@@ -1,0 +1,34 @@
+plugin_routing:
+  modules:
+    hcloud_location_facts:
+      deprecation:
+        removal_date: TBD
+        warning_text: see plugin documentation for details
+    hcloud_server_type_facts:
+      deprecation:
+        removal_date: TBD
+        warning_text: see plugin documentation for details
+    hcloud_image_facts:
+      deprecation:
+        removal_date: TBD
+        warning_text: see plugin documentation for details
+    hcloud_volume_facts:
+      deprecation:
+        removal_date: TBD
+        warning_text: see plugin documentation for details
+    hcloud_floating_ip_facts:
+      deprecation:
+        removal_date: TBD
+        warning_text: see plugin documentation for details
+    hcloud_ssh_key_facts:
+      deprecation:
+        removal_date: TBD
+        warning_text: see plugin documentation for details
+    hcloud_datacenter_facts:
+      deprecation:
+        removal_date: TBD
+        warning_text: see plugin documentation for details
+    hcloud_server_facts:
+      deprecation:
+        removal_date: TBD
+        warning_text: see plugin documentation for details

@@ -1,0 +1,5 @@
+plugins/modules/hcloud_network_info.py validate-modules:return-syntax-error
+plugins/modules/hcloud_server.py validate-modules:parameter-list-no-elements
+plugins/modules/hcloud_server_network.py validate-modules:parameter-list-no-elements
+plugins/doc_fragments/hcloud.py future-import-boilerplate
+plugins/doc_fragments/hcloud.py metaclass-boilerplate
