@@ -45,7 +45,7 @@ function retry
 command -v pip
 pip --version
 pip list --disable-pip-version-check
-retry pip install https://github.com/felixfontein/ansible/archive/changelogs-docs-collections.tar.gz --disable-pip-version-check
+retry pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
 
 export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
 SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
@@ -56,6 +56,8 @@ cd "${TEST_DIR}"
 
 # STAR: HACK install dependencies
 retry ansible-galaxy -vvv collection install community.general
+retry ansible-galaxy -vvv collection install ansible.netcommon
+
 retry pip install hcloud
 # END: HACK
 
@@ -139,7 +141,7 @@ function cleanup
                         -f "${file}" \
                         -F "${flags}" \
                         -n "${test}" \
-                        -t 20636cf5-4d6a-4b9a-8d2d-6f22ebbaa752 \
+                        -t e7471399-9b6d-401d-bd9f-0dce65dd2185 \
                         -X coveragepy \
                         -X gcov \
                         -X fix \
