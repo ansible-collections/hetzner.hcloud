@@ -49,7 +49,7 @@ retry pip install https://github.com/felixfontein/ansible/archive/changelogs-doc
 
 export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
 SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
-TEST_DIR="${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/community/general"
+TEST_DIR="${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/hetzner/hcloud"
 mkdir -p "${TEST_DIR}"
 cp -aT "${SHIPPABLE_BUILD_DIR}" "${TEST_DIR}"
 cd "${TEST_DIR}"
