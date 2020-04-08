@@ -55,7 +55,7 @@ cp -aT "${SHIPPABLE_BUILD_DIR}" "${TEST_DIR}"
 cd "${TEST_DIR}"
 
 # STAR: HACK install dependencies
-retry ansible-galaxy -vvv collection install ansible.general
+retry ansible-galaxy -vvv collection install community.general
 retry pip install hcloud
 # END: HACK
 
