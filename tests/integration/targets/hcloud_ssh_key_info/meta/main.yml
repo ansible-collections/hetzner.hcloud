@@ -1,2 +1,5 @@
 dependencies:
   - setup_sshkey
+collections:
+  - community.general.ipfilter
+  - hetzner.cloud
