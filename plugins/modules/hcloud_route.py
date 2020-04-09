@@ -172,8 +172,8 @@ class AnsibleHcloudRoute(Hcloud):
         return AnsibleModule(
             argument_spec=dict(
                 network={"type": "str", "required": True},
-                destination={"type": "str", "required": True},
                 gateway={"type": "str", "required": True},
+                destination={"type": "str", "required": True},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
