@@ -22,7 +22,7 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "missing required arguments: network_zone, type, ip_range"'
+      - 'result.msg == "missing required arguments: ip_range, network_zone, type"'
 
 - name: test create subnetwork with checkmode
   hcloud_subnetwork:
