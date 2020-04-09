@@ -29,7 +29,7 @@
 - name: test missing required parameters on create
   hcloud_rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv6 | community.general.ipfilter.ipaddr('next_usable') }}"
+    ip_address: "{{ setup.hcloud_server.ipv6 | ipaddr('next_usable') }}"
     state: present
   register: result
   ignore_errors: yes
