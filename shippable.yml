@@ -13,17 +13,7 @@ matrix:
     - env: T=sanity/3
     - env: T=sanity/4
 
-#    - env: T=units/2.6/1
-#    - env: T=units/2.7/1
-#    - env: T=units/3.5/1
-#    - env: T=units/3.6/1
-#    - env: T=units/3.7/1
-#    - env: T=units/3.8/1
-#    - env: T=units/3.9/1
-
-#    - env: T=hcloud/2.7/1
     - env: T=hcloud/3.8/1
-#    - env: T=hcloud/2.7/2
     - env: T=hcloud/3.8/2
 
 branches:
