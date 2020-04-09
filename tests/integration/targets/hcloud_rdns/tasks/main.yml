@@ -2,6 +2,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup
+  collections:
+    - community.general.ipfilter
   hcloud_server:
     name: "{{ hcloud_server_name }}"
     server_type: cx11
@@ -29,7 +31,7 @@
 - name: test missing required parameters on create
   hcloud_rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv6 | ipaddr('next_usable') }}"
+    ip_address: "{{ setup.hcloud_server.ipv6 | community.general.ipfilter.ipaddr('next_usable') }}"
     state: present
   register: result
   ignore_errors: yes

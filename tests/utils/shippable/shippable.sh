@@ -57,7 +57,6 @@ cd "${TEST_DIR}"
 # STAR: HACK install dependencies
 retry ansible-galaxy -vvv collection install community.general
 retry ansible-galaxy -vvv collection install ansible.netcommon
-retry ansible-galaxy -vvv collection install community.general.ipfilter
 
 retry pip install hcloud
 # END: HACK
