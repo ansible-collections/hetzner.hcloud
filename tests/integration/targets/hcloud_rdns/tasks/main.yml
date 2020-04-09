@@ -26,19 +26,6 @@
       - result is failed
       - 'result.msg == "missing required arguments: ip_address, server" or result.msg == "missing required arguments: server, ip_address"'
 
-- name: test missing required parameters on create
-  hcloud_rdns:
-    server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv6 |  ansible.netcommon.ipaddr('next_usable') }}"
-    state: present
-  register: result
-  ignore_errors: yes
-- name: verify fail test missing required parameters on create
-  assert:
-    that:
-      - result is failed
-      - 'result.msg == "missing required arguments: dns_ptr"'
-
 - name: test create rdns with checkmode
   hcloud_rdns:
     server: "{{ hcloud_server_name }}"
@@ -64,7 +51,7 @@
     that:
     - rdns is changed
     - rdns.hcloud_rdns.server == "{{ hcloud_server_name }}"
-    - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv6 | ipaddr('next_usable') }}"
+    - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
     - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: test create rdns idempotency
