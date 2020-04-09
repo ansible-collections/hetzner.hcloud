@@ -64,7 +64,6 @@ retry pip install hcloud
 export PYTHONIOENCODING='utf-8'
 
 if [ "${JOB_TRIGGERED_BY_NAME:-}" == "nightly-trigger" ]; then
-    COVERAGE=yes
     COMPLETE=yes
 fi
 
@@ -93,66 +92,6 @@ find plugins -type d -empty -print -delete
 
 function cleanup
 {
-    # for complete on-demand coverage generate a report for all files with no coverage on the "sanity/5" job so we only have one copy
-    if [ "${COVERAGE}" == "--coverage" ] && [ "${CHANGED}" == "" ] && [ "${test}" == "sanity/5" ]; then
-        stub="--stub"
-        # trigger coverage reporting for stubs even if no other coverage data exists
-        mkdir -p tests/output/coverage/
-    else
-        stub=""
-    fi
-
-    if [ -d tests/output/coverage/ ]; then
-        if find tests/output/coverage/ -mindepth 1 -name '.*' -prune -o -print -quit | grep -q .; then
-            process_coverage='yes'  # process existing coverage files
-        elif [ "${stub}" ]; then
-            process_coverage='yes'  # process coverage when stubs are enabled
-        else
-            process_coverage=''
-        fi
-
-        if [ "${process_coverage}" ]; then
-            # use python 3.7 for coverage to avoid running out of memory during coverage xml processing
-            # only use it for coverage to avoid the additional overhead of setting up a virtual environment for a potential no-op job
-            virtualenv --python /usr/bin/python3.7 ~/ansible-venv
-            set +ux
-            . ~/ansible-venv/bin/activate
-            set -ux
-
-            # shellcheck disable=SC2086
-            ansible-test coverage xml --color --requirements --group-by command --group-by version ${stub:+"$stub"}
-            cp -a tests/output/reports/coverage=*.xml "$SHIPPABLE_RESULT_DIR/codecoverage/"
-
-            # analyze and capture code coverage aggregated by integration test target
-            ansible-test coverage analyze targets generate -v "$SHIPPABLE_RESULT_DIR/testresults/coverage-analyze-targets.json"
-
-            # upload coverage report to codecov.io only when using complete on-demand coverage
-            if [ "${COVERAGE}" == "--coverage" ] && [ "${CHANGED}" == "" ]; then
-                for file in tests/output/reports/coverage=*.xml; do
-                    flags="${file##*/coverage=}"
-                    flags="${flags%-powershell.xml}"
-                    flags="${flags%.xml}"
-                    # remove numbered component from stub files when converting to tags
-                    flags="${flags//stub-[0-9]*/stub}"
-                    flags="${flags//=/,}"
-                    flags="${flags//[^a-zA-Z0-9_,]/_}"
-
-                    bash <(curl -s https://codecov.io/bash) \
-                        -f "${file}" \
-                        -F "${flags}" \
-                        -n "${test}" \
-                        -t e7471399-9b6d-401d-bd9f-0dce65dd2185 \
-                        -X coveragepy \
-                        -X gcov \
-                        -X fix \
-                        -X search \
-                        -X xcode \
-                    || echo "Failed to upload code coverage report to codecov.io: ${file}"
-                done
-            fi
-        fi
-    fi
-
     if [ -d  tests/output/junit/ ]; then
       cp -aT tests/output/junit/ "$SHIPPABLE_RESULT_DIR/testresults/"
     fi
@@ -168,13 +107,7 @@ function cleanup
 
 trap cleanup EXIT
 
-if [[ "${COVERAGE:-}" == "--coverage" ]]; then
-    timeout=60
-else
-    timeout=50
-fi
-
-ansible-test env --dump --show --timeout "${timeout}" --color -v
+ansible-test env --dump --show --timeout "50" --color -v
 
 "tests/utils/shippable/check_matrix.py"
 "tests/utils/shippable/${script}.sh" "${test}"
