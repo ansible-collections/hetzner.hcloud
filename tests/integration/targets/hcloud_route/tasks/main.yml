@@ -21,7 +21,7 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "missing required arguments: network, destination, gateway"'
+      - 'result.msg == "missing required arguments: destination, gateway, network"'
 
 - name: test create route with checkmode
   hcloud_route:

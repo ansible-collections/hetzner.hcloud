@@ -1,4 +1,6 @@
-[![GitHub Actions CI/CD build status — Collection test suite](https://github.com/ansible-collection-migration/hetzner.hcloud/workflows/Collection%20test%20suite/badge.svg?branch=master)](https://github.com/ansible-collection-migration/hetzner.hcloud/actions?query=workflow%3A%22Collection%20test%20suite%22)
+[![Run Status](https://api.shippable.com/projects/5e66776c8b17a60007e4c277/badge?branch=master)]()
 
 Ansible Collection: hetzner.hcloud
 =================================================
+
+Ansible Hetzner Cloud Collection for controlling your Hetzner Cloud Resources.
