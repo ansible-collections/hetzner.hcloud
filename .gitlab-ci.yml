@@ -1,15 +1,28 @@
 stages:
   - test
 
-test:
+test:integration-ansible-devel-py-38:
   stage: test
   image: python:3.8-buster
   except:
     - tags
   script:
     - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
-    - cat "$(pwd)/hcloud_token.txt"
-    - export HOSTNAME="gitlab-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)"
+    - echo "py39-CI_JOB_ID" >> "$(pwd)/prefix.txt"
+    - bash tests/utils/gitlab/gitlab.sh
+  tags:
+    - hc-bladerunner
+
+
+test:integration-ansible-devel-py-39:
+  stage: test
+  image: python:3.9-rc-buster
+  allow_failure: true
+  except:
+    - tags
+  script:
+    - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
+    - echo "py39-CI_JOB_ID" >> "$(pwd)/prefix.txt"
     - bash tests/utils/gitlab/gitlab.sh
   tags:
     - hc-bladerunner
