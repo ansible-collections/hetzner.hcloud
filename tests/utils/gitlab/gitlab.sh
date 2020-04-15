@@ -65,5 +65,5 @@ export UNSTABLE="--allow-unstable-changed"
 find plugins -type d -empty -print -delete
 
 ansible-test env --dump --show --timeout "50" --color -v
-
+ls -la
 bash tests/utils/gitlab/hcloud.sh
