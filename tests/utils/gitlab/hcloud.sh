@@ -5,7 +5,7 @@ set -o pipefail -eux
 cloud="hcloud"
 python="3.8"
 
-target="cloud/hcloud"
+target="cloud/hcloud/"
 
 changed_all_target="shippable/${cloud}/smoketest/"
 ls -la
