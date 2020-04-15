@@ -18,4 +18,4 @@ fi
 
 # shellcheck disable=SC2086
 ansible-test integration --color -v --retry-on-error "${target}" ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} ${UNSTABLE:+"$UNSTABLE"} \
-    --remote-terminate always --remote-stage "${stage}" --changed-all-target "${changed_all_target}""
+    --remote-terminate always --remote-stage "${stage}" --changed-all-target "${changed_all_target}"
