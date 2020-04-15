@@ -8,7 +8,7 @@ test:integration-ansible-devel-py-38:
     - tags
   script:
     - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
-    - echo "py39-CI_JOB_ID" >> "$(pwd)/prefix.txt"
+    - echo "py39-$CI_JOB_ID" >> "$(pwd)/prefix.txt"
     - bash tests/utils/gitlab/gitlab.sh
   tags:
     - hc-bladerunner
@@ -22,7 +22,7 @@ test:integration-ansible-devel-py-39:
     - tags
   script:
     - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
-    - echo "py39-CI_JOB_ID" >> "$(pwd)/prefix.txt"
+    - echo "py39-$CI_JOB_ID" >> "$(pwd)/prefix.txt"
     - bash tests/utils/gitlab/gitlab.sh
   tags:
     - hc-bladerunner
