@@ -7,8 +7,6 @@ python="3.8"
 
 target="cloud/hcloud"
 
-stage="prod"
-
 changed_all_target="shippable/${cloud}/smoketest/"
 ls -la
 # shellcheck disable=SC2086
