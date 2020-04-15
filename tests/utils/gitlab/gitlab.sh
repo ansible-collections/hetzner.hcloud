@@ -30,7 +30,7 @@ export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
 SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
 TEST_DIR="${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/hetzner/hcloud"
 mkdir -p "${TEST_DIR}"
-cp -aT "." "${TEST_DIR}"
+cp -raT "." "${TEST_DIR}"
 cd "${TEST_DIR}"
 
 # STAR: HACK install dependencies
