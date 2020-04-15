@@ -7,6 +7,7 @@ test:sanity-devel-py38:
   except:
     - tags
   script:
+    - bash tests/utils/gitlab/gitlab.sh
     - bash tests/utils/shippable/sanity.sh sanity/1
     - bash tests/utils/shippable/sanity.sh sanity/2
     - bash tests/utils/shippable/sanity.sh sanity/3
@@ -23,6 +24,7 @@ test:integration-devel-py38:
     - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
     - echo "py39-$CI_JOB_ID" >> "$(pwd)/prefix.txt"
     - bash tests/utils/gitlab/gitlab.sh
+    - bash tests/utils/gitlab/hcloud.sh
   tags:
     - hc-bladerunner
 
@@ -34,8 +36,9 @@ test:integration-devel-py39:
   except:
     - tags
   script:
+    - bash tests/utils/gitlab/gitlab.sh
     - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
     - echo "py39-$CI_JOB_ID" >> "$(pwd)/prefix.txt"
-    - bash tests/utils/gitlab/gitlab.sh
+    - bash tests/utils/gitlab/hcloud.sh
   tags:
     - hc-bladerunner
