@@ -12,4 +12,4 @@ hcloud_api_token=${HCLOUD_TOKEN}
 " >> $(pwd)/tests/integration/cloud-config-hcloud.ini
 # shellcheck disable=SC2086
 export HOSTNAME="gitlab-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)"
-ansible-test integration --color --local -v "${target}" ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} ${UNSTABLE:+"$UNSTABLE"}
+ansible-test integration --color --docker --python "${python}" -v "${target}" ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} ${UNSTABLE:+"$UNSTABLE"}
