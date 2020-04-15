@@ -55,7 +55,7 @@ elif [[ "${CI_COMMIT_MESSAGE}" =~ ci_complete ]]; then
     export CHANGED=""
 else
     # enable change detection (default behavior)
-    export CHANGED="--changed"
+    export CHANGED=""
 fi
 
 
