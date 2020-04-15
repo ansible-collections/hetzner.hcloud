@@ -10,4 +10,4 @@ target="cloud/hcloud"
 changed_all_target="shippable/${cloud}/smoketest/"
 ls -la
 # shellcheck disable=SC2086
-ansible-test integration --color --local -v "${target}" ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} ${UNSTABLE:+"$UNSTABLE"} --changed-all-target "${changed_all_target}"
+ansible-test integration --color --local -v ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} ${UNSTABLE:+"$UNSTABLE"} --changed-all-target "${changed_all_target}"
