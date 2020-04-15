@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -o pipefail -eux
-
 cloud="hcloud"
 python="3.8"
 
