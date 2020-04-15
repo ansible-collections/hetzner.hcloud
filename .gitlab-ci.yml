@@ -8,10 +8,10 @@ test:sanity-devel-py38:
     - tags
   script:
     - bash tests/utils/gitlab/gitlab.sh
-    - bash tests/utils/shippable/sanity.sh sanity/1
-    - bash tests/utils/shippable/sanity.sh sanity/2
-    - bash tests/utils/shippable/sanity.sh sanity/3
-    - bash tests/utils/shippable/sanity.sh sanity/4
+    - bash tests/utils/gitlab/sanity.sh sanity/1
+    - bash tests/utils/gitlab/sanity.sh sanity/2
+    - bash tests/utils/gitlab/sanity.sh sanity/3
+    - bash tests/utils/gitlab/sanity.sh sanity/4
   tags:
     - hc-bladerunner
 
