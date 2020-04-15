@@ -37,6 +37,7 @@ cd "${TEST_DIR}"
 retry ansible-galaxy -vvv collection install community.general
 retry ansible-galaxy -vvv collection install ansible.netcommon
 
+retry pip install netaddr --disable-pip-version-check
 retry pip install hcloud
 # END: HACK
 
