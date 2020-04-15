@@ -220,7 +220,7 @@ class AnsibleHcloudFloatingIP(Hcloud):
         self.module.fail_on_missing_params(
             required_params=["type"]
         )
-        self.module.fail_json(msg=self.module.params.get("name"))
+
         params = {
             "description": self.module.params.get("description"),
             "type": self.module.params.get("type"),
