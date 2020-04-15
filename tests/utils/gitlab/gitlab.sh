@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 set -o pipefail -eux
 
@@ -66,4 +66,4 @@ find plugins -type d -empty -print -delete
 
 ansible-test env --dump --show --timeout "50" --color -v
 
-sh tests/utils/gitlab/hcloud.sh
+bash tests/utils/gitlab/hcloud.sh

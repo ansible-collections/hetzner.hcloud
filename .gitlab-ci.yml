@@ -1,23 +1,15 @@
 stages:
   - test
-variables:
-  DOCKER_HOST: tcp://localhost:2375/
-  DOCKER_DRIVER: overlay2
 
 test:
   stage: test
-  image: docker:stable-dind
-  services:
-    - docker:dind
-  before_script:
-    - docker version
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  image: python:3.8-buster
   except:
     - tags
   script:
     - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
     - cat "$(pwd)/hcloud_token.txt"
     - export HOSTNAME="gitlab-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)"
-    - sh tests/utils/gitlab/gitlab.sh
+    - bash tests/utils/gitlab/gitlab.sh
   tags:
     - hc-bladerunner
