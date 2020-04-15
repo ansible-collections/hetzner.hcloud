@@ -66,4 +66,4 @@ find plugins -type d -empty -print -delete
 
 ansible-test env --dump --show --timeout "50" --color -v
 
-"tests/utils/gitlab/hcloud.sh"
+bash tests/utils/gitlab/hcloud.sh
