@@ -26,7 +26,7 @@ pip --version
 pip list --disable-pip-version-check
 retry pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
 
-export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
+export ANSIBLE_COLLECTIONS_PATHS="${CI_PROJECT_PATH}/.ansible"
 SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
 TEST_DIR="${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/hetzner/hcloud"
 mkdir -p "${TEST_DIR}"
