@@ -7,6 +7,8 @@ test:
   except:
     - tags
   script:
+    - echo $HCLOUD_TOKEN >> hcloud_token.txt
+    - cat hcloud_token.txt
     - bash tests/utils/gitlab/gitlab.sh
   tags:
     - hc-bladerunner

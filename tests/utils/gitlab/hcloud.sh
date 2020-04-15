@@ -4,7 +4,7 @@ cloud="hcloud"
 python="3.8"
 
 target="cloud/hcloud/"
-
+HCLOUD_TOKEN= $(cat hcloud_token.txt)
 changed_all_target="shippable/${cloud}/smoketest/"
 ls -la
 echo "[default]
