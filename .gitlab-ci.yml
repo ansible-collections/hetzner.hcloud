@@ -1,7 +1,20 @@
 stages:
   - test
 
-test:integration-ansible-devel-py-38:
+test:sanity-devel-py38:
+  stage: test
+  image: python:3.8-buster
+  except:
+    - tags
+  script:
+    - bash tests/utils/shippable/sanity.sh sanity/1
+    - bash tests/utils/shippable/sanity.sh sanity/2
+    - bash tests/utils/shippable/sanity.sh sanity/3
+    - bash tests/utils/shippable/sanity.sh sanity/4
+  tags:
+    - hc-bladerunner
+
+test:integration-devel-py38:
   stage: test
   image: python:3.8-buster
   except:
@@ -14,7 +27,7 @@ test:integration-ansible-devel-py-38:
     - hc-bladerunner
 
 
-test:integration-ansible-devel-py-39:
+test:integration-devel-py39:
   stage: test
   image: python:3.9-rc-buster
   allow_failure: true
