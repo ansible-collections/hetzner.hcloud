@@ -18,6 +18,6 @@ test:
     - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
     - cat "$(pwd)/hcloud_token.txt"
     - export HOSTNAME="gitlab-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)"
-    - bash tests/utils/gitlab/gitlab.sh
+    - sh tests/utils/gitlab/gitlab.sh
   tags:
     - hc-bladerunner
