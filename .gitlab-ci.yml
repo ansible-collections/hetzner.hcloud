@@ -1,0 +1,15 @@
+stages:
+  - test
+
+test:
+  stage: test
+  image: python:3.8-buster
+  except:
+    - tags
+  before_script:
+    - curl -fsSL https://get.docker.com -o get-docker.sh
+    - bash get-docker.sh
+  script:
+    - bash tests/utils/gitlab/gitlab.sh
+  tags:
+    - hc-bladerunner
