@@ -7,7 +7,6 @@ test:
   except:
     - tags
   script:
-    - export HCLOUD_TOKEN=$HCLOUD_TOKEN
     - bash tests/utils/gitlab/gitlab.sh
   tags:
     - hc-bladerunner
