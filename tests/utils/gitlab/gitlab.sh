@@ -75,6 +75,5 @@ ansible-test env --dump --show --timeout "50" --color -v
 if [[ "${test}" =~ integration ]]; then
   bash tests/utils/gitlab/integration.sh
 else
-  group="${args[2]}"
-  bash tests/utils/gitlab/sanity.sh "${group}"
+  bash tests/utils/gitlab/sanity.sh "$1"
 fi
