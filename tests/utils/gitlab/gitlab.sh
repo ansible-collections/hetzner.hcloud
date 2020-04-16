@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
 set -o pipefail -eux
+declare -a args
+IFS='/:' read -ra args <<< "$1"
 
+test="${args[1]}"
 command -v python
 python -V
 
@@ -66,3 +69,10 @@ export UNSTABLE="--allow-unstable-changed"
 find plugins -type d -empty -print -delete
 
 ansible-test env --dump --show --timeout "50" --color -v
+
+if [[ "${test}" =~ integration ]]; then
+  bash tests/utils/gitlab/integration.sh
+else
+  group="${args[2]}"
+  bash tests/utils/gitlab/sanity.sh "${group}"
+fi
