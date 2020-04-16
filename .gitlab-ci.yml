@@ -57,13 +57,12 @@ test:integration-devel-py38:
 
 test:integration-devel-py39:
   stage: integration
-  image: python:3.9-rc-buster
-  allow_failure: true
+  image: python:3.8-rc-buster
   except:
     - tags
   script:
     - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
     - echo "py39-$CI_JOB_ID" >> "$(pwd)/prefix.txt"
-    - bash tests/utils/gitlab/gitlab.sh integration/1
+    - bash tests/utils/gitlab/gitlab.sh integration/2
   tags:
     - hc-bladerunner

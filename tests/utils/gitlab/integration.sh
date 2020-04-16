@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+target="$1"
+
 HCLOUD_TOKEN=$(cat hcloud_token.txt)
 changed_all_target="shippable/${cloud}/smoketest/"
 
@@ -10,4 +12,4 @@ hcloud_api_token=${HCLOUD_TOKEN}
 export SHIPPABLE="true"
 export SHIPPABLE_BUILD_NUMBER="gl-$(cat prefix.txt)"
 export SHIPPABLE_JOB_NUMBER="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 2 | head -n 1)"
-ansible-test integration --color --local -v "cloud/hcloud/" ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} ${UNSTABLE:+"$UNSTABLE"}
+ansible-test integration --color --local -v "${target}" ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} ${UNSTABLE:+"$UNSTABLE"}

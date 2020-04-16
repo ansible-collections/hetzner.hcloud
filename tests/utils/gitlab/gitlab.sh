@@ -72,9 +72,9 @@ find plugins -type d -empty -print -delete
 
 ansible-test env --dump --show --timeout "50" --color -v
 
+group="${args[1]}"
 if [[ "${test}" =~ integration ]]; then
-  bash tests/utils/gitlab/integration.sh
+  bash tests/utils/gitlab/integration.sh "shippable/hcloud/group${group}"
 else
-  group="${args[1]}"
   bash tests/utils/gitlab/sanity.sh "sanity/${group}"
 fi
