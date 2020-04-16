@@ -42,7 +42,7 @@ test:sanity4-devel-py38:
   tags:
     - hc-bladerunner
 
-test:integration-devel-py38:
+test:integration1-devel-py38:
   stage: integration
   image: python:3.8-buster
   except:
@@ -55,9 +55,9 @@ test:integration-devel-py38:
     - hc-bladerunner
 
 
-test:integration-devel-py39:
+test:integration2-devel-py38:
   stage: integration
-  image: python:3.8-rc-buster
+  image: python:3.8-buster
   except:
     - tags
   script:
