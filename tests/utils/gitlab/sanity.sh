@@ -32,6 +32,7 @@ if [ -d "${network_path}" ]; then
 fi
 
 pip install pycodestyle
+pip install yamllint
 # shellcheck disable=SC2086
 ansible-test sanity --color -v --junit ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} \
     --base-branch "${base_branch}" \
