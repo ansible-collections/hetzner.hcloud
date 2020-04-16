@@ -1,6 +1,6 @@
 stages:
   - sanity
-  - test
+  - integration
 
 test:sanity1-devel-py38:
   stage: sanity
@@ -43,7 +43,7 @@ test:sanity4-devel-py38:
     - hc-bladerunner
 
 test:integration-devel-py38:
-  stage: test
+  stage: integration
   image: python:3.8-buster
   except:
     - tags
@@ -56,7 +56,7 @@ test:integration-devel-py38:
 
 
 test:integration-devel-py39:
-  stage: test
+  stage: integration
   image: python:3.9-rc-buster
   allow_failure: true
   except:

@@ -31,6 +31,7 @@ if [ -d "${network_path}" ]; then
     fi
 fi
 
+pip install pycodestyle
 # shellcheck disable=SC2086
 ansible-test sanity --color -v --junit ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} \
     --base-branch "${base_branch}" \
