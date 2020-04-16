@@ -6,7 +6,7 @@ declare -a args
 
 IFS='/:' read -ra args <<< "$1"
 
-test="${args[1]}"
+test="${args[0]}"
 command -v python
 python -V
 
@@ -75,5 +75,6 @@ ansible-test env --dump --show --timeout "50" --color -v
 if [[ "${test}" =~ integration ]]; then
   bash tests/utils/gitlab/integration.sh
 else
-  bash tests/utils/gitlab/sanity.sh "$1"
+  group="${args[1]}"
+  bash tests/utils/gitlab/sanity.sh "sanity/${group}"
 fi
