@@ -306,6 +306,7 @@ class AnsibleHcloudServer(Hcloud):
         self.module.fail_on_missing_params(
             required_params=["name", "server_type", "image"]
         )
+
         params = {
             "name": self.module.params.get("name"),
             "server_type": self.client.server_types.get_by_name(
