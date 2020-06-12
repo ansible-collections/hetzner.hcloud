@@ -21,7 +21,7 @@ short_description: Gather infos about your Hetzner Cloud certificates.
 description:
     - Gather facts about your Hetzner Cloud certificates.
 author:
-    - Lukas Kämmerling (@LKaemmerling)
+    - Lukas Kaemmerling (@LKaemmerling)
 options:
     id:
         description:
@@ -41,7 +41,7 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = """
-- name: Gather hcloud sshkey infos
+- name: Gather hcloud certificate infos
   hcloud_certificate_info:
   register: output
 - name: Print the gathered infos
@@ -69,12 +69,12 @@ hcloud_certificate_info:
             description: Fingerprint of the certificate
             returned: always
             type: str
-            sample: 03:c7:55:9b:2a:d1:04:17:09:f6:d0:7f:18:34:63:d4:3e:5f
+            sample: "03:c7:55:9b:2a:d1:04:17:09:f6:d0:7f:18:34:63:d4:3e:5f"
         certificate:
-            description: Certificate and chain in PEM format, in order so that each record directly certifies the one preceding
+            description: Certificate and chain in PEM format
             returned: always
             type: str
-            sample: "-----BEGIN CERTIFICATE-----\n..."
+            sample: "-----BEGIN CERTIFICATE-----..."
         domain_names:
             description: List of Domains and Subdomains covered by the Certificate
             returned: always
@@ -102,7 +102,7 @@ except ImportError:
     pass
 
 
-class AnsibleHcloudSSHKeyInfo(Hcloud):
+class AnsibleHcloudCertificateInfo(Hcloud):
     def __init__(self, module):
         Hcloud.__init__(self, module, "hcloud_certificate_info")
         self.hcloud_certificate_info = None
@@ -157,9 +157,9 @@ class AnsibleHcloudSSHKeyInfo(Hcloud):
 
 
 def main():
-    module = AnsibleHcloudSSHKeyInfo.define_module()
+    module = AnsibleHcloudCertificateInfo.define_module()
 
-    hcloud = AnsibleHcloudSSHKeyInfo(module)
+    hcloud = AnsibleHcloudCertificateInfo(module)
     hcloud.get_certificates()
     result = hcloud.get_result()
 

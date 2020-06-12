@@ -5,6 +5,7 @@ stages:
 ansible-devel-1/4:
   stage: sanity
   image: python:3.8-buster
+  allow_failure: true
   except:
     - tags
   script:
@@ -15,6 +16,7 @@ ansible-devel-1/4:
 ansible-devel-2/4:
   stage: sanity
   image: python:3.8-buster
+  allow_failure: true
   except:
     - tags
   script:
@@ -25,6 +27,7 @@ ansible-devel-2/4:
 ansible-devel-3/4:
   stage: sanity
   image: python:3.8-buster
+  allow_failure: true
   except:
     - tags
   script:
@@ -35,6 +38,7 @@ ansible-devel-3/4:
 ansible-devel-4/4:
   stage: sanity
   image: python:3.8-buster
+  allow_failure: true
   except:
     - tags
   script:
