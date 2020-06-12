@@ -79,7 +79,7 @@ hcloud_volume_info:
             returned: always
             type: str
             sample: /dev/disk/by-id/scsi-0HC_Volume_12345
-            version_added: "2.10"
+            version_added: "1.0.0"
         location:
             description: Name of the location where the Volume resides in
             returned: always
@@ -94,7 +94,7 @@ hcloud_volume_info:
             description: True if the Volume is protected for deletion
             returned: always
             type: bool
-            version_added: "2.10"
+            version_added: "1.0.0"
         labels:
             description: User-defined labels (key-value pairs)
             returned: always
@@ -175,7 +175,7 @@ def main():
     is_old_facts = module._name == 'hcloud_volume_facts'
     if is_old_facts:
         module.deprecate("The 'hcloud_volume_facts' module has been renamed to 'hcloud_volume_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.13')
+                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
 
     hcloud = AnsibleHcloudVolumeInfo(module)
 
