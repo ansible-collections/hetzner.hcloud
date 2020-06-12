@@ -167,7 +167,7 @@ def main():
     is_old_facts = module._name == 'hcloud_server_type_facts'
     if is_old_facts:
         module.deprecate("The 'hcloud_server_type_info' module has been renamed to 'hcloud_server_type_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.13')
+                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
 
     hcloud = AnsibleHcloudServerTypeInfo(module)
     hcloud.get_server_types()

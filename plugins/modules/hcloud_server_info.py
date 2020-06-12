@@ -122,13 +122,13 @@ hcloud_server_info:
             type: bool
             returned: always
             sample: false
-            version_added: "2.10"
+            version_added: "1.0.0"
         rebuild_protection:
             description: True if server is protected for rebuild
             type: bool
             returned: always
             sample: false
-            version_added: "2.10"
+            version_added: "1.0.0"
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -208,7 +208,7 @@ def main():
     is_old_facts = module._name == 'hcloud_server_facts'
     if is_old_facts:
         module.deprecate("The 'hcloud_server_facts' module has been renamed to 'hcloud_server_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.13')
+                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
 
     hcloud = AnsibleHcloudServerInfo(module)
     hcloud.get_servers()

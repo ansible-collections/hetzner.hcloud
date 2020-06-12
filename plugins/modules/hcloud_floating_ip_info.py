@@ -67,7 +67,7 @@ hcloud_floating_ip_info:
             returned: Always
             type: str
             sample: my-floating-ip
-            version_added: "2.10"
+            version_added: "1.0.0"
         description:
             description: Description of the Floating IP
             returned: always
@@ -97,7 +97,7 @@ hcloud_floating_ip_info:
             description: True if the Floating IP is protected for deletion
             returned: always
             type: bool
-            version_added: "2.10"
+            version_added: "1.0.0"
         labels:
             description: User-defined labels (key-value pairs)
             returned: always
@@ -174,7 +174,7 @@ def main():
     is_old_facts = module._name == 'hcloud_floating_ip_facts'
     if is_old_facts:
         module.deprecate("The 'hcloud_floating_ip_facts' module has been renamed to 'hcloud_floating_ip_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.13')
+                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
 
     hcloud = AnsibleHcloudFloatingIPInfo(module)
 

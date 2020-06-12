@@ -158,7 +158,7 @@ def main():
     is_old_facts = module._name == 'hcloud_ssh_key_facts'
     if is_old_facts:
         module.deprecate("The 'hcloud_ssh_key_facts' module has been renamed to 'hcloud_ssh_key_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.13')
+                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
 
     hcloud = AnsibleHcloudSSHKeyInfo(module)
     hcloud.get_ssh_keys()

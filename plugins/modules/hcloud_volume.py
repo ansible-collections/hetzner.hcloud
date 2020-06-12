@@ -140,7 +140,7 @@ hcloud_volume:
             returned: always
             type: str
             sample: /dev/disk/by-id/scsi-0HC_Volume_12345
-            version_added: "2.10"
+            version_added: "1.0.0"
         location:
             description: Location name where the Volume is located at
             type: str
@@ -163,7 +163,7 @@ hcloud_volume:
             type: bool
             returned: always
             sample: false
-            version_added: "2.10"
+            version_added: "1.0.0"
 """
 
 from ansible.module_utils.basic import AnsibleModule
