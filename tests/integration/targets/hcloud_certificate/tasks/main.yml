@@ -38,7 +38,7 @@
     that:
       - certificate is changed
       - certificate.hcloud_certificate.name == "{{ hcloud_certificate_name }}"
-      - certificate.hcloud_certificate.certificate ==  "{{ certificate_example_com }}"
+      - certificate.hcloud_certificate.domain_names[0] ==  "www.example.com"
       - certificate.hcloud_certificate.labels.key == "value"
 
 - name: test create certificate idempotence
