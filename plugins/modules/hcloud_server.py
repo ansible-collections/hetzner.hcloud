@@ -49,10 +49,12 @@ options:
             - The key names correspond to the SSH keys configured for your
               Hetzner Cloud account access.
         type: list
+        elements: str
     volumes:
         description:
             - List of Volumes IDs that should be attached to the server on server creation.
         type: list
+        elements: str
     image:
         description:
             - Image the server should be created from.
