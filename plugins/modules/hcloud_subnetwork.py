@@ -25,7 +25,6 @@ options:
     network:
         description:
             - The ID or Name  of the Hetzner Cloud Networks.
-
         type: str
         required: true
     ip_range:

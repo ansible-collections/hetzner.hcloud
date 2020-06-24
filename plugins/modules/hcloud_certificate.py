@@ -136,7 +136,6 @@ from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 try:
-    from hcloud.volumes.domain import Volume
     from hcloud.certificates.domain import Certificate
     from hcloud.certificates.domain import Server
     from hcloud import APIException
