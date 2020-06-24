@@ -120,6 +120,61 @@ hcloud_network_info:
             description: Servers attached to the network
             returned: always
             type: complex
+                id:
+                    description: Numeric identifier of the server
+                    returned: always
+                    type: int
+                    sample: 1937415
+                name:
+                    description: Name of the server
+                    returned: always
+                    type: str
+                    sample: my-server
+                status:
+                    description: Status of the server
+                    returned: always
+                    type: str
+                    sample: running
+                server_type:
+                    description: Name of the server type of the server
+                    returned: always
+                    type: str
+                    sample: cx11
+                ipv4_address:
+                    description: Public IPv4 address of the server
+                    returned: always
+                    type: str
+                    sample: 116.203.104.109
+                ipv6:
+                    description: IPv6 network of the server
+                    returned: always
+                    type: str
+                    sample: 2a01:4f8:1c1c:c140::/64
+                location:
+                    description: Name of the location of the server
+                    returned: always
+                    type: str
+                    sample: fsn1
+                datacenter:
+                    description: Name of the datacenter of the server
+                    returned: always
+                    type: str
+                    sample: fsn1-dc14
+                rescue_enabled:
+                    description: True if rescue mode is enabled, Server will then boot into rescue system on next reboot
+                    returned: always
+                    type: bool
+                    sample: false
+                backup_window:
+                    description: Time window (UTC) in which the backup will run, or null if the backups are not enabled
+                    returned: always
+                    type: bool
+                    sample: 22-02
+                labels:
+                    description: User-defined labels (key-value pairs)
+                    returned: always
+                    type: dict
+
         delete_protection:
             description: True if the network is protected for deletion
             returned: always
