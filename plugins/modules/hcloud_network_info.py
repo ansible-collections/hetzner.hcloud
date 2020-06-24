@@ -80,10 +80,42 @@ hcloud_network_info:
             description: Subnetworks belonging to the network
             returned: always
             type: complex
+            contains:
+                type:
+                    description: Type of the subnetwork.
+                    returned: always
+                    type: str
+                    sample: cloud
+                network_zone:
+                    description: Network of the subnetwork.
+                    returned: always
+                    type: str
+                    sample: eu-central
+                ip_range:
+                    description: IP range of the subnetwork
+                    returned: always
+                    type: str
+                    sample: 10.0.0.0/24
+                gateway:
+                    description: Gateway of this subnetwork
+                    returned: always
+                    type: str
+                    sample: 10.0.0.1
         routes:
             description: Routes belonging to the network
             returned: always
             type: complex
+            contains:
+                ip_range:
+                    description: Destination network or host of this route.
+                    returned: always
+                    type: str
+                    sample: 10.0.0.0/16
+                gateway:
+                    description: Gateway of this route
+                    returned: always
+                    type: str
+                    sample: 10.0.0.1
         servers:
             description: Servers attached to the network
             returned: always
