@@ -172,25 +172,15 @@ class AnsibleHcloudVolumeInfo(Hcloud):
 def main():
     module = AnsibleHcloudVolumeInfo.define_module()
 
-    is_old_facts = module._name == 'hcloud_volume_facts'
-    if is_old_facts:
-        module.deprecate("The 'hcloud_volume_facts' module has been renamed to 'hcloud_volume_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
-
     hcloud = AnsibleHcloudVolumeInfo(module)
 
     hcloud.get_volumes()
     result = hcloud.get_result()
-    if is_old_facts:
-        ansible_info = {
-            'hcloud_volume_facts': result['hcloud_volume_info']
-        }
-        module.exit_json(ansible_facts=ansible_info)
-    else:
-        ansible_info = {
-            'hcloud_volume_info': result['hcloud_volume_info']
-        }
-        module.exit_json(**ansible_info)
+
+    ansible_info = {
+        'hcloud_volume_info': result['hcloud_volume_info']
+    }
+    module.exit_json(**ansible_info)
 
 
 if __name__ == "__main__":

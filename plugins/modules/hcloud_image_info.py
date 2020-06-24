@@ -23,8 +23,6 @@ short_description: Gather infos about your Hetzner Cloud images.
 
 description:
     - Gather infos about your Hetzner Cloud images.
-    - This module was called C(hcloud_location_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_location_facts).
-      Note that the M(hcloud_image_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_image_info)!
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)
@@ -184,25 +182,14 @@ class AnsibleHcloudImageInfo(Hcloud):
 def main():
     module = AnsibleHcloudImageInfo.define_module()
 
-    is_old_facts = module._name == 'hcloud_image_facts'
-    if is_old_facts:
-        module.deprecate("The 'hcloud_image_facts' module has been renamed to 'hcloud_image_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
-
     hcloud = AnsibleHcloudImageInfo(module)
     hcloud.get_images()
     result = hcloud.get_result()
 
-    if is_old_facts:
-        ansible_info = {
-            'hcloud_imagen_facts': result['hcloud_image_info']
-        }
-        module.exit_json(ansible_facts=ansible_info)
-    else:
-        ansible_info = {
-            'hcloud_image_info': result['hcloud_image_info']
-        }
-        module.exit_json(**ansible_info)
+    ansible_info = {
+        'hcloud_image_info': result['hcloud_image_info']
+    }
+    module.exit_json(**ansible_info)
 
 
 if __name__ == "__main__":

@@ -22,8 +22,6 @@ short_description: Gather info about the Hetzner Cloud datacenters.
 
 description:
     - Gather info about your Hetzner Cloud datacenters.
-    - This module was called C(hcloud_datacenter_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_datacenter_facts).
-      Note that the M(hcloud_datacenter_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_datacenter_info)!
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)
@@ -55,8 +53,6 @@ RETURN = """
 hcloud_datacenter_info:
     description:
       - The datacenter info as list
-      - This module was called C(hcloud_datacenter_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_datacenter_facts).
-        Note that the M(hcloud_datacenter_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_datacenter_info)!
     returned: always
     type: complex
     contains:
@@ -147,24 +143,14 @@ class AnsibleHcloudDatacenterInfo(Hcloud):
 def main():
     module = AnsibleHcloudDatacenterInfo.define_module()
 
-    is_old_facts = module._name == 'hcloud_datacenter_facts'
-    if is_old_facts:
-        module.deprecate("The 'hcloud_datacenter_facts' module has been renamed to 'hcloud_datacenter_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
     hcloud = AnsibleHcloudDatacenterInfo(module)
 
     hcloud.get_datacenters()
     result = hcloud.get_result()
-    if is_old_facts:
-        ansible_info = {
-            'hcloud_datacenter_facts': result['hcloud_datacenter_info']
-        }
-        module.exit_json(ansible_facts=ansible_info)
-    else:
-        ansible_info = {
-            'hcloud_datacenter_info': result['hcloud_datacenter_info']
-        }
-        module.exit_json(**ansible_info)
+    ansible_info = {
+        'hcloud_datacenter_info': result['hcloud_datacenter_info']
+    }
+    module.exit_json(**ansible_info)
 
 
 if __name__ == "__main__":

@@ -22,8 +22,6 @@ short_description: Gather infos about the Hetzner Cloud Floating IPs.
 
 description:
     - Gather facts about your Hetzner Cloud Floating IPs.
-    - This module was called C(hcloud_floating_ip_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_floating_ip_facts).
-      Note that the M(hcloud_floating_ip_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_floating_ip_info)!
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)
@@ -171,25 +169,15 @@ class AnsibleHcloudFloatingIPInfo(Hcloud):
 def main():
     module = AnsibleHcloudFloatingIPInfo.define_module()
 
-    is_old_facts = module._name == 'hcloud_floating_ip_facts'
-    if is_old_facts:
-        module.deprecate("The 'hcloud_floating_ip_facts' module has been renamed to 'hcloud_floating_ip_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
-
     hcloud = AnsibleHcloudFloatingIPInfo(module)
 
     hcloud.get_floating_ips()
     result = hcloud.get_result()
-    if is_old_facts:
-        ansible_info = {
-            'hcloud_floating_ip_facts': result['hcloud_floating_ip_info']
-        }
-        module.exit_json(ansible_facts=ansible_info)
-    else:
-        ansible_info = {
-            'hcloud_floating_ip_info': result['hcloud_floating_ip_info']
-        }
-        module.exit_json(**ansible_info)
+
+    ansible_info = {
+        'hcloud_floating_ip_info': result['hcloud_floating_ip_info']
+    }
+    module.exit_json(**ansible_info)
 
 
 if __name__ == "__main__":

@@ -23,8 +23,6 @@ short_description: Gather infos about the Hetzner Cloud server types.
 
 description:
     - Gather infos about your Hetzner Cloud server types.
-    - This module was called C(hcloud_server_type_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_server_type_facts).
-      Note that the M(hcloud_server_type_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_server_type_info)!
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)
@@ -164,24 +162,13 @@ class AnsibleHcloudServerTypeInfo(Hcloud):
 def main():
     module = AnsibleHcloudServerTypeInfo.define_module()
 
-    is_old_facts = module._name == 'hcloud_server_type_facts'
-    if is_old_facts:
-        module.deprecate("The 'hcloud_server_type_info' module has been renamed to 'hcloud_server_type_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
-
     hcloud = AnsibleHcloudServerTypeInfo(module)
     hcloud.get_server_types()
     result = hcloud.get_result()
-    if is_old_facts:
-        ansible_info = {
-            'hcloud_server_type_info': result['hcloud_server_type_info']
-        }
-        module.exit_json(ansible_facts=ansible_info)
-    else:
-        ansible_info = {
-            'hcloud_server_type_info': result['hcloud_server_type_info']
-        }
-        module.exit_json(**ansible_info)
+    ansible_info = {
+        'hcloud_server_type_info': result['hcloud_server_type_info']
+    }
+    module.exit_json(**ansible_info)
 
 
 if __name__ == "__main__":
