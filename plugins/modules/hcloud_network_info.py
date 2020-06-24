@@ -120,6 +120,7 @@ hcloud_network_info:
             description: Servers attached to the network
             returned: always
             type: complex
+            contains:
                 id:
                     description: Numeric identifier of the server
                     returned: always
