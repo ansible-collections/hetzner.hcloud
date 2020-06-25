@@ -4,9 +4,8 @@ version: 0.1.0
 readme: README.md
 authors:
   - Lukas Kaemmerling (github.com/LKaemmerling)
-description: null
+description: A Collection for managing Hetzner Cloud resources
 license: GPL-3.0-or-later
-license_file: COPYING
 tags: null
 dependencies:
   ansible.netcommon: '>=0.0.1'
