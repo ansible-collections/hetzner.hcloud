@@ -53,8 +53,7 @@ cd "${TEST_DIR}"
 # STAR: HACK install dependencies
 retry ansible-galaxy -vvv collection install community.general
 retry ansible-galaxy -vvv collection install ansible.netcommon
-# retry ansible-galaxy -vvv collection install community.internal_test_tools - we need git checkout until 0.2.0 has been released
-retry git clone https://github.com/ansible-collections/community.internal_test_tools.git "${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/community/internal_test_tools"
+retry ansible-galaxy -vvv collection install community.internal_test_tools
 retry pip install netaddr --disable-pip-version-check
 retry pip install hcloud
 # END: HACK
