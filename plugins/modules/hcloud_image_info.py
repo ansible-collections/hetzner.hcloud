@@ -24,7 +24,7 @@ short_description: Gather infos about your Hetzner Cloud images.
 description:
     - Gather infos about your Hetzner Cloud images.
     - This module was called C(hcloud_location_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_location_facts).
-      Note that the M(hcloud_image_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_image_info)!
+      Note that the M(hetzner.hcloud.hcloud_image_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_image_info)!
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)

@@ -24,7 +24,7 @@ short_description: Gather infos about your Hetzner Cloud servers.
 description:
     - Gather infos about your Hetzner Cloud servers.
     - This module was called C(hcloud_server_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_server_facts).
-      Note that the M(hcloud_server_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_server_info)!
+      Note that the M(hetzner.hcloud.hcloud_server_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_server_info)!
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)

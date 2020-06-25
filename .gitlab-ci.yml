@@ -2,7 +2,7 @@ stages:
   - sanity
   - integration
 
-test-sanity-devel-1/4:
+ansible-devel-1/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -12,7 +12,7 @@ test-sanity-devel-1/4:
   tags:
     - hc-bladerunner
 
-test-sanity-devel-2/4:
+ansible-devel-2/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -22,7 +22,7 @@ test-sanity-devel-2/4:
   tags:
     - hc-bladerunner
 
-test-sanity-devel-3/4:
+ansible-devel-3/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -32,7 +32,7 @@ test-sanity-devel-3/4:
   tags:
     - hc-bladerunner
 
-test-sanity-devel-4/4:
+ansible-devel-4/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -42,7 +42,7 @@ test-sanity-devel-4/4:
   tags:
     - hc-bladerunner
 
-test-sanity-210-1/4:
+ansible-210-1/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -52,7 +52,7 @@ test-sanity-210-1/4:
   tags:
     - hc-bladerunner
 
-test-sanity-210-2/4:
+ansible-210-2/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -62,7 +62,7 @@ test-sanity-210-2/4:
   tags:
     - hc-bladerunner
 
-test-sanity-210-3/4:
+ansible-210-3/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -72,7 +72,7 @@ test-sanity-210-3/4:
   tags:
     - hc-bladerunner
 
-test-sanity-210-4/4:
+ansible-210-4/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -82,7 +82,7 @@ test-sanity-210-4/4:
   tags:
     - hc-bladerunner
 
-test-sanity-29-1/4:
+ansible-29-1/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -92,7 +92,7 @@ test-sanity-29-1/4:
   tags:
     - hc-bladerunner
 
-test-sanity-29-2/4:
+ansible-29-2/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -102,7 +102,7 @@ test-sanity-29-2/4:
   tags:
     - hc-bladerunner
 
-test-sanity-29-3/4:
+ansible-29-3/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -112,7 +112,7 @@ test-sanity-29-3/4:
   tags:
     - hc-bladerunner
 
-test-sanity-29-4/4:
+ansible-29-4/4:
   stage: sanity
   image: python:3.8-buster
   except:
@@ -122,7 +122,7 @@ test-sanity-29-4/4:
   tags:
     - hc-bladerunner
 
-test-integration-devel-1/2:
+ansible-devel-1/2:
   stage: integration
   image: python:3.8-buster
   except:
@@ -135,7 +135,7 @@ test-integration-devel-1/2:
     - hc-bladerunner
 
 
-test-integration-devel-2/2:
+ansible-devel-2/2:
   stage: integration
   image: python:3.8-buster
   except:
