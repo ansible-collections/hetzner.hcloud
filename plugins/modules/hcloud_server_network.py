@@ -47,6 +47,7 @@ options:
         description:
             - Alias IPs the server has.
         type: list
+        elements: str
     state:
         description:
             - State of the server_network.
@@ -202,7 +203,7 @@ class AnsibleHcloudServerNetwork(Hcloud):
                 network={"type": "str", "required": True},
                 server={"type": "str", "required": True},
                 ip={"type": "str"},
-                alias_ips={"type": "list"},
+                alias_ips={"type": "list", "elements": "str"},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
