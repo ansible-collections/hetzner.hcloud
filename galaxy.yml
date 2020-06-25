@@ -3,10 +3,13 @@ name: hcloud
 version: 0.1.0
 readme: README.md
 authors:
-  - Lukas Kaemmerling (github.com/LKaemmerling)
+  - Hetzner Cloud (github.com/hetznercloud)
 description: A Collection for managing Hetzner Cloud resources
 license: GPL-3.0-or-later
-tags: null
+tags:
+  - hetzner
+  - cloud
+  - hcloud
 dependencies:
   ansible.netcommon: '>=0.0.1'
 repository: https://github.com:ansible-collections/hetzner.hcloud

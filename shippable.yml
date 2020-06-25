@@ -12,6 +12,7 @@ matrix:
     - env: T=devel/sanity/2
     - env: T=devel/sanity/3
     - env: T=devel/sanity/4
+    - env: T=devel/sanity/extra
 
     - env: T=devel/hcloud/3.8/1
     - env: T=devel/hcloud/3.8/2
@@ -21,6 +22,7 @@ matrix:
     - env: T=2.10/sanity/2
     - env: T=2.10/sanity/3
     - env: T=2.10/sanity/4
+    - env: T=2.10/sanity/extra
 
     - env: T=2.10/hcloud/3.8/1
     - env: T=2.10/hcloud/3.8/2
