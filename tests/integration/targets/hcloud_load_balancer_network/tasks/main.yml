@@ -46,7 +46,7 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "missing required arguments: network, load_balancer"'
+      - 'result.msg == "missing required arguments: load_balancer, network"'
 
 - name: test create load_balancer network with checkmode
   hcloud_load_balancer_network:
