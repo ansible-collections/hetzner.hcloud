@@ -160,7 +160,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             "ipv6_address": to_native(self.hcloud_load_balancer.public_net.ipv6.ip),
             "private_ipv4_address": private_ipv4_address,
             "load_balancer_type": to_native(self.hcloud_load_balancer.load_balancer_type.name),
-            "location": to_native(self.hcloud_load_balancer.datacenter.location.name),
+            "location": to_native(self.hcloud_load_balancer.location.name),
             "labels": self.hcloud_load_balancer.labels,
             "delete_protection": self.hcloud_load_balancer.protection["delete"],
         }
