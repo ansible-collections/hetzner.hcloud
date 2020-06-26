@@ -91,7 +91,7 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "Load Balancer deletion is protected"'
+      - 'result.msg == "load balancer deletion is protected"'
 
 - name: test remove Load Balancer protection
   hcloud_load_balancer:
