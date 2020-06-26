@@ -189,6 +189,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             "load_balancer_type": self.client.load_balancer_types.get_by_name(
                 self.module.params.get("load_balancer_type")
             ),
+            "labels": self.module.params.get("labels"),
         }
 
         if self.module.params.get("location") is None and self.module.params.get("network_zone") is None:
