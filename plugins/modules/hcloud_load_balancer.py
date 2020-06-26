@@ -216,9 +216,9 @@ class AnsibleHcloudLoadBalancer(Hcloud):
                 self._mark_as_changed()
 
             delete_protection = self.module.params.get("delete_protection")
-            if delete_protection is not None and delete_protection != self.hcloud_network.protection["delete"]:
+            if delete_protection is not None and delete_protection != self.hcloud_load_balancer.protection["delete"]:
                 if not self.module.check_mode:
-                    self.hcloud_network.change_protection(delete=delete_protection).wait_until_finished()
+                    self.hcloud_load_balancer.change_protection(delete=delete_protection).wait_until_finished()
                 self._mark_as_changed()
             self._get_load_balancer()
         except APIException as e:

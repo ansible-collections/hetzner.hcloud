@@ -70,7 +70,6 @@
     that:
       - result_after_test is changed
       - result_after_test.hcloud_load_balancer.delete_protection is sameas true
-      - result_after_test.hcloud_load_balancer.rebuild_protection is sameas true
 
 - name: test Load Balancer without protection set to be idempotent
   hcloud_load_balancer:
@@ -81,7 +80,6 @@
     that:
       - result_after_test is not changed
       - result_after_test.hcloud_load_balancer.delete_protection is sameas true
-      - result_after_test.hcloud_load_balancer.rebuild_protection is sameas true
 
 - name: test delete Load Balancer fails if it is protected
   hcloud_load_balancer:
