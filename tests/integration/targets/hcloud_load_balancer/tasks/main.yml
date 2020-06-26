@@ -51,7 +51,7 @@
 - name: test create Load Balancer idempotence
   hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
-    state: started
+    state: present
   register: result
 - name: verify create Load Balancer idempotence
   assert:
@@ -126,7 +126,7 @@
     labels:
       key: value
       mylabel: "val123"
-    state: started
+    state: present
   register: main_load_balancer
 - name: verify create Load Balancer with labels
   assert:
@@ -143,7 +143,7 @@
     labels:
       key: other
       mylabel: "val123"
-    state: started
+    state: present
   register: main_load_balancer
 - name: verify update Load Balancer with labels
   assert:
@@ -160,7 +160,7 @@
     labels:
       mylabel: "val123"
       key: other
-    state: started
+    state: present
   register: main_load_balancer
 - name: verify update Load Balancer with labels in other order
   assert:
