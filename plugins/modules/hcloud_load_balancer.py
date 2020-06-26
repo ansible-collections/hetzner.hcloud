@@ -152,7 +152,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
         self.hcloud_load_balancer = None
 
     def _prepare_result(self):
-        private_ipv4_address = None if self.hcloud_load_balancer.private_net.length == 0 else to_native(self.hcloud_load_balancer.private_net[0].ip)
+        private_ipv4_address = None if len(self.hcloud_load_balancer.private_net) == 0 else to_native(self.hcloud_load_balancer.private_net[0].ip)
         return {
             "id": to_native(self.hcloud_load_balancer.id),
             "name": to_native(self.hcloud_load_balancer.name),
