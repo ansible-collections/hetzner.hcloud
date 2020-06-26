@@ -192,7 +192,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
         }
 
         if self.module.params.get("location") is None and self.module.params.get("network_zone") is None:
-            self.module.fail_json(msg="one of the following is required: home_location, server")
+            self.module.fail_json(msg="one of the following is required: location, network_zone")
         elif self.module.params.get("location") is not None and self.module.params.get("network_zone") is None:
             params["location"] = self.client.locations.get_by_name(
                 self.module.params.get("location")
