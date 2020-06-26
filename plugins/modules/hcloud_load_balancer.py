@@ -236,7 +236,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             self._get_load_balancer()
             if self.hcloud_load_balancer is not None:
                 if not self.module.check_mode:
-                    self.client.load_balancers.delete(self.hcloud_load_balancer).wait_until_finished()
+                    self.client.load_balancers.delete(self.hcloud_load_balancer)
                 self._mark_as_changed()
             self.hcloud_load_balancer = None
         except APIException as e:
