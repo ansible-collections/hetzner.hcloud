@@ -40,7 +40,7 @@ options:
             - Protocol of the service.
             - Required if Load Balancer does not exists.
         type: str
-        choices: [ http, https, tcp]
+        choices: [ http, https, tcp ]
     proxyprotocol:
         description:
             - Enable the PROXY protocol.
@@ -174,13 +174,13 @@ hcloud_load_balancer_service:
             sample: http
             choices: [ http, https, tcp ]
         destination_port:
-            description: 
+            description:
                - The port traffic is forwarded to, i.e. the port the targets are listening and accepting connections on.
             returned: always
             type: int
             sample: 80
         proxyprotocol:
-            description: 
+            description:
                 - Enable the PROXY protocol.
             returned: always
             type: bool
