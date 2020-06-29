@@ -274,27 +274,35 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         return service_health_check
 
     def _update_load_balancer_service(self):
-        old_service = self.hcloud_load_balancer_service
+        changed = False
         try:
             params = {
                 "listen_port": self.module.params.get("listen_port"),
             }
 
-            if self.module.params.get("destination_port"):
-                params["destination_port"] = self.module.params.get("destination_port")
+            if self.module.params.get("destination_port") is not None:
+                if self.hcloud_load_balancer_service.destination_port != self.module.params.get("destination_port"):
+                    params["destination_port"] = self.module.params.get("destination_port")
+                    changed = True
 
-            if self.module.params.get("protocol"):
-                params["protocol"] = self.module.params.get("protocol")
+            if self.module.params.get("protocol") is not None:
+                if self.hcloud_load_balancer_service.protocol != self.module.params.get("protocol"):
+                    params["protocol"] = self.module.params.get("protocol")
+                    changed = True
 
-            if self.module.params.get("proxyprotocol"):
-                params["proxyprotocol"] = self.module.params.get("proxyprotocol")
+            if self.module.params.get("proxyprotocol") is not None:
+                if self.hcloud_load_balancer_service.proxyprotocol != self.module.params.get("proxyprotocol"):
+                    params["proxyprotocol"] = self.module.params.get("proxyprotocol")
+                    changed = True
 
-            if self.module.params.get("http"):
+            if self.module.params.get("http") is not None:
                 params["http"] = self.__get_service_http(http_arg=self.module.params.get("http"))
+                changed = True
 
-            if self.module.params.get("health_check"):
+            if self.module.params.get("health_check") is not None:
                 params["health_check"] = self.__get_service_health_checks(
                     health_check=self.module.params.get("health_check"))
+                changed = True
 
             if not self.module.check_mode:
                 self.hcloud_load_balancer.update_service(LoadBalancerService(**params)).wait_until_finished(
@@ -303,9 +311,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             self.module.fail_json(msg=e.message)
         self._get_load_balancer()
 
-        print(old_service)
-        print(self.hcloud_load_balancer_service)
-        if old_service.__dict__ != self.hcloud_load_balancer_service.__dict__:
+        if changed:
             self._mark_as_changed()
 
     def _get_load_balancer_service(self):
