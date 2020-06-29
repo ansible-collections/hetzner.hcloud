@@ -1,0 +1,39 @@
+# Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+
+- name: test gather hcloud certificate infos in check mode
+  hcloud_certificate_info:
+  register: hcloud_certificate
+  check_mode: yes
+- name: verify test gather hcloud certificate infos in check mode
+  assert:
+    that:
+     - hcloud_certificate.hcloud_certificate_info| list | count >= 1
+
+- name: test gather hcloud certificate infos
+  hcloud_certificate_info:
+  register: hcloud_certificate
+  check_mode: yes
+- name: verify test gather hcloud certificate infos
+  assert:
+    that:
+     - hcloud_certificate.hcloud_certificate_info| list | count >= 1
+
+- name: test gather hcloud certificate infos with correct label selector
+  hcloud_certificate_info:
+    label_selector: "key=value"
+  register: hcloud_certificate
+- name: verify test gather hcloud certificate infos with correct label selector
+  assert:
+    that:
+      - hcloud_certificate.hcloud_certificate_info|selectattr('name','equalto','{{ hcloud_certificate_name }}') | list | count == 1
+
+- name: test gather hcloud certificate infos with wrong label selector
+  hcloud_certificate_info:
+    label_selector: "key!=value"
+  register: hcloud_certificate
+- name: verify test gather hcloud certificate infos with wrong label selector
+  assert:
+    that:
+      - hcloud_certificate.hcloud_certificate_info | list | count == 0

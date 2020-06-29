@@ -25,7 +25,6 @@ options:
     network:
         description:
             - The name of the Hetzner Cloud Networks.
-
         type: str
         required: true
     server:

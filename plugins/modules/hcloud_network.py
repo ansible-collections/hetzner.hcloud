@@ -100,7 +100,7 @@ hcloud_network:
             type: bool
             returned: always
             sample: false
-            version_added: "1.0.0"
+            version_added: "0.1.0"
         labels:
             description: User-defined labels (key-value pairs)
             type: dict

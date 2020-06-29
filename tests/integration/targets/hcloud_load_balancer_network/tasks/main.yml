@@ -1,0 +1,155 @@
+# Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: setup network
+  hcloud_network:
+    name: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/8"
+    state: present
+  register: network
+- name: verify setup network
+  assert:
+    that:
+    - network is success
+
+- name: setup subnetwork
+  hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/16"
+    type: "cloud"
+    network_zone: "eu-central"
+    state: present
+  register: subnetwork
+- name: verify subnetwork
+  assert:
+    that:
+    - subnetwork is success
+
+- name: setup load_balancer
+  hcloud_load_balancer:
+    name: "{{hcloud_load_balancer_name}}"
+    load_balancer_type: lb11
+    state: present
+    location: "fsn1"
+  register: load_balancer
+- name: verify setup load_balancer
+  assert:
+    that:
+      - load_balancer is success
+
+- name: test missing required parameters on create load_balancer network
+  hcloud_load_balancer_network:
+    state: present
+  register: result
+  ignore_errors: yes
+- name: verify fail test missing required parameters on create load_balancer network
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "missing required arguments: load_balancer, network"'
+
+- name: test create load_balancer network with checkmode
+  hcloud_load_balancer_network:
+    network: "{{ hcloud_network_name }}"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    state: present
+  register: result
+  check_mode: yes
+- name: verify test create load_balancer network with checkmode
+  assert:
+    that:
+    - result is changed
+
+- name: test create load_balancer network
+  hcloud_load_balancer_network:
+    network: "{{ hcloud_network_name }}"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    state: present
+  register: load_balancerNetwork
+- name: verify create load_balancer network
+  assert:
+    that:
+    - load_balancerNetwork is changed
+    - load_balancerNetwork.hcloud_load_balancer_network.network == hcloud_network_name
+    - load_balancerNetwork.hcloud_load_balancer_network.load_balancer == hcloud_load_balancer_name
+
+- name: test create load_balancer network idempotency
+  hcloud_load_balancer_network:
+    network: "{{ hcloud_network_name }}"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    state: present
+  register: load_balancerNetwork
+- name: verify create load_balancer network idempotency
+  assert:
+    that:
+    - load_balancerNetwork is not changed
+
+- name: test absent load_balancer network
+  hcloud_load_balancer_network:
+    network: "{{ hcloud_network_name }}"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    state: absent
+  register: result
+- name: verify test absent load_balancer network
+  assert:
+    that:
+    - result is changed
+
+- name: test create load_balancer network with specified ip
+  hcloud_load_balancer_network:
+    network: "{{ hcloud_network_name }}"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    ip: "10.0.0.2"
+    state: present
+  register: load_balancerNetwork
+- name: verify create load_balancer network with specified ip
+  assert:
+    that:
+    - load_balancerNetwork is changed
+    - load_balancerNetwork.hcloud_load_balancer_network.network == hcloud_network_name
+    - load_balancerNetwork.hcloud_load_balancer_network.load_balancer == hcloud_load_balancer_name
+    - load_balancerNetwork.hcloud_load_balancer_network.ip == "10.0.0.2"
+
+- name: cleanup create load_balancer network with specified ip
+  hcloud_load_balancer_network:
+    network: "{{ hcloud_network_name }}"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    state: absent
+  register: result
+- name: verify cleanup create load_balancer network with specified ip
+  assert:
+    that:
+    - result is changed
+
+- name: cleanup load_balancer
+  hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    state: absent
+  register: result
+- name: verify cleanup load_balancer
+  assert:
+    that:
+    - result is success
+
+- name: cleanup subnetwork
+  hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/16"
+    type: "load_balancer"
+    network_zone: "eu-central"
+    state: absent
+  register: result
+- name: verify cleanup subnetwork
+  assert:
+    that:
+    - result is changed
+
+- name: cleanup
+  hcloud_network:
+    name: "{{hcloud_network_name}}"
+    state: absent
+  register: result
+- name: verify cleanup
+  assert:
+    that:
+      - result is success

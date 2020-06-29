@@ -1,0 +1,25 @@
+ancestor: null
+releases:
+  0.1.0:
+    modules:
+    - description: Create and manage cloud Floating IPs on the Hetzner Cloud.
+      name: hcloud_floating_ip
+      namespace: ''
+    - description: Create and manage cloud Load Balancers on the Hetzner Cloud.
+      name: hcloud_load_balancer
+      namespace: ''
+    - description: Manage the relationship between Hetzner Cloud Networks and Load
+        Balancers
+      name: hcloud_load_balancer_network
+      namespace: ''
+    - description: Create and manage the services of cloud Load Balancers on the Hetzner
+        Cloud.
+      name: hcloud_load_balancer_service
+      namespace: ''
+    - description: Manage Hetzner Cloud Load Balancer targets
+      name: hcloud_load_balancer_target
+      namespace: ''
+    - description: Gather infos about the Hetzner Cloud Load Balancer types.
+      name: hcloud_load_balancer_type_info
+      namespace: ''
+    release_date: '2020-06-29'

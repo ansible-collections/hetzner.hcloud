@@ -238,13 +238,13 @@ hcloud_server:
             type: bool
             returned: always
             sample: false
-            version_added: "1.0.0"
+            version_added: "0.1.0"
         rebuild_protection:
             description: True if server is protected for rebuild
             type: bool
             returned: always
             sample: false
-            version_added: "1.0.0"
+            version_added: "0.1.0"
 """
 
 from ansible.module_utils.basic import AnsibleModule

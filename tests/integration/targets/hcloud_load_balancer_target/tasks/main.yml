@@ -1,0 +1,99 @@
+# Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: setup server
+  hcloud_server:
+    name: "{{hcloud_server_name}}"
+    server_type: cx11
+    image: ubuntu-20.04
+    state: started
+    location: "fsn1"
+  register: server
+- name: verify setup server
+  assert:
+    that:
+      - server is success
+
+- name: setup load_balancer
+  hcloud_load_balancer:
+    name: "{{hcloud_load_balancer_name}}"
+    load_balancer_type: lb11
+    state: present
+    location: "fsn1"
+  register: load_balancer
+- name: verify setup load_balancer
+  assert:
+    that:
+      - load_balancer is success
+
+- name: test create load_balancer target with checkmode
+  hcloud_load_balancer_target:
+    type: "server"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    server: "{{hcloud_server_name}}"
+    state: present
+  register: result
+  check_mode: yes
+- name: verify test create load_balancer target with checkmode
+  assert:
+    that:
+    - result is changed
+
+- name: test create load_balancer target
+  hcloud_load_balancer_target:
+    type: "server"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    server: "{{hcloud_server_name}}"
+    state: present
+  register: load_balancer_target
+- name: verify create load_balancer target
+  assert:
+    that:
+    - load_balancer_target is changed
+    - load_balancer_target.hcloud_load_balancer_target.type == "server"
+    - load_balancer_target.hcloud_load_balancer_target.server == hcloud_server_name
+    - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
+
+- name: test create load_balancer target idempotency
+  hcloud_load_balancer_target:
+    type: "server"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    server: "{{hcloud_server_name}}"
+    state: present
+  register: load_balancer_target
+- name: verify create load_balancer target idempotency
+  assert:
+    that:
+    - load_balancer_target is not changed
+
+- name: test absent load_balancer target
+  hcloud_load_balancer_target:
+    type: "server"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    server: "{{hcloud_server_name}}"
+    state: absent
+  register: result
+- name: verify test absent load_balancer target
+  assert:
+    that:
+    - result is changed
+
+- name: cleanup load_balancer
+  hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    state: absent
+  register: result
+- name: verify cleanup load_balancer
+  assert:
+    that:
+    - result is success
+
+- name: cleanup
+  hcloud_server:
+    name: "{{hcloud_server_name}}"
+    state: absent
+  register: result
+- name: verify cleanup
+  assert:
+    that:
+      - result is success

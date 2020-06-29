@@ -1,0 +1,38 @@
+# Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: test gather hcloud Load Balancer type infos
+  hcloud_load_balancer_type_info:
+  register: hcloud_load_balancer_types
+- name: verify test gather hcloud Load Balancer type infos
+  assert:
+    that:
+      - hcloud_load_balancer_types.hcloud_load_balancer_type_info| list | count >= 1
+
+- name: test gather hcloud Load Balancer type infos in check mode
+  hcloud_load_balancer_type_info:
+  check_mode: yes
+  register: hcloud_load_balancer_types
+
+- name: verify test gather hcloud Load Balancer type infos in check mode
+  assert:
+    that:
+      - hcloud_load_balancer_types.hcloud_load_balancer_type_info| list | count >= 1
+
+- name: test gather hcloud Load Balancer type infos with name
+  hcloud_load_balancer_type_info:
+    name: "{{hcloud_load_balancer_type_name}}"
+  register: hcloud_load_balancer_types
+- name: verify test gather hcloud Load Balancer type with name
+  assert:
+    that:
+      - hcloud_load_balancer_types.hcloud_load_balancer_type_info|selectattr('name','equalto','{{ hcloud_load_balancer_type_name }}') | list | count == 1
+
+- name: test gather hcloud Load Balancer type infos with correct id
+  hcloud_load_balancer_type_info:
+    id: "{{hcloud_load_balancer_type_id}}"
+  register: hcloud_load_balancer_types
+- name: verify test gather hcloud Load Balancer type with correct id
+  assert:
+    that:
+      - hcloud_load_balancer_types.hcloud_load_balancer_type_info|selectattr('name','equalto','{{ hcloud_load_balancer_type_name }}') | list | count == 1

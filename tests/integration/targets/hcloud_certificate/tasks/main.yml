@@ -1,0 +1,123 @@
+# Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: test missing required parameters on create certificate
+  hcloud_certificate:
+    name: "{{ hcloud_certificate_name }}"
+  register: result
+  ignore_errors: yes
+- name: verify fail test missing required parameters on create certificate
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "missing required arguments: certificate, private_key"'
+
+- name: test create certificate with check mode
+  hcloud_certificate:
+    name: "{{ hcloud_certificate_name }}"
+    certificate: "{{ certificate_example_com }}"
+    private_key: "{{ certificate_example_com_key }}"
+  register: result
+  check_mode: yes
+- name: test create certificate with check mode
+  assert:
+    that:
+      - result is changed
+
+- name: test create certificate
+  hcloud_certificate:
+    name: "{{ hcloud_certificate_name }}"
+    certificate: "{{ certificate_example_com }}"
+    private_key: "{{ certificate_example_com_key }}"
+    labels:
+      key: value
+      my-label: label
+  register: certificate
+- name: verify create certificate
+  assert:
+    that:
+      - certificate is changed
+      - certificate.hcloud_certificate.name == "{{ hcloud_certificate_name }}"
+      - certificate.hcloud_certificate.domain_names[0] ==  "www.example.com"
+      - certificate.hcloud_certificate.labels.key == "value"
+
+- name: test create certificate idempotence
+  hcloud_certificate:
+    name: "{{ hcloud_certificate_name }}"
+    certificate: "{{ certificate_example_com }}"
+    private_key: "{{ certificate_example_com_key }}"
+  register: result
+- name: verify create certificate idempotence
+  assert:
+    that:
+      - result is not changed
+
+- name: test update certificate with check mode
+  hcloud_certificate:
+    id: "{{ certificate.hcloud_certificate.id }}"
+    name: "changed-{{ hcloud_certificate_name }}"
+  register: result
+  check_mode: yes
+- name: test create certificate with check mode
+  assert:
+    that:
+      - result is changed
+
+- name: test update certificate
+  hcloud_certificate:
+    id: "{{ certificate.hcloud_certificate.id }}"
+    name: "changed-{{ hcloud_certificate_name }}"
+    labels:
+      key: value
+  register: result
+- name: test update certificate
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_certificate.name == "changed-{{ hcloud_certificate_name }}"
+
+- name: test update certificate with same labels
+  hcloud_certificate:
+    id: "{{ certificate.hcloud_certificate.id }}"
+    name: "changed-{{ hcloud_certificate_name }}"
+    labels:
+      key: value
+  register: result
+- name: test update certificate with same labels
+  assert:
+    that:
+      - result is not changed
+
+- name: test update certificate with other labels
+  hcloud_certificate:
+    id: "{{ certificate.hcloud_certificate.id }}"
+    name: "changed-{{ hcloud_certificate_name }}"
+    labels:
+      key: value
+      test: "val123"
+  register: result
+- name: test update certificate  with other labels
+  assert:
+    that:
+      - result is changed
+
+- name: test rename certificate
+  hcloud_certificate:
+    id: "{{ certificate.hcloud_certificate.id }}"
+    name: "{{ hcloud_certificate_name }}"
+  register: result
+- name: test rename certificate
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_certificate.name == "{{ hcloud_certificate_name }}"
+
+- name: absent certificate
+  hcloud_certificate:
+    id: "{{ certificate.hcloud_certificate.id }}"
+    state: absent
+  register: result
+- name: verify absent server
+  assert:
+    that:
+      - result is success

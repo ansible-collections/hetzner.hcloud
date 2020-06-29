@@ -20,7 +20,7 @@ description:
 
 author:
     - Lukas Kaemmerling (@lkaemmerling)
-
+version_added: 0.1.0
 options:
     id:
         description:
@@ -155,7 +155,7 @@ hcloud_floating_ip:
             type: bool
             returned: always
             sample: false
-            version_added: "1.0.0"
+            version_added: "0.1.0"
         labels:
             description: User-defined labels (key-value pairs)
             type: dict

@@ -73,7 +73,7 @@ hcloud_volume_info:
             returned: always
             type: str
             sample: /dev/disk/by-id/scsi-0HC_Volume_12345
-            version_added: "1.0.0"
+            version_added: "0.1.0"
         location:
             description: Name of the location where the Volume resides in
             returned: always
@@ -88,7 +88,7 @@ hcloud_volume_info:
             description: True if the Volume is protected for deletion
             returned: always
             type: bool
-            version_added: "1.0.0"
+            version_added: "0.1.0"
         labels:
             description: User-defined labels (key-value pairs)
             returned: always

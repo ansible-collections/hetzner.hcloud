@@ -1,0 +1,27 @@
+# Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+- name: create a cert temp file
+  tempfile:
+    state: file
+  register: certificate_example_com
+  tags:
+    - prepare
+- name: create a key temp file
+  tempfile:
+    state: file
+  register: certificate_example_com_key
+  tags:
+    - prepare
+    -
+- name: generate certificate
+  shell: openssl req -nodes -new -x509 -keyout {{ certificate_example_com_key.path }} -out {{ certificate_example_com.path }} -subj "/C=DE/ST=Munich/L=Bavaria/O=Dis/CN=www.example.com"
+  tags:
+    - prepare
+
+- name: set facts for future roles
+  set_fact:
+    certificate_example_com: "{{ lookup('file',certificate_example_com.path) }}"
+    certificate_example_com_key:  "{{ lookup('file',certificate_example_com_key.path) }}"
+  tags:
+    - prepare
