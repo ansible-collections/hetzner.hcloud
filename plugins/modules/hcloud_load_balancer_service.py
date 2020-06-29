@@ -201,8 +201,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             params["http"] = self.__get_service_http()
 
         if not self.module.check_mode:
+            print(params["http"])
             try:
-                print(params["http"])
                 self.hcloud_load_balancer.add_service(LoadBalancerService(**params)).wait_until_finished(
                     max_retries=1000)
             except APIException as e:
