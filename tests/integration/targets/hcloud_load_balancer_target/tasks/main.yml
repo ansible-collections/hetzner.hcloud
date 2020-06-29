@@ -50,7 +50,8 @@
   assert:
     that:
     - load_balancerNetwork is changed
-    - load_balancerNetwork.hcloud_load_balancer_target.target == hcloud_target_name
+    - load_balancerNetwork.hcloud_load_balancer_target.type == "server"
+    - load_balancerNetwork.hcloud_load_balancer_target.server == hcloud_server_name
     - load_balancerNetwork.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
 
 - name: test create load_balancer target idempotency
