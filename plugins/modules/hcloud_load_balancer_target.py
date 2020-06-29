@@ -191,7 +191,7 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
                 type={"type": "str", "required": True, "choices": ["server"]},
                 load_balancer={"type": "str", "required": True},
                 server={"type": "str"},
-                use_private_ip={"type": "bool"},
+                use_private_ip={"type": "bool", "default": False},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
