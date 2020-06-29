@@ -164,8 +164,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         return {
             "load_balancer": to_native(self.hcloud_load_balancer.name),
             "protocol": to_native(self.hcloud_load_balancer_service.protocol),
-            "listen_port": to_native(self.hcloud_load_balancer_service.listen_port),
-            "destination_port": to_native(self.hcloud_load_balancer_service.destination_port),
+            "listen_port": self.hcloud_load_balancer_service.listen_port,
+            "destination_port": self.hcloud_load_balancer_service.destination_port,
             "proxyprotocol": self.hcloud_load_balancer_service.proxyprotocol,
         }
 
