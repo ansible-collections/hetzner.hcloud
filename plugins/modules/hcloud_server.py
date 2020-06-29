@@ -8,12 +8,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "community",
-}
-
 DOCUMENTATION = '''
 ---
 module: hcloud_server
@@ -49,10 +43,12 @@ options:
             - The key names correspond to the SSH keys configured for your
               Hetzner Cloud account access.
         type: list
+        elements: str
     volumes:
         description:
             - List of Volumes IDs that should be attached to the server on server creation.
         type: list
+        elements: str
     image:
         description:
             - Image the server should be created from.
@@ -502,8 +498,8 @@ class AnsibleHcloudServer(Hcloud):
                 location={"type": "str"},
                 datacenter={"type": "str"},
                 user_data={"type": "str"},
-                ssh_keys={"type": "list"},
-                volumes={"type": "list"},
+                ssh_keys={"type": "list", "elements": "str"},
+                volumes={"type": "list", "elements": "str"},
                 labels={"type": "dict"},
                 backups={"type": "bool", "default": False},
                 upgrade_disk={"type": "bool", "default": False},

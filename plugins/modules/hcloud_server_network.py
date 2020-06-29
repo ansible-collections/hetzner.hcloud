@@ -8,12 +8,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "community",
-}
-
 DOCUMENTATION = '''
 ---
 module: hcloud_server_network
@@ -47,6 +41,7 @@ options:
         description:
             - Alias IPs the server has.
         type: list
+        elements: str
     state:
         description:
             - State of the server_network.
@@ -202,7 +197,7 @@ class AnsibleHcloudServerNetwork(Hcloud):
                 network={"type": "str", "required": True},
                 server={"type": "str", "required": True},
                 ip={"type": "str"},
-                alias_ips={"type": "list"},
+                alias_ips={"type": "list", "elements": "str"},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",

@@ -8,13 +8,30 @@ matrix:
   exclude:
     - env: T=none
   include:
-    - env: T=sanity/1
-    - env: T=sanity/2
-    - env: T=sanity/3
-    - env: T=sanity/4
+    - env: T=devel/sanity/1
+    - env: T=devel/sanity/2
+    - env: T=devel/sanity/3
+    - env: T=devel/sanity/4
+    - env: T=devel/sanity/extra
 
-    - env: T=hcloud/3.8/1
-    - env: T=hcloud/3.8/2
+    - env: T=devel/hcloud/3.8/1
+    - env: T=devel/hcloud/3.8/2
+
+
+    - env: T=2.10/sanity/1
+    - env: T=2.10/sanity/2
+    - env: T=2.10/sanity/3
+    - env: T=2.10/sanity/4
+    - env: T=2.10/sanity/extra
+
+    - env: T=2.10/hcloud/3.8/1
+    - env: T=2.10/hcloud/3.8/2
+
+
+    - env: T=2.9/sanity/1
+    - env: T=2.9/sanity/2
+    - env: T=2.9/sanity/3
+    - env: T=2.9/sanity/4
 
 branches:
   except:

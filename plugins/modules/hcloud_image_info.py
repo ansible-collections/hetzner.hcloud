@@ -8,12 +8,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "community",
-}
-
 DOCUMENTATION = '''
 ---
 module: hcloud_image_info
@@ -24,7 +18,7 @@ short_description: Gather infos about your Hetzner Cloud images.
 description:
     - Gather infos about your Hetzner Cloud images.
     - This module was called C(hcloud_location_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_location_facts).
-      Note that the M(hcloud_image_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_image_info)!
+      Note that the M(hetzner.hcloud.hcloud_image_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_image_info)!
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)

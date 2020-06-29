@@ -8,12 +8,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "community",
-}
-
 DOCUMENTATION = '''
 ---
 module: hcloud_datacenter_info
@@ -23,7 +17,7 @@ short_description: Gather info about the Hetzner Cloud datacenters.
 description:
     - Gather info about your Hetzner Cloud datacenters.
     - This module was called C(hcloud_datacenter_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_datacenter_facts).
-      Note that the M(hcloud_datacenter_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_datacenter_info)!
+      Note that the M(hetzner.hcloud.hcloud_datacenter_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_datacenter_info)!
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)
@@ -56,7 +50,7 @@ hcloud_datacenter_info:
     description:
       - The datacenter info as list
       - This module was called C(hcloud_datacenter_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_datacenter_facts).
-        Note that the M(hcloud_datacenter_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_datacenter_info)!
+        Note that the M(hetzner.hcloud.hcloud_datacenter_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_datacenter_info)!
     returned: always
     type: complex
     contains:

@@ -8,12 +8,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "community",
-}
-
 DOCUMENTATION = '''
 ---
 module: hcloud_floating_ip_info
@@ -23,7 +17,7 @@ short_description: Gather infos about the Hetzner Cloud Floating IPs.
 description:
     - Gather facts about your Hetzner Cloud Floating IPs.
     - This module was called C(hcloud_floating_ip_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_floating_ip_facts).
-      Note that the M(hcloud_floating_ip_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_floating_ip_info)!
+      Note that the M(hetzner.hcloud.hcloud_floating_ip_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_floating_ip_info)!
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)
