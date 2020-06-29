@@ -102,7 +102,7 @@ options:
                 description:
                     - Additional Configuration of health checks with protocol http/https
                 type: dict
-                options:
+                suboptions:
                     domain:
                         description:
                             - Domain we will set within the HTTP HOST header
