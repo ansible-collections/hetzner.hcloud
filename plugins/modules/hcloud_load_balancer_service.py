@@ -42,8 +42,8 @@ options:
         type: str
         choices: [ http, https, tcp]
     proxyprotocol:
-        description: 
-            - Enable the PROXY protocol. 
+        description:
+            - Enable the PROXY protocol.
         type: bool
     http:
         description: Configuration for HTTP and HTTPS services
@@ -137,8 +137,8 @@ RETURN = """
 hcloud_load_balancer_service:
     description: The Load Balancer service instance
     returned: Always
-    type: complex
-    contains:
+    type: dict
+    options:
         load_balancer:
             description: The name of the Load Balancer where the service belongs to
             returned: always
@@ -156,22 +156,22 @@ hcloud_load_balancer_service:
             sample: http
             choices: [ http, https, tcp ]
         destination_port:
-            description: The port traffic is forwarded to, i.e. the port the targets are listening and accepting connections on.
+            description: 
+               - The port traffic is forwarded to, i.e. the port the targets are listening and accepting connections on.
             returned: always
             type: int
             sample: 80
         proxyprotocol:
             description: 
-                - Enable the PROXY protocol. 
-                - Please note that the software running on the targets and handling connections needs to support the PROXY protocol.
+                - Enable the PROXY protocol.
             returned: always
             type: bool
             sample: false
         http:
             description: Configuration for HTTP and HTTPS services
             returned: always
-            type: complex
-            contains:
+            type: dict
+            options:
                 cookie_name:
                     description: Name of the cookie which will be set when you enable sticky sessions
                     returned: always
@@ -200,8 +200,8 @@ hcloud_load_balancer_service:
         health_check:
             description: Configuration for health checks
             returned: always
-            type: complex
-            contains:
+            type: dict
+            options:
                 protocol:
                     description: Protocol the health checks will be performed over
                     returned: always
@@ -231,8 +231,8 @@ hcloud_load_balancer_service:
                 http:
                     description: Additional Configuration of health checks with protocol http/https
                     returned: always
-                    type: complex
-                    contains:
+                    type: dict
+                    options:
                         domain:
                             description: Domain we will set within the HTTP HOST header
                             returned: always
@@ -252,7 +252,7 @@ hcloud_load_balancer_service:
                             returned: always
                             type: list
                             elements: str
-                            sample: ["2??","3??"]                 
+                            sample: ["2??","3??"]
                         tls:
                             description: Verify the TLS certificate, only available if health check protocol is https
                             returned: always
