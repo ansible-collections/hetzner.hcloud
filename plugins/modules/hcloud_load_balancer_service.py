@@ -223,6 +223,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             if http_arg.get("certificates") is not None:
                 certificates = http_arg.get("certificates")
                 if certificates is not None:
+                    service_http.certificates = []
                     for certificate in certificates:
                         hcloud_cert = None
                         try:
@@ -236,7 +237,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                                 )
                         except APIException as e:
                             self.module.fail_json(msg=e.message)
-                        service_http.certificates.append(hcloud_cert.Id)
+                        service_http.certificates.append(hcloud_cert)
             return service_http
 
     def _update_load_balancer_service(self):
