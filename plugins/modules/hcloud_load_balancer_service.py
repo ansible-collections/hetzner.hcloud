@@ -51,7 +51,7 @@ options:
         description:
             - Configuration for HTTP and HTTPS services
         type: dict
-        options:
+        suboptions:
             cookie_name:
                 description:
                     - Name of the cookie which will be set when you enable sticky sessions
@@ -76,7 +76,7 @@ options:
         description:
             - Configuration for health checks
         type: dict
-        options:
+        suboptions:
             protocol:
                 description:
                     - Protocol the health checks will be performed over
