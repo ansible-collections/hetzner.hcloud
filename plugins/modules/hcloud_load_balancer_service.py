@@ -191,8 +191,8 @@ hcloud_load_balancer_service:
         http:
             description: Configuration for HTTP and HTTPS services
             returned: always
-            type: dict
-            suboptions:
+            type: complex
+            contains:
                 cookie_name:
                     description: Name of the cookie which will be set when you enable sticky sessions
                     returned: always
@@ -221,14 +221,13 @@ hcloud_load_balancer_service:
         health_check:
             description: Configuration for health checks
             returned: always
-            type: dict
-            suboptions:
+            type: complex
+            contains:
                 protocol:
                     description: Protocol the health checks will be performed over
                     returned: always
                     type: str
                     sample: http
-                    choices: [ http, https, tcp ]
                 port:
                     description: Port the health check will be performed on
                     returned: always
@@ -252,8 +251,8 @@ hcloud_load_balancer_service:
                 http:
                     description: Additional Configuration of health checks with protocol http/https
                     returned: always
-                    type: dict
-                    suboptions:
+                    type: complex
+                    contains:
                         domain:
                             description: Domain we will set within the HTTP HOST header
                             returned: always
