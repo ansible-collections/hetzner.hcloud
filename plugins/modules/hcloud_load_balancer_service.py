@@ -127,11 +127,10 @@ EXAMPLES = """
 
 - name: Ensure the Load Balancer is absent (remove if needed)
   hcloud_load_balancer_service:
-    name: my-Load Balancer
+    load_balancer: my-Load Balancer
     protocol: http
     listen_port: 80
     state: absent
-
 """
 
 RETURN = """
