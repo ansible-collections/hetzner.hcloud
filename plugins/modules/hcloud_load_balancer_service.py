@@ -222,7 +222,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                 service_http.redirect_http = http_arg.get("redirect_http")
             if http_arg.get("certificates") is not None:
                 certificates = http_arg.get("certificates")
-                if certificates:
+                if certificates is not None:
                     for certificate in certificates:
                         hcloud_cert = None
                         try:
