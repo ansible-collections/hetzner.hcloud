@@ -31,9 +31,6 @@
     load_balancer: "{{hcloud_load_balancer_name}}"
     protocol: "http"
     listen_port: 80
-    http:
-      cookie_name: "Test"
-      sticky_sessions: yes
     state: present
   register: load_balancer_service
 - name: verify create load_balancer service
@@ -56,6 +53,22 @@
   assert:
     that:
     - load_balancer_service is not changed
+
+- name: test update load_balancer service
+  hcloud_load_balancer_service:
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    protocol: "tcp"
+    listen_port: 80
+    state: present
+  register: load_balancer_service
+- name: verify create load_balancer service
+  assert:
+    that:
+    - load_balancer_service is changed
+    - load_balancer_service.hcloud_load_balancer_service.protocol == "tcp"
+    - load_balancer_service.hcloud_load_balancer_service.listen_port == 80
+    - load_balancer_service.hcloud_load_balancer_service.destination_port == 80
+    - load_balancer_service.hcloud_load_balancer_service.proxyprotocol is sameas false
 
 - name: test absent load_balancer service
   hcloud_load_balancer_service:

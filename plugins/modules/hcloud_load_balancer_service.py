@@ -12,11 +12,11 @@ DOCUMENTATION = '''
 ---
 module: hcloud_load_balancer_service
 
-short_description: Create and manage cloud Load Balancers on the Hetzner Cloud.
+short_description: Create and manage the services of cloud Load Balancers on the Hetzner Cloud.
 
 
 description:
-    - Create, update and manage cloud Load Balancers on the Hetzner Cloud.
+    - Create, update and manage the services of cloud Load Balancers on the Hetzner Cloud.
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)
@@ -148,7 +148,8 @@ from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 try:
-    from hcloud.load_balancers.domain import LoadBalancer, LoadBalancerService, LoadBalancerServiceHttp
+    from hcloud.load_balancers.domain import LoadBalancer, LoadBalancerService, LoadBalancerServiceHttp, \
+        LoadBalancerServiceHealthCheck, LoadBalancerServiceHealthCheckHttp
     from hcloud import APIException
 except ImportError:
     pass
@@ -198,10 +199,13 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             params["destination_port"] = self.module.params.get("destination_port")
 
         if self.module.params.get("http"):
-            params["http"] = self.__get_service_http()
+            params["http"] = self.__get_service_http(http_arg=self.module.params.get("http"))
+
+        if self.module.params.get("health_check"):
+            params["health_check"] = self.__get_service_health_checks(
+                health_check=self.module.params.get("health_check"))
 
         if not self.module.check_mode:
-            print(params["http"])
             try:
                 self.hcloud_load_balancer.add_service(LoadBalancerService(**params)).wait_until_finished(
                     max_retries=1000)
@@ -211,8 +215,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         self._get_load_balancer()
         self._get_load_balancer_service()
 
-    def __get_service_http(self):
-        http_arg = self.module.params.get("http")
+    def __get_service_http(self, http_arg):
         if http_arg:
             service_http = LoadBalancerServiceHttp(certificates=[])
             if http_arg.get("cookie_name") is not None:
@@ -243,9 +246,61 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
 
             return service_http
 
+    def __get_service_health_checks(self, health_check):
+        if health_check:
+            service_health_check = LoadBalancerServiceHealthCheck()
+            if health_check.get("protocol") is not None:
+                service_health_check.protocol = health_check.get("protocol")
+            if health_check.get("port") is not None:
+                service_health_check.port = health_check.get("port")
+            if health_check.get("interval") is not None:
+                service_health_check.interval = health_check.get("interval")
+            if health_check.get("timeout") is not None:
+                service_health_check.timeout = health_check.get("timeout")
+            if health_check.get("retries") is not None:
+                service_health_check.retries = health_check.get("retries")
+            if health_check.get("http") is not None:
+                health_check_http = health_check.get("http")
+                service_health_check.http = LoadBalancerServiceHealthCheckHttp()
+                if health_check_http.get("domain") is not None:
+                    service_health_check.http.domain = health_check_http.get("domain")
+                if health_check_http.get("path") is not None:
+                    service_health_check.http.path = health_check_http.get("path")
+                if health_check_http.get("response") is not None:
+                    service_health_check.http.response = health_check_http.get("response")
+                if health_check_http.get("status_codes") is not None:
+                    service_health_check.http.status_codes = health_check_http.get("status_codes")
+                if health_check_http.get("tls") is not None:
+                    service_health_check.http.tls = health_check_http.get("tls")
+            return service_health_check
+
     def _update_load_balancer_service(self):
         try:
             self._get_load_balancer()
+            params = {}
+
+            if self.module.params.get("destination_port"):
+                params["destination_port"] = self.module.params.get("destination_port")
+
+            if self.module.params.get("protocol"):
+                params["protocol"] = self.module.params.get("protocol")
+
+            if self.module.params.get("proxyprotocol"):
+                params["proxyprotocol"] = self.module.params.get("proxyprotocol")
+
+            if self.module.params.get("http"):
+                params["http"] = self.__get_service_http(http_arg=self.module.params.get("http"))
+
+            if self.module.params.get("health_check"):
+                params["health_check"] = self.__get_service_health_checks(
+                    health_check=self.module.params.get("health_check"))
+
+            if not self.module.check_mode:
+                try:
+                    self.hcloud_load_balancer.update_service(LoadBalancerService(**params)).wait_until_finished(
+                        max_retries=1000)
+                except APIException as e:
+                    self.module.fail_json(msg=e.message)
         except APIException as e:
             self.module.fail_json(msg=e.message)
 
