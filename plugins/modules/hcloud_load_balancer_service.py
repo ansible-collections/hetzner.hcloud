@@ -64,6 +64,7 @@ options:
                 description:
                     - List of Names or IDs of certificates
                 type: list
+                elements: str
             sticky_sessions:
                 description:
                     - Enable or disable sticky_sessions
