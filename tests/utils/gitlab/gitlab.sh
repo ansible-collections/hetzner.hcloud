@@ -55,7 +55,7 @@ retry ansible-galaxy -vvv collection install community.general
 retry ansible-galaxy -vvv collection install ansible.netcommon
 retry ansible-galaxy -vvv collection install community.internal_test_tools
 retry pip install netaddr --disable-pip-version-check
-retry python -m pip install git+https://gitlab-ci-token:${CI_JOB_TOKEN}@git.hetzner.company/hc/backend/integrations/hcloud-python.git@f91ffdcea445641758d2ec43a4b1b1f3976db1aa ## ToDo move to hcloud release version
+retry python -m pip install git+https://gitlab-ci-token:${CI_JOB_TOKEN}@git.hetzner.company/hc/backend/integrations/hcloud-python.git@03528abc67639fc38505d1619ed13f558200aeec ## ToDo move to hcloud release version
 # END: HACK
 
 export PYTHONIOENCODING='utf-8'
