@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
@@ -33,7 +33,7 @@ options:
             - The name of the Hetzner Cloud Networks.
         type: str
         required: true
-    Load Balancer:
+    load_balancer:
         description:
             - The name of the Hetzner Cloud Load Balancer.
         type: str
@@ -61,30 +61,20 @@ EXAMPLES = """
 - name: Create a basic Load Balancer network
   hcloud_load_balancer_network:
     network: my-network
-    Load Balancer: my-LoadBalancer
+    load_balancer: my-LoadBalancer
     state: present
 
 - name: Create a Load Balancer network and specify the ip address
   hcloud_load_balancer_network:
     network: my-network
-    Load Balancer: my-LoadBalancer
+    load_balancer: my-LoadBalancer
     ip: 10.0.0.1
-    state: present
-
-- name: Create a Load Balancer network and add alias ips
-  hcloud_load_balancer_network:
-    network: my-network
-    Load Balancer: my-LoadBalancer
-    ip: 10.0.0.1
-    alias_ips:
-       - 10.1.0.1
-       - 10.2.0.1
     state: present
 
 - name: Ensure the Load Balancer network is absent (remove if needed)
   hcloud_load_balancer_network:
     network: my-network
-    Load Balancer: my-LoadBalancer
+    load_balancer: my-LoadBalancer
     state: absent
 """
 
@@ -99,7 +89,7 @@ hcloud_load_balancer_network:
             type: str
             returned: always
             sample: my-network
-        Load Balancer:
+        load_balancer:
             description: Name of the Load Balancer
             type: str
             returned: always
@@ -122,9 +112,9 @@ except ImportError:
     NetworkSubnet = None
 
 
-class AnsibleHcloudServerNetwork(Hcloud):
+class AnsibleHcloudLoadBalancerNetwork(Hcloud):
     def __init__(self, module):
-        super(AnsibleHcloudServerNetwork, self).__init__(module, "hcloud_load_balancer_network")
+        super(AnsibleHcloudLoadBalancerNetwork, self).__init__(module, "hcloud_load_balancer_network")
         self.hcloud_network = None
         self.hcloud_load_balancer= None
         self.hcloud_load_balancer_network = None
@@ -200,9 +190,9 @@ class AnsibleHcloudServerNetwork(Hcloud):
 
 
 def main():
-    module = AnsibleHcloudServerNetwork.define_module()
+    module = AnsibleHcloudLoadBalancerNetwork.define_module()
 
-    hcloud = AnsibleHcloudServerNetwork(module)
+    hcloud = AnsibleHcloudLoadBalancerNetwork(module)
     state = module.params["state"]
     if state == "absent":
         hcloud.delete_load_balancer_network()
