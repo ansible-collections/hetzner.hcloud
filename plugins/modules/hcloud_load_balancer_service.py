@@ -25,11 +25,13 @@ options:
     load_balancer:
         description:
             - The Name of the Hetzner Cloud Load Balancer the service belongs to
-        type: int
+        type: str
+        required: true
     listen_port:
         description:
             - The port the service listens on, i.e. the port users can connect to.
         type: int
+        required: true
     destination_port:
         description:
             - The port traffic is forwarded to, i.e. the port the targets are listening and accepting connections on.
