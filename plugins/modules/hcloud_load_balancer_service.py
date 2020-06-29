@@ -274,6 +274,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         return service_health_check
 
     def _update_load_balancer_service(self):
+        old_service = self.hcloud_load_balancer_service
         try:
             params = {
                 "listen_port": self.module.params.get("listen_port"),
@@ -298,10 +299,11 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             if not self.module.check_mode:
                 self.hcloud_load_balancer.update_service(LoadBalancerService(**params)).wait_until_finished(
                     max_retries=1000)
-            self._mark_as_changed()
         except APIException as e:
             self.module.fail_json(msg=e.message)
         self._get_load_balancer()
+        if old_service.__dict__ != self.hcloud_load_balancer_service.__dict__:
+            self._mark_as_changed()
 
     def _get_load_balancer_service(self):
         for service in self.hcloud_load_balancer.services:
