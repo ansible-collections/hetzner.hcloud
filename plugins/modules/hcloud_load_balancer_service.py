@@ -198,8 +198,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             params["destination_port"] = self.module.params.get("destination_port")
 
         if not self.module.check_mode:
-            resp = self.hcloud_load_balancer.add_service(LoadBalancerService(**params))
-            resp.action.wait_until_finished(max_retries=1000)
+            action = self.hcloud_load_balancer.add_service(LoadBalancerService(**params))
+            action.wait_until_finished(max_retries=1000)
 
         self._mark_as_changed()
         self._get_load_balancer()
@@ -228,7 +228,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             self._get_load_balancer()
             if self.hcloud_load_balancer_service is not None:
                 if not self.module.check_mode:
-                    self.hcloud_load_balancer.delete_service(self.hcloud_load_balancer_service)
+                    self.hcloud_load_balancer.delete_service(self.hcloud_load_balancer_service).wait_until_finished(max_retries=1000)
                 self._mark_as_changed()
             self.hcloud_load_balancer_service = None
         except APIException as e:
