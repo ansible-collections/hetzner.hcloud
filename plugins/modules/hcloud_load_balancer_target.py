@@ -125,7 +125,7 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
         return {
             "type": to_native(self.hcloud_load_balancer_target.type),
             "load_balancer": to_native(self.hcloud_load_balancer.name),
-            "server": None if self.hcloud_server else to_native(self.hcloud_server.name),
+            "server": to_native(self.hcloud_server.name) if self.hcloud_server else None,
         }
 
     def _get_load_balancer_and_target(self):
