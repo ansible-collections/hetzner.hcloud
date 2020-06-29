@@ -33,7 +33,7 @@ options:
     destination_port:
         description:
             - The port traffic is forwarded to, i.e. the port the targets are listening and accepting connections on.
-            - Required if services does not exists and protocol == tcp.
+            - Required if services does not exists and protocol is tcp.
         type: int
     protocol:
         description:
@@ -44,7 +44,6 @@ options:
     proxyprotocol:
         description: 
             - Enable the PROXY protocol. 
-             - Please note that the software running on the targets and handling connections needs to support the PROXY protocol.
         type: bool
     http:
         description: Configuration for HTTP and HTTPS services
@@ -91,14 +90,10 @@ options:
                 options:
                     domain:
                         description: Domain we will set within the HTTP HOST header
-                        returned: always
                         type: str
-                        sample: example.com
                     path:
                         description: Path we will try to access
-                        returned: always
                         type: str
-                        sample: /
                     response:
                         description: Response we expect, if response is not within the health check response the target is unhealthy
                         type: str
