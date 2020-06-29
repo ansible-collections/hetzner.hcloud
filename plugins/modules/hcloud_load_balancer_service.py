@@ -302,6 +302,9 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         except APIException as e:
             self.module.fail_json(msg=e.message)
         self._get_load_balancer()
+
+        print(old_service)
+        print(self.hcloud_load_balancer_service)
         if old_service.__dict__ != self.hcloud_load_balancer_service.__dict__:
             self._mark_as_changed()
 
