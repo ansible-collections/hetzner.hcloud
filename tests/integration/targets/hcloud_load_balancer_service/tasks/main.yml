@@ -66,6 +66,25 @@
     that:
     - result is changed
 
+- name: test create load_balancer service with http
+  hcloud_load_balancer_service:
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    protocol: "http"
+    listen_port: 80
+    http:
+      cookie_name: "Test"
+      sticky_sessions: yes
+    state: present
+  register: load_balancer_service
+- name: verify create load_balancer service
+  assert:
+    that:
+    - load_balancer_service is changed
+    - load_balancer_service.hcloud_load_balancer_service.protocol == "http"
+    - load_balancer_service.hcloud_load_balancer_service.listen_port == 80
+    - load_balancer_service.hcloud_load_balancer_service.destination_port == 80
+    - load_balancer_service.hcloud_load_balancer_service.proxyprotocol is sameas false
+
 - name: cleanup load_balancer
   hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"

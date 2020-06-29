@@ -148,7 +148,7 @@ from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 try:
-    from hcloud.load_balancers.domain import LoadBalancer, LoadBalancerService
+    from hcloud.load_balancers.domain import LoadBalancer, LoadBalancerService, LoadBalancerServiceHttp
     from hcloud import APIException
 except ImportError:
     pass
@@ -197,6 +197,9 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         if self.module.params.get("destination_port"):
             params["destination_port"] = self.module.params.get("destination_port")
 
+        if self.module.params.get("http"):
+            params["http"] = self.__get_service_http()
+
         if not self.module.check_mode:
             action = self.hcloud_load_balancer.add_service(LoadBalancerService(**params))
             action.wait_until_finished(max_retries=1000)
@@ -204,6 +207,37 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         self._mark_as_changed()
         self._get_load_balancer()
         self._get_load_balancer_service()
+
+    def __get_service_http(self):
+        http_arg = self.module.params.get("http")
+        if http_arg:
+            service_http = LoadBalancerServiceHttp()
+            if http_arg.get("cookie_name") is not None:
+                service_http.cookie_name = http_arg.get("cookie_name")
+            if http_arg.get("cookie_lifetime") is not None:
+                service_http.cookie_lifetime = http_arg.get("cookie_lifetime")
+            if http_arg.get("sticky_sessions") is not None:
+                service_http.sticky_sessions = http_arg.get("sticky_sessions")
+            if http_arg.get("redirect_http") is not None:
+                service_http.redirect_http = http_arg.get("redirect_http")
+            if http_arg.get("certificates") is not None:
+                certificates = http_arg.get("certificates")
+                if certificates:
+                    for certificate in certificates:
+                        hcloud_cert = None
+                        try:
+                            try:
+                                hcloud_cert = self.client.certificates.get_by_name(
+                                    certificate
+                                )
+                            except APIException:
+                                hcloud_cert = self.client.certificates.get_by_id(
+                                    certificate
+                                )
+                        except APIException as e:
+                            self.module.fail_json(msg=e.message)
+                        service_http.certificates.append(hcloud_cert.Id)
+            return service_http
 
     def _update_load_balancer_service(self):
         try:
@@ -228,7 +262,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             self._get_load_balancer()
             if self.hcloud_load_balancer_service is not None:
                 if not self.module.check_mode:
-                    self.hcloud_load_balancer.delete_service(self.hcloud_load_balancer_service).wait_until_finished(max_retries=1000)
+                    self.hcloud_load_balancer.delete_service(self.hcloud_load_balancer_service).wait_until_finished(
+                        max_retries=1000)
                 self._mark_as_changed()
             self.hcloud_load_balancer_service = None
         except APIException as e:
@@ -242,9 +277,78 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                 listen_port={"type": "int", "required": True},
                 destination_port={"type": "int"},
                 protocol={
+                    "type": "str",
                     "choices": ["http", "https", "tcp"],
                 },
                 proxyprotocol={"type": "bool", "default": False},
+                http={
+                    "type": "dict",
+                    "options": dict(
+                        cookie_name={
+                            "type": "str"
+                        },
+                        cookie_lifetime={
+                            "type": "int"
+                        },
+                        sticky_sessions={
+                            "type": "bool",
+                            "default": False
+                        },
+                        redirect_http={
+                            "type": "bool",
+                            "default": False
+                        },
+                        certificates={
+                            "type": "list",
+                            "elements": "str"
+                        },
+
+                    )
+                },
+                health_check={
+                    "type": "dict",
+                    "options": dict(
+                        protocol={
+                            "type": "str",
+                            "choices": ["http", "https", "tcp"],
+                        },
+                        port={
+                            "type": "int"
+                        },
+                        interval={
+                            "type": "int"
+                        },
+                        timeout={
+                            "type": "int"
+                        },
+                        retries={
+                            "type": "int"
+                        },
+                        http={
+                            "type": "dict",
+                            "options": dict(
+                                domain={
+                                    "type": "str"
+                                },
+                                path={
+                                    "type": "str"
+                                },
+                                response={
+                                    "type": "str"
+                                },
+                                status_codes={
+                                    "type": "list",
+                                    "elements": "str"
+                                },
+                                tls={
+                                    "type": "bool",
+                                    "default": False
+                                },
+                            )
+                        }
+                    )
+
+                },
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
