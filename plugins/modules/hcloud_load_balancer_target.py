@@ -20,7 +20,7 @@ description:
 
 author:
     - Lukas Kaemmerling (@lkaemmerling)
-
+version_added: 0.1.0
 options:
     type:
         description:

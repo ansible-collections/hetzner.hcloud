@@ -61,7 +61,7 @@ hcloud_floating_ip_info:
             returned: Always
             type: str
             sample: my-floating-ip
-            version_added: "1.0.0"
+            version_added: "0.1.0"
         description:
             description: Description of the Floating IP
             returned: always
@@ -91,7 +91,7 @@ hcloud_floating_ip_info:
             description: True if the Floating IP is protected for deletion
             returned: always
             type: bool
-            version_added: "1.0.0"
+            version_added: "0.1.0"
         labels:
             description: User-defined labels (key-value pairs)
             returned: always
