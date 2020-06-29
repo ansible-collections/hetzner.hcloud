@@ -132,7 +132,7 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
         try:
             self.hcloud_load_balancer = self.client.load_balancers.get_by_name(self.module.params.get("load_balancer"))
             if self.module.params.get("type") == "server":
-                self.hcloud_server = self.client.networks.get_by_name(self.module.params.get("server"))
+                self.hcloud_server = self.client.servers.get_by_name(self.module.params.get("server"))
             self.hcloud_load_balancer_target = None
         except APIException as e:
             self.module.fail_json(msg=e.message)
@@ -173,7 +173,7 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
         if self.hcloud_load_balancer_target is not None and self.hcloud_load_balancer is not None:
             if not self.module.check_mode:
                 target = None
-                if params["type"] == "server":
+                if self.module.params.get("type") == "server":
                     target = LoadBalancerTarget(type=self.module.params.get("type"),
                                                 server=self.hcloud_server,
                                                 use_private_ip=self.module.params.get("use_private_ip"))
