@@ -174,7 +174,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             "location": to_native(self.hcloud_load_balancer.location.name),
             "labels": self.hcloud_load_balancer.labels,
             "delete_protection": self.hcloud_load_balancer.protection["delete"],
-            "disable_public_interface": self.hcloud_load_balancer.public_net.enabled
+            "disable_public_interface": False if self.hcloud_load_balancer.public_net.enabled else True,
         }
 
     def _get_load_balancer(self):
@@ -219,7 +219,6 @@ class AnsibleHcloudLoadBalancer(Hcloud):
 
         self._mark_as_changed()
         self._get_load_balancer()
-        self._update_load_balancer()
 
     def _update_load_balancer(self):
         try:
@@ -251,8 +250,10 @@ class AnsibleHcloudLoadBalancer(Hcloud):
     def present_load_balancer(self):
         self._get_load_balancer()
         if self.hcloud_load_balancer is None:
+            self.module.debug(msg="Create")
             self._create_load_balancer()
         else:
+            self.module.debug(msg="Update")
             self._update_load_balancer()
 
     def delete_load_balancer(self):
