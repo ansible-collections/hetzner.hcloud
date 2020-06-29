@@ -24,40 +24,91 @@ author:
 options:
     load_balancer:
         description:
-            - The ID of the Hetzner Cloud Load Balancer to manage.
+            - The Name of the Hetzner Cloud Load Balancer the service belongs to
         type: int
     listen_port:
         description:
-            - The Name of the Hetzner Cloud Load Balancer to manage.
-        type: str
-    load_balancer_type:
+            - The port the service listens on, i.e. the port users can connect to.
+        type: int
+    destination_port:
         description:
-            - The Load Balancer Type of the Hetzner Cloud Load Balancer to manage.
+            - The port traffic is forwarded to, i.e. the port the targets are listening and accepting connections on.
+            - Required if services does not exists and protocol == tcp.
+        type: int
+    protocol:
+        description:
+            - 	Protocol of the service.
             - Required if Load Balancer does not exists.
         type: str
-    location:
-        description:
-            - Location of Load Balancer.
-            - Required if no I(network_zone) is given and Load Balancer does not exists.
-        type: str
-    network_zone:
-        description:
-            - Network Zone of Load Balancer.
-            - Required of no I(location) is given and Load Balancer does not exists.
-        type: str
-    labels:
-        description:
-            - User-defined labels (key-value pairs).
+        choices: [ http, https, tcp]
+    proxyprotocol:
+        description: 
+            - Enable the PROXY protocol. 
+             - Please note that the software running on the targets and handling connections needs to support the PROXY protocol.
+        type: bool
+    http:
+        description: Configuration for HTTP and HTTPS services
         type: dict
-    disable_public_interface:
-        description:
-            - Disables the public interface.
-        type: bool
-        default: False
-    delete_protection:
-        description:
-            - Protect the Load Balancer for deletion.
-        type: bool
+        options:
+            cookie_name:
+                description: Name of the cookie which will be set when you enable sticky sessions
+                type: str
+            cookie_lifetime:
+                description: Lifetime of the cookie which will be set when you enable sticky sessions, in seconds
+                type: int
+            certificates:
+                description: List of Names or IDs of certificates
+                type: list
+            sticky_sessions:
+                description: Enable or disable sticky_sessions
+                type: bool
+            redirect_http:
+                description: Redirect Traffic from Port 80 to Port 443, only available if protocol is https
+                type: bool
+    health_check:
+        description: Configuration for health checks
+        type: dict
+        options:
+            protocol:
+                description: Protocol the health checks will be performed over
+                type: str
+                choices: [ http, https, tcp ]
+            port:
+                description: Port the health check will be performed on
+                type: int
+            interval:
+                description: Interval of health checks, in seconds
+                type: int
+            timeout:
+                description: Timeout of health checks, in seconds
+                type: int
+            retries:
+                description: Number of retries until a target is marked as unhealthy
+                type: int
+            http:
+                description: Additional Configuration of health checks with protocol http/https
+                type: dict
+                options:
+                    domain:
+                        description: Domain we will set within the HTTP HOST header
+                        returned: always
+                        type: str
+                        sample: example.com
+                    path:
+                        description: Path we will try to access
+                        returned: always
+                        type: str
+                        sample: /
+                    response:
+                        description: Response we expect, if response is not within the health check response the target is unhealthy
+                        type: str
+                    status_codes:
+                        description: List of HTTP status codes we expect to get when we perform the health check.
+                        type: list
+                        elements: str
+                    tls:
+                        description: Verify the TLS certificate, only available if health check protocol is https
+                        type: bool
     state:
         description:
             - State of the Load Balancer.
@@ -68,79 +119,152 @@ extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
 requirements:
-  - hcloud-python >= 1.8.0
+  - hcloud-python >= 1.8.1
 '''
 
 EXAMPLES = """
-- name: Create a basic Load Balancer
+- name: Create a basic Load Balancer service with Port 80
   hcloud_load_balancer_service:
-    name: my-Load Balancer
-    load_balancer_type: lb11
-    location: fsn1
+    load_balancer: my-load-balancer
+    protocol: http
+    listen_port: 80
     state: present
 
 - name: Ensure the Load Balancer is absent (remove if needed)
   hcloud_load_balancer_service:
     name: my-Load Balancer
+    protocol: http
+    listen_port: 80
     state: absent
 
 """
 
 RETURN = """
 hcloud_load_balancer_service:
-    description: The Load Balancer instance
+    description: The Load Balancer service instance
     returned: Always
     type: complex
     contains:
-        id:
-            description: Numeric identifier of the Load Balancer
+        load_balancer:
+            description: The name of the Load Balancer where the service belongs to
+            returned: always
+            type: string
+            sample: my-load-balancer
+        listen_port:
+            description: The port the service listens on, i.e. the port users can connect to.
             returned: always
             type: int
-            sample: 1937415
-        name:
-            description: Name of the Load Balancer
+            sample: 443
+        protocol:
+            description: Protocol of the service
             returned: always
             type: str
-            sample: my-Load-Balancer
-        status:
-            description: Status of the Load Balancer
+            sample: http
+            choices: [ http, https, tcp ]
+        destination_port:
+            description: The port traffic is forwarded to, i.e. the port the targets are listening and accepting connections on.
             returned: always
-            type: str
-            sample: running
-        load_balancer_type:
-            description: Name of the Load Balancer type of the Load Balancer
+            type: int
+            sample: 80
+        proxyprotocol:
+            description: 
+                - Enable the PROXY protocol. 
+                - Please note that the software running on the targets and handling connections needs to support the PROXY protocol.
             returned: always
-            type: str
-            sample: cx11
-        ipv4_address:
-            description: Public IPv4 address of the Load Balancer
-            returned: always
-            type: str
-            sample: 116.203.104.109
-        ipv6_address:
-            description: Public IPv6 address of the Load Balancer
-            returned: always
-            type: str
-            sample: 2a01:4f8:1c1c:c140::1
-        location:
-            description: Name of the location of the Load Balancer
-            returned: always
-            type: str
-            sample: fsn1
-        labels:
-            description: User-defined labels (key-value pairs)
-            returned: always
-            type: dict
-        delete_protection:
-            description: True if Load Balancer is protected for deletion
             type: bool
-            returned: always
             sample: false
-        disable_public_interface:
-            description: True if Load Balancer public interface is disabled
-            type: bool
+        http:
+            description: Configuration for HTTP and HTTPS services
             returned: always
-            sample: false
+            type: complex
+            contains:
+                cookie_name:
+                    description: Name of the cookie which will be set when you enable sticky sessions
+                    returned: always
+                    type: str
+                    sample: HCLBSTICKY
+                cookie_lifetime:
+                    description: Lifetime of the cookie which will be set when you enable sticky sessions, in seconds
+                    returned: always
+                    type: int
+                    sample: 3600
+                certificates:
+                    description: List of Names or IDs of certificates
+                    returned: always
+                    type: list
+                    elements: str
+                sticky_sessions:
+                    description: Enable or disable sticky_sessions
+                    returned: always
+                    type: bool
+                    sample: true
+                redirect_http:
+                    description: Redirect Traffic from Port 80 to Port 443, only available if protocol is https
+                    returned: always
+                    type: bool
+                    sample: false
+        health_check:
+            description: Configuration for health checks
+            returned: always
+            type: complex
+            contains:
+                protocol:
+                    description: Protocol the health checks will be performed over
+                    returned: always
+                    type: str
+                    sample: http
+                    choices: [ http, https, tcp ]
+                port:
+                    description: Port the health check will be performed on
+                    returned: always
+                    type: int
+                    sample: 80
+                interval:
+                    description: Interval of health checks, in seconds
+                    returned: always
+                    type: int
+                    sample: 15
+                timeout:
+                    description: Timeout of health checks, in seconds
+                    returned: always
+                    type: int
+                    sample: 10
+                retries:
+                    description: Number of retries until a target is marked as unhealthy
+                    returned: always
+                    type: int
+                    sample: 3
+                http:
+                    description: Additional Configuration of health checks with protocol http/https
+                    returned: always
+                    type: complex
+                    contains:
+                        domain:
+                            description: Domain we will set within the HTTP HOST header
+                            returned: always
+                            type: str
+                            sample: example.com
+                        path:
+                            description: Path we will try to access
+                            returned: always
+                            type: str
+                            sample: /
+                        response:
+                            description: Response we expect, if response is not within the health check response the target is unhealthy
+                            returned: always
+                            type: str
+                            sample: "{\"status\": \"ok\"}"
+                        status_codes:
+                            description: List of HTTP status codes we expect to get when we perform the health check.
+                            returned: always
+                            type: list
+                            elements: str
+                            sample: ["2??","3??"]                 
+                        tls:
+                            description: Verify the TLS certificate, only available if health check protocol is https
+                            returned: always
+                            type: bool
+                            sample: false
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -162,12 +286,40 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         self.hcloud_load_balancer_service = None
 
     def _prepare_result(self):
+        http = None
+        if self.hcloud_load_balancer_service.protocol != "tcp":
+            http = {
+                "cookie_name": to_native(self.hcloud_load_balancer_service.http.cookie_name),
+                "cookie_lifetime": self.hcloud_load_balancer_service.http.cookie_name,
+                "redirect_http": self.hcloud_load_balancer_service.http.redirect_http,
+                "sticky_sessions": self.hcloud_load_balancer_service.http.sticky_sessions,
+                "certificates": [to_native(certificate.name) for certificate in
+                                 self.hcloud_load_balancer_service.http.certificates],
+            }
+        health_check = {
+            "protocol": to_native(self.hcloud_load_balancer_service.health_check.protocol),
+            "port": self.hcloud_load_balancer_service.health_check.port,
+            "interval": self.hcloud_load_balancer_service.health_check.interval,
+            "timeout": self.hcloud_load_balancer_service.health_check.timeout,
+            "retries": self.hcloud_load_balancer_service.health_check.retries,
+        }
+        if self.hcloud_load_balancer_service.health_check.protocol != "tcp":
+            health_check["http"] = {
+                "domain": to_native(self.hcloud_load_balancer_service.health_check.http.domain),
+                "path": to_native(self.hcloud_load_balancer_service.health_check.http.path),
+                "response": to_native(self.hcloud_load_balancer_service.health_check.http.response),
+                "certificates": [to_native(status_code) for status_code in
+                                 self.hcloud_load_balancer_service.health_check.http.status_codes],
+                "tls": self.hcloud_load_balancer_service.health_check.tls,
+            }
         return {
             "load_balancer": to_native(self.hcloud_load_balancer.name),
             "protocol": to_native(self.hcloud_load_balancer_service.protocol),
             "listen_port": self.hcloud_load_balancer_service.listen_port,
             "destination_port": self.hcloud_load_balancer_service.destination_port,
             "proxyprotocol": self.hcloud_load_balancer_service.proxyprotocol,
+            "http": http,
+            "health_check": health_check,
         }
 
     def _get_load_balancer(self):

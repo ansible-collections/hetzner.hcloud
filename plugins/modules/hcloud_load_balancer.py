@@ -162,7 +162,8 @@ class AnsibleHcloudLoadBalancer(Hcloud):
         self.hcloud_load_balancer = None
 
     def _prepare_result(self):
-        private_ipv4_address = None if len(self.hcloud_load_balancer.private_net) == 0 else to_native(self.hcloud_load_balancer.private_net[0].ip)
+        private_ipv4_address = None if len(self.hcloud_load_balancer.private_net) == 0 else to_native(
+            self.hcloud_load_balancer.private_net[0].ip)
         return {
             "id": to_native(self.hcloud_load_balancer.id),
             "name": to_native(self.hcloud_load_balancer.name),
@@ -211,7 +212,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             )
         elif self.module.params.get("location") is None and self.module.params.get("network_zone") is not None:
             params["network_zone"] = self.module.params.get("network_zone")
-            
+
         if not self.module.check_mode:
             resp = self.client.load_balancers.create(**params)
             resp.action.wait_until_finished(max_retries=1000)
@@ -274,9 +275,9 @@ class AnsibleHcloudLoadBalancer(Hcloud):
                 load_balancer_type={"type": "str"},
                 location={"type": "str"},
                 network_zone={"type": "str"},
-                volumes={"type": "list"},
                 labels={"type": "dict"},
                 delete_protection={"type": "bool"},
+                disable_public_interface={"type": "bool", "default": False},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",

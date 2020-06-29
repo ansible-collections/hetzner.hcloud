@@ -8,12 +8,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "community",
-}
-
 DOCUMENTATION = '''
 ---
 module: hcloud_load_balancer_network
@@ -50,7 +44,7 @@ options:
         type: str
 
 requirements:
-  - hcloud-python >= 1.9.0
+  - hcloud-python >= 1.8.1
 
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
@@ -116,7 +110,7 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
     def __init__(self, module):
         super(AnsibleHcloudLoadBalancerNetwork, self).__init__(module, "hcloud_load_balancer_network")
         self.hcloud_network = None
-        self.hcloud_load_balancer= None
+        self.hcloud_load_balancer = None
         self.hcloud_load_balancer_network = None
 
     def _prepare_result(self):
@@ -129,7 +123,7 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
     def _get_load_balancer_and_network(self):
         try:
             self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("network"))
-            self.hcloud_load_balancer= self.client.load_balancers.get_by_name(self.module.params.get("load_balancer"))
+            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(self.module.params.get("load_balancer"))
             self.hcloud_load_balancer_network = None
         except APIException as e:
             self.module.fail_json(msg=e.message)
@@ -168,7 +162,8 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
         self._get_load_balancer_network()
         if self.hcloud_load_balancer_network is not None and self.hcloud_load_balancer is not None:
             if not self.module.check_mode:
-                self.hcloud_load_balancer.detach_from_network(self.hcloud_load_balancer_network.network).wait_until_finished()
+                self.hcloud_load_balancer.detach_from_network(
+                    self.hcloud_load_balancer_network.network).wait_until_finished()
             self._mark_as_changed()
         self.hcloud_load_balancer_network = None
 
