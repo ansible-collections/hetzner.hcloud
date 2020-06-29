@@ -171,7 +171,7 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
             self._create_load_balancer_target()
 
     def delete_load_balancer_target(self):
-        self._get_load_balancer_and_network()
+        self._get_load_balancer_and_target()
         self._get_load_balancer_target()
         if self.hcloud_load_balancer_target is not None and self.hcloud_load_balancer is not None:
             if not self.module.check_mode:
