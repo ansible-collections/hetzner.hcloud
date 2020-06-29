@@ -296,11 +296,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                     health_check=self.module.params.get("health_check"))
 
             if not self.module.check_mode:
-                try:
-                    self.hcloud_load_balancer.update_service(LoadBalancerService(**params)).wait_until_finished(
-                        max_retries=1000)
-                except APIException as e:
-                    self.module.fail_json(msg=e.message)
+                self.hcloud_load_balancer.update_service(LoadBalancerService(**params)).wait_until_finished(
+                    max_retries=1000)
         except APIException as e:
             self.module.fail_json(msg=e.message)
 
