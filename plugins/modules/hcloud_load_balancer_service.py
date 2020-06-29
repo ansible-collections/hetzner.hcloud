@@ -211,7 +211,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
     def __get_service_http(self):
         http_arg = self.module.params.get("http")
         if http_arg:
-            service_http = LoadBalancerServiceHttp()
+            service_http = LoadBalancerServiceHttp(certificates=[])
             if http_arg.get("cookie_name") is not None:
                 service_http.cookie_name = http_arg.get("cookie_name")
             if http_arg.get("cookie_lifetime") is not None:
@@ -223,7 +223,6 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             if http_arg.get("certificates") is not None:
                 certificates = http_arg.get("certificates")
                 if certificates is not None:
-                    service_http.certificates = []
                     for certificate in certificates:
                         hcloud_cert = None
                         try:
