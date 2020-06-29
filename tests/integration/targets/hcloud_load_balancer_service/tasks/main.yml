@@ -31,6 +31,9 @@
     load_balancer: "{{hcloud_load_balancer_name}}"
     protocol: "http"
     listen_port: 80
+    http:
+      cookie_name: "Test"
+      sticky_sessions: yes
     state: present
   register: load_balancer_service
 - name: verify create load_balancer service
