@@ -201,9 +201,12 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             params["http"] = self.__get_service_http()
 
         if not self.module.check_mode:
-            action = self.hcloud_load_balancer.add_service(LoadBalancerService(**params))
-            action.wait_until_finished(max_retries=1000)
-
+            try:
+                print(params)
+                action = self.hcloud_load_balancer.add_service(LoadBalancerService(**params))
+                action.wait_until_finished(max_retries=1000)
+            except APIException as e:
+                self.module.fail_json(msg=e.message)
         self._mark_as_changed()
         self._get_load_balancer()
         self._get_load_balancer_service()
@@ -238,7 +241,6 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                             self.module.fail_json(msg=e.message)
                         service_http.certificates.append(hcloud_cert)
 
-            self.module.fail_json(msg="test", debug=service_http)
             return service_http
 
     def _update_load_balancer_service(self):
