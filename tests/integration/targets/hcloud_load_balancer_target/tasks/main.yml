@@ -5,7 +5,7 @@
   hcloud_server:
     name: "{{hcloud_server_name}}"
     server_type: cx11
-    image: ubuntu-18.04
+    image: ubuntu-20.04
     state: started
     location: "fsn1"
   register: server
@@ -28,7 +28,7 @@
 
 - name: test create load_balancer target with checkmode
   hcloud_load_balancer_target:
-    target: "server"
+    type: "server"
     load_balancer: "{{hcloud_load_balancer_name}}"
     server: "{{hcloud_server_name}}"
     state: present
@@ -41,7 +41,7 @@
 
 - name: test create load_balancer target
   hcloud_load_balancer_target:
-    target: "server"
+    type: "server"
     load_balancer: "{{hcloud_load_balancer_name}}"
     server: "{{hcloud_server_name}}"
     state: present
@@ -55,7 +55,7 @@
 
 - name: test create load_balancer target idempotency
   hcloud_load_balancer_target:
-    target: "server"
+    type: "server"
     load_balancer: "{{hcloud_load_balancer_name}}"
     server: "{{hcloud_server_name}}"
     state: present
@@ -67,7 +67,7 @@
 
 - name: test absent load_balancer target
   hcloud_load_balancer_target:
-    target: "server"
+    type: "server"
     load_balancer: "{{hcloud_load_balancer_name}}"
     server: "{{hcloud_server_name}}"
     state: absent
