@@ -37,7 +37,7 @@ options:
         type: int
     protocol:
         description:
-            - 	Protocol of the service.
+            - Protocol of the service.
             - Required if Load Balancer does not exists.
         type: str
         choices: [ http, https, tcp]
@@ -253,7 +253,6 @@ hcloud_load_balancer_service:
                             description: Response we expect, if response is not within the health check response the target is unhealthy
                             returned: always
                             type: str
-                            sample: "{\"status\": \"ok\"}"
                         status_codes:
                             description: List of HTTP status codes we expect to get when we perform the health check.
                             returned: always
