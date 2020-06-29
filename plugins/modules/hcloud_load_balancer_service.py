@@ -175,7 +175,6 @@ hcloud_load_balancer_service:
             returned: always
             type: str
             sample: http
-            choices: [ http, https, tcp ]
         destination_port:
             description:
                - The port traffic is forwarded to, i.e. the port the targets are listening and accepting connections on.
