@@ -51,6 +51,11 @@ options:
         description:
             - User-defined labels (key-value pairs).
         type: dict
+    disable_public_interface:
+        description:
+            - Disables the public interface.
+        type: bool
+        default: False
     delete_protection:
         description:
             - Protect the Load Balancer for deletion.
@@ -133,6 +138,11 @@ hcloud_load_balancer:
             type: bool
             returned: always
             sample: false
+        disable_public_interface:
+            description: True if Load Balancer public interface is disabled
+            type: bool
+            returned: always
+            sample: false
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -163,6 +173,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             "location": to_native(self.hcloud_load_balancer.location.name),
             "labels": self.hcloud_load_balancer.labels,
             "delete_protection": self.hcloud_load_balancer.protection["delete"],
+            "disable_public_interface": self.hcloud_load_balancer.public_net.enabled
         }
 
     def _get_load_balancer(self):
@@ -207,6 +218,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
 
         self._mark_as_changed()
         self._get_load_balancer()
+        self._update_load_balancer()
 
     def _update_load_balancer(self):
         try:
@@ -220,6 +232,16 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             if delete_protection is not None and delete_protection != self.hcloud_load_balancer.protection["delete"]:
                 if not self.module.check_mode:
                     self.hcloud_load_balancer.change_protection(delete=delete_protection).wait_until_finished()
+                self._mark_as_changed()
+            self._get_load_balancer()
+
+            disable_public_interface = self.module.params.get("disable_public_interface")
+            if disable_public_interface is not None and disable_public_interface != self.hcloud_load_balancer.public_net.enabled:
+                if not self.module.check_mode:
+                    if disable_public_interface is True:
+                        self.hcloud_load_balancer.disable_public_interface().wait_until_finished()
+                    else:
+                        self.hcloud_load_balancer.enable_public_interface().wait_until_finished()
                 self._mark_as_changed()
             self._get_load_balancer()
         except APIException as e:
