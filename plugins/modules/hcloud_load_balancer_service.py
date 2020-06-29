@@ -46,63 +46,81 @@ options:
             - Enable the PROXY protocol.
         type: bool
     http:
-        description: Configuration for HTTP and HTTPS services
+        description:
+            - Configuration for HTTP and HTTPS services
         type: dict
         options:
             cookie_name:
-                description: Name of the cookie which will be set when you enable sticky sessions
+                description:
+                    - Name of the cookie which will be set when you enable sticky sessions
                 type: str
             cookie_lifetime:
-                description: Lifetime of the cookie which will be set when you enable sticky sessions, in seconds
+                description:
+                    - Lifetime of the cookie which will be set when you enable sticky sessions, in seconds
                 type: int
             certificates:
-                description: List of Names or IDs of certificates
+                description:
+                    - List of Names or IDs of certificates
                 type: list
             sticky_sessions:
-                description: Enable or disable sticky_sessions
+                description:
+                    - Enable or disable sticky_sessions
                 type: bool
             redirect_http:
-                description: Redirect Traffic from Port 80 to Port 443, only available if protocol is https
+                description:
+                    - Redirect Traffic from Port 80 to Port 443, only available if protocol is https
                 type: bool
     health_check:
-        description: Configuration for health checks
+        description:
+            - Configuration for health checks
         type: dict
         options:
             protocol:
-                description: Protocol the health checks will be performed over
+                description:
+                    - Protocol the health checks will be performed over
                 type: str
                 choices: [ http, https, tcp ]
             port:
-                description: Port the health check will be performed on
+                description:
+                    - Port the health check will be performed on
                 type: int
             interval:
-                description: Interval of health checks, in seconds
+                description:
+                    - Interval of health checks, in seconds
                 type: int
             timeout:
-                description: Timeout of health checks, in seconds
+                description:
+                    - Timeout of health checks, in seconds
                 type: int
             retries:
-                description: Number of retries until a target is marked as unhealthy
+                description:
+                    - Number of retries until a target is marked as unhealthy
                 type: int
             http:
-                description: Additional Configuration of health checks with protocol http/https
+                description:
+                    - Additional Configuration of health checks with protocol http/https
                 type: dict
                 options:
                     domain:
-                        description: Domain we will set within the HTTP HOST header
+                        description:
+                            - Domain we will set within the HTTP HOST header
                         type: str
                     path:
-                        description: Path we will try to access
+                        description:
+                            - Path we will try to access
                         type: str
                     response:
-                        description: Response we expect, if response is not within the health check response the target is unhealthy
+                        description:
+                            - Response we expect, if response is not within the health check response the target is unhealthy
                         type: str
                     status_codes:
-                        description: List of HTTP status codes we expect to get when we perform the health check.
+                        description:
+                            - List of HTTP status codes we expect to get when we perform the health check.
                         type: list
                         elements: str
                     tls:
-                        description: Verify the TLS certificate, only available if health check protocol is https
+                        description:
+                            - Verify the TLS certificate, only available if health check protocol is https
                         type: bool
     state:
         description:
@@ -142,7 +160,7 @@ hcloud_load_balancer_service:
         load_balancer:
             description: The name of the Load Balancer where the service belongs to
             returned: always
-            type: string
+            type: str
             sample: my-load-balancer
         listen_port:
             description: The port the service listens on, i.e. the port users can connect to.
