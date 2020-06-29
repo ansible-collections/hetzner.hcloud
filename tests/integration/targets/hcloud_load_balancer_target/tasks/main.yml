@@ -43,7 +43,7 @@
   hcloud_load_balancer_target:
     target: "server"
     load_balancer: "{{hcloud_load_balancer_name}}"
-       server: "{{hcloud_server_name}}"
+    server: "{{hcloud_server_name}}"
     state: present
   register: load_balancerNetwork
 - name: verify create load_balancer target
