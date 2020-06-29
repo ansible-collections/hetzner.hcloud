@@ -216,67 +216,65 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         self._get_load_balancer_service()
 
     def __get_service_http(self, http_arg):
-        if http_arg:
-            service_http = LoadBalancerServiceHttp(certificates=[])
-            if http_arg.get("cookie_name") is not None:
-                service_http.cookie_name = http_arg.get("cookie_name")
-            if http_arg.get("cookie_lifetime") is not None:
-                service_http.cookie_lifetime = http_arg.get("cookie_lifetime")
-            if http_arg.get("sticky_sessions") is not None:
-                service_http.sticky_sessions = http_arg.get("sticky_sessions")
-            if http_arg.get("redirect_http") is not None:
-                service_http.redirect_http = http_arg.get("redirect_http")
-            if http_arg.get("certificates") is not None:
-                certificates = http_arg.get("certificates")
-                if certificates is not None:
-                    for certificate in certificates:
-                        hcloud_cert = None
+        service_http = LoadBalancerServiceHttp(certificates=[])
+        if http_arg.get("cookie_name") is not None:
+            service_http.cookie_name = http_arg.get("cookie_name")
+        if http_arg.get("cookie_lifetime") is not None:
+            service_http.cookie_lifetime = http_arg.get("cookie_lifetime")
+        if http_arg.get("sticky_sessions") is not None:
+            service_http.sticky_sessions = http_arg.get("sticky_sessions")
+        if http_arg.get("redirect_http") is not None:
+            service_http.redirect_http = http_arg.get("redirect_http")
+        if http_arg.get("certificates") is not None:
+            certificates = http_arg.get("certificates")
+            if certificates is not None:
+                for certificate in certificates:
+                    hcloud_cert = None
+                    try:
                         try:
-                            try:
-                                hcloud_cert = self.client.certificates.get_by_name(
-                                    certificate
-                                )
-                            except APIException:
-                                hcloud_cert = self.client.certificates.get_by_id(
-                                    certificate
-                                )
-                        except APIException as e:
-                            self.module.fail_json(msg=e.message)
-                        service_http.certificates.append(hcloud_cert)
+                            hcloud_cert = self.client.certificates.get_by_name(
+                                certificate
+                            )
+                        except APIException:
+                            hcloud_cert = self.client.certificates.get_by_id(
+                                certificate
+                            )
+                    except APIException as e:
+                        self.module.fail_json(msg=e.message)
+                    service_http.certificates.append(hcloud_cert)
 
-            return service_http
+        return service_http
 
     def __get_service_health_checks(self, health_check):
-        if health_check:
-            service_health_check = LoadBalancerServiceHealthCheck()
-            if health_check.get("protocol") is not None:
-                service_health_check.protocol = health_check.get("protocol")
-            if health_check.get("port") is not None:
-                service_health_check.port = health_check.get("port")
-            if health_check.get("interval") is not None:
-                service_health_check.interval = health_check.get("interval")
-            if health_check.get("timeout") is not None:
-                service_health_check.timeout = health_check.get("timeout")
-            if health_check.get("retries") is not None:
-                service_health_check.retries = health_check.get("retries")
-            if health_check.get("http") is not None:
-                health_check_http = health_check.get("http")
-                service_health_check.http = LoadBalancerServiceHealthCheckHttp()
-                if health_check_http.get("domain") is not None:
-                    service_health_check.http.domain = health_check_http.get("domain")
-                if health_check_http.get("path") is not None:
-                    service_health_check.http.path = health_check_http.get("path")
-                if health_check_http.get("response") is not None:
-                    service_health_check.http.response = health_check_http.get("response")
-                if health_check_http.get("status_codes") is not None:
-                    service_health_check.http.status_codes = health_check_http.get("status_codes")
-                if health_check_http.get("tls") is not None:
-                    service_health_check.http.tls = health_check_http.get("tls")
-            return service_health_check
+        service_health_check = LoadBalancerServiceHealthCheck()
+        if health_check.get("protocol") is not None:
+            service_health_check.protocol = health_check.get("protocol")
+        if health_check.get("port") is not None:
+            service_health_check.port = health_check.get("port")
+        if health_check.get("interval") is not None:
+            service_health_check.interval = health_check.get("interval")
+        if health_check.get("timeout") is not None:
+            service_health_check.timeout = health_check.get("timeout")
+        if health_check.get("retries") is not None:
+            service_health_check.retries = health_check.get("retries")
+        if health_check.get("http") is not None:
+            health_check_http = health_check.get("http")
+            service_health_check.http = LoadBalancerServiceHealthCheckHttp()
+            if health_check_http.get("domain") is not None:
+                service_health_check.http.domain = health_check_http.get("domain")
+            if health_check_http.get("path") is not None:
+                service_health_check.http.path = health_check_http.get("path")
+            if health_check_http.get("response") is not None:
+                service_health_check.http.response = health_check_http.get("response")
+            if health_check_http.get("status_codes") is not None:
+                service_health_check.http.status_codes = health_check_http.get("status_codes")
+            if health_check_http.get("tls") is not None:
+                service_health_check.http.tls = health_check_http.get("tls")
+
+        return service_health_check
 
     def _update_load_balancer_service(self):
         try:
-            self._get_load_balancer()
             params = {}
 
             if self.module.params.get("destination_port"):
@@ -300,6 +298,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                     max_retries=1000)
         except APIException as e:
             self.module.fail_json(msg=e.message)
+        self._get_load_balancer()
 
     def _get_load_balancer_service(self):
         for service in self.hcloud_load_balancer.services:
