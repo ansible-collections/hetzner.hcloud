@@ -178,7 +178,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         except APIException as e:
             self.module.fail_json(msg=e.message)
 
-    def _create_load_balancer(self):
+    def _create_load_balancer_service(self):
 
         self.module.fail_on_missing_params(
             required_params=["protocol"]
@@ -190,8 +190,12 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
 
         params = {
             "protocol": self.module.params.get("protocol"),
-            "proxyprotocol": self.module.params.get("proxyprotocl")
+            "listen_port": self.module.params.get("listen_port"),
+            "proxyprotocol": self.module.params.get("proxyprotocol")
         }
+
+        if self.module.params.get("destination_port"):
+            params["destination_port"] = self.module.params.get("destination_port")
 
         if not self.module.check_mode:
             resp = self.hcloud_load_balancer.add_service(LoadBalancerService(**params))
@@ -201,7 +205,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         self._get_load_balancer()
         self._get_load_balancer_service()
 
-    def _update_load_balancer(self):
+    def _update_load_balancer_service(self):
         try:
             self._get_load_balancer()
         except APIException as e:
@@ -215,9 +219,9 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
     def present_load_balancer_service(self):
         self._get_load_balancer()
         if self.hcloud_load_balancer_service is None:
-            self._create_load_balancer()
+            self._create_load_balancer_service()
         else:
-            self._update_load_balancer()
+            self._update_load_balancer_service()
 
     def delete_load_balancer_service(self):
         try:
