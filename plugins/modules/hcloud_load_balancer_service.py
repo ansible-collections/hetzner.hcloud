@@ -237,6 +237,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                         except APIException as e:
                             self.module.fail_json(msg=e.message)
                         service_http.certificates.append(hcloud_cert)
+
+            self._mark_as_failed(msg="test", debug=service_http)
             return service_http
 
     def _update_load_balancer_service(self):
