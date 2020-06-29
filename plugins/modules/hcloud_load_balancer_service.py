@@ -157,8 +157,8 @@ RETURN = """
 hcloud_load_balancer_service:
     description: The Load Balancer service instance
     returned: Always
-    type: dict
-    options:
+    type: complex
+    contains:
         load_balancer:
             description: The name of the Load Balancer where the service belongs to
             returned: always
