@@ -148,7 +148,10 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
             "target": None
         }
 
-        if params["type"] == "server":
+        if self.module.params.get("type") == "server":
+            self.module.fail_on_missing_params(
+                required_params=["server"]
+            )
             params["target"] = LoadBalancerTarget(type=self.module.params.get("type"), server=self.hcloud_server,
                                                   use_private_ip=self.module.params.get("use_private_ip"))
         if not self.module.check_mode:
