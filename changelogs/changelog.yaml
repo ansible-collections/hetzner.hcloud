@@ -23,3 +23,11 @@ releases:
       name: hcloud_load_balancer_type_info
       namespace: ''
     release_date: '2020-06-29'
+  0.2.0:
+    changes:
+      bugfixes:
+      - hcloud inventory plugin - Allow usage of hcloud.yml and hcloud.yaml - this
+        was removed by error within the migration from build-in ansible to our collection
+    fragments:
+    - inventory-allow-usage-of-pre-migration-configuration-fuiles.yml
+    release_date: '2020-06-30'

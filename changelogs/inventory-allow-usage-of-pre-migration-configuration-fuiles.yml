@@ -1,2 +1,0 @@
-bugfix:
-  - hcloud inventory plugin - Allow usage of hcloud.yml and hcloud.yaml - this was removed by error within the migration from build-in ansible to our collection
