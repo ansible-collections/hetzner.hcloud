@@ -322,7 +322,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                 "response": to_native(self.hcloud_load_balancer_service.health_check.http.response),
                 "certificates": [to_native(status_code) for status_code in
                                  self.hcloud_load_balancer_service.health_check.http.status_codes],
-                "tls": self.hcloud_load_balancer_service.health_check.tls,
+                "tls": self.hcloud_load_balancer_service.health_check.http.tls,
             }
         return {
             "load_balancer": to_native(self.hcloud_load_balancer.name),

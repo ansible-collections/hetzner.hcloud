@@ -46,6 +46,7 @@ fi
 export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
 SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
 TEST_DIR="${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/hetzner/hcloud"
+rm -rf  "${TEST_DIR}"
 mkdir -p "${TEST_DIR}"
 cp -r "." "${TEST_DIR}"
 cd "${TEST_DIR}"
