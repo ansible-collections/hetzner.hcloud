@@ -174,7 +174,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             "location": to_native(self.hcloud_load_balancer.location.name),
             "labels": self.hcloud_load_balancer.labels,
             "delete_protection": self.hcloud_load_balancer.protection["delete"],
-            "disable_public_interface": self.hcloud_load_balancer.public_net.enabled
+            "disable_public_interface": False if self.hcloud_load_balancer.public_net.enabled else True,
         }
 
     def _get_load_balancer(self):
@@ -219,7 +219,6 @@ class AnsibleHcloudLoadBalancer(Hcloud):
 
         self._mark_as_changed()
         self._get_load_balancer()
-        self._update_load_balancer()
 
     def _update_load_balancer(self):
         try:
@@ -237,7 +236,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             self._get_load_balancer()
 
             disable_public_interface = self.module.params.get("disable_public_interface")
-            if disable_public_interface is not None and disable_public_interface != self.hcloud_load_balancer.public_net.enabled:
+            if disable_public_interface is not None and disable_public_interface != (not self.hcloud_load_balancer.public_net.enabled):
                 if not self.module.check_mode:
                     if disable_public_interface is True:
                         self.hcloud_load_balancer.disable_public_interface().wait_until_finished()
@@ -277,7 +276,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
                 network_zone={"type": "str"},
                 labels={"type": "dict"},
                 delete_protection={"type": "bool"},
-                disable_public_interface={"type": "bool", "default": False},
+                disable_public_interface={"type": "bool"},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",

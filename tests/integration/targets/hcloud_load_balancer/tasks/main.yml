@@ -29,7 +29,7 @@
     state: present
   register: result
   check_mode: yes
-- name: test create Load Balancer Load Balancer
+- name: test create Load Balancer with check mode
   assert:
     that:
       - result is changed
@@ -51,6 +51,8 @@
 - name: test create Load Balancer idempotence
   hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
+    load_balancer_type: lb11
+    network_zone: eu-central
     state: present
   register: result
 - name: verify create Load Balancer idempotence

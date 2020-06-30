@@ -46,6 +46,7 @@ fi
 export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
 SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
 TEST_DIR="${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/hetzner/hcloud"
+rm -rf  "${TEST_DIR}"
 mkdir -p "${TEST_DIR}"
 cp -r "." "${TEST_DIR}"
 cd "${TEST_DIR}"
@@ -85,7 +86,9 @@ find plugins -type d -empty -print -delete
 ansible-test env --dump --show --timeout "50" --color -v
 
 group="${args[1]}"
-if [[ "${test}" =~ integration ]]; then
+echo $test
+if [[ "${test}" =~ hcloud ]]; then
+  group="${args[3]}"
   bash tests/utils/gitlab/integration.sh "shippable/hcloud/group${group}/"
 else
   bash tests/utils/gitlab/sanity.sh "sanity/${group}"
