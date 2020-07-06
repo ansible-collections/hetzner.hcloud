@@ -563,3 +563,29 @@
   assert:
     that:
     - result is success
+
+- name: test create server with enabled backups
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    backups: true
+    image: "ubuntu-18.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
+  register: result
+- name: verify enable backups
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_server.backup_window != ""
+
+- name: test create server with enabled backups
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+  register: result
+- name: verify cleanup
+  assert:
+    that:
+    - result is success
