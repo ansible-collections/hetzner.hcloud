@@ -352,6 +352,11 @@ class AnsibleHcloudServer(Hcloud):
                 self._get_server()
                 self._set_rescue_mode(rescue_mode)
 
+            backups = self.module.params.get("backups")
+            if backups:
+                self._get_server()
+                self.hcloud_server.enable_backup().wait_until_finished()
+
         self._mark_as_changed()
         self._get_server()
 
