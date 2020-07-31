@@ -1,6 +1,7 @@
 language: python
-python:
-  - 3.7
+
+python: 3.7
+
 env:
   matrix:
     - T=none
@@ -42,7 +43,9 @@ build:
   ci:
     - which python
     - which python3
+    - python --version
     - ls -s /usr/bin/python3 /root/venv/bin/python -f
+    - python --version
     - tests/utils/shippable/timing.sh tests/utils/shippable/shippable.sh $T
 
 integrations:
