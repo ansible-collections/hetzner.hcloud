@@ -70,7 +70,7 @@ retry ansible-galaxy -vvv collection install ansible.netcommon
 
 retry pip install hcloud
 retry pip install netaddr --disable-pip-version-check
-retry git clone https://github.com/ansible-collections/community.internal_test_tools.git "${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/community/internal_test_tools"
+retry ansible-galaxy -vvv collection install community.internal_test_tools
 # END: HACK
 
 export PYTHONIOENCODING='utf-8'
