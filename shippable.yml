@@ -11,10 +11,15 @@ matrix:
     - env: T=none
   include:
     - env: T=devel/sanity/1
+      python: 3.7
     - env: T=devel/sanity/2
+      python: 3.7
     - env: T=devel/sanity/3
+      python: 3.7
     - env: T=devel/sanity/4
+      python: 3.7
     - env: T=devel/sanity/extra
+      python: 3.7
 
     - env: T=devel/hcloud/3.8/1
     - env: T=devel/hcloud/3.8/2
