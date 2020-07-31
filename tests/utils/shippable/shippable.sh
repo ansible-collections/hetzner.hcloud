@@ -30,8 +30,8 @@ if [ -d /home/shippable/cache/ ]; then
     ls -la /home/shippable/cache/
 fi
 
-command -v python3
-python3 -V
+command -v python
+python -V
 
 function retry
 {
@@ -49,13 +49,13 @@ function retry
     exit -1
 }
 
-command -v python3 -m pip
-python3 -m pip --version
-python3 -m pip list --disable-pip-version-check
+command -v pip
+pip --version
+pip list --disable-pip-version-check
 if [ "${ansible_version}" == "devel" ]; then
-    retry python3 -m pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
+    retry pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
 else
-    retry python3 -m pip install "https://github.com/ansible/ansible/archive/stable-${ansible_version}.tar.gz" --disable-pip-version-check
+    retry pip install "https://github.com/ansible/ansible/archive/stable-${ansible_version}.tar.gz" --disable-pip-version-check
 fi
 export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
 SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
@@ -68,8 +68,8 @@ cd "${TEST_DIR}"
 retry ansible-galaxy -vvv collection install community.general
 retry ansible-galaxy -vvv collection install ansible.netcommon
 
-retry python3 -m pip install hcloud
-retry python3 -m pip install netaddr --disable-pip-version-check
+retry pip install hcloud
+retry pip install netaddr --disable-pip-version-check
 retry ansible-galaxy -vvv collection install community.internal_test_tools
 # END: HACK
 
