@@ -40,6 +40,8 @@ branches:
 
 build:
   ci:
+    - which python
+    - which python3
     - tests/utils/shippable/timing.sh tests/utils/shippable/shippable.sh $T
 
 integrations:
