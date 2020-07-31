@@ -42,6 +42,7 @@ build:
   ci:
     - which python
     - which python3
+    - ls -s python3 /root/venv/bin/python -f
     - tests/utils/shippable/timing.sh tests/utils/shippable/shippable.sh $T
 
 integrations:
