@@ -49,13 +49,13 @@ function retry
     exit -1
 }
 
-command -v pip3
-pip3 --version
-pip3 list --disable-pip-version-check
+command -v python3 -m pip
+python3 -m pip --version
+python3 -m pip list --disable-pip-version-check
 if [ "${ansible_version}" == "devel" ]; then
-    retry pip3 install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
+    retry python3 -m pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
 else
-    retry pip3 install "https://github.com/ansible/ansible/archive/stable-${ansible_version}.tar.gz" --disable-pip-version-check
+    retry python3 -m pip install "https://github.com/ansible/ansible/archive/stable-${ansible_version}.tar.gz" --disable-pip-version-check
 fi
 export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
 SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
@@ -68,8 +68,8 @@ cd "${TEST_DIR}"
 retry ansible-galaxy -vvv collection install community.general
 retry ansible-galaxy -vvv collection install ansible.netcommon
 
-retry pip3 install hcloud
-retry pip3 install netaddr --disable-pip-version-check
+retry python3 -m pip install hcloud
+retry python3 -m pip install netaddr --disable-pip-version-check
 retry ansible-galaxy -vvv collection install community.internal_test_tools
 # END: HACK
 
