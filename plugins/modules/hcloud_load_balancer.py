@@ -243,6 +243,18 @@ class AnsibleHcloudLoadBalancer(Hcloud):
                     else:
                         self.hcloud_load_balancer.enable_public_interface().wait_until_finished()
                 self._mark_as_changed()
+
+            load_balancer_type = self.module.params.get("load_balancer_type")
+            if load_balancer_type is not None and self.hcloud_load_balancer.load_balancer_type.name != load_balancer_type:
+                new_load_balancer_type = self.client.server_types.get_by_name(load_balancer_type)
+                if not new_load_balancer_type:
+                    self.module.fail_json(msg="unknown load balancer type")
+                if not self.module.check_mode:
+                    self.hcloud_load_balancer.change_type(
+                        load_balancer_type=new_load_balancer_type,
+                    ).wait_until_finished(max_retries=1000)
+
+                self._mark_as_changed()
             self._get_load_balancer()
         except APIException as e:
             self.module.fail_json(msg=e.message)

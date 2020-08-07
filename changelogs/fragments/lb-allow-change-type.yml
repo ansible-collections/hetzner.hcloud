@@ -1,0 +1,2 @@
+minor_changes:
+  - hcloud_load_balancer Allow changing the type of a Load Balancer

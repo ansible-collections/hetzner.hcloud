@@ -60,6 +60,29 @@
     that:
       - result is not changed
 
+- name: test change Load Balancer type
+  hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    load_balancer_type: lb21
+    state: present
+  register: result_after_test
+  ignore_errors: true
+- name: verify change Load Balancer type
+  assert:
+    that:
+      - result_after_test is changed
+      - result_after_test.hcloud_load_balancer.load_balancer_type == "lb21"
+
+- name: test Load Balancer without type set to be idempotent
+  hcloud_load_balancer:
+    name: "{{hcloud_load_balancer_name}}"
+  register: result_after_test
+- name: verify test Load Balancer without type set to be idempotent
+  assert:
+    that:
+      - result_after_test is not changed
+        - result_after_test.hcloud_load_balancer.load_balancer_type == "lb21"
+
 - name: test update Load Balancer protection
   hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
