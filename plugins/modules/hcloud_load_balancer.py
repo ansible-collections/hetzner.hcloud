@@ -246,7 +246,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
 
             load_balancer_type = self.module.params.get("load_balancer_type")
             if load_balancer_type is not None and self.hcloud_load_balancer.load_balancer_type.name != load_balancer_type:
-                new_load_balancer_type = self.client.server_types.get_by_name(load_balancer_type)
+                new_load_balancer_type = self.client.load_balancer_types.get_by_name(load_balancer_type)
                 if not new_load_balancer_type:
                     self.module.fail_json(msg="unknown load balancer type")
                 if not self.module.check_mode:
