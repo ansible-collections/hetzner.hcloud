@@ -14,7 +14,8 @@ else
 fi
 
 if [ "${group}" == "extra" ]; then
-    ../../community/internal_test_tools/tools/run.py --color
+    pip install antsibull-changelog
+    python ../../community/internal_test_tools/tools/run.py --color
     exit
 fi
 
