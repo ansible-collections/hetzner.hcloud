@@ -5,6 +5,15 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.0.0
+======
+
+Minor Changes
+-------------
+
+- hcloud_load_balancer Allow changing the type of a Load Balancer
+- hcloud_server Allow the creation of servers with enabled backups
+
 v0.2.0
 ======
 

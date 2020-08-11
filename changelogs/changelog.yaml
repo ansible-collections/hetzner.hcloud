@@ -31,3 +31,12 @@ releases:
     fragments:
     - inventory-allow-usage-of-pre-migration-configuration-fuiles.yml
     release_date: '2020-06-30'
+  1.0.0:
+    changes:
+      minor_changes:
+      - hcloud_load_balancer Allow changing the type of a Load Balancer
+      - hcloud_server Allow the creation of servers with enabled backups
+    fragments:
+    - gh7-allow-enabling-of-backups-on-server-creation.yml
+    - lb-allow-change-type.yml
+    release_date: '2020-08-11'
