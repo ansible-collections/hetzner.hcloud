@@ -56,7 +56,7 @@ retry ansible-galaxy -vvv collection install community.general
 retry ansible-galaxy -vvv collection install ansible.netcommon
 retry ansible-galaxy -vvv collection install community.internal_test_tools
 retry pip install netaddr --disable-pip-version-check
-retry python -m pip install hcloud
+retry pip install hcloud
 # END: HACK
 
 export PYTHONIOENCODING='utf-8'

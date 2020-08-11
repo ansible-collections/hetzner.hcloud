@@ -78,6 +78,36 @@
     that:
     - result is changed
 
+- name: test create label_selector target
+  hcloud_load_balancer_target:
+    type: "label_selector"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    label_selector: "application=backend"
+    state: present
+  register: load_balancer_target
+- name: verify create label_selector target
+  assert:
+    that:
+    - load_balancer_target is changed
+    - load_balancer_target.hcloud_load_balancer_target.type == "label_selector"
+    - load_balancer_target.hcloud_load_balancer_target.label_selector == "application=backend"
+    - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
+
+- name: test create ip target
+  hcloud_load_balancer_target:
+    type: "ip"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    ip: "{{hcloud_testing_ip}}"
+    state: present
+  register: load_balancer_target
+- name: verify create ip target
+  assert:
+    that:
+    - load_balancer_target is changed
+    - load_balancer_target.hcloud_load_balancer_target.type == "ip"
+    - load_balancer_target.hcloud_load_balancer_target.ip == hcloud_testing_ip
+    - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
+
 - name: cleanup load_balancer
   hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"

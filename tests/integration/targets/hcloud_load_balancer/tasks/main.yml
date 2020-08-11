@@ -81,7 +81,7 @@
   assert:
     that:
       - result_after_test is not changed
-        - result_after_test.hcloud_load_balancer.load_balancer_type == "lb21"
+      - result_after_test.hcloud_load_balancer.load_balancer_type == "lb21"
 
 - name: test update Load Balancer protection
   hcloud_load_balancer:
