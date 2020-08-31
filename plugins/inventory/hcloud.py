@@ -37,6 +37,7 @@ DOCUMENTATION = r'''
                 - public_ipv4
                 - hostname
                 - ipv4_dns_ptr
+                - private_ipv4
         locations:
           description: Populate inventory with instances in this location.
           default: []
