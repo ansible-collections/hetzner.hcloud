@@ -179,7 +179,7 @@ class AnsibleHcloudReverseDNS(Hcloud):
                             "dns_ptr": ipv6_address_dns_ptr["dns_ptr"],
                         }
             elif self.module.params.get("floating_ip"):
-                for ipv6_address_dns_ptr in self.hcloud_resource.dns_ptr :
+                for ipv6_address_dns_ptr in self.hcloud_resource.dns_ptr:
                     if ipv6_address_dns_ptr["ip"] == ip_address:
                         self.hcloud_rdns = {
                             "ip_address": ipv6_address_dns_ptr["ip"],
