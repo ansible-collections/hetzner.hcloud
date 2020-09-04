@@ -26,7 +26,10 @@ options:
         description:
             - The name of the Hetzner Cloud server you want to add the reverse DNS entry to.
         type: str
-        required: true
+    floating_ip:
+        description:
+            - The name of the Hetzner Cloud Floating IP you want to add the reverse DNS entry to.
+        type: str
     ip_address:
         description:
             - The IP address that should point to I(dns_ptr).
@@ -60,6 +63,13 @@ EXAMPLES = """
     dns_ptr: example.com
     state: present
 
+- name: Create a reverse DNS entry for a Floating IP
+  hcloud_rdns:
+    floating_ip: my-floating-ip
+    ip_address: 123.123.123.123
+    dns_ptr: example.com
+    state: present
+
 - name: Ensure the reverse DNS entry is absent (remove if needed)
   hcloud_rdns:
     server: my-server
@@ -79,6 +89,11 @@ hcloud_rdns:
             type: str
             returned: always
             sample: my-server
+        floating_ip:
+            description: Name of the Floating IP
+            type: str
+            returned: always
+            sample: my-floating-ip
         ip_address:
             description: The IP address that point to the DNS ptr
             type: str
@@ -105,41 +120,71 @@ except ImportError:
 class AnsibleHcloudReverseDNS(Hcloud):
     def __init__(self, module):
         super(AnsibleHcloudReverseDNS, self).__init__(module, "hcloud_rdns")
-        self.hcloud_server = None
+        self.hcloud_resource = None
         self.hcloud_rdns = None
 
     def _prepare_result(self):
-        return {
-            "server": to_native(self.hcloud_server.name),
+        result = {
+            "server": None,
+            "floating_ip": None,
             "ip_address": to_native(self.hcloud_rdns["ip_address"]),
             "dns_ptr": to_native(self.hcloud_rdns["dns_ptr"]),
         }
 
-    def _get_server(self):
+        if self.module.params.get("server"):
+            result["server"] = to_native(self.hcloud_resource.name),
+        elif self.module.params.get("floating_ip"):
+            result["floating_ip"] = to_native(self.hcloud_resource.name),
+        return
+
+    def _get_resource(self):
         try:
-            self.hcloud_server = self.client.servers.get_by_name(
-                self.module.params.get("server")
-            )
+            if self.module.params.get("server"):
+                self.hcloud_resource = self.client.servers.get_by_name(
+                    self.module.params.get("server")
+                )
+            elif self.module.params.get("floating_ip"):
+                self.hcloud_resource = self.client.floating_ip.get_by_name(
+                    self.module.params.get("server")
+                )
         except APIException as e:
             self.module.fail_json(msg=e.message)
 
     def _get_rdns(self):
         ip_address = self.module.params.get("ip_address")
         if utils.validate_ip_address(ip_address):
-            if self.hcloud_server.public_net.ipv4.ip == ip_address:
-                self.hcloud_rdns = {
-                    "ip_address": self.hcloud_server.public_net.ipv4.ip,
-                    "dns_ptr": self.hcloud_server.public_net.ipv4.dns_ptr,
-                }
-            else:
-                self.module.fail_json(msg="The selected server does not have this IP address")
-        elif utils.validate_ip_v6_address(ip_address):
-            for ipv6_address_dns_ptr in self.hcloud_server.public_net.ipv6.dns_ptr:
-                if ipv6_address_dns_ptr["ip"] == ip_address:
+            if self.module.params.get("server"):
+                if self.hcloud_resource.public_net.ipv4.ip == ip_address:
                     self.hcloud_rdns = {
-                        "ip_address": ipv6_address_dns_ptr["ip"],
-                        "dns_ptr": ipv6_address_dns_ptr["dns_ptr"],
+                        "ip_address": self.hcloud_resource.public_net.ipv4.ip,
+                        "dns_ptr": self.hcloud_resource.public_net.ipv4.dns_ptr,
                     }
+                else:
+                    self.module.fail_json(msg="The selected server does not have this IP address")
+            elif self.module.params.get("floating_ip"):
+                if self.hcloud_resource.ip == ip_address:
+                    self.hcloud_rdns = {
+                        "ip_address": self.hcloud_resource.ip,
+                        "dns_ptr": self.hcloud_resource.dns_ptr[0]["dns_ptr"],
+                    }
+                else:
+                    self.module.fail_json(msg="The selected server does not have this IP address")
+
+        elif utils.validate_ip_v6_address(ip_address):
+            if self.module.params.get("server"):
+                for ipv6_address_dns_ptr in self.hcloud_resource.public_net.ipv6.dns_ptr:
+                    if ipv6_address_dns_ptr["ip"] == ip_address:
+                        self.hcloud_rdns = {
+                            "ip_address": ipv6_address_dns_ptr["ip"],
+                            "dns_ptr": ipv6_address_dns_ptr["dns_ptr"],
+                        }
+            elif self.module.params.get("floating_ip"):
+                for ipv6_address_dns_ptr in self.hcloud_resource.dns_ptr:
+                    if ipv6_address_dns_ptr["ip"] == ip_address:
+                        self.hcloud_rdns = {
+                            "ip_address": ipv6_address_dns_ptr["ip"],
+                            "dns_ptr": ipv6_address_dns_ptr["dns_ptr"],
+                        }
         else:
             self.module.fail_json(msg="The given IP address is not valid")
 
@@ -153,10 +198,10 @@ class AnsibleHcloudReverseDNS(Hcloud):
         }
 
         if not self.module.check_mode:
-            self.hcloud_server.change_dns_ptr(**params).wait_until_finished()
+            self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
 
         self._mark_as_changed()
-        self._get_server()
+        self._get_resource()
         self._get_rdns()
 
     def _update_rdns(self):
@@ -168,14 +213,14 @@ class AnsibleHcloudReverseDNS(Hcloud):
             }
 
             if not self.module.check_mode:
-                self.hcloud_server.change_dns_ptr(**params).wait_until_finished()
+                self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
 
             self._mark_as_changed()
-            self._get_server()
+            self._get_resource()
             self._get_rdns()
 
     def present_rdns(self):
-        self._get_server()
+        self._get_resource()
         self._get_rdns()
         if self.hcloud_rdns is None:
             self._create_rdns()
@@ -183,11 +228,11 @@ class AnsibleHcloudReverseDNS(Hcloud):
             self._update_rdns()
 
     def delete_rdns(self):
-        self._get_server()
+        self._get_resource()
         self._get_rdns()
         if self.hcloud_rdns is not None:
             if not self.module.check_mode:
-                self.hcloud_server.change_dns_ptr(ip=self.hcloud_rdns['ip_address'], dns_ptr=None)
+                self.hcloud_resource.change_dns_ptr(ip=self.hcloud_rdns['ip_address'], dns_ptr=None)
             self._mark_as_changed()
         self.hcloud_rdns = None
 
@@ -195,7 +240,8 @@ class AnsibleHcloudReverseDNS(Hcloud):
     def define_module():
         return AnsibleModule(
             argument_spec=dict(
-                server={"type": "str", "required": True},
+                server={"type": "str"},
+                floating_ip={"type": "str"},
                 ip_address={"type": "str", "required": True},
                 dns_ptr={"type": "str"},
                 state={
@@ -204,6 +250,8 @@ class AnsibleHcloudReverseDNS(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
+            required_one_of=[['server', 'floating_ip']],
+            mutually_exclusive=[["server", "floating_ip"]],
             supports_check_mode=True,
         )
 

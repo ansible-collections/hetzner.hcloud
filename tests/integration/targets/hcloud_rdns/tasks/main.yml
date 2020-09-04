@@ -15,6 +15,17 @@
     that:
     - setup is success
 
+- name: test create Floating IP
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    type: ipv4
+    home_location: "fsn1"
+  register: floatingIP
+- name: verify test create Floating IP
+  assert:
+    that:
+      - floatingIP is success
+
 - name: test missing required parameter
   hcloud_rdns:
     state: present
@@ -24,20 +35,7 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "missing required arguments: ip_address, server" or result.msg == "missing required arguments: server, ip_address"'
-
-- name: test create rdns with checkmode
-  hcloud_rdns:
-    server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
-    dns_ptr: "example.com"
-    state: present
-  register: result
-  check_mode: yes
-- name: verify test create rdns with checkmode
-  assert:
-    that:
-    - result is changed
+      - 'result.msg == "missing required arguments: ip_address"'
 
 - name: test create rdns
   hcloud_rdns:
@@ -106,9 +104,34 @@
     - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv4_address }}"
     - rdns.hcloud_rdns.dns_ptr != "example.com"
 
+- name: test create rdns with floating IP
+  hcloud_rdns:
+    floating_ip: "{{ hcloud_floating_ip_name }}"
+    ip_address: "{{ floatingIP.hcloud_floating_ip.ip}}"
+    dns_ptr: "example.com"
+    state: present
+  register: rdns
+- name: verify create rdns
+  assert:
+    that:
+    - rdns is changed
+    - rdns.hcloud_rdns.server == "{{ hcloud_floating_ip_name }}"
+    - rdns.hcloud_rdns.ip_address == "{{ floatingIP.hcloud_floating_ip.ip}}"
+    - rdns.hcloud_rdns.dns_ptr == "example.com"
+
 - name: cleanup
   hcloud_server:
-    name: "{{hcloud_server_name}}"
+    name: "{{ hcloud_server_name }}"
+    state: absent
+  register: result
+- name: verify cleanup
+  assert:
+    that:
+      - result is success
+
+- name: cleanup
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
     state: absent
   register: result
 - name: verify cleanup
