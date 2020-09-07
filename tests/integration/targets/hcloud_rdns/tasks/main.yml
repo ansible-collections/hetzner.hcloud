@@ -40,7 +40,7 @@
 - name: test create rdns
   hcloud_rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    ip_address: "{{ setup.hcloud_server.ipv4_address }}"
     dns_ptr: "example.com"
     state: present
   register: rdns
@@ -49,13 +49,13 @@
     that:
     - rdns is changed
     - rdns.hcloud_rdns.server == "{{ hcloud_server_name }}"
-    - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv4_address }}"
     - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: test create rdns idempotency
   hcloud_rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    ip_address: "{{ setup.hcloud_server.ipv4_address }}"
     dns_ptr: "example.com"
     state: present
   register: result
@@ -67,7 +67,7 @@
 - name: test absent rdns
   hcloud_rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    ip_address: "{{ setup.hcloud_server.ipv4_address }}"
     state: absent
   register: result
 - name: verify test absent rdns

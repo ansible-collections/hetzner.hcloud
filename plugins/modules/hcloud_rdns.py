@@ -200,6 +200,7 @@ class AnsibleHcloudReverseDNS(Hcloud):
         if not self.module.check_mode:
             self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
 
+        self.log("created rdns", type(self.hcloud_resource))
         self._mark_as_changed()
         self._get_resource()
         self._get_rdns()
