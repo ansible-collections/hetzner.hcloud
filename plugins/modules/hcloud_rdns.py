@@ -132,9 +132,9 @@ class AnsibleHcloudReverseDNS(Hcloud):
         }
 
         if self.module.params.get("server"):
-            result.server = to_native(self.hcloud_resource.name),
+            result["server"] = to_native(self.hcloud_resource.name),
         elif self.module.params.get("floating_ip"):
-            result.floating_ip = to_native(self.hcloud_resource.name),
+            result["floating_ip"] = to_native(self.hcloud_resource.name),
         return result
 
     def _get_resource(self):
