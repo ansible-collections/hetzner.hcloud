@@ -115,7 +115,7 @@
   assert:
     that:
     - rdns is changed
-    - rdns.hcloud_rdns.server == "{{ hcloud_floating_ip_name }}"
+    - rdns.hcloud_rdns.floating_ip == "{{ hcloud_floating_ip_name }}"
     - rdns.hcloud_rdns.ip_address == "{{ floatingIP.hcloud_floating_ip.ip}}"
     - rdns.hcloud_rdns.dns_ptr == "example.com"
 
