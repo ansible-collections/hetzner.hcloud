@@ -589,3 +589,60 @@
   assert:
     that:
     - result is success
+
+- name: test create server with protection
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    delete_protection: true
+    rebuild_protection: true
+    server_type: cpx11
+    image: "ubuntu-20.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
+  register: result_after_test
+  ignore_errors: true
+- name: verify create server with protection
+  assert:
+    that:
+      - result_after_test is changed
+      - result_after_test.hcloud_server.delete_protection is sameas true
+      - result_after_test.hcloud_server.rebuild_protection is sameas true
+
+
+- name: test delete server fails if it is protected
+  hcloud_server:
+    name: "{{hcloud_server_name}}"
+    state: absent
+  ignore_errors: yes
+  register: result
+- name: verify delete server fails if it is protected
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "server deletion is protected"'
+
+- name: remove protection from server
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    delete_protection: false
+    rebuild_protection: false
+    state: present
+  register: result_after_test
+  ignore_errors: true
+- name: verify update server protection
+  assert:
+    that:
+      - result_after_test is changed
+      - result_after_test.hcloud_server.delete_protection is sameas false
+      - result_after_test.hcloud_server.rebuild_protection is sameas false
+
+- name: cleanup
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+  register: result
+- name: verify cleanup
+  assert:
+    that:
+    - result is success
