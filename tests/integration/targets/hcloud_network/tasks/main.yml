@@ -167,3 +167,49 @@
   assert:
     that:
       - result is success
+
+
+- name: test create Network with delete protection
+  hcloud_network:
+    name: "{{hcloud_network_name}}"
+    ip_range: "10.0.0.0/8"
+    delete_protection: true
+  register: network
+- name: verify create Network with delete protection
+  assert:
+    that:
+      - network is changed
+      - network.hcloud_network.delete_protection is sameas true
+
+- name: test delete Network fails if it is protected
+  hcloud_network:
+    name: "{{hcloud_network_name}}"
+    state: absent
+  ignore_errors: yes
+  register: result
+- name: verify delete Network
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "network deletion is protected"'
+
+- name: test update Network delete protection
+  hcloud_network:
+    name: "{{hcloud_network_name}}"
+    delete_protection: false
+  register: network
+- name: verify test update Network delete protection
+  assert:
+    that:
+      - network is changed
+      - network.hcloud_network.delete_protection is sameas false
+
+- name: test delete Network
+  hcloud_network:
+    name: "{{hcloud_network_name}}"
+    state: absent
+  register: result
+- name: verify delete Network
+  assert:
+    that:
+      - result is success

@@ -217,6 +217,11 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             resp = self.client.load_balancers.create(**params)
             resp.action.wait_until_finished(max_retries=1000)
 
+            delete_protection = self.module.params.get("delete_protection")
+            if delete_protection is not None:
+                self._get_load_balancer()
+                self.hcloud_load_balancer.change_protection(delete=delete_protection).wait_until_finished()
+
         self._mark_as_changed()
         self._get_load_balancer()
 

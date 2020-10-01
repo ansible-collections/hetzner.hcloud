@@ -1,0 +1,6 @@
+minor_changes:
+  - hcloud_server Allow creating server with protection
+  - hcloud_floating_ip Allow creating Floating IP with protection
+  - hcloud_load_balancer Allow creating Load Balancer with protection
+  - hcloud_network Allow creating Network with protection
+  - hcloud_volume Allow creating Volumes with protection

@@ -161,6 +161,11 @@ class AnsibleHcloudNetwork(Hcloud):
         if not self.module.check_mode:
             self.client.networks.create(**params)
 
+            delete_protection = self.module.params.get("delete_protection")
+            if delete_protection is not None:
+                self._get_network()
+                self.hcloud_network.change_protection(delete=delete_protection).wait_until_finished()
+
         self._mark_as_changed()
         self._get_network()
 

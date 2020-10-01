@@ -231,6 +231,53 @@
     that:
       - result is success
 
+
+- name: test create Volume with delete protection
+  hcloud_volume:
+    name: "{{hcloud_volume_name}}"
+    size: 10
+    location: "fsn1"
+    delete_protection: true
+  register: volume
+- name: verify create Volume with delete protection
+  assert:
+    that:
+      - volume is changed
+      - volume.hcloud_volume.delete_protection is sameas true
+
+- name: test delete Volume fails if it is protected
+  hcloud_volume:
+    name: "{{hcloud_volume_name}}"
+    state: absent
+  ignore_errors: yes
+  register: result
+- name: verify delete Volume fails if it is protected
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "volume deletion is protected"'
+
+- name: test update Volume delete protection
+  hcloud_volume:
+    name: "{{hcloud_volume_name}}"
+    delete_protection: false
+  register: volume
+- name: verify test update Volume delete protection
+  assert:
+    that:
+      - volume is changed
+      - volume.hcloud_volume.delete_protection is sameas false
+
+- name: test delete Volume
+  hcloud_volume:
+    name: "{{hcloud_volume_name}}"
+    state: absent
+  register: result
+- name: verify delete Volume
+  assert:
+    that:
+      - result is success
+
 - name: cleanup
   hcloud_server:
     name: "{{ hcloud_server_name }}"

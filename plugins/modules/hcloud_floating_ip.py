@@ -237,6 +237,10 @@ class AnsibleHcloudFloatingIP(Hcloud):
             resp = self.client.floating_ips.create(**params)
             self.hcloud_floating_ip = resp.floating_ip
 
+            delete_protection = self.module.params.get("delete_protection")
+            if delete_protection is not None:
+                self.hcloud_floating_ip.change_protection(delete=delete_protection).wait_until_finished()
+
         self._mark_as_changed()
         self._get_floating_ip()
 
