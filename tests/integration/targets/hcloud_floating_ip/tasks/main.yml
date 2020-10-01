@@ -372,7 +372,7 @@
 - name: verify cleanup
   assert:
     that:
-    - result is changed
+      - result is changed
 - name: cleanup another server
   hcloud_server:
     name: "{{ main_server2.hcloud_server.name }}"
@@ -381,4 +381,51 @@
 - name: verify cleanup another server
   assert:
     that:
-    - result is changed
+      - result is changed
+
+- name: test create Floating IP with delete protection
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    type: ipv4
+    home_location: fsn1
+    delete_protection: true
+  register: floatingIP
+- name: verify create Floating IP with delete protection
+  assert:
+    that:
+      - floatingIP is changed
+      - floatingIP.hcloud_floating_ip.delete_protection is sameas true
+
+- name: test delete Floating IP fails if it is protected
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    state: "absent"
+  register: result
+  ignore_errors: yes
+- name: verify test delete floating ip
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "Floating IP deletion is protected"'
+
+- name: test update Floating IP delete protection
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    type: ipv4
+    delete_protection: false
+  register: floatingIP
+- name: verify update Floating IP delete protection
+  assert:
+    that:
+      - floatingIP is changed
+      - floatingIP.hcloud_floating_ip.delete_protection is sameas false
+
+- name: test delete floating ip
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    state: "absent"
+  register: result
+- name: verify test delete floating ip
+  assert:
+    that:
+      - result is changed

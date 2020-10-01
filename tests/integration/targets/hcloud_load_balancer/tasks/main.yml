@@ -199,3 +199,49 @@
   assert:
     that:
     - result is success
+
+- name: test create Load Balancer with delete protection
+  hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    load_balancer_type: lb11
+    network_zone: eu-central
+    delete_protection: true
+  register: main_load_balancer
+- name: verify create Load Balancer with delete protection
+  assert:
+    that:
+      - main_load_balancer is changed
+      - main_load_balancer.hcloud_load_balancer.delete_protection is sameas true
+
+- name: test delete Load Balancer fails if it is protected
+  hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    state: "absent"
+  register: result
+  ignore_errors: yes
+- name: verify test delete Load Balancer
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "load balancer deletion is protected"'
+
+- name: test update Load Balancer delete protection
+  hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    delete_protection: false
+  register: main_load_balancer
+- name: verify update Load Balancer delete protection
+  assert:
+    that:
+      - main_load_balancer is changed
+      - main_load_balancer.hcloud_load_balancer.delete_protection is sameas false
+
+- name: test delete Load Balancer
+  hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    state: "absent"
+  register: result
+- name: verify test delete Load Balancer
+  assert:
+    that:
+      - result is changed
