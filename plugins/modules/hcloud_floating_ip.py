@@ -259,16 +259,23 @@ class AnsibleHcloudFloatingIP(Hcloud):
                 self._mark_as_changed()
 
             server = self.module.params.get("server")
-            if server is not None and server != self.hcloud_floating_ip.server.name:
-                if self.module.params.get("force") or self.hcloud_floating_ip.server is None:
+            if server is not None and self.hcloud_floating_ip.server is not None:
+                if self.module.params.get("force") and server != self.hcloud_floating_ip.server.name:
                     if not self.module.check_mode:
                         self.hcloud_floating_ip.assign(
                             self.client.servers.get_by_name(self.module.params.get("server"))
                         )
-                else:
+                        self._mark_as_changed()
+                elif server != self.hcloud_floating_ip.server.name:
                     self.module.warn(
                         "Floating IP is already assigned to another server %s. You need to unassign the Floating IP or use force=yes."
                         % self.hcloud_floating_ip.server.name
+                    )
+                    self._mark_as_changed()
+            elif server is not None and self.hcloud_floating_ip.server is None:
+                if not self.module.check_mode:
+                    self.hcloud_floating_ip.assign(
+                        self.client.servers.get_by_name(self.module.params.get("server"))
                     )
                 self._mark_as_changed()
             elif server is None and self.hcloud_floating_ip.server is not None:
