@@ -1,2 +1,2 @@
-Bugfixes:
+bugfixes:
   - hcloud_floating_ip Fix idempotency when floating ip is assigned to server
