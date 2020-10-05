@@ -40,3 +40,17 @@ releases:
     - gh7-allow-enabling-of-backups-on-server-creation.yml
     - lb-allow-change-type.yml
     release_date: '2020-08-11'
+  1.1.0:
+    changes:
+      bugfixes:
+      - hcloud_floating_ip Fix idempotency when floating ip is assigned to server
+      minor_changes:
+      - hcloud_floating_ip Allow creating Floating IP with protection
+      - hcloud_load_balancer Allow creating Load Balancer with protection
+      - hcloud_network Allow creating Network with protection
+      - hcloud_server Allow creating server with protection
+      - hcloud_volume Allow creating Volumes with protection
+    fragments:
+    - fix-idempotency-floating-ip.yml
+    - gh-28-allow-setting-of-protection-on-creation.yml
+    release_date: '2020-10-05'

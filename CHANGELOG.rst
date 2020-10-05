@@ -5,6 +5,23 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.1.0
+======
+
+Minor Changes
+-------------
+
+- hcloud_floating_ip Allow creating Floating IP with protection
+- hcloud_load_balancer Allow creating Load Balancer with protection
+- hcloud_network Allow creating Network with protection
+- hcloud_server Allow creating server with protection
+- hcloud_volume Allow creating Volumes with protection
+
+Bugfixes
+--------
+
+- hcloud_floating_ip Fix idempotency when floating ip is assigned to server
+
 v1.0.0
 ======
 
