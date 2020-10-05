@@ -213,6 +213,18 @@
       - floatingIP is changed
       - floatingIP.hcloud_floating_ip.server == "{{ main_server.hcloud_server.name }}"
 
+- name: test assign Floating IP idempotency
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    description: "changed-description"
+    type: ipv4
+    server: "{{ main_server.hcloud_server.name }}"
+  register: floatingIP
+- name: verify test unassign Floating IPidempotency
+  assert:
+    that:
+      - floatingIP is not changed
+
 - name: test unassign Floating IP
   hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
