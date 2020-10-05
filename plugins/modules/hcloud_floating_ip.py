@@ -263,7 +263,7 @@ class AnsibleHcloudFloatingIP(Hcloud):
                 if self.module.params.get("force") and server != self.hcloud_floating_ip.server.name:
                     if not self.module.check_mode:
                         self.hcloud_floating_ip.assign(
-                            self.client.servers.get_by_name(self.module.params.get("server"))
+                            self.client.servers.get_by_name(server)
                         )
                         self._mark_as_changed()
                 elif server != self.hcloud_floating_ip.server.name:
@@ -275,7 +275,7 @@ class AnsibleHcloudFloatingIP(Hcloud):
             elif server is not None and self.hcloud_floating_ip.server is None:
                 if not self.module.check_mode:
                     self.hcloud_floating_ip.assign(
-                        self.client.servers.get_by_name(self.module.params.get("server"))
+                        self.client.servers.get_by_name(server)
                     )
                 self._mark_as_changed()
             elif server is None and self.hcloud_floating_ip.server is not None:
