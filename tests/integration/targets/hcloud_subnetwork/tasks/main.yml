@@ -42,7 +42,7 @@
   hcloud_subnetwork:
     network: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/16"
-    type: "server"
+    type: "cloud"
     network_zone: "eu-central"
     state: present
   register: subnet
@@ -52,14 +52,14 @@
     - subnet is changed
     - subnet.hcloud_subnetwork.network == "{{ hcloud_network_name }}"
     - subnet.hcloud_subnetwork.ip_range == "10.0.0.0/16"
-    - subnet.hcloud_subnetwork.type == "server"
+    - subnet.hcloud_subnetwork.type == "cloud"
     - subnet.hcloud_subnetwork.network_zone == "eu-central"
 
 - name: test create subnetwork idempotency
   hcloud_subnetwork:
     network: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/16"
-    type: "server"
+    type: "cloud"
     network_zone: "eu-central"
     state: present
   register: result
@@ -72,10 +72,43 @@
   hcloud_subnetwork:
     network: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/16"
-    type: "server"
+    type: "cloud"
     network_zone: "eu-central"
     state: absent
   register: result
+- name: verify test absent subnetwork
+  assert:
+    that:
+    - result is changed
+
+- name: test vswitch subnetwork
+  hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/16"
+    type: "vswitch"
+    network_zone: "eu-central"
+    vswitch_id: "{{ hetzner_vswitch_id }}"
+    state: present
+  register: subnet
+- name: verify test vswitch subnetwork
+  assert:
+    that:
+    - subnet is changed
+    - subnet.hcloud_subnetwork.network == "{{ hcloud_network_name }}"
+    - subnet.hcloud_subnetwork.ip_range == "10.0.0.0/16"
+    - subnet.hcloud_subnetwork.type == "vswitch"
+    - subnet.hcloud_subnetwork.network_zone == "eu-central"
+    - subnet.hcloud_subnetwork.vswitch_id == hetzner_vswitch_id
+
+- name: test absent subnetwork
+  hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/16"
+    type: "vswitch"
+    network_zone: "eu-central"
+    vswitch_id: "{{ hetzner_vswitch_id }}"
+    state: absent
+  register: subnet
 - name: verify test absent subnetwork
   assert:
     that:
