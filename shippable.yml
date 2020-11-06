@@ -1,7 +1,6 @@
 language: python
 
 python: 3.7
-
 env:
   matrix:
     - T=none
@@ -30,6 +29,7 @@ matrix:
 
     - env: T=2.10/hcloud/3.8/1
     - env: T=2.10/hcloud/3.8/2
+    - env: T=2.10/hcloud/3.8/3
 
 
     - env: T=2.9/sanity/1

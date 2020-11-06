@@ -36,12 +36,18 @@ options:
         description:
             - Type of subnetwork.
         type: str
+        choices: [ server, cloud, vswitch ]
         required: true
     network_zone:
         description:
             - Name of network zone.
         type: str
         required: true
+    vswitch_id:
+        description:
+            - ID of the vSwitch you want to couple with your Network.
+            - Required if type == vswitch
+        type: int
     state:
         description:
             - State of the subnetwork.
@@ -50,7 +56,7 @@ options:
         type: str
 
 requirements:
-  - hcloud-python >= 1.3.0
+  - hcloud-python >= 1.10.0
 
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
@@ -63,7 +69,16 @@ EXAMPLES = """
     network: my-network
     ip_range: 10.0.0.0/16
     network_zone: eu-central
-    type: server
+    type: cloud
+    state: present
+
+- name: Create a basic subnetwork
+  hcloud_subnetwork:
+    network: my-vswitch-network
+    ip_range: 10.0.0.0/24
+    network_zone: eu-central
+    type: vswitch
+    vswitch_id: 123
     state: present
 
 - name: Ensure the subnetwork is absent (remove if needed)
@@ -71,7 +86,7 @@ EXAMPLES = """
     network: my-network
     ip_range: 10.0.0.0/8
     network_zone: eu-central
-    type: server
+    type: cloud
     state: absent
 """
 
@@ -101,6 +116,11 @@ hcloud_subnetwork:
             type: str
             returned: always
             sample: eu-central
+        vswitch_id:
+            description: ID of the vswitch, null if not type vswitch
+            type: int
+            returned: always
+            sample: 123
         gateway:
             description: Gateway of the subnetwork
             type: str
@@ -133,6 +153,7 @@ class AnsibleHcloudSubnetwork(Hcloud):
             "type": to_native(self.hcloud_subnetwork.type),
             "network_zone": to_native(self.hcloud_subnetwork.network_zone),
             "gateway": self.hcloud_subnetwork.gateway,
+            "vswitch_id": self.hcloud_subnetwork.vswitch_id,
         }
 
     def _get_network(self):
@@ -149,15 +170,20 @@ class AnsibleHcloudSubnetwork(Hcloud):
                 self.hcloud_subnetwork = subnetwork
 
     def _create_subnetwork(self):
-        subnet = NetworkSubnet(
-            ip_range=self.module.params.get("ip_range"),
-            type=self.module.params.get('type'),
-            network_zone=self.module.params.get('network_zone')
-        )
+        params = {
+            "ip_range": self.module.params.get("ip_range"),
+            "type": self.module.params.get('type'),
+            "network_zone": self.module.params.get('network_zone')
+        }
+        if self.module.params.get('type') == NetworkSubnet.TYPE_VSWITCH:
+            self.module.fail_on_missing_params(
+                required_params=["vswitch_id"]
+            )
+            params["vswitch_id"] = self.module.params.get('vswitch_id')
 
         if not self.module.check_mode:
             try:
-                self.hcloud_network.add_subnet(subnet=subnet).wait_until_finished()
+                self.hcloud_network.add_subnet(subnet=NetworkSubnet(**params)).wait_until_finished()
             except APIException as e:
                 self.module.fail_json(msg=e.message)
 
@@ -186,8 +212,13 @@ class AnsibleHcloudSubnetwork(Hcloud):
             argument_spec=dict(
                 network={"type": "str", "required": True},
                 network_zone={"type": "str", "required": True},
-                type={"type": "str", "required": True},
+                type={
+                    "type": "str",
+                    "required": True,
+                    "choices": ["server", "cloud", "vswitch"]
+                },
                 ip_range={"type": "str", "required": True},
+                vswitch_id={"type": "int"},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
