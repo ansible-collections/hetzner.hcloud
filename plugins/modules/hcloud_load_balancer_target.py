@@ -147,6 +147,9 @@ try:
     from hcloud.load_balancers.domain import LoadBalancerTarget, LoadBalancerTargetLabelSelector, LoadBalancerTargetIP
 except ImportError:
     APIException = None
+    LoadBalancerTarget = None
+    LoadBalancerTargetLabelSelector = None
+    LoadBalancerTargetIP = None
 
 
 class AnsibleHcloudLoadBalancerTarget(Hcloud):

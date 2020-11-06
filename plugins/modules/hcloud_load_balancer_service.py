@@ -288,7 +288,7 @@ try:
         LoadBalancerServiceHealthCheck, LoadBalancerServiceHealthCheckHttp
     from hcloud import APIException
 except ImportError:
-    pass
+    APIException = None
 
 
 class AnsibleHcloudLoadBalancerService(Hcloud):

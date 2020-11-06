@@ -111,7 +111,7 @@ from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hclou
 try:
     from hcloud import APIException
 except ImportError:
-    pass
+    APIException = None
 
 
 class AnsibleHcloudImageInfo(Hcloud):

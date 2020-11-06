@@ -123,7 +123,6 @@ try:
     from hcloud import APIException
 except ImportError:
     APIException = None
-    NetworkSubnet = None
 
 
 class AnsibleHcloudServerNetwork(Hcloud):

@@ -169,7 +169,9 @@ try:
     from hcloud.servers.domain import Server
     import hcloud
 except ImportError:
-    pass
+    APIException = None
+    Volume = None
+    Server = None
 
 
 class AnsibleHcloudVolume(Hcloud):

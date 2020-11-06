@@ -124,7 +124,7 @@ try:
     from hcloud.ssh_keys.domain import Server
     from hcloud import APIException
 except ImportError:
-    pass
+    APIException = None
 
 
 class AnsibleHcloudSSHKey(Hcloud):

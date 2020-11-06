@@ -134,7 +134,7 @@ try:
     from hcloud.certificates.domain import Server
     from hcloud import APIException
 except ImportError:
-    pass
+    APIException = None
 
 
 class AnsibleHcloudCertificate(Hcloud):
