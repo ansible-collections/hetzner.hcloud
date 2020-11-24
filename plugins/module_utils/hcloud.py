@@ -12,6 +12,7 @@ from ansible.module_utils.basic import env_fallback, missing_required_lib
 
 try:
     import hcloud
+    from hcloud import APIException
 
     HAS_HCLOUD = True
 except ImportError:

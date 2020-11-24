@@ -257,7 +257,10 @@ try:
     from hcloud.servers.domain import Server
     from hcloud import APIException
 except ImportError:
-    pass
+    APIException = None
+    Volume = None
+    SSHKey = None
+    Server = None
 
 
 class AnsibleHcloudServer(Hcloud):

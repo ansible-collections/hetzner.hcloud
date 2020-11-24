@@ -98,6 +98,7 @@ from ansible.release import __version__
 
 try:
     from hcloud import hcloud
+    from hcloud import APIException
 except ImportError:
     raise AnsibleError("The Hetzner Cloud dynamic inventory plugin requires hcloud-python.")
 
@@ -123,7 +124,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
             # We test the API Token against the location API, because this is the API with the smallest result
             # and not controllable from the customer.
             self.client.locations.get_all()
-        except hcloud.APIException:
+        except APIException:
             raise AnsibleError("Invalid Hetzner Cloud API Token.")
 
     def _get_servers(self):
@@ -138,7 +139,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                 self.network = self.client.networks.get_by_name(self.get_option("network"))
                 if self.network is None:
                     self.network = self.client.networks.get_by_id(self.get_option("network"))
-            except hcloud.APIException:
+            except APIException:
                 raise AnsibleError(
                     "The given network is not found.")
 

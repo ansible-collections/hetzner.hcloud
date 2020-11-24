@@ -100,7 +100,7 @@ try:
     from hcloud.networks.domain import NetworkRoute
 except ImportError:
     APIException = None
-    NetworkSubnet = None
+    NetworkRoute = None
 
 
 class AnsibleHcloudRoute(Hcloud):

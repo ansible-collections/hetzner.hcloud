@@ -153,7 +153,7 @@ try:
     from hcloud.load_balancers.domain import LoadBalancer
     from hcloud import APIException
 except ImportError:
-    pass
+    APIException = None
 
 
 class AnsibleHcloudLoadBalancer(Hcloud):
