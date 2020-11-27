@@ -154,7 +154,7 @@ except ImportError:
 
 class AnsibleHcloudLoadBalancerTarget(Hcloud):
     def __init__(self, module):
-        super(AnsibleHcloudLoadBalancerTarget, self).__init__(module, "hcloud_load_balancer_target")
+        Hcloud.__init__(self, module, "hcloud_load_balancer_target")
         self.hcloud_load_balancer = None
         self.hcloud_load_balancer_target = None
         self.hcloud_server = None

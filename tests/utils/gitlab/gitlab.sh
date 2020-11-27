@@ -57,6 +57,7 @@ retry ansible-galaxy -vvv collection install ansible.netcommon
 retry ansible-galaxy -vvv collection install community.internal_test_tools
 retry pip install netaddr --disable-pip-version-check
 retry pip install hcloud
+retry pip install rstcheck
 # END: HACK
 
 export PYTHONIOENCODING='utf-8'

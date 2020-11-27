@@ -177,7 +177,7 @@ except ImportError:
 
 class AnsibleHcloudFloatingIP(Hcloud):
     def __init__(self, module):
-        super(AnsibleHcloudFloatingIP, self).__init__(module, "hcloud_floating_ip")
+        Hcloud.__init__(self, module, "hcloud_floating_ip")
         self.hcloud_floating_ip = None
 
     def _prepare_result(self):

@@ -142,7 +142,7 @@ except ImportError:
 
 class AnsibleHcloudSubnetwork(Hcloud):
     def __init__(self, module):
-        super(AnsibleHcloudSubnetwork, self).__init__(module, "hcloud_subnetwork")
+        Hcloud.__init__(self, module, "hcloud_subnetwork")
         self.hcloud_network = None
         self.hcloud_subnetwork = None
 

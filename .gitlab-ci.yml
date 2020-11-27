@@ -4,7 +4,7 @@ stages:
 
 ansible-devel-1/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   allow_failure: true
   except:
     - tags
@@ -15,7 +15,7 @@ ansible-devel-1/4:
 
 ansible-devel-2/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   allow_failure: true
   except:
     - tags
@@ -26,7 +26,7 @@ ansible-devel-2/4:
 
 ansible-devel-3/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   allow_failure: true
   except:
     - tags
@@ -37,7 +37,7 @@ ansible-devel-3/4:
 
 ansible-devel-4/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   allow_failure: true
   except:
     - tags
@@ -48,7 +48,7 @@ ansible-devel-4/4:
 
 ansible-210-1/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   except:
     - tags
   script:
@@ -58,7 +58,7 @@ ansible-210-1/4:
 
 ansible-210-2/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   except:
     - tags
   script:
@@ -68,7 +68,7 @@ ansible-210-2/4:
 
 ansible-210-3/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   except:
     - tags
   script:
@@ -78,7 +78,7 @@ ansible-210-3/4:
 
 ansible-210-4/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   except:
     - tags
   script:
@@ -88,7 +88,7 @@ ansible-210-4/4:
 
 ansible-29-1/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   except:
     - tags
   script:
@@ -98,7 +98,7 @@ ansible-29-1/4:
 
 ansible-29-2/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   except:
     - tags
   script:
@@ -108,7 +108,7 @@ ansible-29-2/4:
 
 ansible-29-3/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   except:
     - tags
   script:
@@ -118,7 +118,7 @@ ansible-29-3/4:
 
 ansible-29-4/4:
   stage: sanity
-  image: python:3.8-buster
+  image: python:3.6-buster
   except:
     - tags
   script:
@@ -126,27 +126,39 @@ ansible-29-4/4:
   tags:
     - hc-bladerunner
 
-ansible-devel-1/2:
+ansible-devel-1/3:
   stage: integration
-  image: python:3.8-buster
+  image: python:3.6-buster
   except:
     - tags
   script:
     - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
     - echo "py38-$CI_JOB_ID" >> "$(pwd)/prefix.txt"
-    - bash tests/utils/gitlab/gitlab.sh devel/hcloud/3.8/1
+    - bash tests/utils/gitlab/gitlab.sh devel/hcloud/3.6/1
   tags:
     - hc-bladerunner
 
 
-ansible-devel-2/2:
+ansible-devel-2/3:
   stage: integration
-  image: python:3.8-buster
+  image: python:3.6-buster
   except:
     - tags
   script:
     - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
     - echo "py39-$CI_JOB_ID" >> "$(pwd)/prefix.txt"
-    - bash tests/utils/gitlab/gitlab.sh devel/hcloud/3.8/2
+    - bash tests/utils/gitlab/gitlab.sh devel/hcloud/3.6/2
+  tags:
+    - hc-bladerunner
+
+ansible-devel-3/3:
+  stage: integration
+  image: python:3.6-buster
+  except:
+    - tags
+  script:
+    - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
+    - echo "py39-$CI_JOB_ID" >> "$(pwd)/prefix.txt"
+    - bash tests/utils/gitlab/gitlab.sh devel/hcloud/3.6/3
   tags:
     - hc-bladerunner
