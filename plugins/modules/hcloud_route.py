@@ -105,7 +105,7 @@ except ImportError:
 
 class AnsibleHcloudRoute(Hcloud):
     def __init__(self, module):
-        super(AnsibleHcloudRoute, self).__init__(module, "hcloud_route")
+        Hcloud.__init__(self, module, "hcloud_route")
         self.hcloud_network = None
         self.hcloud_route = None
 

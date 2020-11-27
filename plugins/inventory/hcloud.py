@@ -231,12 +231,12 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
     def verify_file(self, path):
         """Return the possibly of a file being consumable by this plugin."""
         return (
-            super(InventoryModule, self).verify_file(path) and
+            super().verify_file(path) and
             path.endswith(("hcloud.yaml", "hcloud.yml"))
         )
 
     def parse(self, inventory, loader, path, cache=True):
-        super(InventoryModule, self).parse(inventory, loader, path, cache)
+        super().parse(inventory, loader, path, cache)
         self._read_config_data(path)
         self._configure_hcloud_client()
         self._test_hcloud_token()

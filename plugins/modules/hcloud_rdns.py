@@ -119,7 +119,7 @@ except ImportError:
 
 class AnsibleHcloudReverseDNS(Hcloud):
     def __init__(self, module):
-        super(AnsibleHcloudReverseDNS, self).__init__(module, "hcloud_rdns")
+        Hcloud.__init__(self, module, "hcloud_rdns")
         self.hcloud_resource = None
         self.hcloud_rdns = None
 

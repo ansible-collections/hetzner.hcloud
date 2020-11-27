@@ -1,3 +1,4 @@
+title: Hetzner Cloud Ansible Collection
 changelog_filename_template: ../CHANGELOG.rst
 changelog_filename_version_depth: 0
 changes_file: changelog.yaml
@@ -25,4 +26,3 @@ sections:
   - Bugfixes
 - - known_issues
   - Known Issues
-title: Hetzner Cloud Ansible Collection

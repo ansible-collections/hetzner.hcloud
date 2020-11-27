@@ -1,0 +1,128 @@
+# Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: setup ensure Load Balancer is absent
+  hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    state: absent
+- name: setup server
+  hcloud_server:
+    name: "{{hcloud_server_name}}"
+    server_type: cx11
+    image: ubuntu-20.04
+    state: started
+  register: server
+- name: verify setup server
+  assert:
+    that:
+      - server is success
+- name: setup Load Balancer
+  hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    load_balancer_type: lb11
+    network_zone: eu-central
+    labels:
+      key: value
+  register: test_load_balancer
+
+- name: verify setup Load Balancer
+  assert:
+    that:
+      - test_load_balancer is changed
+
+- name: test create load_balancer target
+  hcloud_load_balancer_target:
+    type: "server"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    server: "{{hcloud_server_name}}"
+    state: present
+  register: load_balancer_target
+- name: verify create load_balancer target
+  assert:
+    that:
+    - load_balancer_target is success
+- name: test create load_balancer service
+  hcloud_load_balancer_service:
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    protocol: "http"
+    listen_port: 80
+    state: present
+  register: load_balancer_service
+- name: verify create load_balancer service
+  assert:
+    that:
+    - load_balancer_service is success
+
+- name: test gather hcloud Load Balancer infos
+  hcloud_load_balancer_info:
+    id: "{{test_load_balancer.hcloud_load_balancer.id}}"
+  register: hcloud_load_balancers
+- name: verify test gather hcloud Load Balancer infos
+  assert:
+    that:
+      - hcloud_load_balancers.hcloud_load_balancer_info| list | count >= 1
+      - hcloud_load_balancers.hcloud_load_balancer_info[0].targets | list | count == 1
+      - hcloud_load_balancers.hcloud_load_balancer_info[0].targets | selectattr('type','equalto','server') | list | count == 1
+      - hcloud_load_balancers.hcloud_load_balancer_info[0].targets | selectattr('server','equalto','{{ hcloud_server_name }}') | list | count == 1
+      - hcloud_load_balancers.hcloud_load_balancer_info[0].services | list | count == 1
+      - hcloud_load_balancers.hcloud_load_balancer_info[0].services | selectattr('protocol','equalto','http') | list | count == 1
+      - hcloud_load_balancers.hcloud_load_balancer_info[0].services | selectattr('listen_port','equalto',80) | list | count == 1
+      - hcloud_load_balancers.hcloud_load_balancer_info[0].services | selectattr('destination_port','equalto',80) | list | count == 1
+
+- name: test gather hcloud Load Balancer infos in check mode
+  hcloud_load_balancer_info:
+  check_mode: yes
+  register: hcloud_load_balancers
+
+- name: verify test gather hcloud Load Balancer infos in check mode
+  assert:
+    that:
+      - hcloud_load_balancers.hcloud_load_balancer_info| list | count >= 1
+
+
+- name: test gather hcloud Load Balancer infos with correct label selector
+  hcloud_load_balancer_info:
+    label_selector: "key=value"
+  register: hcloud_load_balancers
+- name: verify test gather hcloud Load Balancer with correct label selector
+  assert:
+    that:
+      - hcloud_load_balancers.hcloud_load_balancer_info|selectattr('name','equalto','{{ test_load_balancer.hcloud_load_balancer.name }}') | list | count == 1
+
+- name: test gather hcloud Load Balancer infos with wrong label selector
+  hcloud_load_balancer_info:
+    label_selector: "key!=value"
+  register: hcloud_load_balancers
+- name: verify test gather hcloud Load Balancer with wrong label selector
+  assert:
+    that:
+      - hcloud_load_balancers.hcloud_load_balancer_info | list | count == 0
+
+- name: test gather hcloud Load Balancer infos with correct id
+  hcloud_load_balancer_info:
+    id: "{{test_load_balancer.hcloud_load_balancer.id}}"
+  register: hcloud_load_balancers
+- name: verify test gather hcloud Load Balancer with correct id
+  assert:
+    that:
+      - hcloud_load_balancers.hcloud_load_balancer_info|selectattr('name','equalto','{{ test_load_balancer.hcloud_load_balancer.name }}') | list | count == 1
+
+- name: test gather hcloud Load Balancer infos with wrong id
+  hcloud_load_balancer_info:
+      id: "{{test_load_balancer.hcloud_load_balancer.id}}1"
+  register: result
+  ignore_errors: yes
+- name: verify test gather hcloud Load Balancer with wrong id
+  assert:
+    that:
+      - result is failed
+
+- name: cleanup
+  hcloud_load_balancer:
+    id: "{{ test_load_balancer.hcloud_load_balancer.id }}"
+    state: absent
+  register: result
+- name: verify cleanup
+  assert:
+    that:
+    - result is success
