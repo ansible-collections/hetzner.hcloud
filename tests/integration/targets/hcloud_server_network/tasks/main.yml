@@ -142,6 +142,41 @@
     - 'serverNetwork.hcloud_server_network.alias_ips[0] == "10.0.2.3"'
     - 'serverNetwork.hcloud_server_network.alias_ips[1] == "10.0.1.2"'
 
+- name: test update server network with alias ips
+  hcloud_server_network:
+    network: "{{ hcloud_network_name }}"
+    server: "{{hcloud_server_name}}"
+    ip: "10.0.0.2"
+    alias_ips:
+      - "10.0.2.3"
+      - "10.0.3.1"
+    state: present
+  register: serverNetwork
+- name: verify create server network with alias ips
+  assert:
+    that:
+    - serverNetwork is changed
+    - serverNetwork.hcloud_server_network.network == hcloud_network_name
+    - serverNetwork.hcloud_server_network.server == hcloud_server_name
+    - serverNetwork.hcloud_server_network.ip == "10.0.0.2"
+    - 'serverNetwork.hcloud_server_network.alias_ips[0] == "10.0.2.3"'
+    - 'serverNetwork.hcloud_server_network.alias_ips[1] == "10.0.3.1"'
+
+- name: test update server network with alias ips idempotency
+  hcloud_server_network:
+    network: "{{ hcloud_network_name }}"
+    server: "{{hcloud_server_name}}"
+    ip: "10.0.0.2"
+    alias_ips:
+      - "10.0.2.3"
+      - "10.0.3.1"
+    state: present
+  register: serverNetwork
+- name: verify create server network with alias ips idempotency
+  assert:
+    that:
+    - serverNetwork is not changed
+
 - name: cleanup create server network with alias ips
   hcloud_server_network:
     network: "{{ hcloud_network_name }}"
