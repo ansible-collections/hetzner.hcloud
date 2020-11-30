@@ -26,9 +26,12 @@ DOCUMENTATION = r'''
             choices: ["hcloud"]
         token:
             description: The Hetzner Cloud API Token.
-            required: true
-            env:
-                - name: HCLOUD_TOKEN
+            required: false
+        token_env:
+            description: The Hetzner Cloud API Token.
+            default: HCLOUD_TOKEN
+            type: str
+            required: false
         connect_with:
             description: Connect to the server using the value from this field.
             default: public_ipv4
@@ -107,10 +110,13 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
     NAME = 'hetzner.hcloud.hcloud'
 
     def _configure_hcloud_client(self):
-        self.api_token = self.get_option("token")
+        self.token_env = self.get_option("token_env")
+        self.api_token = self.get_option("token") or os.getenv(self.token_env)
         if self.api_token is None:
             raise AnsibleError(
-                "Please specify a token, via the option token or via environment variable HCLOUD_TOKEN")
+                "Please specify a token, via the option token, via environment variable HCLOUD_TOKEN "
+                "or via custom environemt variable set by token_env option."
+            )
 
         self.endpoint = os.getenv("HCLOUD_ENDPOINT") or "https://api.hetzner.cloud/v1"
 
