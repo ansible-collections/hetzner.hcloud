@@ -173,11 +173,31 @@ class AnsibleHcloudServerNetwork(Hcloud):
         self._get_server_and_network()
         self._get_server_network()
 
+    def _update_server_network(self):
+        params = {
+            "network": self.hcloud_network
+        }
+        alias_ips = self.module.params.get("alias_ips")
+        if alias_ips is not None and self.hcloud_server_network.alias_ips.sort() != alias_ips.sort():
+            params["alias_ips"] = alias_ips
+
+            if not self.module.check_mode:
+                try:
+                    self.hcloud_server.change_alias_ips(**params).wait_until_finished()
+                except APIException as e:
+                    self.module.fail_json(msg=e.message)
+
+            self._mark_as_changed()
+        self._get_server_and_network()
+        self._get_server_network()
+
     def present_server_network(self):
         self._get_server_and_network()
         self._get_server_network()
         if self.hcloud_server_network is None:
             self._create_server_network()
+        else:
+            self._update_server_network()
 
     def delete_server_network(self):
         self._get_server_and_network()
