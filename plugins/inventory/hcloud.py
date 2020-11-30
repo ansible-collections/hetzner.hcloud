@@ -28,7 +28,7 @@ DOCUMENTATION = r'''
             description: The Hetzner Cloud API Token.
             required: false
         token_env:
-            description: The Hetzner Cloud API Token.
+            description: Environment variable to load the Hetzner Cloud API Token from.
             default: HCLOUD_TOKEN
             type: str
             required: false
