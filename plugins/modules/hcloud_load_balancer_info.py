@@ -12,11 +12,11 @@ DOCUMENTATION = '''
 ---
 module: hcloud_load_balancer_info
 
-short_description: Gather infos about your Hetzner Cloud load_balancers.
+short_description: Gather infos about your Hetzner Cloud Load Balancers.
 
 
 description:
-    - Gather infos about your Hetzner Cloud load_balancers.
+    - Gather infos about your Hetzner Cloud Load Balancers..
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)

@@ -54,3 +54,16 @@ releases:
     - fix-idempotency-floating-ip.yml
     - gh-28-allow-setting-of-protection-on-creation.yml
     release_date: '2020-10-05'
+  1.2.0:
+    changes:
+      minor_changes:
+      - Dynamic Inventory Add option to specifiy the token_env variable which is used
+        for identification if now token is set
+      - Improve imports of API Exception
+      - hcloud_server_network Allow updating alias ips
+      - hcloud_subnetwork Allow creating vswitch subnetworks
+    modules:
+    - description: Gather infos about your Hetzner Cloud load_balancers.
+      name: hcloud_load_balancer_info
+      namespace: ''
+    release_date: '2020-12-01'

@@ -5,6 +5,22 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.2.0
+======
+
+Minor Changes
+-------------
+
+- Dynamic Inventory Add option to specifiy the token_env variable which is used for identification if now token is set
+- Improve imports of API Exception
+- hcloud_server_network Allow updating alias ips
+- hcloud_subnetwork Allow creating vswitch subnetworks
+
+New Modules
+-----------
+
+- hcloud_load_balancer_info - Gather infos about your Hetzner Cloud load_balancers.
+
 v1.1.0
 ======
 
