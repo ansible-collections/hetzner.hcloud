@@ -115,7 +115,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
         if self.api_token is None:
             raise AnsibleError(
                 "Please specify a token, via the option token, via environment variable HCLOUD_TOKEN "
-                "or via custom environemt variable set by token_env option."
+                "or via custom environment variable set by token_env option."
             )
 
         self.endpoint = os.getenv("HCLOUD_ENDPOINT") or "https://api.hetzner.cloud/v1"
