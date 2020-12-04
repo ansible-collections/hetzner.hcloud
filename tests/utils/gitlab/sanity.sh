@@ -39,7 +39,7 @@ fi
 pip install pycodestyle
 pip install yamllint
 pip install voluptuous
-pip install pylint
+pip install pylint==2.5.3
 # shellcheck disable=SC2086
 ansible-test sanity --color -v --junit ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} \
     --base-branch "${base_branch}" \

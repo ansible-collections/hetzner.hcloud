@@ -25,7 +25,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name }}"
     server_type: cx11
-    image: ubuntu-18.04
+    image: ubuntu-20.04
     state: present
   register: result
   check_mode: yes
@@ -38,7 +38,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: ubuntu-18.04
+    image: ubuntu-20.04
     state: started
   register: main_server
 - name: verify create server
@@ -239,7 +239,7 @@
 - name: test rebuild server
   hcloud_server:
     name: "{{ hcloud_server_name }}"
-    image: ubuntu-18.04
+    image: ubuntu-20.04
     state: rebuild
   register: result_after_test
 - name: verify rebuild server
@@ -251,7 +251,7 @@
 - name: test rebuild server with check mode
   hcloud_server:
     name: "{{ hcloud_server_name }}"
-    image: ubuntu-18.04
+    image: ubuntu-20.04
     state: rebuild
   register: result_after_test
   check_mode: true
@@ -327,7 +327,7 @@
 - name: test rebuild server fails if it is protected
   hcloud_server:
     name: "{{hcloud_server_name}}"
-    image: ubuntu-18.04
+    image: ubuntu-20.04
     state: rebuild
   ignore_errors: yes
   register: result
@@ -366,7 +366,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: "ubuntu-18.04"
+    image: "ubuntu-20.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: started
@@ -394,7 +394,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: "ubuntu-18.04"
+    image: "ubuntu-20.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     rescue_mode: "linux64"
@@ -424,7 +424,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: ubuntu-18.04
+    image: ubuntu-20.04
     state: started
   register: main_server
 - name: verify setup server
@@ -503,7 +503,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: "ubuntu-18.04"
+    image: "ubuntu-20.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     labels:
@@ -522,7 +522,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: "ubuntu-18.04"
+    image: "ubuntu-20.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     labels:
@@ -541,7 +541,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: "ubuntu-18.04"
+    image: "ubuntu-20.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     labels:
@@ -569,7 +569,7 @@
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     backups: true
-    image: "ubuntu-18.04"
+    image: "ubuntu-20.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: present
@@ -580,7 +580,7 @@
       - result is changed
       - result.hcloud_server.backup_window != ""
 
-- name: test create server with enabled backups
+- name: cleanup test create server with enabled backups
   hcloud_server:
     name: "{{ hcloud_server_name }}"
     state: absent
@@ -638,6 +638,88 @@
       - result_after_test.hcloud_server.rebuild_protection is sameas false
 
 - name: cleanup
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+  register: result
+- name: verify cleanup
+  assert:
+    that:
+    - result is success
+
+- name: test create firewall
+  hcloud_firewall:
+    name: "{{ hcloud_firewall_name }}"
+    rules:
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+  register: firewall
+- name: verify create firewall
+  assert:
+    that:
+      - firewall is changed
+
+- name: test create firewall
+  hcloud_firewall:
+    name: "{{ hcloud_firewall_name }}2"
+    rules:
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+  register: firewall2
+- name: verify create firewall
+  assert:
+    that:
+      - firewall2 is changed
+
+- name: test create server with firewalls
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    firewalls:
+      - "{{ hcloud_firewall_name }}"
+    image: "ubuntu-20.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
+  register: result
+- name: verify enable backups
+  assert:
+    that:
+      - result is changed
+
+- name: test update server with firewalls
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    firewalls:
+      - "{{ hcloud_firewall_name }}2"
+    image: "ubuntu-20.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
+  register: result
+- name: verify enable backups
+  assert:
+    that:
+      - result is changed
+
+- name: cleanup test create firewall
+  hcloud_firewall:
+    name: "{{ hcloud_firewall_name }}"
+    state: absent
+  register: result
+- name: verify create firewall
+  assert:
+    that:
+      - result is changed
+
+- name: cleanup test create server with firewalls
   hcloud_server:
     name: "{{ hcloud_server_name }}"
     state: absent
