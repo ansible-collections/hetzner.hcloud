@@ -41,6 +41,7 @@ options:
         description:
             - Automatically mount the Volume.
         type: bool
+        default: False
     format:
         description:
             - Automatically Format the volume on creation

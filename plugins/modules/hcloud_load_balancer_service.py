@@ -47,6 +47,7 @@ options:
         description:
             - Enable the PROXY protocol.
         type: bool
+        default: False
     http:
         description:
             - Configuration for HTTP and HTTPS services
@@ -69,10 +70,12 @@ options:
                 description:
                     - Enable or disable sticky_sessions
                 type: bool
+                default: False
             redirect_http:
                 description:
                     - Redirect Traffic from Port 80 to Port 443, only available if protocol is https
                 type: bool
+                default: False
     health_check:
         description:
             - Configuration for health checks
@@ -125,6 +128,7 @@ options:
                         description:
                             - Verify the TLS certificate, only available if health check protocol is https
                         type: bool
+                        default: False
     state:
         description:
             - State of the Load Balancer.
