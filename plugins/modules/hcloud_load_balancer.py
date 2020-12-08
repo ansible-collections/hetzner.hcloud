@@ -293,7 +293,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
                 network_zone={"type": "str"},
                 labels={"type": "dict"},
                 delete_protection={"type": "bool"},
-                disable_public_interface={"type": "bool"},
+                disable_public_interface={"type": "bool", "default": False},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",

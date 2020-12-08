@@ -53,6 +53,7 @@ options:
             - Route the traffic over the private IP of the Load Balancer through a Hetzner Cloud Network.
             - Load Balancer needs to be attached to a network. See M(hetzner.hcloud.hcloud.hcloud_load_balancer_network)
         type: bool
+        default: False
     state:
         description:
             - State of the load_balancer_network.
