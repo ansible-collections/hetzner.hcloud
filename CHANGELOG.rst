@@ -4,6 +4,13 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v1.2.1
+======
+
+Bugfixes
+--------
+- Inventory Restore Python 2.7 compatibility
+
 
 v1.2.0
 ======

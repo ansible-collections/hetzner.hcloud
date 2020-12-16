@@ -67,3 +67,8 @@ releases:
       name: hcloud_load_balancer_info
       namespace: ''
     release_date: '2020-12-01'
+  1.2.1:
+    changes:
+      bugfixes:
+      - Inventory Restore Python 2.7 compatibility
+    release_date: '2020-12-16'
