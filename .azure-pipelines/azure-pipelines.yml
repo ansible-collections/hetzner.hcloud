@@ -117,8 +117,8 @@ stages:
     condition: succeededOrFailed()
     dependsOn:
       - Ansible_devel
-      - Ansile_2_10
-      - Ansile_2_9
+      - Ansible_2_10
+      - Ansible_2_9
       - Hetzner_devel
       - Hetzner_2_10
       - Hetzner_2_9
