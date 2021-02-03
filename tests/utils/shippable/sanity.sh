@@ -14,31 +14,14 @@ else
 fi
 
 if [ "${group}" == "extra" ]; then
-    pip install antsibull-changelog
-    python ../../community/internal_test_tools/tools/run.py --color
+    # ansible-galaxy -vvv collection install community.internal_test_tools
+    git clone --single-branch --depth 1 https://github.com/ansible-collections/community.internal_test_tools.git ../../community/internal_test_tools
+
+    ../internal_test_tools/tools/run.py --color
     exit
-fi
-
-case "${group}" in
-    1) options=(--skip-test pylint --skip-test ansible-doc --skip-test validate-modules) ;;
-    2) options=(                   --test      ansible-doc      --test validate-modules) ;;
-    3) options=(--test pylint           plugins/modules/) ;;
-    4) options=(--test pylint --exclude plugins/modules/) ;;
-esac
-
-# allow collection migration sanity tests for groups 3 and 4 to pass without updating this script during migration
-network_path="lib/ansible/modules/network/"
-
-if [ -d "${network_path}" ]; then
-    if [ "${group}" -eq 3 ]; then
-        options+=(--exclude "${network_path}")
-    elif [ "${group}" -eq 4 ]; then
-        options+=("${network_path}")
-    fi
 fi
 
 # shellcheck disable=SC2086
 ansible-test sanity --color -v --junit ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} \
     --docker --base-branch "${base_branch}" \
-    --exclude shippable.yml --exclude tests/utils/ \
-    "${options[@]}" --allow-disabled
+    --allow-disabled
