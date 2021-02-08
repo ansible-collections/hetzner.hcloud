@@ -7,6 +7,7 @@ declare -a args
 IFS='/:' read -ra args <<< "$1"
 
 ansible_version="${args[0]}"
+# shellcheck disable=SC2034
 script="${args[1]}"
 
 function join {
@@ -21,6 +22,7 @@ python -V
 
 function retry
 {
+    # shellcheck disable=SC2034
     for repetition in 1 2 3; do
         set +e
         "$@"
@@ -29,9 +31,9 @@ function retry
         if [ ${result} == 0 ]; then
             return ${result}
         fi
-        echo "$@ -> ${result}"
+        echo "@* -> ${result}"
     done
-    echo "Command '$@' failed 3 times!"
+    echo "Command '@*' failed 3 times!"
     exit -1
 }
 
@@ -44,6 +46,7 @@ else
     retry pip install "https://github.com/ansible/ansible/archive/stable-${ansible_version}.tar.gz" --disable-pip-version-check
 fi
 export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
+# shellcheck disable=SC2034
 SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
 TEST_DIR="${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/hetzner/hcloud"
 rm -rf  "${TEST_DIR}"
@@ -87,7 +90,7 @@ find plugins -type d -empty -print -delete
 ansible-test env --dump --show --timeout "50" --color -v
 
 group="${args[1]}"
-echo $test
+echo "$test"
 if [[ "${test}" =~ hcloud ]]; then
   group="${args[3]}"
   bash tests/utils/gitlab/integration.sh "shippable/hcloud/group${group}/"

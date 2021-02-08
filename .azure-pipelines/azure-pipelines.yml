@@ -80,8 +80,6 @@ stages:
           nameFormat: Python 3.8 {0}
           testFormat: devel/hcloud/3.8/{0}
           targets:
-            - test: ''
-          groups:
             - 1
             - 2
   - stage: Hetzner_2_10
@@ -93,8 +91,6 @@ stages:
           nameFormat: Python 3.8 {0}
           testFormat: 2.10/hcloud/3.8/{0}
           targets:
-            - test: ''
-          groups:
             - 1
             - 2
             - 3
@@ -107,8 +103,6 @@ stages:
           nameFormat: Python 3.8 {0}
           testFormat: 2.9/hcloud/3.8/{0}
           targets:
-            - test: ''
-          groups:
             - 1
             - 2
             - 3
