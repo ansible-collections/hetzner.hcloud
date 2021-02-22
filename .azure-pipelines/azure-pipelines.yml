@@ -2,15 +2,13 @@ trigger:
   batch: true
   branches:
     include:
-      - main
-      - stable-*
+      - master
 
 pr:
   autoCancel: true
   branches:
     include:
-      - main
-      - stable-*
+      - master
 
 schedules:
   - cron: 0 9 * * *
@@ -18,14 +16,13 @@ schedules:
     always: true
     branches:
       include:
-        - main
-        - stable-*
+        - master
 
 variables:
   - name: checkoutPath
     value: ansible_collections/hetzner/hcloud
   - name: coverageBranches
-    value: main
+    value: master
   - name: pipelinesCoverage
     value: coverage
   - name: entryPoint
@@ -41,7 +38,7 @@ resources:
 pool: Standard
 
 stages:
-### Sanity 
+### Sanity
   - stage: Ansible_devel
     displayName: Sanity devel
     dependsOn: []
@@ -77,41 +74,41 @@ stages:
     jobs:
       - template: templates/matrix.yml
         parameters:
-          nameFormat: Python 3.8 {0}
-          testFormat: devel/hcloud/3.8/{0}
-          targets:
-            - test: ''
           groups:
             - 1
             - 2
+          targets:
+            - name: hcloud
+              test: 'devel/hcloud/3.8'
+
   - stage: Hetzner_2_10
     displayName: Hetzner 2.10
     dependsOn: []
     jobs:
       - template: templates/matrix.yml
         parameters:
-          nameFormat: Python 3.8 {0}
-          testFormat: 2.10/hcloud/3.8/{0}
-          targets:
-            - test: ''
           groups:
             - 1
             - 2
             - 3
+          targets:
+            - name: hcloud
+              test: '2.10/hcloud/3.8'
+
   - stage: Hetzner_2_9
     displayName: Hetzner 2.9
     dependsOn: []
     jobs:
       - template: templates/matrix.yml
         parameters:
-          nameFormat: Python 3.8 {0}
-          testFormat: 2.9/hcloud/3.8/{0}
-          targets:
-            - test: ''
           groups:
             - 1
             - 2
             - 3
+          targets:
+            - name: hcloud
+              test: '2.9/hcloud/3.8'
+
 ### Finally
   - stage: Summary
     condition: succeededOrFailed()

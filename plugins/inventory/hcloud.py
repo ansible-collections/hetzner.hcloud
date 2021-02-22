@@ -102,8 +102,9 @@ from ansible.release import __version__
 try:
     from hcloud import hcloud
     from hcloud import APIException
+    HAS_HCLOUD = True
 except ImportError:
-    raise AnsibleError("The Hetzner Cloud dynamic inventory plugin requires hcloud-python.")
+    HAS_HCLOUD = False
 
 
 class InventoryModule(BaseInventoryPlugin, Constructable):
@@ -243,6 +244,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
 
     def parse(self, inventory, loader, path, cache=True):
         super(InventoryModule, self).parse(inventory, loader, path, cache)
+
+        if not HAS_HCLOUD:
+            raise AnsibleError("The Hetzner Cloud dynamic inventory plugin requires hcloud-python.")
+
         self._read_config_data(path)
         self._configure_hcloud_client()
         self._test_hcloud_token()
