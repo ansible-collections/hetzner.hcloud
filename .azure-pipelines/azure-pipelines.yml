@@ -79,7 +79,7 @@ stages:
             - 2
           targets:
             - name: hcloud
-              test: 'devel/hcloud/1'
+              test: 'devel/hcloud/3.8'
 
   - stage: Hetzner_2_10
     displayName: Hetzner 2.10
@@ -93,7 +93,7 @@ stages:
             - 3
           targets:
             - name: hcloud
-              test: '2.10/hcloud/1'
+              test: '2.10/hcloud/3.8'
 
   - stage: Hetzner_2_9
     displayName: Hetzner 2.9
@@ -107,7 +107,7 @@ stages:
             - 3
           targets:
             - name: hcloud
-              test: '2.9/hcloud/1'
+              test: '2.9/hcloud/3.8'
 
 ### Finally
   - stage: Summary
