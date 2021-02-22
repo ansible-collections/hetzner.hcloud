@@ -75,8 +75,8 @@ stages:
       - template: templates/matrix.yml
         parameters:
           targets:
-            - name: Integration
-              test: 'devel/integration/1'
+            - name: hcloud
+              test: 'devel/hcloud/1'
 
   - stage: Hetzner_2_10
     displayName: Hetzner 2.10
@@ -85,8 +85,8 @@ stages:
       - template: templates/matrix.yml
         parameters:
           targets:
-            - name: Integration
-              test: '2.10/integration/1'
+            - name: hcloud
+              test: '2.10/hcloud/1'
 
   - stage: Hetzner_2_9
     displayName: Hetzner 2.9
@@ -95,8 +95,8 @@ stages:
       - template: templates/matrix.yml
         parameters:
           targets:
-            - name: Integration
-              test: '2.9/integration/1'
+            - name: hcloud
+              test: '2.9/hcloud/1'
 
 ### Finally
   - stage: Summary
