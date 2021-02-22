@@ -74,35 +74,30 @@ stages:
     jobs:
       - template: templates/matrix.yml
         parameters:
-          nameFormat: Python 3.8 {0}
-          testFormat: devel/hcloud/3.8/{0}
-          groups:
-            - 1
-            - 2
+          targets:
+            - name: Integration
+              test: 'devel/integration/1'
+
   - stage: Hetzner_2_10
     displayName: Hetzner 2.10
     dependsOn: []
     jobs:
       - template: templates/matrix.yml
         parameters:
-          nameFormat: Python 3.8 {0}
-          testFormat: 2.10/hcloud/3.8/{0}
-          groups:
-            - 1
-            - 2
-            - 3
+          targets:
+            - name: Integration
+              test: '2.10/integration/1'
+
   - stage: Hetzner_2_9
     displayName: Hetzner 2.9
     dependsOn: []
     jobs:
       - template: templates/matrix.yml
         parameters:
-          nameFormat: Python 3.8 {0}
-          testFormat: 2.9/hcloud/3.8/{0}
-          groups:
-            - 1
-            - 2
-            - 3
+          targets:
+            - name: Integration
+              test: '2.9/integration/1'
+
 ### Finally
   - stage: Summary
     condition: succeededOrFailed()
