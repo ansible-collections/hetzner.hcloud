@@ -74,6 +74,9 @@ stages:
     jobs:
       - template: templates/matrix.yml
         parameters:
+          groups:
+            - 1
+            - 2
           targets:
             - name: hcloud
               test: 'devel/hcloud/1'
@@ -84,6 +87,10 @@ stages:
     jobs:
       - template: templates/matrix.yml
         parameters:
+          groups:
+            - 1
+            - 2
+            - 3
           targets:
             - name: hcloud
               test: '2.10/hcloud/1'
@@ -94,6 +101,10 @@ stages:
     jobs:
       - template: templates/matrix.yml
         parameters:
+          groups:
+            - 1
+            - 2
+            - 3
           targets:
             - name: hcloud
               test: '2.9/hcloud/1'
