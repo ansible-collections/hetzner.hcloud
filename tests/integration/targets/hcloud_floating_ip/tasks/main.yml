@@ -87,7 +87,7 @@
   assert:
     that:
       - result is failed
-      - result.msg == "location 'abc' not found"
+      - result.msg == "invalid input in fields 'server', 'home_location'"
 
 - name: test create Floating IP with check mode
   hcloud_floating_ip:
