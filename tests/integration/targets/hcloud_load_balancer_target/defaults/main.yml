@@ -2,6 +2,6 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 hcloud_prefix: "tests"
-hcloud_server_name: "{{hcloud_prefix}}-lb-target"
-hcloud_load_balancer_name: "{{hcloud_prefix}}-load_balancer-target"
+hcloud_server_name: "{{hcloud_prefix}}-lb-t"
+hcloud_load_balancer_name: "{{hcloud_prefix}}-lb-target"
 hcloud_testing_ip: "176.9.59.39"
