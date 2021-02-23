@@ -74,7 +74,20 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "one of the following is required: id, name"'
+      - 'result.msg == "value of type must be one of: ipv4, ipv6, got: ipv5"'
+
+- name: test invalid location
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    type: ipv4
+    home_location: "abc"
+  register: result
+  ignore_errors: yes
+- name: verify invalid location
+  assert:
+    that:
+      - result is failed
+      - result.msg == "location 'abc' not found"
 
 - name: test create Floating IP with check mode
   hcloud_floating_ip:
