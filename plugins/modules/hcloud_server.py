@@ -297,7 +297,7 @@ class AnsibleHcloudServer(Hcloud):
                 self.hcloud_server = self.client.servers.get_by_name(
                     self.module.params.get("name")
                 )
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_server(self):
@@ -345,27 +345,30 @@ class AnsibleHcloudServer(Hcloud):
             )
 
         if not self.module.check_mode:
-            resp = self.client.servers.create(**params)
-            self.result["root_password"] = resp.root_password
-            resp.action.wait_until_finished(max_retries=1000)
-            [action.wait_until_finished() for action in resp.next_actions]
+            try:
+                resp = self.client.servers.create(**params)
+                self.result["root_password"] = resp.root_password
+                resp.action.wait_until_finished(max_retries=1000)
+                [action.wait_until_finished() for action in resp.next_actions]
 
-            rescue_mode = self.module.params.get("rescue_mode")
-            if rescue_mode:
-                self._get_server()
-                self._set_rescue_mode(rescue_mode)
+                rescue_mode = self.module.params.get("rescue_mode")
+                if rescue_mode:
+                    self._get_server()
+                    self._set_rescue_mode(rescue_mode)
 
-            backups = self.module.params.get("backups")
-            if backups:
-                self._get_server()
-                self.hcloud_server.enable_backup().wait_until_finished()
+                backups = self.module.params.get("backups")
+                if backups:
+                    self._get_server()
+                    self.hcloud_server.enable_backup().wait_until_finished()
 
-            delete_protection = self.module.params.get("delete_protection")
-            rebuild_protection = self.module.params.get("rebuild_protection")
-            if delete_protection is not None and rebuild_protection is not None:
-                self._get_server()
-                self.hcloud_server.change_protection(delete=delete_protection,
-                                                     rebuild=rebuild_protection).wait_until_finished()
+                delete_protection = self.module.params.get("delete_protection")
+                rebuild_protection = self.module.params.get("rebuild_protection")
+                if delete_protection is not None and rebuild_protection is not None:
+                    self._get_server()
+                    self.hcloud_server.change_protection(delete=delete_protection,
+                                                         rebuild=rebuild_protection).wait_until_finished()
+            except Exception as e:
+                self.module.fail_json(msg=e.message)
         self._mark_as_changed()
         self._get_server()
 
@@ -434,7 +437,7 @@ class AnsibleHcloudServer(Hcloud):
                                                          rebuild=rebuild_protection).wait_until_finished()
                 self._mark_as_changed()
             self._get_server()
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _set_rescue_mode(self, rescue_mode):
@@ -456,7 +459,7 @@ class AnsibleHcloudServer(Hcloud):
                     self.client.servers.power_on(self.hcloud_server).wait_until_finished()
                 self._mark_as_changed()
             self._get_server()
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def stop_server(self):
@@ -466,7 +469,7 @@ class AnsibleHcloudServer(Hcloud):
                     self.client.servers.power_off(self.hcloud_server).wait_until_finished()
                 self._mark_as_changed()
             self._get_server()
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def rebuild_server(self):
@@ -480,7 +483,7 @@ class AnsibleHcloudServer(Hcloud):
             self._mark_as_changed()
 
             self._get_server()
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def present_server(self):
@@ -498,7 +501,7 @@ class AnsibleHcloudServer(Hcloud):
                     self.client.servers.delete(self.hcloud_server).wait_until_finished()
                 self._mark_as_changed()
             self.hcloud_server = None
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod

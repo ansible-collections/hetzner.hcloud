@@ -147,7 +147,7 @@ class AnsibleHcloudVolumeInfo(Hcloud):
             else:
                 self.hcloud_volume_info = self.client.volumes.get_all()
 
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod

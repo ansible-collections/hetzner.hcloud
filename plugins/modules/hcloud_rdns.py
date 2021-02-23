@@ -147,7 +147,7 @@ class AnsibleHcloudReverseDNS(Hcloud):
                 self.hcloud_resource = self.client.floating_ips.get_by_name(
                     self.module.params.get("floating_ip")
                 )
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _get_rdns(self):
@@ -198,8 +198,10 @@ class AnsibleHcloudReverseDNS(Hcloud):
         }
 
         if not self.module.check_mode:
-            self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
-
+            try:
+                self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
+            except Exception as e:
+                self.module.fail_json(msg=e.message)
         self._mark_as_changed()
         self._get_resource()
         self._get_rdns()
@@ -213,8 +215,10 @@ class AnsibleHcloudReverseDNS(Hcloud):
             }
 
             if not self.module.check_mode:
-                self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
-
+                try:
+                    self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
+                except Exception as e:
+                    self.module.fail_json(msg=e.message)
             self._mark_as_changed()
             self._get_resource()
             self._get_rdns()
@@ -232,7 +236,10 @@ class AnsibleHcloudReverseDNS(Hcloud):
         self._get_rdns()
         if self.hcloud_rdns is not None:
             if not self.module.check_mode:
-                self.hcloud_resource.change_dns_ptr(ip=self.hcloud_rdns['ip_address'], dns_ptr=None)
+                try:
+                    self.hcloud_resource.change_dns_ptr(ip=self.hcloud_rdns['ip_address'], dns_ptr=None)
+                except Exception as e:
+                    self.module.fail_json(msg=e.message)
             self._mark_as_changed()
         self.hcloud_rdns = None
 

@@ -62,6 +62,20 @@
       - result is failed
       - 'result.msg == "one of the following is required: id, name"'
 
+
+- name: test invalid type
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    type: ipv5
+    home_location: "fsn1"
+  register: result
+  ignore_errors: yes
+- name: verify invalid type
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "one of the following is required: id, name"'
+
 - name: test create Floating IP with check mode
   hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"

@@ -145,7 +145,7 @@ class AnsibleHcloudServerNetwork(Hcloud):
             self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("network"))
             self.hcloud_server = self.client.servers.get_by_name(self.module.params.get("server"))
             self.hcloud_server_network = None
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _get_server_network(self):
@@ -166,7 +166,7 @@ class AnsibleHcloudServerNetwork(Hcloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_server.attach_to_network(**params).wait_until_finished()
-            except APIException as e:
+            except Exception as e:
                 self.module.fail_json(msg=e.message)
 
         self._mark_as_changed()
@@ -204,7 +204,10 @@ class AnsibleHcloudServerNetwork(Hcloud):
         self._get_server_network()
         if self.hcloud_server_network is not None and self.hcloud_server is not None:
             if not self.module.check_mode:
-                self.hcloud_server.detach_from_network(self.hcloud_server_network.network).wait_until_finished()
+                try:
+                    self.hcloud_server.detach_from_network(self.hcloud_server_network.network).wait_until_finished()
+                except Exception as e:
+                    self.module.fail_json(msg=e.message)
             self._mark_as_changed()
         self.hcloud_server_network = None
 

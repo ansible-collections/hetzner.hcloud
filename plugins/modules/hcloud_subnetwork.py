@@ -160,7 +160,7 @@ class AnsibleHcloudSubnetwork(Hcloud):
         try:
             self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("network"))
             self.hcloud_subnetwork = None
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _get_subnetwork(self):
@@ -184,7 +184,7 @@ class AnsibleHcloudSubnetwork(Hcloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_network.add_subnet(subnet=NetworkSubnet(**params)).wait_until_finished()
-            except APIException as e:
+            except Exception as e:
                 self.module.fail_json(msg=e.message)
 
         self._mark_as_changed()
@@ -202,7 +202,10 @@ class AnsibleHcloudSubnetwork(Hcloud):
         self._get_subnetwork()
         if self.hcloud_subnetwork is not None and self.hcloud_network is not None:
             if not self.module.check_mode:
-                self.hcloud_network.delete_subnet(self.hcloud_subnetwork).wait_until_finished()
+                try:
+                    self.hcloud_network.delete_subnet(self.hcloud_subnetwork).wait_until_finished()
+                except Exception as e:
+                    self.module.fail_json(msg=e.message)
             self._mark_as_changed()
         self.hcloud_subnetwork = None
 

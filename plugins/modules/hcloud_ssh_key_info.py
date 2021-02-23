@@ -129,7 +129,7 @@ class AnsibleHcloudSSHKeyInfo(Hcloud):
             else:
                 self.hcloud_ssh_key_info = self.client.ssh_keys.get_all()
 
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod

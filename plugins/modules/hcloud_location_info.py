@@ -122,7 +122,7 @@ class AnsibleHcloudLocationInfo(Hcloud):
             else:
                 self.hcloud_location_info = self.client.locations.get_all()
 
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod
