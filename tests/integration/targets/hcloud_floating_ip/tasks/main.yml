@@ -62,6 +62,33 @@
       - result is failed
       - 'result.msg == "one of the following is required: id, name"'
 
+
+- name: test invalid type
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    type: ipv5
+    home_location: "fsn1"
+  register: result
+  ignore_errors: yes
+- name: verify invalid type
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "value of type must be one of: ipv4, ipv6, got: ipv5"'
+
+- name: test invalid location
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    type: ipv4
+    home_location: "abc"
+  register: result
+  ignore_errors: yes
+- name: verify invalid location
+  assert:
+    that:
+      - result is failed
+      - result.msg == "invalid input in fields 'server', 'home_location'"
+
 - name: test create Floating IP with check mode
   hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"

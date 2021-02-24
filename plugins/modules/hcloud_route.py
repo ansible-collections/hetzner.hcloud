@@ -120,7 +120,7 @@ class AnsibleHcloudRoute(Hcloud):
         try:
             self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("network"))
             self.hcloud_route = None
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _get_route(self):
@@ -139,7 +139,7 @@ class AnsibleHcloudRoute(Hcloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_network.add_route(route=route).wait_until_finished()
-            except APIException as e:
+            except Exception as e:
                 self.module.fail_json(msg=e.message)
 
         self._mark_as_changed()
@@ -157,7 +157,10 @@ class AnsibleHcloudRoute(Hcloud):
         self._get_route()
         if self.hcloud_route is not None and self.hcloud_network is not None:
             if not self.module.check_mode:
-                self.hcloud_network.delete_route(self.hcloud_route).wait_until_finished()
+                try:
+                    self.hcloud_network.delete_route(self.hcloud_route).wait_until_finished()
+                except Exception as e:
+                    self.module.fail_json(msg=e.message)
             self._mark_as_changed()
         self.hcloud_route = None
 

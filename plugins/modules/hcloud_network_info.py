@@ -264,7 +264,7 @@ class AnsibleHcloudNetworkInfo(Hcloud):
             else:
                 self.hcloud_network_info = self.client.networks.get_all()
 
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod

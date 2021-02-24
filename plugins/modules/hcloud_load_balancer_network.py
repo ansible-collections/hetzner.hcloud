@@ -125,7 +125,7 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
             self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("network"))
             self.hcloud_load_balancer = self.client.load_balancers.get_by_name(self.module.params.get("load_balancer"))
             self.hcloud_load_balancer_network = None
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _get_load_balancer_network(self):
@@ -144,7 +144,7 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_load_balancer.attach_to_network(**params).wait_until_finished()
-            except APIException as e:
+            except Exception as e:
                 self.module.fail_json(msg=e.message)
 
         self._mark_as_changed()
@@ -162,9 +162,13 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
         self._get_load_balancer_network()
         if self.hcloud_load_balancer_network is not None and self.hcloud_load_balancer is not None:
             if not self.module.check_mode:
-                self.hcloud_load_balancer.detach_from_network(
-                    self.hcloud_load_balancer_network.network).wait_until_finished()
-            self._mark_as_changed()
+                try:
+                    self.hcloud_load_balancer.detach_from_network(
+                        self.hcloud_load_balancer_network.network).wait_until_finished()
+                    self._mark_as_changed()
+                except Exception as e:
+                    self.module.fail_json(msg=e.message)
+
         self.hcloud_load_balancer_network = None
 
     @staticmethod

@@ -144,7 +144,7 @@ class AnsibleHcloudNetwork(Hcloud):
                 self.hcloud_network = self.client.networks.get_by_name(
                     self.module.params.get("name")
                 )
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_network(self):
@@ -157,15 +157,16 @@ class AnsibleHcloudNetwork(Hcloud):
             "ip_range": self.module.params.get("ip_range"),
             "labels": self.module.params.get("labels"),
         }
+        try:
+            if not self.module.check_mode:
+                self.client.networks.create(**params)
 
-        if not self.module.check_mode:
-            self.client.networks.create(**params)
-
-            delete_protection = self.module.params.get("delete_protection")
-            if delete_protection is not None:
-                self._get_network()
-                self.hcloud_network.change_protection(delete=delete_protection).wait_until_finished()
-
+                delete_protection = self.module.params.get("delete_protection")
+                if delete_protection is not None:
+                    self._get_network()
+                    self.hcloud_network.change_protection(delete=delete_protection).wait_until_finished()
+        except Exception as e:
+            self.module.fail_json(msg=e.message)
         self._mark_as_changed()
         self._get_network()
 
@@ -188,7 +189,7 @@ class AnsibleHcloudNetwork(Hcloud):
                 if not self.module.check_mode:
                     self.hcloud_network.change_protection(delete=delete_protection).wait_until_finished()
                 self._mark_as_changed()
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
         self._get_network()
 
@@ -206,7 +207,7 @@ class AnsibleHcloudNetwork(Hcloud):
                 if not self.module.check_mode:
                     self.client.networks.delete(self.hcloud_network)
                 self._mark_as_changed()
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
         self.hcloud_network = None
 

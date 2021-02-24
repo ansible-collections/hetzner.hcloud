@@ -134,7 +134,7 @@ class AnsibleHcloudCertificateInfo(Hcloud):
             else:
                 self.hcloud_certificate_info = self.client.certificates.get_all()
 
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod

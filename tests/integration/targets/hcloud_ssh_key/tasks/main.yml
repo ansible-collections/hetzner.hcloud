@@ -136,7 +136,7 @@
 - name: test fail cleanly on double created ssh key
   hcloud_ssh_key:
     name: "{{ hcloud_ssh_key_name }}othername"
-    public_key: "{{ hcloud_ssh_key_public_key }}"
+    public_key: "{{ hcloud_doubled_ssh_key_public_key }}"
   register: result
   ignore_errors: yes
 - name: verify failed correctly

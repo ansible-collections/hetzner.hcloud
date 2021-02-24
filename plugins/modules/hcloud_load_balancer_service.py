@@ -344,7 +344,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                 self.module.params.get("load_balancer")
             )
             self._get_load_balancer_service()
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_load_balancer_service(self):
@@ -377,7 +377,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             try:
                 self.hcloud_load_balancer.add_service(LoadBalancerService(**params)).wait_until_finished(
                     max_retries=1000)
-            except APIException as e:
+            except Exception as e:
                 self.module.fail_json(msg=e.message)
         self._mark_as_changed()
         self._get_load_balancer()
@@ -403,11 +403,11 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                             hcloud_cert = self.client.certificates.get_by_name(
                                 certificate
                             )
-                        except APIException:
+                        except Exception:
                             hcloud_cert = self.client.certificates.get_by_id(
                                 certificate
                             )
-                    except APIException as e:
+                    except Exception as e:
                         self.module.fail_json(msg=e.message)
                     service_http.certificates.append(hcloud_cert)
 
@@ -475,7 +475,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             if not self.module.check_mode:
                 self.hcloud_load_balancer.update_service(LoadBalancerService(**params)).wait_until_finished(
                     max_retries=1000)
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
         self._get_load_balancer()
 
@@ -499,8 +499,11 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             self._get_load_balancer()
             if self.hcloud_load_balancer_service is not None:
                 if not self.module.check_mode:
-                    self.hcloud_load_balancer.delete_service(self.hcloud_load_balancer_service).wait_until_finished(
-                        max_retries=1000)
+                    try:
+                        self.hcloud_load_balancer.delete_service(self.hcloud_load_balancer_service).wait_until_finished(
+                            max_retries=1000)
+                    except Exception as e:
+                        self.module.fail_json(msg=e.message)
                 self._mark_as_changed()
             self.hcloud_load_balancer_service = None
         except APIException as e:

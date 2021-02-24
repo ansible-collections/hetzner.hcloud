@@ -370,7 +370,7 @@ class AnsibleHcloudLoadBalancerInfo(Hcloud):
 
                 self.hcloud_load_balancer_info = self.client.load_balancers.get_all(**params)
 
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod

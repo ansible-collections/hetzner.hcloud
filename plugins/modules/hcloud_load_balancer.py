@@ -187,7 +187,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
                 self.hcloud_load_balancer = self.client.load_balancers.get_by_name(
                     self.module.params.get("name")
                 )
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_load_balancer(self):
@@ -195,33 +195,34 @@ class AnsibleHcloudLoadBalancer(Hcloud):
         self.module.fail_on_missing_params(
             required_params=["name", "load_balancer_type"]
         )
+        try:
+            params = {
+                "name": self.module.params.get("name"),
+                "load_balancer_type": self.client.load_balancer_types.get_by_name(
+                    self.module.params.get("load_balancer_type")
+                ),
+                "labels": self.module.params.get("labels"),
+            }
 
-        params = {
-            "name": self.module.params.get("name"),
-            "load_balancer_type": self.client.load_balancer_types.get_by_name(
-                self.module.params.get("load_balancer_type")
-            ),
-            "labels": self.module.params.get("labels"),
-        }
+            if self.module.params.get("location") is None and self.module.params.get("network_zone") is None:
+                self.module.fail_json(msg="one of the following is required: location, network_zone")
+            elif self.module.params.get("location") is not None and self.module.params.get("network_zone") is None:
+                params["location"] = self.client.locations.get_by_name(
+                    self.module.params.get("location")
+                )
+            elif self.module.params.get("location") is None and self.module.params.get("network_zone") is not None:
+                params["network_zone"] = self.module.params.get("network_zone")
 
-        if self.module.params.get("location") is None and self.module.params.get("network_zone") is None:
-            self.module.fail_json(msg="one of the following is required: location, network_zone")
-        elif self.module.params.get("location") is not None and self.module.params.get("network_zone") is None:
-            params["location"] = self.client.locations.get_by_name(
-                self.module.params.get("location")
-            )
-        elif self.module.params.get("location") is None and self.module.params.get("network_zone") is not None:
-            params["network_zone"] = self.module.params.get("network_zone")
+            if not self.module.check_mode:
+                resp = self.client.load_balancers.create(**params)
+                resp.action.wait_until_finished(max_retries=1000)
 
-        if not self.module.check_mode:
-            resp = self.client.load_balancers.create(**params)
-            resp.action.wait_until_finished(max_retries=1000)
-
-            delete_protection = self.module.params.get("delete_protection")
-            if delete_protection is not None:
-                self._get_load_balancer()
-                self.hcloud_load_balancer.change_protection(delete=delete_protection).wait_until_finished()
-
+                delete_protection = self.module.params.get("delete_protection")
+                if delete_protection is not None:
+                    self._get_load_balancer()
+                    self.hcloud_load_balancer.change_protection(delete=delete_protection).wait_until_finished()
+        except Exception as e:
+            self.module.fail_json(msg=e.message)
         self._mark_as_changed()
         self._get_load_balancer()
 
@@ -261,7 +262,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
 
                 self._mark_as_changed()
             self._get_load_balancer()
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def present_load_balancer(self):
@@ -279,7 +280,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
                     self.client.load_balancers.delete(self.hcloud_load_balancer)
                 self._mark_as_changed()
             self.hcloud_load_balancer = None
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod
