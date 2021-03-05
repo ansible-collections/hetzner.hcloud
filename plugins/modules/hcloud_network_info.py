@@ -219,12 +219,13 @@ class AnsibleHcloudNetworkInfo(Hcloud):
 
                 servers = []
                 for server in network.servers:
+                    image = None if server.image is None else to_native(server.image.name)
                     prepared_server = {
                         "id": to_native(server.id),
                         "name": to_native(server.name),
                         "ipv4_address": to_native(server.public_net.ipv4.ip),
                         "ipv6": to_native(server.public_net.ipv6.ip),
-                        "image": to_native(server.image.name),
+                        "image": image,
                         "server_type": to_native(server.server_type.name),
                         "datacenter": to_native(server.datacenter.name),
                         "location": to_native(server.datacenter.location.name),
@@ -263,7 +264,7 @@ class AnsibleHcloudNetworkInfo(Hcloud):
             else:
                 self.hcloud_network_info = self.client.networks.get_all()
 
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod

@@ -14,13 +14,16 @@ function join {
     echo "$*";
 }
 
+# Ensure we can write other collections to this dir
+sudo chown "$(whoami)" "${PWD}/../../"
+
 test="$(join / "${args[@]:1}")"
 
 docker images ansible/ansible
 docker images quay.io/ansible/*
 docker ps
 
-for container in $(docker ps --format '{{.Image}} {{.ID}}' | grep -v '^drydock/' | sed 's/^.* //'); do
+for container in $(docker ps --format '{{.Image}} {{.ID}}' | grep -v -e '^drydock/' -e '^quay.io/ansible/azure-pipelines-test-container:' | sed 's/^.* //'); do
     docker rm -f "${container}" || true  # ignore errors
 done
 
@@ -35,6 +38,7 @@ python -V
 
 function retry
 {
+    # shellcheck disable=SC2034
     for repetition in 1 2 3; do
         set +e
         "$@"
@@ -43,10 +47,10 @@ function retry
         if [ ${result} == 0 ]; then
             return ${result}
         fi
-        echo "$@ -> ${result}"
+        echo "@* -> ${result}"
     done
-    echo "Command '$@' failed 3 times!"
-    exit -1
+    echo "Command '@*' failed 3 times!"
+    exit 1
 }
 
 command -v pip
@@ -57,12 +61,17 @@ if [ "${ansible_version}" == "devel" ]; then
 else
     retry pip install "https://github.com/ansible/ansible/archive/stable-${ansible_version}.tar.gz" --disable-pip-version-check
 fi
-export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
-SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
-TEST_DIR="${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/hetzner/hcloud"
-mkdir -p "${TEST_DIR}"
-cp -aT "${SHIPPABLE_BUILD_DIR}" "${TEST_DIR}"
-cd "${TEST_DIR}"
+
+if [ "${SHIPPABLE_BUILD_ID:-}" ]; then
+    export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
+    SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
+    TEST_DIR="${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/hetzner/hcloud"
+    mkdir -p "${TEST_DIR}"
+    cp -aT "${SHIPPABLE_BUILD_DIR}" "${TEST_DIR}"
+    cd "${TEST_DIR}"
+else
+    export ANSIBLE_COLLECTIONS_PATHS="${PWD}/../../../"
+fi
 
 # STAR: HACK install dependencies
 retry ansible-galaxy -vvv collection install community.general
@@ -76,9 +85,20 @@ retry ansible-galaxy -vvv collection install community.internal_test_tools
 export PYTHONIOENCODING='utf-8'
 
 if [ "${JOB_TRIGGERED_BY_NAME:-}" == "nightly-trigger" ]; then
+    COVERAGE=yes
     COMPLETE=yes
 fi
 
+if [ -n "${COVERAGE:-}" ]; then
+    # on-demand coverage reporting triggered by setting the COVERAGE environment variable to a non-empty value
+    export COVERAGE="--coverage"
+elif [[ "${COMMIT_MESSAGE}" =~ ci_coverage ]]; then
+    # on-demand coverage reporting triggered by having 'ci_coverage' in the latest commit message
+    export COVERAGE="--coverage"
+else
+    # on-demand coverage reporting disabled (default behavior, always-on coverage reporting remains enabled)
+    export COVERAGE="--coverage-check"
+fi
 
 if [ -n "${COMPLETE:-}" ]; then
     # disable change detection triggered by setting the COMPLETE environment variable to a non-empty value
@@ -104,6 +124,68 @@ find plugins -type d -empty -print -delete
 
 function cleanup
 {
+    # for complete on-demand coverage generate a report for all files with no coverage on the "sanity/5" job so we only have one copy
+    if [ "${COVERAGE}" == "--coverage" ] && [ "${CHANGED}" == "" ] && [ "${test}" == "sanity/5" ]; then
+        stub="--stub"
+        # trigger coverage reporting for stubs even if no other coverage data exists
+        mkdir -p tests/output/coverage/
+    else
+        stub=""
+    fi
+
+    if [ -d tests/output/coverage/ ]; then
+        if find tests/output/coverage/ -mindepth 1 -name '.*' -prune -o -print -quit | grep -q .; then
+            process_coverage='yes'  # process existing coverage files
+        elif [ "${stub}" ]; then
+            process_coverage='yes'  # process coverage when stubs are enabled
+        else
+            process_coverage=''
+        fi
+
+        if [ "${process_coverage}" ]; then
+            # use python 3.7 for coverage to avoid running out of memory during coverage xml processing
+            # only use it for coverage to avoid the additional overhead of setting up a virtual environment for a potential no-op job
+            virtualenv --python /usr/bin/python3.7 ~/ansible-venv
+            set +ux
+            . ~/ansible-venv/bin/activate
+            set -ux
+
+            # shellcheck disable=SC2086
+            ansible-test coverage xml --color -v --requirements --group-by command --group-by version ${stub:+"$stub"}
+            cp -a tests/output/reports/coverage=*.xml "$SHIPPABLE_RESULT_DIR/codecoverage/"
+
+            if [ "${ansible_version}" != "2.9" ]; then
+                # analyze and capture code coverage aggregated by integration test target
+                ansible-test coverage analyze targets generate -v "$SHIPPABLE_RESULT_DIR/testresults/coverage-analyze-targets.json"
+            fi
+
+            # upload coverage report to codecov.io only when using complete on-demand coverage
+            if [ "${COVERAGE}" == "--coverage" ] && [ "${CHANGED}" == "" ]; then
+                for file in tests/output/reports/coverage=*.xml; do
+                    flags="${file##*/coverage=}"
+                    flags="${flags%-powershell.xml}"
+                    flags="${flags%.xml}"
+                    # remove numbered component from stub files when converting to tags
+                    flags="${flags//stub-[0-9]*/stub}"
+                    flags="${flags//=/,}"
+                    flags="${flags//[^a-zA-Z0-9_,]/_}"
+
+                    bash <(curl -s https://codecov.io/bash) \
+                        -f "${file}" \
+                        -F "${flags}" \
+                        -n "${test}" \
+                        -t 8a86e979-f37b-4d5d-95a4-960c280d5eaa \
+                        -X coveragepy \
+                        -X gcov \
+                        -X fix \
+                        -X search \
+                        -X xcode \
+                    || echo "Failed to upload code coverage report to codecov.io: ${file}"
+                done
+            fi
+        fi
+    fi
+
     if [ -d  tests/output/junit/ ]; then
       cp -aT tests/output/junit/ "$SHIPPABLE_RESULT_DIR/testresults/"
     fi
@@ -117,9 +199,15 @@ function cleanup
     fi
 }
 
-trap cleanup EXIT
+if [ "${SHIPPABLE_BUILD_ID:-}" ]; then trap cleanup EXIT; fi
 
-ansible-test env --dump --show --timeout "50" --color -v
+if [[ "${COVERAGE:-}" == "--coverage" ]]; then
+    timeout=60
+else
+    timeout=45
+fi
 
-"tests/utils/shippable/check_matrix.py"
+ansible-test env --dump --show --timeout "${timeout}" --color -v
+
+if [ "${SHIPPABLE_BUILD_ID:-}" ]; then "tests/utils/shippable/check_matrix.py"; fi
 "tests/utils/shippable/${script}.sh" "${test}"

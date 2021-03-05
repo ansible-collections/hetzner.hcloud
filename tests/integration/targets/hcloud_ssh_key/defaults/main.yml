@@ -2,7 +2,10 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 hcloud_prefix: "tests"
-hcloud_server_name: "{{hcloud_prefix}}-integration"
-hcloud_ssh_key_name: "{{hcloud_prefix}}-integration"
+hcloud_server_name: "{{hcloud_prefix}}"
+hcloud_ssh_key_name: "{{hcloud_prefix}}"
 hcloud_ssh_key_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDnaTPfKaX1QKcRLOfr34buVLh5FhJAThI9NYB0xNdXsMd4Y0zLyyCQzHbx4eWCVZxym/s6csWSeLaAhO1GOHeAw3hQFMqf1oTBx6Y8g0pKpeotKPa/PDSUzdZF9Lc+DadtpQd8kFVHAu1Kd3zoEUnk1u6kP7I4qu4Z/6F9qBDF+M3aobiPVxdS7GwaVRW3nZu+FcQDLiBiNOjuRDyjHcDfEUkoh2SOu25RrFtGPzFu5mGmBJwotKpWAocLGfHzyn/fAHxgw3jKZVH/t+XWQFnl82Ie8yE3Z1EZ7oDkNRqFQT9AdXEQOLycTTYTQMJZpgeFTv3sAo6lPRCusiFmmLcf ci@ansible.hetzner.cloud"
 hcloud_ssh_key_fingerprint: "56:89:c4:d6:a7:4a:79:82:f4:c2:58:9c:e1:d2:2d:4e"
+
+hcloud_doubled_ssh_key_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1AiuN3UMQKzOs4tNudmlDSkSebC+savc6CivoHGflUKeli7nKb5pKgGiqH+zeWZc+8+flUa2BxsJWmi7d1nGJ++W4BnzmqW78ApelpJnGtuX8IKNcq/trhVTQyaShPiLluoBs7bXyyZpAKNGkk3jHrgwwYD/QQDN0CJnQUM18fjH5CUes2vmaG/kkhn7ctuVHDOvDcEy8KdBX3fYyrtXw5GgWDC5borG6yT1f3E9AXfRPL9OQjMTeC+G4FHscJAZjNnYav+jLrQLdV1xJ0JgbjRyBgTAfBszx9oKIjzCUPvpj4npju0WFGu10pIh0w7bluMoVn1tS6Y3gxE/Cepwt ci@ansible.hetzner.cloud"
+hcloud_doubled_ssh_key_fingerprint: "f9:33:40:ff:77:f3:3e:85:f2:9e:8f:98:71:fd:a0:58"

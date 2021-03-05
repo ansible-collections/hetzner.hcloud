@@ -181,7 +181,7 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
             if self.module.params.get("type") == "server":
                 self.hcloud_server = self.client.servers.get_by_name(self.module.params.get("server"))
             self.hcloud_load_balancer_target = None
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _get_load_balancer_target(self):
@@ -226,7 +226,7 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_load_balancer.add_target(**params).wait_until_finished()
-            except APIException as e:
+            except Exception as e:
                 if e.code == "locked" or e.code == "conflict":
                     self._create_load_balancer_target()
                 else:
@@ -269,7 +269,10 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
                     target = LoadBalancerTarget(type=self.module.params.get("type"),
                                                 ip=LoadBalancerTargetIP(ip=self.module.params.get("ip")),
                                                 use_private_ip=False)
-                self.hcloud_load_balancer.remove_target(target).wait_until_finished()
+                try:
+                    self.hcloud_load_balancer.remove_target(target).wait_until_finished()
+                except Exception as e:
+                    self.module.fail_json(msg=e.message)
             self._mark_as_changed()
         self.hcloud_load_balancer_target = None
 

@@ -147,7 +147,7 @@ class AnsibleHcloudFloatingIPInfo(Hcloud):
             else:
                 self.hcloud_floating_ip_info = self.client.floating_ips.get_all()
 
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod

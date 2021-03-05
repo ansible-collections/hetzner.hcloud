@@ -158,7 +158,7 @@ class AnsibleHcloudImageInfo(Hcloud):
 
                 self.hcloud_image_info = self.client.images.get_all(**params)
 
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod

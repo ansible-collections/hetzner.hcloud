@@ -140,7 +140,7 @@ class AnsibleHcloudServerTypeInfo(Hcloud):
             else:
                 self.hcloud_server_type_info = self.client.server_types.get_all()
 
-        except APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod

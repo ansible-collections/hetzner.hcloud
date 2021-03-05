@@ -206,7 +206,7 @@ class AnsibleHcloudVolume(Hcloud):
                 self.hcloud_volume = self.client.volumes.get_by_name(
                     self.module.params.get("name")
                 )
-        except hcloud.APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_volume(self):
@@ -228,14 +228,16 @@ class AnsibleHcloudVolume(Hcloud):
             self.module.fail_json(msg="server or location is required")
 
         if not self.module.check_mode:
-            resp = self.client.volumes.create(**params)
-            resp.action.wait_until_finished()
-            [action.wait_until_finished() for action in resp.next_actions]
-            delete_protection = self.module.params.get("delete_protection")
-            if delete_protection is not None:
-                self._get_volume()
-                self.hcloud_volume.change_protection(delete=delete_protection).wait_until_finished()
-
+            try:
+                resp = self.client.volumes.create(**params)
+                resp.action.wait_until_finished()
+                [action.wait_until_finished() for action in resp.next_actions]
+                delete_protection = self.module.params.get("delete_protection")
+                if delete_protection is not None:
+                    self._get_volume()
+                    self.hcloud_volume.change_protection(delete=delete_protection).wait_until_finished()
+            except Exception as e:
+                self.module.fail_json(msg=e.message)
         self._mark_as_changed()
         self._get_volume()
 
@@ -277,7 +279,7 @@ class AnsibleHcloudVolume(Hcloud):
                 self._mark_as_changed()
 
             self._get_volume()
-        except hcloud.APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def present_volume(self):
@@ -295,7 +297,7 @@ class AnsibleHcloudVolume(Hcloud):
                     self.client.volumes.delete(self.hcloud_volume)
                 self._mark_as_changed()
             self.hcloud_volume = None
-        except hcloud.APIException as e:
+        except Exception as e:
             self.module.fail_json(msg=e.message)
 
     @staticmethod

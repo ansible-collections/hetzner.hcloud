@@ -113,7 +113,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name }}"
     server_type: cx11
-    image: "ubuntu-18.04"
+    image: "ubuntu-20.04"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     state: started
@@ -128,10 +128,22 @@
     id: "{{ sshKey.hcloud_ssh_key.id }}"
     state: absent
   register: result
-- name: verify absent server
+- name: verify absent sshkey
   assert:
     that:
       - result is success
+
+- name: test fail cleanly on double created ssh key
+  hcloud_ssh_key:
+    name: "{{ hcloud_ssh_key_name }}othername"
+    public_key: "{{ hcloud_doubled_ssh_key_public_key }}"
+  register: result
+  ignore_errors: yes
+- name: verify failed correctly
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "SSH key with the same fingerprint already exists"'
 
 - name: cleanup
   hcloud_server:

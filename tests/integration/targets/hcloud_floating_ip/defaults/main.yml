@@ -2,5 +2,5 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 hcloud_prefix: "tests"
-hcloud_floating_ip_name: "{{hcloud_prefix}}-integration"
-hcloud_server_name: "{{hcloud_prefix}}-fip-tests"
+hcloud_floating_ip_name: "{{hcloud_prefix}}-i"
+hcloud_server_name: "{{hcloud_prefix}}-fip-t"
