@@ -49,6 +49,11 @@ options:
             - List of Volumes IDs that should be attached to the server on server creation.
         type: list
         elements: str
+    firewalls:
+        description:
+            - List of Firewall IDs that should be attached to the server on server creation.
+        type: list
+        elements: str
     image:
         description:
             - Image the server should be created from.
@@ -255,12 +260,15 @@ try:
     from hcloud.volumes.domain import Volume
     from hcloud.ssh_keys.domain import SSHKey
     from hcloud.servers.domain import Server
+    from hcloud.firewalls.domain import Firewall, FirewallResource
     from hcloud import APIException
 except ImportError:
     APIException = None
     Volume = None
     SSHKey = None
     Server = None
+    Firewall = None
+    FirewallResource = None
 
 
 class AnsibleHcloudServer(Hcloud):
@@ -314,9 +322,10 @@ class AnsibleHcloudServer(Hcloud):
             "user_data": self.module.params.get("user_data"),
             "labels": self.module.params.get("labels"),
         }
-        if self.client.images.get_by_name(self.module.params.get("image")) is not None:
+        image = self.client.images.get_by_name(self.module.params.get("image"))
+        if image is not None:
             # When image name is not available look for id instead
-            params["image"] = self.client.images.get_by_name(self.module.params.get("image"))
+            params["image"] = image
         else:
             params["image"] = self.client.images.get_by_id(self.module.params.get("image"))
 
@@ -330,6 +339,15 @@ class AnsibleHcloudServer(Hcloud):
             params["volumes"] = [
                 Volume(id=volume_id) for volume_id in self.module.params.get("volumes")
             ]
+        if self.module.params.get("firewalls") is not None:
+            params["firewalls"] = []
+            for fw in self.module.params.get("firewalls"):
+                f = self.client.firewalls.get_by_name(fw)
+                if f is not None:
+                    # When firewall name is not available look for id instead
+                    params["firewalls"].append(f)
+                else:
+                    params["firewalls"].append(self.client.firewalls.get_by_id(fw))
 
         if self.module.params.get("location") is None and self.module.params.get("datacenter") is None:
             # When not given, the API will choose the location.
@@ -397,6 +415,34 @@ class AnsibleHcloudServer(Hcloud):
             if labels is not None and labels != self.hcloud_server.labels:
                 if not self.module.check_mode:
                     self.hcloud_server.update(labels=labels)
+                self._mark_as_changed()
+
+            firewalls = self.module.params.get("firewalls")
+            if firewalls is not None and firewalls != self.hcloud_server.public_net.firewalls:
+                if not self.module.check_mode:
+                    for f in self.hcloud_server.public_net.firewalls:
+                        found = False
+                        for fname in firewalls:
+                            if f.firewall.name == fname:
+                                found = True
+                        if not found:
+                            r = FirewallResource(type="server", server=self.hcloud_server)
+                            actions = self.client.firewalls.remove_from_resources(f.firewall, [r])
+                            for a in actions:
+                                a.wait_until_finished()
+
+                    for fname in firewalls:
+                        found = False
+                        fw = None
+                        for f in self.hcloud_server.public_net.firewalls:
+                            if f.firewall.name == fname:
+                                found = True
+                                fw = f
+                        if not found and fw is not None:
+                            r = FirewallResource(type="server", server=self.hcloud_server)
+                            actions = self.client.firewalls.apply_to_resources(fw, [r])
+                            for a in actions:
+                                a.wait_until_finished()
                 self._mark_as_changed()
 
             server_type = self.module.params.get("server_type")
@@ -517,6 +563,7 @@ class AnsibleHcloudServer(Hcloud):
                 user_data={"type": "str"},
                 ssh_keys={"type": "list", "elements": "str"},
                 volumes={"type": "list", "elements": "str"},
+                firewalls={"type": "list", "elements": "str"},
                 labels={"type": "dict"},
                 backups={"type": "bool", "default": False},
                 upgrade_disk={"type": "bool", "default": False},
