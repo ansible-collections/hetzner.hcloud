@@ -4,6 +4,19 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v1.3.0
+======
+
+Minor Changes
+--------
+- Add firewalls to hcloud_server module
+
+New Modules
+-----------
+
+- hcloud_firewall - Manage Hetzner Cloud Firewalls
+
+
 v1.2.1
 ======
 

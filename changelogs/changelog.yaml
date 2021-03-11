@@ -72,3 +72,13 @@ releases:
       bugfixes:
       - Inventory Restore Python 2.7 compatibility
     release_date: '2020-12-16'
+  1.3.0:
+    changes:
+      minor_changes:
+        - Add firewalls to hcloud_server module
+    modules:
+    - description: Manage Hetzner Cloud Firewalls
+      name: hcloud_firewall
+      namespace: ''
+    release_date: '2021-03-11'
+
