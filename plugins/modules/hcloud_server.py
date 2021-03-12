@@ -500,21 +500,23 @@ class AnsibleHcloudServer(Hcloud):
 
     def start_server(self):
         try:
-            if self.hcloud_server.status != Server.STATUS_RUNNING:
-                if not self.module.check_mode:
-                    self.client.servers.power_on(self.hcloud_server).wait_until_finished()
-                self._mark_as_changed()
-            self._get_server()
+            if self.hcloud_server:
+                if self.hcloud_server.status != Server.STATUS_RUNNING:
+                    if not self.module.check_mode:
+                        self.client.servers.power_on(self.hcloud_server).wait_until_finished()
+                    self._mark_as_changed()
+                self._get_server()
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def stop_server(self):
         try:
-            if self.hcloud_server.status != Server.STATUS_OFF:
-                if not self.module.check_mode:
-                    self.client.servers.power_off(self.hcloud_server).wait_until_finished()
-                self._mark_as_changed()
-            self._get_server()
+            if self.hcloud_server:
+                if self.hcloud_server.status != Server.STATUS_OFF:
+                    if not self.module.check_mode:
+                        self.client.servers.power_off(self.hcloud_server).wait_until_finished()
+                    self._mark_as_changed()
+                self._get_server()
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
