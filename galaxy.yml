@@ -13,6 +13,6 @@ tags:
 dependencies:
   ansible.netcommon: '>=0.0.1'
 repository: https://github.com/ansible-collections/hetzner.hcloud
-documentation: https://github.com/ansible-collections/hetzner.hcloud/tree/master/docs
+documentation: https://docs.ansible.com/ansible/latest/collections/hetzner/hcloud
 homepage: https://github.com/ansible-collections/hetzner.hcloud
 issues: https://github.com/ansible-collections/hetzner.hcloud/issues
