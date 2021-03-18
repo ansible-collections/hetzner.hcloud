@@ -75,10 +75,17 @@ releases:
   1.3.0:
     changes:
       minor_changes:
-        - Add firewalls to hcloud_server module
+      - Add firewalls to hcloud_server module
     modules:
     - description: Manage Hetzner Cloud Firewalls
       name: hcloud_firewall
       namespace: ''
     release_date: '2021-03-11'
-
+  1.3.1:
+    changes:
+      bugfixes:
+      - hcloud_server - fix a crash related to check mode if ``state=started`` or
+        ``state=stopped`` (https://github.com/ansible-collections/hetzner.hcloud/issues/54).
+    fragments:
+    - 64-hcloud_server_fix_checkmode_state_started.yml
+    release_date: '2021-03-18'

@@ -4,11 +4,21 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+
+v1.3.1
+======
+
+Bugfixes
+--------
+
+- hcloud_server - fix a crash related to check mode if ``state=started`` or ``state=stopped`` (https://github.com/ansible-collections/hetzner.hcloud/issues/54).
+
 v1.3.0
 ======
 
 Minor Changes
---------
+-------------
+
 - Add firewalls to hcloud_server module
 
 New Modules
@@ -16,14 +26,13 @@ New Modules
 
 - hcloud_firewall - Manage Hetzner Cloud Firewalls
 
-
 v1.2.1
 ======
 
 Bugfixes
 --------
-- Inventory Restore Python 2.7 compatibility
 
+- Inventory Restore Python 2.7 compatibility
 
 v1.2.0
 ======

@@ -1,2 +1,0 @@
-bugfixes:
-  - hcloud_server - fix a crash related to check mode if ``state=started`` or ``state=stopped`` (https://github.com/ansible-collections/hetzner.hcloud/issues/54).
