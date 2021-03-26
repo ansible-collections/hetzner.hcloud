@@ -232,7 +232,7 @@ class AnsibleHcloudCertificate(Hcloud):
                 id={"type": "int"},
                 name={"type": "str"},
                 certificate={"type": "str"},
-                private_key={"type": "str"},
+                private_key={"type": "str", "no_log": True},
                 labels={"type": "dict"},
                 state={
                     "choices": ["absent", "present"],

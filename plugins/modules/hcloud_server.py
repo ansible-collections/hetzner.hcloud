@@ -563,7 +563,7 @@ class AnsibleHcloudServer(Hcloud):
                 location={"type": "str"},
                 datacenter={"type": "str"},
                 user_data={"type": "str"},
-                ssh_keys={"type": "list", "elements": "str"},
+                ssh_keys={"type": "list", "elements": "str", "no_log": False},
                 volumes={"type": "list", "elements": "str"},
                 firewalls={"type": "list", "elements": "str"},
                 labels={"type": "dict"},
