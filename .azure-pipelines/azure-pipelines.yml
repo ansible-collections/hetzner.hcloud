@@ -2,13 +2,13 @@ trigger:
   batch: true
   branches:
     include:
-      - master
+      - main
 
 pr:
   autoCancel: true
   branches:
     include:
-      - master
+      - main
 
 schedules:
   - cron: 0 9 * * *
@@ -16,13 +16,13 @@ schedules:
     always: true
     branches:
       include:
-        - master
+        - main
 
 variables:
   - name: checkoutPath
     value: ansible_collections/hetzner/hcloud
   - name: coverageBranches
-    value: master
+    value: main
   - name: pipelinesCoverage
     value: coverage
   - name: entryPoint
