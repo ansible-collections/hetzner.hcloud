@@ -89,3 +89,18 @@ releases:
     fragments:
     - 64-hcloud_server_fix_checkmode_state_started.yml
     release_date: '2021-03-18'
+  1.4.0:
+    changes:
+      bugfixes:
+      - hcloud_firewall - fix idempotence related to rules comparison (https://github.com/ansible-collections/hetzner.hcloud/pull/71).
+      - hcloud_load_balancer_service - fix imported wrong HealthCheck from hcloud-python
+        (https://github.com/ansible-collections/hetzner.hcloud/pull/73).
+      - hcloud_server - fix idempotence related to firewall handling (https://github.com/ansible-collections/hetzner.hcloud/pull/71).
+      security_fixes:
+      - hcloud_certificate - mark the ``private_key`` parameter as ``no_log`` to prevent
+        potential leaking of secret values (https://github.com/ansible-collections/hetzner.hcloud/pull/70).
+    fragments:
+    - 70-no_log_security_fixes.yml
+    - 71-hcloud_firewall_fix_idempotence.yml
+    - 73-hcloud_load_balancer_service_fix_wrong_import.yml
+    release_date: '2021-04-06'
