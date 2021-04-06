@@ -121,3 +121,29 @@
   assert:
     that:
       - result is success
+
+- name: test create managed certificate
+  hcloud_certificate:
+    name: "{{ hcloud_certificate_name }}"
+    domain_names:
+      - "{{ hcloud_dns_test_domain }}"
+    type: managed
+    labels:
+      HC-Use-Staging-CA: "true"
+  register: result
+- name: test rename certificate
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_certificate.name == "{{ hcloud_certificate_name }}"
+      - result.hcloud_certificate.domain_names[0] == "{{ hcloud_dns_test_domain }}"
+
+- name: absent certificate
+  hcloud_certificate:
+    id: "{{ result.hcloud_certificate.id }}"
+    state: absent
+  register: result
+- name: verify absent server
+  assert:
+    that:
+      - result is success

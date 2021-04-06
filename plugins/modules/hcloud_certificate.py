@@ -46,6 +46,18 @@ options:
             - Certificate key in PEM format.
             - Required if certificate does not exists.
         type: str
+    domain_names:
+        description:
+            - Certificate key in PEM format.
+            - Required if certificate does not exists.
+        type: list
+        elements: str
+    type:
+        description:
+            - Choose between uploading a Certificate in PEM format or requesting a managed Let's Encrypt Certificate.
+        default: uploaded
+        choices: [ uploaded, managed ]
+        type: str
     state:
         description:
             - State of the certificate.
@@ -146,6 +158,7 @@ class AnsibleHcloudCertificate(Hcloud):
         return {
             "id": to_native(self.hcloud_certificate.id),
             "name": to_native(self.hcloud_certificate.name),
+            "type": to_native(self.hcloud_certificate.type),
             "fingerprint": to_native(self.hcloud_certificate.fingerprint),
             "certificate": to_native(self.hcloud_certificate.certificate),
             "not_valid_before": to_native(self.hcloud_certificate.not_valid_before),
@@ -170,20 +183,36 @@ class AnsibleHcloudCertificate(Hcloud):
 
     def _create_certificate(self):
         self.module.fail_on_missing_params(
-            required_params=["name", "certificate", "private_key"]
+            required_params=["name"]
         )
+
         params = {
             "name": self.module.params.get("name"),
-            "certificate": self.module.params.get("certificate"),
-            "private_key": self.module.params.get("private_key"),
             "labels": self.module.params.get("labels")
         }
+        if self.module.params.get('type') == 'uploaded':
+            self.module.fail_on_missing_params(
+                required_params=["certificate", "private_key"]
+            )
+            params["certificate"] = self.module.params.get("certificate")
+            params["private_key"] = self.module.params.get("private_key")
+            if not self.module.check_mode:
+                try:
+                    self.client.certificates.create(**params)
+                except Exception as e:
+                    self.module.fail_json(msg=e.message)
+        else:
+            self.module.fail_on_missing_params(
+                required_params=["domain_names"]
+            )
+            params["domain_names"] = self.module.params.get("domain_names")
+            if not self.module.check_mode:
+                try:
+                    resp = self.client.certificates.create_managed(**params)
+                    resp.action.wait_until_finished(max_retries=1000)
+                except Exception as e:
+                    self.module.fail_json(msg=e.message)
 
-        if not self.module.check_mode:
-            try:
-                self.client.certificates.create(**params)
-            except Exception as e:
-                self.module.fail_json(msg=e.message)
         self._mark_as_changed()
         self._get_certificate()
 
@@ -231,6 +260,11 @@ class AnsibleHcloudCertificate(Hcloud):
             argument_spec=dict(
                 id={"type": "int"},
                 name={"type": "str"},
+                type={
+                    "choices": ["uploaded", "managed"],
+                    "default": "uploaded",
+                },
+                domain_names={"type": "list", "elements": "str", "default": []},
                 certificate={"type": "str"},
                 private_key={"type": "str", "no_log": True},
                 labels={"type": "dict"},
