@@ -1,6 +1,11 @@
 # Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
+- name: setup firewall to be absent
+  hcloud_firewall:
+    name: "{{ hcloud_firewall_name }}"
+    state: absent
+
 - name: test missing required parameters on create firewall
   hcloud_firewall:
   register: result
@@ -46,6 +51,12 @@
 - name: test create firewall idempotence
   hcloud_firewall:
     name: "{{ hcloud_firewall_name }}"
+    rules:
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
     labels:
       key: value
       my-label: label
@@ -88,6 +99,18 @@
 - name: test update firewall rules idempotence
   hcloud_firewall:
     name: "{{ hcloud_firewall_name }}"
+    rules:
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+      - direction: in
+        protocol: tcp
+        port: 80
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
     labels:
       key: value
       my-label: label
@@ -96,7 +119,6 @@
   assert:
     that:
       - result is not changed
-
 
 - name: test update firewall with check mode
   hcloud_firewall:

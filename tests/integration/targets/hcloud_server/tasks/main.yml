@@ -609,7 +609,6 @@
       - result_after_test.hcloud_server.delete_protection is sameas true
       - result_after_test.hcloud_server.rebuild_protection is sameas true
 
-
 - name: test delete server fails if it is protected
   hcloud_server:
     name: "{{hcloud_server_name}}"
@@ -647,35 +646,18 @@
     that:
     - result is success
 
-- name: test create firewall
+- name: setup create firewalls
   hcloud_firewall:
-    name: "{{ hcloud_firewall_name }}"
+    name: "{{ item }}"
     rules:
       - direction: in
         protocol: icmp
         source_ips:
           - 0.0.0.0/0
           - ::/0
-  register: firewall
-- name: verify create firewall
-  assert:
-    that:
-      - firewall is changed
-
-- name: test create firewall
-  hcloud_firewall:
-    name: "{{ hcloud_firewall_name }}2"
-    rules:
-      - direction: in
-        protocol: icmp
-        source_ips:
-          - 0.0.0.0/0
-          - ::/0
-  register: firewall2
-- name: verify create firewall
-  assert:
-    that:
-      - firewall2 is changed
+  with_items:
+    - "{{ hcloud_firewall_name }}"
+    - "{{ hcloud_firewall_name }}2"
 
 - name: test create server with firewalls
   hcloud_server:
@@ -688,10 +670,26 @@
       - ci@ansible.hetzner.cloud
     state: present
   register: result
-- name: verify enable backups
+- name: verify test create server with firewalls
   assert:
     that:
       - result is changed
+
+- name: test create server with firewalls idempotence
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    firewalls:
+      - "{{ hcloud_firewall_name }}"
+    image: "ubuntu-20.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
+  register: result
+- name: verify test create server with firewalls idempotence
+  assert:
+    that:
+      - result is not changed
 
 - name: test update server with firewalls
   hcloud_server:
@@ -704,27 +702,36 @@
       - ci@ansible.hetzner.cloud
     state: present
   register: result
-- name: verify enable backups
+- name: verify test update server with firewalls
   assert:
     that:
       - result is changed
 
-- name: cleanup test create firewall
-  hcloud_firewall:
-    name: "{{ hcloud_firewall_name }}"
-    state: absent
+- name: test update server with firewalls idempotence
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    firewalls:
+      - "{{ hcloud_firewall_name }}2"
+    image: "ubuntu-20.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
   register: result
-- name: verify create firewall
+- name: verify test update server with firewalls idempotence
   assert:
     that:
-      - result is changed
+      - result is not changed
 
-- name: cleanup test create server with firewalls
+- name: cleanup server with firewalls
   hcloud_server:
     name: "{{ hcloud_server_name }}"
     state: absent
-  register: result
-- name: verify cleanup
-  assert:
-    that:
-    - result is success
+
+- name: cleanup test create firewall
+  hcloud_firewall:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ hcloud_firewall_name }}"
+    - "{{ hcloud_firewall_name }}2"
