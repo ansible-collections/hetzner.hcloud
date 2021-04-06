@@ -49,6 +49,7 @@ ansible-devel-4/4:
 ansible-210-1/4:
   stage: sanity
   image: python:3.6-buster
+  allow_failure: true
   except:
     - tags
   script:
@@ -59,6 +60,7 @@ ansible-210-1/4:
 ansible-210-2/4:
   stage: sanity
   image: python:3.6-buster
+  allow_failure: true
   except:
     - tags
   script:
@@ -69,6 +71,7 @@ ansible-210-2/4:
 ansible-210-3/4:
   stage: sanity
   image: python:3.6-buster
+  allow_failure: true
   except:
     - tags
   script:
@@ -79,6 +82,7 @@ ansible-210-3/4:
 ansible-210-4/4:
   stage: sanity
   image: python:3.6-buster
+  allow_failure: true
   except:
     - tags
   script:
@@ -89,6 +93,7 @@ ansible-210-4/4:
 ansible-29-1/4:
   stage: sanity
   image: python:3.6-buster
+  allow_failure: true
   except:
     - tags
   script:
@@ -99,6 +104,7 @@ ansible-29-1/4:
 ansible-29-2/4:
   stage: sanity
   image: python:3.6-buster
+  allow_failure: true
   except:
     - tags
   script:
@@ -109,6 +115,7 @@ ansible-29-2/4:
 ansible-29-3/4:
   stage: sanity
   image: python:3.6-buster
+  allow_failure: true
   except:
     - tags
   script:
@@ -119,6 +126,7 @@ ansible-29-3/4:
 ansible-29-4/4:
   stage: sanity
   image: python:3.6-buster
+  allow_failure: true
   except:
     - tags
   script:
