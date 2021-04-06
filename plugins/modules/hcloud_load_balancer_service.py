@@ -289,7 +289,7 @@ from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hclou
 
 try:
     from hcloud.load_balancers.domain import LoadBalancer, LoadBalancerService, LoadBalancerServiceHttp, \
-        LoadBalancerServiceHealthCheck, LoadBalancerServiceHealthCheckHttp
+        LoadBalancerHealthCheck, LoadBalancerHealtCheckHttp
     from hcloud import APIException
 except ImportError:
     APIException = None
@@ -414,7 +414,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         return service_http
 
     def __get_service_health_checks(self, health_check):
-        service_health_check = LoadBalancerServiceHealthCheck()
+        service_health_check = LoadBalancerHealthCheck()
         if health_check.get("protocol") is not None:
             service_health_check.protocol = health_check.get("protocol")
         if health_check.get("port") is not None:
@@ -427,7 +427,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             service_health_check.retries = health_check.get("retries")
         if health_check.get("http") is not None:
             health_check_http = health_check.get("http")
-            service_health_check.http = LoadBalancerServiceHealthCheckHttp()
+            service_health_check.http = LoadBalancerHealtCheckHttp()
             if health_check_http.get("domain") is not None:
                 service_health_check.http.domain = health_check_http.get("domain")
             if health_check_http.get("path") is not None:
