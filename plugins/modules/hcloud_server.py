@@ -3,7 +3,6 @@
 
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-#
 
 from __future__ import absolute_import, division, print_function
 
@@ -418,33 +417,34 @@ class AnsibleHcloudServer(Hcloud):
                     self.hcloud_server.update(labels=labels)
                 self._mark_as_changed()
 
-            firewalls = self.module.params.get("firewalls")
-            if firewalls is not None and firewalls != self.hcloud_server.public_net.firewalls:
-                if not self.module.check_mode:
-                    for f in self.hcloud_server.public_net.firewalls:
-                        found = False
-                        for fname in firewalls:
-                            if f.firewall.name == fname:
-                                found = True
-                        if not found:
+            wanted_firewalls = self.module.params.get("firewalls")
+            if wanted_firewalls is not None:
+                # Removing existing but not wanted firewalls
+                for current_firewall in self.hcloud_server.public_net.firewalls:
+                    if current_firewall.firewall.name not in wanted_firewalls:
+                        self._mark_as_changed()
+                        if not self.module.check_mode:
                             r = FirewallResource(type="server", server=self.hcloud_server)
-                            actions = self.client.firewalls.remove_from_resources(f.firewall, [r])
+                            actions = self.client.firewalls.remove_from_resources(current_firewall.firewall, [r])
                             for a in actions:
                                 a.wait_until_finished()
 
-                    for fname in firewalls:
-                        found = False
-                        fw = None
-                        for f in self.hcloud_server.public_net.firewalls:
-                            if f.firewall.name == fname:
-                                found = True
-                                fw = f
-                        if not found and fw is not None:
+                # Adding wanted firewalls that doesn't exist yet
+                for fname in wanted_firewalls:
+                    found = False
+                    for f in self.hcloud_server.public_net.firewalls:
+                        if f.firewall.name == fname:
+                            found = True
+                            break
+
+                    if not found:
+                        self._mark_as_changed()
+                        if not self.module.check_mode:
+                            fw = self.client.firewalls.get_by_name(fname)
                             r = FirewallResource(type="server", server=self.hcloud_server)
                             actions = self.client.firewalls.apply_to_resources(fw, [r])
                             for a in actions:
                                 a.wait_until_finished()
-                self._mark_as_changed()
 
             server_type = self.module.params.get("server_type")
             if server_type is not None and self.hcloud_server.server_type.name != server_type:

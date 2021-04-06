@@ -3,7 +3,6 @@
 
 # Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-#
 
 from __future__ import absolute_import, division, print_function
 
@@ -253,7 +252,7 @@ class AnsibleHcloudFirewall(Hcloud):
             self._mark_as_changed()
 
         rules = self.module.params.get("rules")
-        if rules is not None and self.hcloud_firewall.rules != rules:
+        if rules is not None and rules != [self._prepare_result_rule(rule) for rule in self.hcloud_firewall.rules]:
             if not self.module.check_mode:
                 new_rules = [
                     FirewallRule(
@@ -298,7 +297,7 @@ class AnsibleHcloudFirewall(Hcloud):
                         protocol={"type": "str", "choices": ["icmp", "udp", "tcp"]},
                         port={"type": "str"},
                         source_ips={"type": "list", "elements": "str"},
-                        destination_ips={"type": "list", "elements": "str"},
+                        destination_ips={"type": "list", "elements": "str", "default": []},
                     ),
                     required_together=[["direction", "protocol", "source_ips"]]
                 ),
