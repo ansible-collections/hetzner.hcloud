@@ -1,3 +1,0 @@
-minor_changes:
-  - hcloud_server - improve the validation and error response for not existing images
-  - hcloud_server - improve the handling of deprecated images

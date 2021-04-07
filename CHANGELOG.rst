@@ -5,13 +5,18 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
-v1.4.0
+v1.4.1
 ======
 
 Minor Changes
 -------------
 
-- Add support for managed certificates to hcloud_certificate module
+- hcloud_server - improve the handling of deprecated images
+- hcloud_server - improve the validation and error response for not existing images
+- inventory - support jinjia templating within `token`
+
+v1.4.0
+======
 
 Security Fixes
 --------------

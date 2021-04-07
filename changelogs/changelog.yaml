@@ -104,3 +104,13 @@ releases:
     - 71-hcloud_firewall_fix_idempotence.yml
     - 73-hcloud_load_balancer_service_fix_wrong_import.yml
     release_date: '2021-04-06'
+  1.4.1:
+    changes:
+      minor_changes:
+      - hcloud_server - improve the handling of deprecated images
+      - hcloud_server - improve the validation and error response for not existing
+        images
+      - inventory - support jinjia templating within `token`
+    fragments:
+    - 74-hcloud_server-improve-error-message-images.yml
+    release_date: '2021-04-07'
