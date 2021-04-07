@@ -8,6 +8,8 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from dateutil import relativedelta
+
 DOCUMENTATION = '''
 ---
 module: hcloud_server
@@ -84,6 +86,11 @@ options:
         description:
             - Force the upgrade of the server.
             - Power off the server if it is running on upgrade.
+        type: bool
+        default: no
+    allow_deprecated_image:
+        description:
+            - Allows the creation of servers with deprecated images.
         type: bool
         default: no
     user_data:
@@ -309,7 +316,6 @@ class AnsibleHcloudServer(Hcloud):
             self.module.fail_json(msg=e.message)
 
     def _create_server(self):
-
         self.module.fail_on_missing_params(
             required_params=["name", "server_type", "image"]
         )
@@ -321,13 +327,8 @@ class AnsibleHcloudServer(Hcloud):
             ),
             "user_data": self.module.params.get("user_data"),
             "labels": self.module.params.get("labels"),
+            "image": self._get_image()
         }
-        image = self.client.images.get_by_name(self.module.params.get("image"))
-        if image is not None:
-            # When image name is not available look for id instead
-            params["image"] = image
-        else:
-            params["image"] = self.client.images.get_by_id(self.module.params.get("image"))
 
         if self.module.params.get("ssh_keys") is not None:
             params["ssh_keys"] = [
@@ -389,6 +390,32 @@ class AnsibleHcloudServer(Hcloud):
                 self.module.fail_json(msg=e.message)
         self._mark_as_changed()
         self._get_server()
+
+    def _get_image(self):
+        image_resp = self.client.images.get_list(name=self.module.params.get("image"), include_deprecated=True)
+        images = getattr(image_resp, 'images')
+        image = None
+        if images is not None and len(images) > 0:
+            # If image name is not available look for id instead
+            image = images[0]
+        else:
+            try:
+                image = self.client.images.get_by_id(self.module.params.get("image"))
+            except:
+                self.module.fail_json(msg=f"Image {self.module.params.get('image')} was not found")
+        if image.deprecated is not None:
+            available_until = image.deprecated + relativedelta.relativedelta(months=3)
+            if self.module.params.get("allow_deprecated_image"):
+                self.module.warn(
+                    f"You try to use a deprecated image. The image {image.name} will "
+                    f"continue to be available until {available_until.strftime('%Y-%m-%d')}."
+                )
+            else:
+                self.module.fail_json(msg=f"You try to use a deprecated image. The image {image.name} will "
+                                          f"continue to be available until {available_until.strftime('%Y-%m-%d')}. "
+                                          f"If you want to use this image use allow_deprecated_image=yes."
+                                      )
+        return image
 
     def _update_server(self):
         try:
@@ -527,8 +554,8 @@ class AnsibleHcloudServer(Hcloud):
         )
         try:
             if not self.module.check_mode:
-                self.client.servers.rebuild(self.hcloud_server, self.client.images.get_by_name(
-                    self.module.params.get("image"))).wait_until_finished()
+                image = self._get_image()
+                self.client.servers.rebuild(self.hcloud_server, image).wait_until_finished()
             self._mark_as_changed()
 
             self._get_server()
@@ -571,6 +598,7 @@ class AnsibleHcloudServer(Hcloud):
                 backups={"type": "bool", "default": False},
                 upgrade_disk={"type": "bool", "default": False},
                 force_upgrade={"type": "bool", "default": False},
+                allow_deprecated_image={"type": "bool", "default": False},
                 rescue_mode={"type": "str"},
                 delete_protection={"type": "bool"},
                 rebuild_protection={"type": "bool"},
