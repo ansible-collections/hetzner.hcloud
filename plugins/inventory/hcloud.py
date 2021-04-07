@@ -112,7 +112,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
 
     def _configure_hcloud_client(self):
         self.token_env = self.get_option("token_env")
-        self.api_token = self.get_option("token") or os.getenv(self.token_env)
+        self.api_token = self.templar.template(self.get_option("token"), fail_on_undefined=False) or os.getenv(self.token_env)
         if self.api_token is None:
             raise AnsibleError(
                 "Please specify a token, via the option token, via environment variable HCLOUD_TOKEN "
