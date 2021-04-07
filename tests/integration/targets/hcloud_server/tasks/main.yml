@@ -20,6 +20,35 @@
     that:
       - result is failed
       - 'result.msg == "missing required arguments: server_type, image"'
+- name: test create server with not existing image
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cx11
+    image: my-not-existing-image-20.04
+    state: present
+  register: result
+  ignore_errors: yes
+- name: verify fail test create server with not existing image
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "Image my-not-existing-image-20.04 was not found"'
+
+# Temporary test case to test deprecated images. This test will fail when the ubuntu-16.04 image was removed
+# feel free to remove this test then.
+- name: test create server with deprecated image
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cx11
+    image: ubuntu-16.04
+    state: present
+  register: result
+  ignore_errors: yes
+- name: verify fail test create server deprecated image
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "You try to use a deprecated image. The image ubuntu-16.04 will continue to be available until 2021-06-24. If you want to use this image use allow_deprecated_image=yes."'
 
 - name: test create server with check mode
   hcloud_server:
