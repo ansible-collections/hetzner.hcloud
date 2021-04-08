@@ -400,21 +400,18 @@ class AnsibleHcloudServer(Hcloud):
         else:
             try:
                 image = self.client.images.get_by_id(self.module.params.get("image"))
-            except Exception:
+            except:
                 self.module.fail_json(msg="Image %s was not found" % image.name)
         if image.deprecated is not None:
             available_until = image.deprecated + timedelta(days=180)
             if self.module.params.get("allow_deprecated_image"):
                 self.module.warn(
-                    ("You try to use a deprecated image. The image %s will " +
-                     "continue to be available until %s.") % (image.name, available_until.strftime('%Y-%m-%d'))
-                )
+                    "You try to use a deprecated image. The image %s will continue to be available until %s."
+                    % (image.name, available_until.strftime('%Y-%m-%d')))
             else:
-                self.module.fail_json(msg=("You try to use a deprecated image. The image %s will " +
-                                           "continue to be available until %s. " +
-                                           "If you want to use this image use allow_deprecated_image=yes.") % (
-                                              image.name, available_until.strftime('%Y-%m-%d'))
-                                      )
+                self.module.fail_json(
+                    msg=("You try to use a deprecated image. The image %s will continue to be available until %s. " +
+                         "If you want to use this image use allow_deprecated_image=yes.") % (image.name, available_until.strftime('%Y-%m-%d')))
         return image
 
     def _update_server(self):
