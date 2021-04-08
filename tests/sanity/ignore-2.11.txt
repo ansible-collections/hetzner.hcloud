@@ -1,2 +1,3 @@
 tests/utils/shippable/check_matrix.py replace-urlopen
 tests/utils/shippable/timing.py shebang
+plugins/modules/hcloud_server.py !skip
