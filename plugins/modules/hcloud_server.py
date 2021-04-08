@@ -8,8 +8,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from dateutil import relativedelta
-
 DOCUMENTATION = '''
 ---
 module: hcloud_server
@@ -262,6 +260,7 @@ hcloud_server:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from datetime import timedelta
 
 try:
     from hcloud.volumes.domain import Volume
@@ -401,19 +400,20 @@ class AnsibleHcloudServer(Hcloud):
         else:
             try:
                 image = self.client.images.get_by_id(self.module.params.get("image"))
-            except:
-                self.module.fail_json(msg=f"Image {self.module.params.get('image')} was not found")
+            except Exception:
+                self.module.fail_json(msg="Image %s was not found" % image.name)
         if image.deprecated is not None:
-            available_until = image.deprecated + relativedelta.relativedelta(months=3)
+            available_until = image.deprecated + timedelta(days=180)
             if self.module.params.get("allow_deprecated_image"):
                 self.module.warn(
-                    f"You try to use a deprecated image. The image {image.name} will "
-                    f"continue to be available until {available_until.strftime('%Y-%m-%d')}."
+                    ("You try to use a deprecated image. The image %s will " +
+                     "continue to be available until %s.") % (image.name, available_until.strftime('%Y-%m-%d'))
                 )
             else:
-                self.module.fail_json(msg=f"You try to use a deprecated image. The image {image.name} will "
-                                          f"continue to be available until {available_until.strftime('%Y-%m-%d')}. "
-                                          f"If you want to use this image use allow_deprecated_image=yes."
+                self.module.fail_json(msg=("You try to use a deprecated image. The image %s will " +
+                                           "continue to be available until %s. " +
+                                           "If you want to use this image use allow_deprecated_image=yes.") % (
+                                              image.name, available_until.strftime('%Y-%m-%d'))
                                       )
         return image
 
