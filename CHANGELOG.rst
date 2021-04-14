@@ -5,6 +5,14 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.4.2
+======
+
+Bugfixes
+--------
+
+- inventory fix image name was set as server type instead of the correct server type
+
 v1.4.1
 ======
 

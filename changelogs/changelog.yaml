@@ -114,3 +114,11 @@ releases:
     fragments:
     - 74-hcloud_server-improve-error-message-images.yml
     release_date: '2021-04-07'
+  1.4.2:
+    changes:
+      bugfixes:
+      - inventory fix image name was set as server type instead of the correct server
+        type
+    fragments:
+    - inventory-fix-server-type-wrong-value.yml
+    release_date: '2021-04-14'

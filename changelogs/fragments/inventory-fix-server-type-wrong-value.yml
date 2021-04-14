@@ -1,2 +1,0 @@
-bugfixes:
-  - inventory fix image name was set as server type instead of the correct server type
