@@ -210,10 +210,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                     "You can only connect via private IPv4 if you specify a network")
 
         # Server Type
-        if server.image is not None and server.image.name is not None:
-            self.inventory.set_variable(server.name, "server_type", to_native(server.image.name))
+        if server.server_type is not None:
+            self.inventory.set_variable(server.name, "server_type", to_native(server.server_type.name))
         else:
-            self.inventory.set_variable(server.name, "server_type", to_native("No Image name found."))
+            self.inventory.set_variable(server.name, "server_type", to_native("No server type name found."))
 
         # Datacenter
         self.inventory.set_variable(server.name, "datacenter", to_native(server.datacenter.name))
