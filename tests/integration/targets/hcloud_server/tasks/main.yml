@@ -48,7 +48,7 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "You try to use a deprecated image. The image ubuntu-16.04 will continue to be available until 2021-06-24. If you want to use this image use allow_deprecated_image=yes."'
+      - 'result.msg == "You try to use a deprecated image. The image ubuntu-16.04 will continue to be available until 2021-06-22. If you want to use this image use allow_deprecated_image=yes."'
 
 - name: test create server with check mode
   hcloud_server:
