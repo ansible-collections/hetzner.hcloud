@@ -1,0 +1,2 @@
+bugfixes:
+  - hcloud_server Fix incompatbility with python < 3.6
