@@ -5,6 +5,15 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.4.3
+======
+
+Bugfixes
+--------
+
+- hcloud_server Fix incompatibility with python < 3.6
+- hcloud_server Improve error handling when using not existing server types
+
 v1.4.2
 ======
 

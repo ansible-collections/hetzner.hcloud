@@ -122,3 +122,12 @@ releases:
     fragments:
     - inventory-fix-server-type-wrong-value.yml
     release_date: '2021-04-14'
+  1.4.3:
+    changes:
+      bugfixes:
+      - hcloud_server Fix incompatbility with python < 3.6
+      - hcloud_server Improve error handling when using not existing server types
+    fragments:
+    - hcloud-server-py36.yaml
+    - hcloud-server-server-type.yaml
+    release_date: '2021-04-22'
