@@ -1,0 +1,2 @@
+bugfixes:
+  - hcloud_server Improve error handling when using not existing server types

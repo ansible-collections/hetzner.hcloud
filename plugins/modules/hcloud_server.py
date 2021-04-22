@@ -321,9 +321,7 @@ class AnsibleHcloudServer(Hcloud):
 
         params = {
             "name": self.module.params.get("name"),
-            "server_type": self.client.server_types.get_by_name(
-                self.module.params.get("server_type")
-            ),
+            "server_type": self._get_server_type(),
             "user_data": self.module.params.get("user_data"),
             "labels": self.module.params.get("labels"),
             "image": self._get_image()
@@ -415,6 +413,18 @@ class AnsibleHcloudServer(Hcloud):
                          ) % (image.name, available_until.strftime('%Y-%m-%d')))
         return image
 
+    def _get_server_type(self):
+        server_type = self.client.server_types.get_by_name(
+            self.module.params.get("server_type")
+        )
+        if server_type is None:
+            try:
+                server_type = self.client.server_types.get_by_id(self.module.params.get("server_type"))
+            except Exception:
+                self.module.fail_json(msg="server_type %s was not found" % self.module.params.get('server_type'))
+
+        return server_type
+
     def _update_server(self):
         try:
             rescue_mode = self.module.params.get("rescue_mode")
@@ -491,7 +501,7 @@ class AnsibleHcloudServer(Hcloud):
                     )  # When we upgrade the disk too the resize progress takes some more time.
                 if not self.module.check_mode:
                     self.hcloud_server.change_type(
-                        server_type=self.client.server_types.get_by_name(server_type),
+                        server_type=self._get_server_type(),
                         upgrade_disk=self.module.params.get("upgrade_disk"),
                     ).wait_until_finished(timeout)
                     if state == "present" and previous_server_status == Server.STATUS_RUNNING or state == "started":
