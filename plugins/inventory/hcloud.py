@@ -23,7 +23,7 @@ DOCUMENTATION = r'''
         plugin:
             description: marks this as an instance of the "hcloud" plugin
             required: true
-            choices: ["hcloud"]
+            choices: ["hcloud", "hetzner.hcloud.hcloud"]
         token:
             description: The Hetzner Cloud API Token.
             required: false
