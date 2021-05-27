@@ -81,6 +81,12 @@
         source_ips:
           - 0.0.0.0/0
           - ::/0
+      - direction: out
+        protocol: tcp
+        port: 80
+        destination_ips:
+          - 0.0.0.0/0
+          - ::/0
     labels:
       key: value
       my-label: label
@@ -90,11 +96,12 @@
     that:
       - firewall is changed
       - firewall.hcloud_firewall.name == "{{ hcloud_firewall_name }}"
-      - firewall.hcloud_firewall.rules | list | count == 2
+      - firewall.hcloud_firewall.rules | list | count == 3
       - firewall.hcloud_firewall.rules | selectattr('direction','equalto','in') | list | count == 2
+      - firewall.hcloud_firewall.rules | selectattr('direction','equalto','out') | list | count == 1
       - firewall.hcloud_firewall.rules | selectattr('protocol','equalto','icmp') | list | count == 1
-      - firewall.hcloud_firewall.rules | selectattr('protocol','equalto','tcp') | list | count == 1
-      - firewall.hcloud_firewall.rules | selectattr('port','equalto','80') | list | count == 1
+      - firewall.hcloud_firewall.rules | selectattr('protocol','equalto','tcp') | list | count == 2
+      - firewall.hcloud_firewall.rules | selectattr('port','equalto','80') | list | count == 2
 
 - name: test update firewall rules idempotence
   hcloud_firewall:
@@ -109,6 +116,12 @@
         protocol: tcp
         port: 80
         source_ips:
+          - 0.0.0.0/0
+          - ::/0
+      - direction: out
+        protocol: tcp
+        port: 80
+        destination_ips:
           - 0.0.0.0/0
           - ::/0
     labels:
