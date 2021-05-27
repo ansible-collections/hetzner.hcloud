@@ -221,8 +221,8 @@ class AnsibleHcloudFirewall(Hcloud):
                 FirewallRule(
                     direction=rule["direction"],
                     protocol=rule["protocol"],
-                    source_ips=rule["source_ips"],
-                    destination_ips=rule["destination_ips"],
+                    source_ips=rule["source_ips"] if rule["source_ips"] is not None else [],
+                    destination_ips=rule["destination_ips"] if rule["destination_ips"] is not None else [],
                     port=rule["port"]
                 )
                 for rule in rules
@@ -258,8 +258,8 @@ class AnsibleHcloudFirewall(Hcloud):
                     FirewallRule(
                         direction=rule["direction"],
                         protocol=rule["protocol"],
-                        source_ips=rule["source_ips"],
-                        destination_ips=rule["destination_ips"],
+                        source_ips=rule["source_ips"] if rule["source_ips"] is not None else [],
+                        destination_ips=rule["destination_ips"] if rule["destination_ips"] is not None else [],
                         port=rule["port"]
                     )
                     for rule in rules
@@ -296,10 +296,10 @@ class AnsibleHcloudFirewall(Hcloud):
                         direction={"type": "str", "choices": ["in", "out"]},
                         protocol={"type": "str", "choices": ["icmp", "udp", "tcp"]},
                         port={"type": "str"},
-                        source_ips={"type": "list", "elements": "str"},
+                        source_ips={"type": "list", "elements": "str", "default": []},
                         destination_ips={"type": "list", "elements": "str", "default": []},
                     ),
-                    required_together=[["direction", "protocol", "source_ips"]]
+                    required_together=[["direction", "protocol"]],
                 ),
                 labels={"type": "dict"},
                 state={
