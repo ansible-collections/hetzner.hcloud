@@ -294,6 +294,8 @@ class AnsibleHcloudVolume(Hcloud):
             self._get_volume()
             if self.hcloud_volume is not None:
                 if not self.module.check_mode:
+                    if self.hcloud_volume.server is not None:
+                        self.hcloud_volume.detach().wait_until_finished()
                     self.client.volumes.delete(self.hcloud_volume)
                 self._mark_as_changed()
             self.hcloud_volume = None
