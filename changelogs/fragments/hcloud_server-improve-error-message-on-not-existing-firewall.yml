@@ -1,0 +1,2 @@
+bugfixes:
+  - hcloud_server Improve Error Message when attaching a not existing firewall to a server

@@ -480,6 +480,20 @@
       - main_server.hcloud_server.status == "running"
       - main_server.root_password != ""
 
+- name: test add not existing firewall should fail
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    firewalls:
+      - not-existing
+    state: present
+  ignore_errors: yes
+  register: result
+- name: verifyt add not existing firewall should fail
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "firewall not-existing was not found"'
+
 - name: test activate rescue mode with check_mode
   hcloud_server:
     name: "{{ hcloud_server_name }}"

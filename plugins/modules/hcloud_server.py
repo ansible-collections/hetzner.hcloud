@@ -476,6 +476,8 @@ class AnsibleHcloudServer(Hcloud):
                         self._mark_as_changed()
                         if not self.module.check_mode:
                             fw = self.client.firewalls.get_by_name(fname)
+                            if fw is None:
+                                self.module.fail_json(msg="firewall %s was not found" % fname)
                             r = FirewallResource(type="server", server=self.hcloud_server)
                             actions = self.client.firewalls.apply_to_resources(fw, [r])
                             for a in actions:
