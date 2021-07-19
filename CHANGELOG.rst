@@ -5,13 +5,22 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.4.4
+======
+
+Bugfixes
+--------
+
+- hcloud_server Improve Error Message when attaching a not existing firewall to a server
+- hcloud_volume Force detaching of volumes on servers before deletion
+
 v1.4.3
 ======
 
 Bugfixes
 --------
 
-- hcloud_server Fix incompatibility with python < 3.6
+- hcloud_server Fix incompatbility with python < 3.6
 - hcloud_server Improve error handling when using not existing server types
 
 v1.4.2

@@ -1,2 +1,0 @@
-bugfixes:
-  - hcloud_volume Force detaching of volumes on servers before deletion

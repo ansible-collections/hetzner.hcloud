@@ -131,3 +131,13 @@ releases:
     - hcloud-server-py36.yaml
     - hcloud-server-server-type.yaml
     release_date: '2021-04-22'
+  1.4.4:
+    changes:
+      bugfixes:
+      - hcloud_server Improve Error Message when attaching a not existing firewall
+        to a server
+      - hcloud_volume Force detaching of volumes on servers before deletion
+    fragments:
+    - hcloud_server-improve-error-message-on-not-existing-firewall.yml
+    - hcloud_volume-force-detach-before-deletion.yml
+    release_date: '2021-07-19'
