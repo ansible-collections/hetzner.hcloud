@@ -73,7 +73,6 @@ options:
         description:
             - Enable or disable Backups for the given Server.
         type: bool
-        default: no
     upgrade_disk:
         description:
             - Resize the disk size, when resizing a server.
@@ -605,7 +604,7 @@ class AnsibleHcloudServer(Hcloud):
                 volumes={"type": "list", "elements": "str"},
                 firewalls={"type": "list", "elements": "str"},
                 labels={"type": "dict"},
-                backups={"type": "bool", "default": False},
+                backups={"type": "bool"},
                 upgrade_disk={"type": "bool", "default": False},
                 force_upgrade={"type": "bool", "default": False},
                 allow_deprecated_image={"type": "bool", "default": False},
