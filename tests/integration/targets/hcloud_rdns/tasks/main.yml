@@ -36,7 +36,18 @@
     that:
       - result is failed
       - 'result.msg == "missing required arguments: ip_address"'
-
+- name: test fail on not existing resource
+  hcloud_rdns:
+    server: "not-existing"
+    ip_address: "127.0.0.1"
+    state: present
+  register: result
+  ignore_errors: yes
+- name: verify fail on not existing resou
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "The selected server does not exist"'
 - name: test create rdns
   hcloud_rdns:
     server: "{{ hcloud_server_name }}"

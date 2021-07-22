@@ -143,10 +143,14 @@ class AnsibleHcloudReverseDNS(Hcloud):
                 self.hcloud_resource = self.client.servers.get_by_name(
                     self.module.params.get("server")
                 )
+                if self.hcloud_resource is None:
+                    self.module.fail_json(msg="The selected server does not exist")
             elif self.module.params.get("floating_ip"):
                 self.hcloud_resource = self.client.floating_ips.get_by_name(
                     self.module.params.get("floating_ip")
                 )
+                if self.hcloud_resource is None:
+                    self.module.fail_json(msg="The selected Floating IP does not exist")
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
