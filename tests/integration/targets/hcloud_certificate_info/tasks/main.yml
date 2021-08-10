@@ -2,6 +2,23 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 
+- name: create certificate
+  hcloud_certificate:
+    name: "{{ hcloud_certificate_name }}"
+    certificate: "{{ certificate_example_com }}"
+    private_key: "{{ certificate_example_com_key }}"
+    labels:
+      key: value
+      my-label: label
+  register: certificate
+- name: verify create certificate
+  assert:
+    that:
+      - certificate is changed
+      - certificate.hcloud_certificate.name == "{{ hcloud_certificate_name }}"
+      - certificate.hcloud_certificate.domain_names[0] ==  "www.example.com"
+      - certificate.hcloud_certificate.labels.key == "value"
+
 - name: test gather hcloud certificate infos in check mode
   hcloud_certificate_info:
   register: hcloud_certificate
@@ -37,3 +54,13 @@
   assert:
     that:
       - hcloud_certificate.hcloud_certificate_info | list | count == 0
+
+- name: absent certificate
+  hcloud_certificate:
+    id: "{{ certificate.hcloud_certificate.id }}"
+    state: absent
+  register: result
+- name: verify absent certificate
+  assert:
+    that:
+      - result is success
