@@ -66,6 +66,10 @@ options:
                     - List of CIDRs that are allowed within this rule
                 type: list
                 elements: str
+            description:
+                description:
+                    - User defined description of this rule.
+                type: str
     state:
         description:
             - State of the firewall.
@@ -91,6 +95,7 @@ EXAMPLES = """
          source_ips:
            - 0.0.0.0/0
            - ::/0
+         description: allow icmp in
     state: present
 
 - name: Create a firewall with labels
@@ -153,6 +158,10 @@ hcloud_firewall:
                     type: list
                     elements: str
                     returned: always
+                description:
+                    description: User defined description of the Firewall Rule
+                    type: str
+                    returned: always
         labels:
             description: User-defined labels (key-value pairs)
             returned: always
@@ -190,7 +199,8 @@ class AnsibleHcloudFirewall(Hcloud):
             "protocol": to_native(rule.protocol),
             "port": to_native(rule.port) if rule.port is not None else None,
             "source_ips": [to_native(cidr) for cidr in rule.source_ips],
-            "destination_ips": [to_native(cidr) for cidr in rule.destination_ips]
+            "destination_ips": [to_native(cidr) for cidr in rule.destination_ips],
+            "description": to_native(rule.description) if rule.description is not None else None,
         }
 
     def _get_firewall(self):
@@ -223,7 +233,8 @@ class AnsibleHcloudFirewall(Hcloud):
                     protocol=rule["protocol"],
                     source_ips=rule["source_ips"] if rule["source_ips"] is not None else [],
                     destination_ips=rule["destination_ips"] if rule["destination_ips"] is not None else [],
-                    port=rule["port"]
+                    port=rule["port"],
+                    description=rule["description"],
                 )
                 for rule in rules
             ]
@@ -260,7 +271,8 @@ class AnsibleHcloudFirewall(Hcloud):
                         protocol=rule["protocol"],
                         source_ips=rule["source_ips"] if rule["source_ips"] is not None else [],
                         destination_ips=rule["destination_ips"] if rule["destination_ips"] is not None else [],
-                        port=rule["port"]
+                        port=rule["port"],
+                        description=rule["description"],
                     )
                     for rule in rules
                 ]
@@ -298,6 +310,7 @@ class AnsibleHcloudFirewall(Hcloud):
                         port={"type": "str"},
                         source_ips={"type": "list", "elements": "str", "default": []},
                         destination_ips={"type": "list", "elements": "str", "default": []},
+                        description={"type": "str"},
                     ),
                     required_together=[["direction", "protocol"]],
                 ),
