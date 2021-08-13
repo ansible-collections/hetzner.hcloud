@@ -6,6 +6,11 @@
     name: "{{ hcloud_placement_group_name }}"
     state: absent
 
+- name: setup server to be absent
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+
 - name: test missing required parameters on create placement group
   hcloud_placement_group:
   register: result
@@ -56,6 +61,22 @@
     that:
       - result is not changed
 
+- name: test create server with placement group
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    placement_group: "{{ hcloud_placement_group_name }}"
+    image: "ubuntu-20.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
+  register: server
+- name: verify create server with placement group
+  assert:
+    that:
+      - server is changed
+      - server.hcloud_server.placement_group == "{{ hcloud_placement_group_name }}"
+
 - name: test update placement group with check mode
   hcloud_placement_group:
     id: "{{ placement_group.hcloud_placement_group.id }}"
@@ -91,6 +112,11 @@
   assert:
     that:
       - result is not changed
+
+- name: absent server
+  hcloud_server:
+    id: "{{ server.hcloud_server.id }}"
+    state: absent
 
 - name: absent placement group
   hcloud_placement_group:

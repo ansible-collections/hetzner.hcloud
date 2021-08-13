@@ -113,6 +113,10 @@ options:
             - Protect the Server for rebuild.
             - Needs to be the same as I(delete_protection).
         type: bool
+    placement_group:
+        description:
+            - Placement Group of the server.
+        type: str
     state:
         description:
             - State of the server.
@@ -254,6 +258,12 @@ hcloud_server:
             returned: always
             sample: false
             version_added: "0.1.0"
+        placement_group:
+            description: Placement Group of the server
+            type: str
+            returned: always
+            sample: 4711
+            version_added: "1.4.5"
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -292,6 +302,7 @@ class AnsibleHcloudServer(Hcloud):
             "server_type": to_native(self.hcloud_server.server_type.name),
             "datacenter": to_native(self.hcloud_server.datacenter.name),
             "location": to_native(self.hcloud_server.datacenter.location.name),
+            "placement_group": to_native(self.hcloud_server.placement_group.name),
             "rescue_enabled": self.hcloud_server.rescue_enabled,
             "backup_window": to_native(self.hcloud_server.backup_window),
             "labels": self.hcloud_server.labels,
@@ -323,7 +334,8 @@ class AnsibleHcloudServer(Hcloud):
             "server_type": self._get_server_type(),
             "user_data": self.module.params.get("user_data"),
             "labels": self.module.params.get("labels"),
-            "image": self._get_image()
+            "image": self._get_image(),
+            "placement_group": self._get_placement_group(),
         }
 
         if self.module.params.get("ssh_keys") is not None:
@@ -423,6 +435,21 @@ class AnsibleHcloudServer(Hcloud):
                 self.module.fail_json(msg="server_type %s was not found" % self.module.params.get('server_type'))
 
         return server_type
+
+    def _get_placement_group(self):
+        if self.module.params.get("placement_group") is None:
+            return None
+
+        placement_group = self.client.placement_groups.get_by_name(
+            self.module.params.get("placement_group")
+        )
+        if placement_group is None:
+            try:
+                placement_group = self.client.placement_groups.get_by_id(self.module.params.get("placement_group"))
+            except Exception:
+                self.module.fail_json(msg="placement_group %s was not found" % self.module.params.get("placement_group"))
+
+        return placement_group
 
     def _update_server(self):
         try:
@@ -611,6 +638,7 @@ class AnsibleHcloudServer(Hcloud):
                 rescue_mode={"type": "str"},
                 delete_protection={"type": "bool"},
                 rebuild_protection={"type": "bool"},
+                placement_group={"type": "str"},
                 state={
                     "choices": ["absent", "present", "restarted", "started", "stopped", "rebuild"],
                     "default": "present",
