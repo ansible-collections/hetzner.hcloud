@@ -184,6 +184,19 @@ EXAMPLES = """
     name: my-server
     image: ubuntu-18.04
     state: rebuild
+
+- name: Add server to placement group
+  hcloud_server:
+    name: my-server
+    placement_group: my-placement-group
+    force_upgrade: True
+    state: present
+
+- name: Remove server from placement group
+  hcloud_server:
+    name: my-server
+    placement_group: null
+    state: present
 """
 
 RETURN = """
@@ -227,6 +240,12 @@ hcloud_server:
             returned: always
             type: str
             sample: fsn1
+        placement_group:
+            description: Placement Group of the server
+            type: str
+            returned: always
+            sample: 4711
+            version_added: "1.4.5"
         datacenter:
             description: Name of the datacenter of the server
             returned: always
@@ -258,12 +277,6 @@ hcloud_server:
             returned: always
             sample: false
             version_added: "0.1.0"
-        placement_group:
-            description: Placement Group of the server
-            type: str
-            returned: always
-            sample: 4711
-            version_added: "1.4.5"
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -293,6 +306,7 @@ class AnsibleHcloudServer(Hcloud):
 
     def _prepare_result(self):
         image = None if self.hcloud_server.image is None else to_native(self.hcloud_server.image.name)
+        placement_group = None if self.hcloud_server.placement_group is None else to_native(self.hcloud_server.placement_group.name)
         return {
             "id": to_native(self.hcloud_server.id),
             "name": to_native(self.hcloud_server.name),
@@ -302,7 +316,7 @@ class AnsibleHcloudServer(Hcloud):
             "server_type": to_native(self.hcloud_server.server_type.name),
             "datacenter": to_native(self.hcloud_server.datacenter.name),
             "location": to_native(self.hcloud_server.datacenter.location.name),
-            "placement_group": to_native(self.hcloud_server.placement_group.name),
+            "placement_group": placement_group,
             "rescue_enabled": self.hcloud_server.rescue_enabled,
             "backup_window": to_native(self.hcloud_server.backup_window),
             "labels": self.hcloud_server.labels,
@@ -453,6 +467,8 @@ class AnsibleHcloudServer(Hcloud):
 
     def _update_server(self):
         try:
+            previous_server_status = self.hcloud_server.status
+
             rescue_mode = self.module.params.get("rescue_mode")
             if rescue_mode and self.hcloud_server.rescue_enabled is False:
                 if not self.module.check_mode:
@@ -509,19 +525,23 @@ class AnsibleHcloudServer(Hcloud):
                             for a in actions:
                                 a.wait_until_finished()
 
+            if "placement_group" in self.module.params:
+                if self.module.params["placement_group"] is None and self.hcloud_server.placement_group is not None:
+                    if not self.module.check_mode:
+                        self.hcloud_server.remove_from_placement_group().wait_until_finished()
+                    self._mark_as_changed()
+                else:
+                    placement_group = self._get_placement_group()
+                    if placement_group is not None and (self.hcloud_server.placement_group is None or self.hcloud_server.placement_group.id != placement_group.id):
+                        self.stop_server_if_forced()
+                        if not self.module.check_mode:
+                            self.hcloud_server.add_to_placement_group(placement_group)
+                        self._mark_as_changed()
+
             server_type = self.module.params.get("server_type")
             if server_type is not None and self.hcloud_server.server_type.name != server_type:
-                previous_server_status = self.hcloud_server.status
-                state = self.module.params.get("state")
-                if previous_server_status == Server.STATUS_RUNNING:
-                    if not self.module.check_mode:
-                        if self.module.params.get("force_upgrade") or state == "stopped":
-                            self.stop_server()  # Only stopped server can be upgraded
-                        else:
-                            self.module.warn(
-                                "You can not upgrade a running instance %s. You need to stop the instance or use force_upgrade=yes."
-                                % self.hcloud_server.name
-                            )
+                self.stop_server_if_forced()
+
                 timeout = 100
                 if self.module.params.get("upgrade_disk"):
                     timeout = (
@@ -532,10 +552,13 @@ class AnsibleHcloudServer(Hcloud):
                         server_type=self._get_server_type(),
                         upgrade_disk=self.module.params.get("upgrade_disk"),
                     ).wait_until_finished(timeout)
-                    if state == "present" and previous_server_status == Server.STATUS_RUNNING or state == "started":
-                        self.start_server()
-
                 self._mark_as_changed()
+
+            if (not self.module.check_mode and 
+                (self.module.params.get("state") == "present" and previous_server_status == Server.STATUS_RUNNING or 
+                self.module.params.get("state") == "started")
+            ):
+                self.start_server()
 
             delete_protection = self.module.params.get("delete_protection")
             rebuild_protection = self.module.params.get("rebuild_protection")
@@ -583,6 +606,20 @@ class AnsibleHcloudServer(Hcloud):
                 self._get_server()
         except Exception as e:
             self.module.fail_json(msg=e.message)
+
+    def stop_server_if_forced(self):
+        previous_server_status = self.hcloud_server.status
+        if previous_server_status == Server.STATUS_RUNNING and not self.module.check_mode:
+            if self.module.params.get("force_upgrade") or self.module.params.get("state") == "stopped":
+                self.stop_server()  # Only stopped server can be upgraded
+                return previous_server_status
+            else:
+                self.module.warn(
+                    "You can not upgrade a running instance %s. You need to stop the instance or use force_upgrade=yes."
+                    % self.hcloud_server.name
+                )
+
+        return None
 
     def rebuild_server(self):
         self.module.fail_on_missing_params(
