@@ -92,6 +92,12 @@ hcloud_server_info:
             returned: always
             type: str
             sample: fsn1
+        placement_group:
+            description: Placement Group of the server
+            type: str
+            returned: always
+            sample: 4711
+            version_added: "1.4.5"
         datacenter:
             description: Name of the datacenter of the server
             returned: always
@@ -146,6 +152,7 @@ class AnsibleHcloudServerInfo(Hcloud):
         for server in self.hcloud_server_info:
             if server is not None:
                 image = None if server.image is None else to_native(server.image.name)
+                placement_group = None if server.placement_group is None else to_native(server.placement_group.name)
                 tmp.append({
                     "id": to_native(server.id),
                     "name": to_native(server.name),
@@ -155,6 +162,7 @@ class AnsibleHcloudServerInfo(Hcloud):
                     "server_type": to_native(server.server_type.name),
                     "datacenter": to_native(server.datacenter.name),
                     "location": to_native(server.datacenter.location.name),
+                    "placement_group": placement_group,
                     "rescue_enabled": server.rescue_enabled,
                     "backup_window": to_native(server.backup_window),
                     "labels": server.labels,
