@@ -252,7 +252,7 @@ hcloud_server:
             type: str
             returned: always
             sample: 4711
-            version_added: "1.4.5"
+            version_added: "1.5.0"
         datacenter:
             description: Name of the datacenter of the server
             returned: always
@@ -541,7 +541,10 @@ class AnsibleHcloudServer(Hcloud):
                     self._mark_as_changed()
                 else:
                     placement_group = self._get_placement_group()
-                    if placement_group is not None and (self.hcloud_server.placement_group is None or self.hcloud_server.placement_group.id != placement_group.id):
+                    if (
+                        placement_group is not None and
+                        (self.hcloud_server.placement_group is None or self.hcloud_server.placement_group.id != placement_group.id)
+                    ):
                         self.stop_server_if_forced()
                         if not self.module.check_mode:
                             self.hcloud_server.add_to_placement_group(placement_group)
@@ -563,9 +566,12 @@ class AnsibleHcloudServer(Hcloud):
                     ).wait_until_finished(timeout)
                 self._mark_as_changed()
 
-            if (not self.module.check_mode and 
-                (self.module.params.get("state") == "present" and previous_server_status == Server.STATUS_RUNNING or 
-                self.module.params.get("state") == "started")
+            if (
+                not self.module.check_mode and
+                (
+                    self.module.params.get("state") == "present" and previous_server_status == Server.STATUS_RUNNING or
+                    self.module.params.get("state") == "started"
+                )
             ):
                 self.start_server()
 
@@ -619,8 +625,9 @@ class AnsibleHcloudServer(Hcloud):
     def stop_server_if_forced(self):
         previous_server_status = self.hcloud_server.status
         if previous_server_status == Server.STATUS_RUNNING and not self.module.check_mode:
-            if (self.module.params.get("force_upgrade") or 
-                self.module.params.get("force") or 
+            if (
+                self.module.params.get("force_upgrade") or
+                self.module.params.get("force") or
                 self.module.params.get("state") == "stopped"
             ):
                 self.stop_server()  # Only stopped server can be upgraded

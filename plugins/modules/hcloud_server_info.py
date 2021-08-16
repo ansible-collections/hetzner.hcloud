@@ -97,7 +97,7 @@ hcloud_server_info:
             type: str
             returned: always
             sample: 4711
-            version_added: "1.4.5"
+            version_added: "1.5.0"
         datacenter:
             description: Name of the datacenter of the server
             returned: always

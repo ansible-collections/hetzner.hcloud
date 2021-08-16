@@ -4,8 +4,9 @@
 # Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from __future__ import absolute_import, division, print_function
 
+__metaclass__ = type
 
 DOCUMENTATION = """
 ---
@@ -110,8 +111,10 @@ hcloud_placement_group:
                 - 4712
 """
 
+from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+
 
 class AnsibleHcloudPlacementGroup(Hcloud):
     def __init__(self, module):
@@ -181,7 +184,7 @@ class AnsibleHcloudPlacementGroup(Hcloud):
             self._create_placement_group()
         else:
             self._update_placement_group()
-    
+
     def delete_placement_group(self):
         self._get_placement_group()
         if self.hcloud_placement_group is not None:
@@ -208,6 +211,7 @@ class AnsibleHcloudPlacementGroup(Hcloud):
             required_if=[['state', 'present', ['name']]],
             supports_check_mode=True,
         )
+
 
 def main():
     module = AnsibleHcloudPlacementGroup.define_module()
