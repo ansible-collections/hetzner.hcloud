@@ -1,0 +1,169 @@
+# Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: setup placement group to be absent
+  hcloud_placement_group:
+    name: "{{ hcloud_placement_group_name }}"
+    state: absent
+
+- name: setup server to be absent
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+
+- name: test missing required parameters on create placement group
+  hcloud_placement_group:
+  register: result
+  ignore_errors: yes
+- name: verify fail test missing required parameters on create placement group
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "one of the following is required: id, name"'
+
+- name: test create placement group with check mode
+  hcloud_placement_group:
+    name: "{{ hcloud_placement_group_name }}"
+    type: spread
+  register: result
+  check_mode: yes
+- name: test create placement group with check mode
+  assert:
+    that:
+      - result is changed
+
+- name: test create placement group
+  hcloud_placement_group:
+    name: "{{ hcloud_placement_group_name }}"
+    type: spread
+    labels:
+      key: value
+      my-label: label
+  register: placement_group
+- name: verify create placement group
+  assert:
+    that:
+      - placement_group is changed
+      - placement_group.hcloud_placement_group.name == "{{ hcloud_placement_group_name }}"
+      - placement_group.hcloud_placement_group.type == "spread"
+      - placement_group.hcloud_placement_group.servers | list | count == 0
+
+- name: test create placement group idempotence
+  hcloud_placement_group:
+    name: "{{ hcloud_placement_group_name }}"
+    type: spread
+    labels:
+      key: value
+      my-label: label
+  register: result
+- name: verify create placement group idempotence
+  assert:
+    that:
+      - result is not changed
+
+- name: test create server with placement group
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    placement_group: "{{ hcloud_placement_group_name }}"
+    image: "ubuntu-20.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
+  register: server
+- name: verify create server with placement group
+  assert:
+    that:
+      - server is changed
+      - server.hcloud_server.placement_group == "{{ hcloud_placement_group_name }}"
+
+- name: test remove server from placement group
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    placement_group: null
+    state: present
+  register: result
+- name: verify remove server from placement group
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_server.placement_group == None
+
+- name: test add server to placement group
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    placement_group: "{{ hcloud_server_name }}"
+    force: True
+    state: present
+  register: result
+- name: verify add server to placement group
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_server.placement_group == "{{ hcloud_placement_group_name }}"
+      - result.hcloud_server.status == "running"
+
+- name: test add server to placement group idempotence
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    placement_group: "{{ hcloud_server_name }}"
+    force: True
+    state: present
+  register: result
+- name: verify add server to placement group idempotence
+  assert:
+    that:
+      - result is not changed
+      - result.hcloud_server.placement_group == "{{ hcloud_placement_group_name }}"
+      - result.hcloud_server.status == "running"
+
+- name: test update placement group with check mode
+  hcloud_placement_group:
+    id: "{{ placement_group.hcloud_placement_group.id }}"
+    name: "changed-{{ hcloud_placement_group_name }}"
+  register: result
+  check_mode: yes
+- name: verify update placement group with check mode
+  assert:
+    that:
+      - result is changed
+
+- name: test update placement group
+  hcloud_placement_group:
+    id: "{{ placement_group.hcloud_placement_group.id }}"
+    name: "changed-{{ hcloud_placement_group_name }}"
+    labels:
+      key: value
+  register: result
+- name: verify update placement group
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_placement_group.name == "changed-{{ hcloud_placement_group_name }}"
+
+- name: test update placement group idempotence
+  hcloud_placement_group:
+    id: "{{ placement_group.hcloud_placement_group.id }}"
+    name: "changed-{{ hcloud_placement_group_name }}"
+    labels:
+      key: value
+  register: result
+- name: verify update placement group idempotence
+  assert:
+    that:
+      - result is not changed
+
+- name: absent server
+  hcloud_server:
+    id: "{{ server.hcloud_server.id }}"
+    state: absent
+
+- name: absent placement group
+  hcloud_placement_group:
+    id: "{{ placement_group.hcloud_placement_group.id }}"
+    state: absent
+  register: result
+- name: verify absent placement group
+  assert:
+    that:
+      - result is success
