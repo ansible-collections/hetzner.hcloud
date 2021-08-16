@@ -141,3 +141,18 @@ releases:
     - hcloud_server-improve-error-message-on-not-existing-firewall.yml
     - hcloud_volume-force-detach-before-deletion.yml
     release_date: '2021-07-19'
+  1.5.0:
+    changes:
+      bugfixes:
+      - hcloud_rdns improve error message on not existing server/Floating IP
+      - hcloud_server backups property defaults to None now instead of False
+      major_changes:
+      - Introduction of placement groups
+      minor_changes:
+      - hcloud_firewall Add description field to firewall rules
+    fragments:
+    - hcloud_firewall-add-description-field-to-rules.yml
+    - hcloud_placement_group.yml
+    - hcloud_rdns-improve-validation-of-input.yml
+    - hcloud_server_default-backups-to-none.yml
+    release_date: '2021-08-16'

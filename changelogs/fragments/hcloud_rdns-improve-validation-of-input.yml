@@ -1,2 +1,0 @@
-bugfixes:
-  - hcloud_rdns improve error message on not existing server/Floating IP

@@ -1,2 +1,0 @@
-bugfixes:
-  - hcloud_server backups property defaults to None now instead of False

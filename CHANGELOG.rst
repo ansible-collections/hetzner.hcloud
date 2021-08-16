@@ -5,6 +5,25 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.5.0
+======
+
+Major Changes
+-------------
+
+- Introduction of placement groups
+
+Minor Changes
+-------------
+
+- hcloud_firewall Add description field to firewall rules
+
+Bugfixes
+--------
+
+- hcloud_rdns improve error message on not existing server/Floating IP
+- hcloud_server backups property defaults to None now instead of False
+
 v1.4.4
 ======
 
