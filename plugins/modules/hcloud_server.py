@@ -81,8 +81,15 @@ options:
         default: no
     force_upgrade:
         description:
+            - Deprecated
             - Force the upgrade of the server.
             - Power off the server if it is running on upgrade.
+        type: bool
+        default: no
+    force:
+        description:
+            - Force the update of the server.
+            - May power off the server if update.
         type: bool
         default: no
     allow_deprecated_image:
@@ -189,7 +196,7 @@ EXAMPLES = """
   hcloud_server:
     name: my-server
     placement_group: my-placement-group
-    force_upgrade: True
+    force: True
     state: present
 
 - name: Remove server from placement group
@@ -466,6 +473,8 @@ class AnsibleHcloudServer(Hcloud):
         return placement_group
 
     def _update_server(self):
+        self.module.warn("force_upgrade is deprecated, use force instead")
+
         try:
             previous_server_status = self.hcloud_server.status
 
@@ -610,12 +619,15 @@ class AnsibleHcloudServer(Hcloud):
     def stop_server_if_forced(self):
         previous_server_status = self.hcloud_server.status
         if previous_server_status == Server.STATUS_RUNNING and not self.module.check_mode:
-            if self.module.params.get("force_upgrade") or self.module.params.get("state") == "stopped":
+            if (self.module.params.get("force_upgrade") or 
+                self.module.params.get("force") or 
+                self.module.params.get("state") == "stopped"
+            ):
                 self.stop_server()  # Only stopped server can be upgraded
                 return previous_server_status
             else:
                 self.module.warn(
-                    "You can not upgrade a running instance %s. You need to stop the instance or use force_upgrade=yes."
+                    "You can not upgrade a running instance %s. You need to stop the instance or use force=yes."
                     % self.hcloud_server.name
                 )
 
@@ -670,6 +682,7 @@ class AnsibleHcloudServer(Hcloud):
                 labels={"type": "dict"},
                 backups={"type": "bool"},
                 upgrade_disk={"type": "bool", "default": False},
+                force={"type": "bool", "default": False},
                 force_upgrade={"type": "bool", "default": False},
                 allow_deprecated_image={"type": "bool", "default": False},
                 rescue_mode={"type": "str"},
