@@ -4,6 +4,13 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v1.6.0
+======
+
+Minor Changes
+-------------
+
+- hcloud_rdns Add support for load balancer
 
 v1.5.0
 ======

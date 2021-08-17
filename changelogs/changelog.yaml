@@ -156,3 +156,10 @@ releases:
     - hcloud_rdns-improve-validation-of-input.yml
     - hcloud_server_default-backups-to-none.yml
     release_date: '2021-08-16'
+  1.6.0:
+    changes:
+      minor_changes:
+      - hcloud_rdns Add support for load balancer
+    fragments:
+    - hcloud_rdns-add-support-for-load-balancers.yml
+    release_date: '2021-08-17'
