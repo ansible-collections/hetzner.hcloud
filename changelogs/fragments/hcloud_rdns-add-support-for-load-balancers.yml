@@ -1,0 +1,2 @@
+minor_changes:
+  - hcloud_rdns Add support for load balancer
