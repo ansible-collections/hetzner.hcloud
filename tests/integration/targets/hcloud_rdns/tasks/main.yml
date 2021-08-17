@@ -26,6 +26,18 @@
     that:
       - floatingIP is success
 
+- name: setup Load Balancer
+  hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name}}"
+    load_balancer_type: lb11
+    network_zone: eu-central
+    state: present
+  register: load_balancer
+- name: verify setup
+  assert:
+    that:
+    - load_balancer is success
+
 - name: test missing required parameter
   hcloud_rdns:
     state: present
@@ -130,6 +142,21 @@
     - rdns.hcloud_rdns.ip_address == "{{ floatingIP.hcloud_floating_ip.ip}}"
     - rdns.hcloud_rdns.dns_ptr == "example.com"
 
+- name: test create rdns with load balancer
+  hcloud_rdns:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    ip_address: "{{ load_balancer.hcloud_load_balancer.ipv4_address }}"
+    dns_ptr: "example.com"
+    state: present
+  register: rdns
+- name: verify create rdns with load balancer
+  assert:
+    that:
+    - rdns is changed
+    - rdns.hcloud_rdns.load_balancer == "{{ hcloud_load_balancer_name }}"
+    - rdns.hcloud_rdns.ip_address == "{{ load_balancer.hcloud_load_balancer.ipv4_address }}"
+    - rdns.hcloud_rdns.dns_ptr == "example.com"
+
 - name: cleanup
   hcloud_server:
     name: "{{ hcloud_server_name }}"
@@ -143,6 +170,16 @@
 - name: cleanup
   hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
+    state: absent
+  register: result
+- name: verify cleanup
+  assert:
+    that:
+      - result is success
+
+- name: cleanup
+  hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result
 - name: verify cleanup
