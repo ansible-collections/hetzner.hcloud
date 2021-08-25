@@ -142,10 +142,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
 
     def _filter_servers(self):
         if self.get_option("network"):
+            network = self.templar.template(self.get_option("network"), fail_on_undefined=False) or self.get_option("network")
             try:
-                self.network = self.client.networks.get_by_name(self.get_option("network"))
+                self.network = self.client.networks.get_by_name(network)
                 if self.network is None:
-                    self.network = self.client.networks.get_by_id(self.get_option("network"))
+                    self.network = self.client.networks.get_by_id(network)
             except APIException:
                 raise AnsibleError(
                     "The given network is not found.")
