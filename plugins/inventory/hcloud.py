@@ -66,19 +66,26 @@ DOCUMENTATION = r'''
           default: ""
           type: str
           required: false
+        status:
+          description: Populate inventory with instances with this status.
+          default: []
+          type: list
+          required: false
 '''
 
 EXAMPLES = r"""
 # Minimal example. `HCLOUD_TOKEN` is exposed in environment.
 plugin: hcloud
 
-# Example with locations, types, groups and token
+# Example with locations, types, status and token
 plugin: hcloud
 token: foobar
 locations:
   - nbg1
 types:
   - cx11
+status:
+  - running
 
 # Group by a location with prefix e.g. "hcloud_location_nbg1"
 # and image_os_flavor without prefix and separator e.g. "ubuntu"
@@ -176,6 +183,13 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
             tmp = []
             for server in self.servers:
                 if server.image is not None and server.image.os_flavor in self.get_option("images"):
+                    tmp.append(server)
+            self.servers = tmp
+
+        if self.get_option("status"):
+            tmp = []
+            for server in self.servers:
+                if server.status in self.get_option("status"):
                     tmp.append(server)
             self.servers = tmp
 
