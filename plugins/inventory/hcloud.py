@@ -7,7 +7,6 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
     name: hcloud
-    plugin_type: inventory
     author:
       - Lukas Kaemmerling (@lkaemmerling)
     short_description: Ansible dynamic inventory plugin for the Hetzner Cloud.
@@ -45,16 +44,19 @@ DOCUMENTATION = r'''
           description: Populate inventory with instances in this location.
           default: []
           type: list
+          elements: str
           required: false
         types:
           description: Populate inventory with instances with this type.
           default: []
           type: list
+          elements: str
           required: false
         images:
           description: Populate inventory with instances with this image name, only available for system images.
           default: []
           type: list
+          elements: str
           required: false
         label_selector:
           description: Populate inventory with instances with this label.
