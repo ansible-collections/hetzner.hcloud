@@ -30,7 +30,7 @@ options:
     name:
         description:
             - The Name of the Hetzner Cloud Floating IPs to manage.
-            - Only required if no Floating IP I(id) is given or a Floating IP does not exists.
+            - Only required if no Floating IP I(id) is given or a Floating IP does not exist.
         type: str
     description:
         description:
@@ -39,17 +39,17 @@ options:
     home_location:
         description:
             - Home Location of the Hetzner Cloud Floating IP.
-            - Required if no I(server) is given and Floating IP does not exists.
+            - Required if no I(server) is given and Floating IP does not exist.
         type: str
     server:
         description:
             - Server Name the Floating IP should be assigned to.
-            - Required if no I(home_location) is given and Floating IP does not exists.
+            - Required if no I(home_location) is given and Floating IP does not exist.
         type: str
     type:
         description:
             - Type of the Floating IP.
-            - Required if Floating IP does not exists
+            - Required if Floating IP does not exist
         choices: [ ipv4, ipv6 ]
         type: str
     force:

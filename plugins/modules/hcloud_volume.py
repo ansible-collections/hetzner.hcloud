@@ -30,7 +30,7 @@ options:
     name:
         description:
             - The Name of the Hetzner Cloud Block Volume to manage.
-            - Only required if no volume I(id) is given or a volume does not exists.
+            - Only required if no volume I(id) is given or a volume does not exist.
         type: str
     size:
         description:
@@ -45,18 +45,18 @@ options:
     format:
         description:
             - Automatically Format the volume on creation
-            - Can only be used in case the Volume does not exists.
+            - Can only be used in case the Volume does not exist.
         type: str
         choices: [xfs, ext4]
     location:
         description:
             - Location of the Hetzner Cloud Volume.
-            - Required if no I(server) is given and Volume does not exists.
+            - Required if no I(server) is given and Volume does not exist.
         type: str
     server:
         description:
             - Server Name the Volume should be assigned to.
-            - Required if no I(location) is given and Volume does not exists.
+            - Required if no I(location) is given and Volume does not exist.
         type: str
     delete_protection:
         description:

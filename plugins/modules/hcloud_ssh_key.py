@@ -30,7 +30,7 @@ options:
     name:
         description:
             - The Name of the Hetzner Cloud ssh_key to manage.
-            - Only required if no ssh_key I(id) is given or a ssh_key does not exists.
+            - Only required if no ssh_key I(id) is given or a ssh_key does not exist.
         type: str
     fingerprint:
         description:
@@ -44,7 +44,7 @@ options:
     public_key:
         description:
             - The Public Key to add.
-            - Required if ssh_key does not exists.
+            - Required if ssh_key does not exist.
         type: str
     state:
         description:

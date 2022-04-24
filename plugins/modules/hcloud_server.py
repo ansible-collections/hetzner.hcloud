@@ -30,12 +30,12 @@ options:
     name:
         description:
             - The Name of the Hetzner Cloud server to manage.
-            - Only required if no server I(id) is given or a server does not exists.
+            - Only required if no server I(id) is given or a server does not exist.
         type: str
     server_type:
         description:
             - The Server Type of the Hetzner Cloud server to manage.
-            - Required if server does not exists.
+            - Required if server does not exist.
         type: str
     ssh_keys:
         description:
@@ -57,17 +57,17 @@ options:
     image:
         description:
             - Image the server should be created from.
-            - Required if server does not exists.
+            - Required if server does not exist.
         type: str
     location:
         description:
             - Location of Server.
-            - Required if no I(datacenter) is given and server does not exists.
+            - Required if no I(datacenter) is given and server does not exist.
         type: str
     datacenter:
         description:
             - Datacenter of Server.
-            - Required of no I(location) is given and server does not exists.
+            - Required of no I(location) is given and server does not exist.
         type: str
     backups:
         description:
@@ -100,7 +100,7 @@ options:
     user_data:
         description:
             - User Data to be passed to the server on creation.
-            - Only used if server does not exists.
+            - Only used if server does not exist.
         type: str
     rescue_mode:
         description:

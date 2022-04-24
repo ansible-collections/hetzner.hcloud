@@ -30,7 +30,7 @@ options:
     name:
         description:
             - The Name of the Hetzner Cloud firewall to manage.
-            - Only required if no firewall I(id) is given, or a firewall does not exists.
+            - Only required if no firewall I(id) is given, or a firewall does not exist.
         type: str
     labels:
         description:
