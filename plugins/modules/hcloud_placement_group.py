@@ -30,7 +30,7 @@ options:
     name:
         description:
             - The Name of the Hetzner Cloud placement group to manage.
-            - Only required if no placement group I(id) is given, or a placement group does not exists.
+            - Only required if no placement group I(id) is given, or a placement group does not exist.
         type: str
     labels:
         description:

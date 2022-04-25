@@ -31,12 +31,12 @@ options:
     name:
         description:
             - The Name of the Hetzner Cloud Network to manage.
-            - Only required if no Network I(id) is given or a Network does not exists.
+            - Only required if no Network I(id) is given or a Network does not exist.
         type: str
     ip_range:
         description:
             - IP range of the Network.
-            - Required if Network does not exists.
+            - Required if Network does not exist.
         type: str
     labels:
         description:

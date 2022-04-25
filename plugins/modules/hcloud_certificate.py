@@ -30,7 +30,7 @@ options:
     name:
         description:
             - The Name of the Hetzner Cloud certificate to manage.
-            - Only required if no certificate I(id) is given or a certificate does not exists.
+            - Only required if no certificate I(id) is given or a certificate does not exist.
         type: str
     labels:
         description:
@@ -39,17 +39,17 @@ options:
     certificate:
         description:
             - Certificate and chain in PEM format, in order so that each record directly certifies the one preceding.
-            - Required if certificate does not exists.
+            - Required if certificate does not exist.
         type: str
     private_key:
         description:
             - Certificate key in PEM format.
-            - Required if certificate does not exists.
+            - Required if certificate does not exist.
         type: str
     domain_names:
         description:
             - Certificate key in PEM format.
-            - Required if certificate does not exists.
+            - Required if certificate does not exist.
         type: list
         elements: str
     type:

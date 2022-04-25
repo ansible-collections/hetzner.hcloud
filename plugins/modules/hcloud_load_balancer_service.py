@@ -35,12 +35,12 @@ options:
     destination_port:
         description:
             - The port traffic is forwarded to, i.e. the port the targets are listening and accepting connections on.
-            - Required if services does not exists and protocol is tcp.
+            - Required if services does not exist and protocol is tcp.
         type: int
     protocol:
         description:
             - Protocol of the service.
-            - Required if Load Balancer does not exists.
+            - Required if Load Balancer does not exist.
         type: str
         choices: [ http, https, tcp ]
     proxyprotocol:

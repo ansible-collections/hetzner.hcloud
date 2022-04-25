@@ -30,22 +30,22 @@ options:
     name:
         description:
             - The Name of the Hetzner Cloud Load Balancer to manage.
-            - Only required if no Load Balancer I(id) is given or a Load Balancer does not exists.
+            - Only required if no Load Balancer I(id) is given or a Load Balancer does not exist.
         type: str
     load_balancer_type:
         description:
             - The Load Balancer Type of the Hetzner Cloud Load Balancer to manage.
-            - Required if Load Balancer does not exists.
+            - Required if Load Balancer does not exist.
         type: str
     location:
         description:
             - Location of Load Balancer.
-            - Required if no I(network_zone) is given and Load Balancer does not exists.
+            - Required if no I(network_zone) is given and Load Balancer does not exist.
         type: str
     network_zone:
         description:
             - Network Zone of Load Balancer.
-            - Required of no I(location) is given and Load Balancer does not exists.
+            - Required of no I(location) is given and Load Balancer does not exist.
         type: str
     labels:
         description:
