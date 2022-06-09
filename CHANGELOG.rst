@@ -4,6 +4,15 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+
+v1.7.0
+======
+
+Minor Changes
+-------------
+
+- inventory - support jinjia templating within `network`
+
 v1.6.0
 ======
 

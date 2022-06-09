@@ -1,2 +1,0 @@
-minor_changes:
-    - inventory - support jinjia templating within `network`

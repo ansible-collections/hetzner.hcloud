@@ -163,3 +163,10 @@ releases:
     fragments:
     - hcloud_rdns-add-support-for-load-balancers.yml
     release_date: '2021-08-17'
+  1.7.0:
+    changes:
+      minor_changes:
+      - inventory - support jinjia templating within `network`
+    fragments:
+    - inventory-network-templating.yml
+    release_date: '2022-06-09'

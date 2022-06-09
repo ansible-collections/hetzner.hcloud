@@ -57,6 +57,6 @@ ansible-test integration --color --local  -vvv hcloud_server // Executed all int
 1. Check if the changelog fragments are available (there should be files in `changelogs/fragments`)
 2. Run `antsibull-changelog release --version <version>`, it should remove all fragments and change
    the `changelogs/changlog.yaml` and `CHANGELOG.rst`
-3. Push the changes to the master branch
+3. Push the changes to the main branch
 4. Tag the release through the Github UI, after this the Github Actions will run and publish the collection to Ansible
    Galaxy
