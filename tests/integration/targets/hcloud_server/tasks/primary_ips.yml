@@ -1,0 +1,82 @@
+# Copyright: (c) 2022, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: setup create primary ipv4
+  hcloud_primary_ip:
+    name: "{{ hcloud_primary_ip_name }}v4"
+    type: ipv4
+    datacenter: "fsn1-dc14"
+  register: primaryIPv4
+
+- name: setup create second primary ipv4
+  hcloud_primary_ip:
+    name: "{{ hcloud_primary_ip_name }}v42"
+    type: ipv4
+    datacenter: "fsn1-dc14"
+  register: secondPrimaryIPv4
+
+- name: setup create primary ipv6
+  hcloud_primary_ip:
+    name: "{{ hcloud_primary_ip_name }}v6"
+    type: ipv6
+    datacenter: "fsn1-dc14"
+  register: primaryIPv6
+
+- name: test create server with primary ips
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    datacenter: "fsn1-dc14"
+    image: "ubuntu-20.04"
+    ipv4: "{{primaryIPv4.hcloud_primary_ip.id}}"
+    ipv6: "{{primaryIPv6.hcloud_primary_ip.id}}"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: stopped
+  register: result
+- name: verify test create server with primary ips
+  assert:
+    that:
+      - result is changed
+
+- name: test update server with primary ips
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    datacenter: "fsn1-dc14"
+    image: "ubuntu-20.04"
+    ipv4: "{{secondPrimaryIPv4.hcloud_primary_ip.id}}"
+    ipv6: ""
+    enable_ipv6: no
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: stopped
+  register: result
+- name: verify test create server with primary ips
+  assert:
+    that:
+      - result is changed
+
+- name: cleanup server with primary ips
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+
+- name: cleanup test create primary ips
+  hcloud_primary_ip:
+    name: "{{ hcloud_server_name }}v4"
+    state: absent
+- name: cleanup test create primary ips
+  hcloud_primary_ip:
+    name: "{{ hcloud_server_name }}v42"
+    state: absent
+  until: result is not failed
+  retries: 5
+  delay: 2
+- name: cleanup test create primary ips
+  hcloud_primary_ip:
+    name: "{{ hcloud_server_name }}v6"
+    state: absent
+  until: result is not failed
+  retries: 5
+  delay: 2

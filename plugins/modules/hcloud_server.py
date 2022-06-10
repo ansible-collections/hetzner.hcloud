@@ -79,6 +79,24 @@ options:
             - If you want to downgrade the server later, this value should be False.
         type: bool
         default: no
+    enable_ipv4:
+        description:
+            - Enables the public ipv4 address
+        type: bool
+        default: yes
+    enable_ipv6:
+        description:
+            - Enables the public ipv6 address
+        type: bool
+        default: yes
+    ipv4:
+        description:
+            - ID of the ipv4 Primary IP to use. If omitted and enable_ipv4 is true, a new ipv4 Primary IP will automatically be created
+        type: str
+    ipv6:
+        description:
+            - ID of the ipv6 Primary IP to use. If omitted and enable_ipv6 is true, a new ipv6 Primary IP will automatically be created.
+        type: str
     force_upgrade:
         description:
             - Deprecated
@@ -294,16 +312,19 @@ from datetime import timedelta
 try:
     from hcloud.volumes.domain import Volume
     from hcloud.ssh_keys.domain import SSHKey
-    from hcloud.servers.domain import Server
+    from hcloud.servers.domain import Server, ServerCreatePublicNetwork
     from hcloud.firewalls.domain import Firewall, FirewallResource
+    from hcloud.primary_ips.domain import PrimaryIP
     from hcloud import APIException
 except ImportError:
     APIException = None
     Volume = None
     SSHKey = None
     Server = None
+    ServerCreatePublicNetwork = None
     Firewall = None
     FirewallResource = None
+    PrimaryIP = None
 
 
 class AnsibleHcloudServer(Hcloud):
@@ -313,12 +334,16 @@ class AnsibleHcloudServer(Hcloud):
 
     def _prepare_result(self):
         image = None if self.hcloud_server.image is None else to_native(self.hcloud_server.image.name)
-        placement_group = None if self.hcloud_server.placement_group is None else to_native(self.hcloud_server.placement_group.name)
+        placement_group = None if self.hcloud_server.placement_group is None else to_native(
+            self.hcloud_server.placement_group.name)
+        ipv4_address = None if self.hcloud_server.public_net.ipv4 is None else to_native(
+            self.hcloud_server.public_net.ipv4.ip)
+        ipv6 = None if self.hcloud_server.public_net.ipv6 is None else to_native(self.hcloud_server.public_net.ipv6.ip)
         return {
             "id": to_native(self.hcloud_server.id),
             "name": to_native(self.hcloud_server.name),
-            "ipv4_address": to_native(self.hcloud_server.public_net.ipv4.ip),
-            "ipv6": to_native(self.hcloud_server.public_net.ipv6.ip),
+            "ipv4_address": ipv4_address,
+            "ipv6": ipv6,
             "image": image,
             "server_type": to_native(self.hcloud_server.server_type.name),
             "datacenter": to_native(self.hcloud_server.datacenter.name),
@@ -357,7 +382,23 @@ class AnsibleHcloudServer(Hcloud):
             "labels": self.module.params.get("labels"),
             "image": self._get_image(),
             "placement_group": self._get_placement_group(),
+            "public_net": ServerCreatePublicNetwork(
+                enable_ipv4=self.module.params.get("enable_ipv4"),
+                enable_ipv6=self.module.params.get("enable_ipv6")
+            )
         }
+
+        if self.module.params.get("ipv4") is not None:
+            p = self.client.primary_ips.get_by_name(self.module.params.get("ipv4"))
+            if not p:
+                p = self.client.primary_ips.get_by_id(self.module.params.get("ipv4"))
+            params["public_net"].ipv4 = p
+
+        if self.module.params.get("ipv6") is not None:
+            p = self.client.primary_ips.get_by_name(self.module.params.get("ipv6"))
+            if not p:
+                p = self.client.primary_ips.get_by_id(self.module.params.get("ipv6"))
+            params["public_net"].ipv6 = p
 
         if self.module.params.get("ssh_keys") is not None:
             params["ssh_keys"] = [
@@ -436,8 +477,8 @@ class AnsibleHcloudServer(Hcloud):
             available_until = image.deprecated + timedelta(days=90)
             if self.module.params.get("allow_deprecated_image"):
                 self.module.warn(
-                    "You try to use a deprecated image. The image %s will continue to be available until %s.") \
-                    % (image.name, available_until.strftime('%Y-%m-%d'))
+                    "You try to use a deprecated image. The image %s will continue to be available until %s.") % (
+                    image.name, available_until.strftime('%Y-%m-%d'))
             else:
                 self.module.fail_json(
                     msg=("You try to use a deprecated image. The image %s will continue to be available until %s." +
@@ -468,12 +509,30 @@ class AnsibleHcloudServer(Hcloud):
             try:
                 placement_group = self.client.placement_groups.get_by_id(self.module.params.get("placement_group"))
             except Exception:
-                self.module.fail_json(msg="placement_group %s was not found" % self.module.params.get("placement_group"))
+                self.module.fail_json(
+                    msg="placement_group %s was not found" % self.module.params.get("placement_group"))
 
         return placement_group
 
+    def _get_primary_ip(self, field):
+        if self.module.params.get(field) is None:
+            return None
+
+        primary_ip = self.client.primary_ips.get_by_name(
+            self.module.params.get(field)
+        )
+        if primary_ip is None:
+            try:
+                primary_ip = self.client.primary_ips.get_by_id(self.module.params.get(field))
+            except Exception as e:
+                self.module.fail_json(
+                    msg="primary_ip %s was not found" % self.module.params.get(field))
+
+        return primary_ip
+
     def _update_server(self):
-        self.module.warn("force_upgrade is deprecated, use force instead")
+        if "force_upgrade" in self.module.params:
+            self.module.warn("force_upgrade is deprecated, use force instead")
 
         try:
             previous_server_status = self.hcloud_server.status
@@ -542,14 +601,67 @@ class AnsibleHcloudServer(Hcloud):
                 else:
                     placement_group = self._get_placement_group()
                     if (
-                        placement_group is not None and
-                        (self.hcloud_server.placement_group is None or self.hcloud_server.placement_group.id != placement_group.id)
+                            placement_group is not None and
+                            (
+                                self.hcloud_server.placement_group is None or
+                                self.hcloud_server.placement_group.id != placement_group.id
+                            )
                     ):
                         self.stop_server_if_forced()
                         if not self.module.check_mode:
                             self.hcloud_server.add_to_placement_group(placement_group)
                         self._mark_as_changed()
 
+            if "ipv4" in self.module.params:
+                if (
+                        self.module.params["ipv4"] is None and
+                        self.hcloud_server.public_net.primary_ipv4 is not None and
+                        not self.module.params.get("enable_ipv4")
+                ):
+                    self.stop_server_if_forced()
+                    if not self.module.check_mode:
+                        self.hcloud_server.public_net.primary_ipv4.unassign().wait_until_finished()
+                    self._mark_as_changed()
+                else:
+                    primary_ip = self._get_primary_ip("ipv4")
+                    if (
+                            primary_ip is not None and
+                            (
+                                self.hcloud_server.public_net.primary_ipv4 is None or
+                                self.hcloud_server.public_net.primary_ipv4.id != primary_ip.id
+                            )
+                    ):
+                        self.stop_server_if_forced()
+                        if not self.module.check_mode:
+                            if self.hcloud_server.public_net.primary_ipv4:
+                                self.hcloud_server.public_net.primary_ipv4.unassign().wait_until_finished()
+                            primary_ip.assign(self.hcloud_server.id, "server").wait_until_finished()
+                        self._mark_as_changed()
+            if "ipv6" in self.module.params:
+                if (
+                        (self.module.params["ipv6"] is None or self.module.params["ipv6"] == "") and
+                        self.hcloud_server.public_net.primary_ipv6 is not None and
+                        not self.module.params.get("enable_ipv6")
+                ):
+                    self.stop_server_if_forced()
+                    if not self.module.check_mode:
+                        self.hcloud_server.public_net.primary_ipv6.unassign().wait_until_finished()
+                    self._mark_as_changed()
+                else:
+                    primary_ip = self._get_primary_ip("ipv6")
+                    if (
+                            primary_ip is not None and
+                            (
+                                self.hcloud_server.public_net.primary_ipv6 is None or
+                                self.hcloud_server.public_net.primary_ipv6.id != primary_ip.id
+                            )
+                    ):
+                        self.stop_server_if_forced()
+                        if not self.module.check_mode:
+                            if self.hcloud_server.public_net.primary_ipv6 is not None:
+                                self.hcloud_server.public_net.primary_ipv6.unassign().wait_until_finished()
+                            primary_ip.assign(self.hcloud_server.id, "server").wait_until_finished()
+                        self._mark_as_changed()
             server_type = self.module.params.get("server_type")
             if server_type is not None and self.hcloud_server.server_type.name != server_type:
                 self.stop_server_if_forced()
@@ -558,7 +670,7 @@ class AnsibleHcloudServer(Hcloud):
                 if self.module.params.get("upgrade_disk"):
                     timeout = (
                         1000
-                    )  # When we upgrade the disk too the resize progress takes some more time.
+                    )  # When we upgrade the disk to the resize progress takes some more time.
                 if not self.module.check_mode:
                     self.hcloud_server.change_type(
                         server_type=self._get_server_type(),
@@ -567,11 +679,14 @@ class AnsibleHcloudServer(Hcloud):
                 self._mark_as_changed()
 
             if (
-                not self.module.check_mode and
-                (
-                    self.module.params.get("state") == "present" and previous_server_status == Server.STATUS_RUNNING or
-                    self.module.params.get("state") == "started"
-                )
+                    not self.module.check_mode and
+                    (
+                        (
+                            self.module.params.get("state") == "present" and
+                            previous_server_status == Server.STATUS_RUNNING
+                        ) or
+                        self.module.params.get("state") == "started"
+                    )
             ):
                 self.start_server()
 
@@ -586,7 +701,7 @@ class AnsibleHcloudServer(Hcloud):
                 self._mark_as_changed()
             self._get_server()
         except Exception as e:
-            self.module.fail_json(msg=e.message)
+            self.module.fail_json(msg=e)
 
     def _set_rescue_mode(self, rescue_mode):
         if self.module.params.get("ssh_keys"):
@@ -626,9 +741,9 @@ class AnsibleHcloudServer(Hcloud):
         previous_server_status = self.hcloud_server.status
         if previous_server_status == Server.STATUS_RUNNING and not self.module.check_mode:
             if (
-                self.module.params.get("force_upgrade") or
-                self.module.params.get("force") or
-                self.module.params.get("state") == "stopped"
+                    self.module.params.get("force_upgrade") or
+                    self.module.params.get("force") or
+                    self.module.params.get("state") == "stopped"
             ):
                 self.stop_server()  # Only stopped server can be upgraded
                 return previous_server_status
@@ -689,6 +804,10 @@ class AnsibleHcloudServer(Hcloud):
                 labels={"type": "dict"},
                 backups={"type": "bool"},
                 upgrade_disk={"type": "bool", "default": False},
+                enable_ipv4={"type": "bool", "default": True},
+                enable_ipv6={"type": "bool", "default": True},
+                ipv4={"type": "str"},
+                ipv6={"type": "str"},
                 force={"type": "bool", "default": False},
                 force_upgrade={"type": "bool", "default": False},
                 allow_deprecated_image={"type": "bool", "default": False},

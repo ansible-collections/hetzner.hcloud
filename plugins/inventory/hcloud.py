@@ -203,9 +203,12 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
         self.inventory.set_variable(server.name, "type", to_native(server.server_type.name))
 
         # Network
-        self.inventory.set_variable(server.name, "ipv4", to_native(server.public_net.ipv4.ip))
-        self.inventory.set_variable(server.name, "ipv6_network", to_native(server.public_net.ipv6.network))
-        self.inventory.set_variable(server.name, "ipv6_network_mask", to_native(server.public_net.ipv6.network_mask))
+        if server.public_net.ipv4:
+            self.inventory.set_variable(server.name, "ipv4", to_native(server.public_net.ipv4.ip))
+
+        if server.public_net.ipv6:
+            self.inventory.set_variable(server.name, "ipv6_network", to_native(server.public_net.ipv6.network))
+            self.inventory.set_variable(server.name, "ipv6_network_mask", to_native(server.public_net.ipv6.network_mask))
 
         if self.get_option("network"):
             for server_private_network in server.private_net:
