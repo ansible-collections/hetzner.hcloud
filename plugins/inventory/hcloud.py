@@ -70,6 +70,7 @@ DOCUMENTATION = r'''
           description: Populate inventory with instances with this status.
           default: []
           type: list
+          elements: str
           required: false
 '''
 
