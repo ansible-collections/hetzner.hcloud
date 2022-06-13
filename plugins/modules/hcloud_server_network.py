@@ -178,7 +178,7 @@ class AnsibleHcloudServerNetwork(Hcloud):
             "network": self.hcloud_network
         }
         alias_ips = self.module.params.get("alias_ips")
-        if alias_ips is not None and self.hcloud_server_network.alias_ips.sort() != alias_ips.sort():
+        if alias_ips is not None and sorted(self.hcloud_server_network.alias_ips) != sorted(alias_ips):
             params["alias_ips"] = alias_ips
 
             if not self.module.check_mode:
