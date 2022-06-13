@@ -1,0 +1,2 @@
+bugfixes:
+  - hcloud_server_network - fixes changed alias_ips by using sorted
