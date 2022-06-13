@@ -170,3 +170,13 @@ releases:
     fragments:
     - inventory-network-templating.yml
     release_date: '2022-06-09'
+  1.7.1:
+    changes:
+      bugfixes:
+      - hcloud_server_network - fixes changed alias_ips by using sorted
+      minor_changes:
+      - inventory - allow filtering by server status
+    fragments:
+    - hcloud_server_network-alias-ips.yaml
+    - inventory-filter-by-status.yaml
+    release_date: '2022-06-13'

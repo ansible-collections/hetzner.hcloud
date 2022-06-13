@@ -5,6 +5,19 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.7.1
+======
+
+Minor Changes
+-------------
+
+- inventory - allow filtering by server status
+
+Bugfixes
+--------
+
+- hcloud_server_network - fixes changed alias_ips by using sorted
+
 v1.7.0
 ======
 
