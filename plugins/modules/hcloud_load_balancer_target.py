@@ -71,28 +71,28 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a server Load Balancer target
-  hcloud_load_balancer_target:
+  hetzner.hcloud.hcloud_load_balancer_target:
     type: server
     load_balancer: my-LoadBalancer
     server: my-server
     state: present
 
 - name: Create a label_selector Load Balancer target
-  hcloud_load_balancer_target:
-    type: server
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: label_selector
     load_balancer: my-LoadBalancer
     label_selector: application=backend
     state: present
 
 - name: Create an IP Load Balancer target
-  hcloud_load_balancer_target:
-    type: server
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: ip
     load_balancer: my-LoadBalancer
     ip: 127.0.0.1
     state: present
 
 - name: Ensure the Load Balancer target is absent (remove if needed)
-  hcloud_load_balancer_target:
+  hetzner.hcloud.hcloud_load_balancer_target:
     type: server
     load_balancer: my-LoadBalancer
     server: my-server
