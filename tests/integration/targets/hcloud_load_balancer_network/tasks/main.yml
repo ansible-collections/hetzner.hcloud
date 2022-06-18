@@ -46,7 +46,7 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "missing required arguments: load_balancer, network"'
+      - '"missing required arguments:" in result.msg'
 
 - name: test fail load balancer does not exist
   hetzner.hcloud.hcloud_load_balancer_network:
