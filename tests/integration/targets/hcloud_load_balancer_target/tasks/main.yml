@@ -139,10 +139,9 @@
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result
-- name: verify cleanup load_balancer
-  assert:
-    that:
-    - result is success
+  until: result is not failed
+  retries: 5
+  delay: 2
 
 - name: cleanup
   hcloud_server:
