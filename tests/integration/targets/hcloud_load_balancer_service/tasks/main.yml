@@ -13,6 +13,20 @@
     that:
       - load_balancer is success
 
+- name: test fail load balancer does not exist
+  hetzner.hcloud.hcloud_load_balancer_service:
+    load_balancer: does-not-exist
+    protocol: http
+    listen_port: 80
+    state: present
+  register: result
+  ignore_errors: true
+- name: verify test fail load_balancer does not exist
+  assert:
+    that:
+      - result is failed
+      - "result.msg == 'Load balancer does not exist: does-not-exist'"
+
 - name: test create load_balancer service with checkmode
   hcloud_load_balancer_service:
     load_balancer: "{{hcloud_load_balancer_name}}"

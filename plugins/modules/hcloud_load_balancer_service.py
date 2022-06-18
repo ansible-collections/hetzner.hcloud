@@ -340,9 +340,13 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
 
     def _get_load_balancer(self):
         try:
+            load_balancer_name = self.module.params.get("load_balancer")
             self.hcloud_load_balancer = self.client.load_balancers.get_by_name(
-                self.module.params.get("load_balancer")
+                load_balancer_name
             )
+            if not self.hcloud_load_balancer:
+                self.module.fail_json(msg="Load balancer does not exist: %s" % load_balancer_name)
+
             self._get_load_balancer_service()
         except Exception as e:
             self.module.fail_json(msg=e.message)
