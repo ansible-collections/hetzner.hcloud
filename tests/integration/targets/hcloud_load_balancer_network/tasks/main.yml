@@ -46,7 +46,33 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "missing required arguments: load_balancer, network"'
+      - '"missing required arguments:" in result.msg'
+
+- name: test fail load balancer does not exist
+  hetzner.hcloud.hcloud_load_balancer_network:
+    network: "{{ hcloud_network_name }}"
+    load_balancer: does-not-exist
+    state: present
+  register: result
+  ignore_errors: true
+- name: verify test fail load_balancer does not exist
+  assert:
+    that:
+      - result is failed
+      - "result.msg == 'Load balancer does not exist: does-not-exist'"
+
+- name: test fail network does not exist
+  hetzner.hcloud.hcloud_load_balancer_network:
+    network: does-not-exist
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    state: present
+  register: result
+  ignore_errors: true
+- name: verify test fail network does not exist
+  assert:
+    that:
+      - result is failed
+      - "result.msg == 'Network does not exist: does-not-exist'"
 
 - name: test create load_balancer network with checkmode
   hcloud_load_balancer_network:

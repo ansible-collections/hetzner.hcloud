@@ -177,9 +177,19 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
 
     def _get_load_balancer_and_target(self):
         try:
-            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(self.module.params.get("load_balancer"))
+            load_balancer_name = self.module.params.get("load_balancer")
+            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(
+                load_balancer_name
+            )
+            if not self.hcloud_load_balancer:
+                self.module.fail_json(msg="Load balancer does not exist: %s" % load_balancer_name)
+
             if self.module.params.get("type") == "server":
-                self.hcloud_server = self.client.servers.get_by_name(self.module.params.get("server"))
+                server_name = self.module.params.get("server")
+                self.hcloud_server = self.client.servers.get_by_name(server_name)
+                if not self.hcloud_server:
+                    self.module.fail_json(msg="Server not found: %s" % server_name)
+
             self.hcloud_load_balancer_target = None
         except Exception as e:
             self.module.fail_json(msg=e.message)

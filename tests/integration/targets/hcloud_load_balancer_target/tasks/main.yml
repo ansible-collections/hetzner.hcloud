@@ -26,6 +26,32 @@
     that:
       - load_balancer is success
 
+- name: test fail load balancer does not exist
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: server
+    load_balancer: does-not-exist
+    server: "{{ hcloud_server_name }}"
+  register: result
+  ignore_errors: true
+- name: verify test fail load_balancer does not exist
+  assert:
+    that:
+      - result is failed
+      - "result.msg == 'Load balancer does not exist: does-not-exist'"
+
+- name: test fail server does not exist
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: server
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    server: does-not-exist
+  register: result
+  ignore_errors: true
+- name: verify test fail server does not exist
+  assert:
+    that:
+      - result is failed
+      - "result.msg == 'Server not found: does-not-exist'"
+
 - name: test create load_balancer target with checkmode
   hcloud_load_balancer_target:
     type: "server"
@@ -113,10 +139,9 @@
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result
-- name: verify cleanup load_balancer
-  assert:
-    that:
-    - result is success
+  until: result is not failed
+  retries: 5
+  delay: 2
 
 - name: cleanup
   hcloud_server:
