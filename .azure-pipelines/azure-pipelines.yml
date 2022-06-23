@@ -33,7 +33,7 @@ variables:
 resources:
   containers:
     - container: default
-      image: quay.io/ansible/azure-pipelines-test-container:1.9.0
+      image: quay.io/ansible/azure-pipelines-test-container:3.0.0
 
 pool: Standard
 
@@ -77,26 +77,6 @@ stages:
             - name: Sanity
               test: '2.11/sanity/1'
 
-  - stage: Ansible_2_10
-    displayName: Sanity & Units 2.10
-    dependsOn: []
-    jobs:
-      - template: templates/matrix.yml
-        parameters:
-          targets:
-            - name: Sanity
-              test: '2.10/sanity/1'
-
-  - stage: Ansible_2_9
-    displayName: Sanity 2.9
-    dependsOn: []
-    jobs:
-      - template: templates/matrix.yml
-        parameters:
-          targets:
-            - name: Sanity
-              test: '2.9/sanity/1'
-
 ## Integration tests (remote)
   - stage: Hetzner_devel
     displayName: Hetzner devel
@@ -109,7 +89,7 @@ stages:
             - 2
           targets:
             - name: hcloud
-              test: 'devel/hcloud/3.8'
+              test: 'devel/hcloud/3.9'
 
   - stage: Hetzner_2_13
     displayName: Hetzner 2.13
@@ -122,7 +102,7 @@ stages:
             - 2
           targets:
             - name: hcloud
-              test: '2.13/hcloud/3.8'
+              test: '2.13/hcloud/3.9'
 
   - stage: Hetzner_2_12
     displayName: Hetzner 2.12
@@ -135,7 +115,7 @@ stages:
             - 2
           targets:
             - name: hcloud
-              test: '2.12/hcloud/3.8'
+              test: '2.12/hcloud/3.9'
 
   - stage: Hetzner_2_11
     displayName: Hetzner 2.11
@@ -148,35 +128,8 @@ stages:
             - 2
           targets:
             - name: hcloud
-              test: '2.11/hcloud/3.8'
+              test: '2.11/hcloud/3.9'
 
-  - stage: Hetzner_2_10
-    displayName: Hetzner 2.10
-    dependsOn: []
-    jobs:
-      - template: templates/matrix.yml
-        parameters:
-          groups:
-            - 1
-            - 2
-            - 3
-          targets:
-            - name: hcloud
-              test: '2.10/hcloud/3.8'
-
-  - stage: Hetzner_2_9
-    displayName: Hetzner 2.9
-    dependsOn: []
-    jobs:
-      - template: templates/matrix.yml
-        parameters:
-          groups:
-            - 1
-            - 2
-            - 3
-          targets:
-            - name: hcloud
-              test: '2.9/hcloud/3.8'
 
 ### Finally
   - stage: Summary
@@ -186,13 +139,9 @@ stages:
       - Ansible_2_13
       - Ansible_2_12
       - Ansible_2_11
-      - Ansible_2_10
-      - Ansible_2_9
       - Hetzner_devel
       - Hetzner_2_13
       - Hetzner_2_12
       - Hetzner_2_11
-      - Hetzner_2_10
-      - Hetzner_2_9
     jobs:
       - template: templates/coverage.yml
