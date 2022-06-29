@@ -180,3 +180,11 @@ releases:
     - hcloud_server_network-alias-ips.yaml
     - inventory-filter-by-status.yaml
     release_date: '2022-06-13'
+  1.8.0:
+    modules:
+    - description: Create and manage cloud Primary IPs on the Hetzner Cloud.
+      name: hcloud_primary_ip
+      namespace: hetzner.hcloud
+    release_date: '2022-06-29'
+  1.8.1:
+    release_date: '2022-06-29'
