@@ -1,0 +1,105 @@
+# Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: test add not existing firewall should fail
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    firewalls:
+      - not-existing
+    state: present
+  ignore_errors: yes
+  register: result
+- name: verify add not existing firewall should fail
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "firewall not-existing was not found"'
+- name: setup create firewalls
+  hcloud_firewall:
+    name: "{{ item }}"
+    rules:
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+  with_items:
+    - "{{ hcloud_firewall_name }}"
+    - "{{ hcloud_firewall_name }}2"
+
+- name: test create server with firewalls
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    firewalls:
+      - "{{ hcloud_firewall_name }}"
+    image: "ubuntu-20.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
+  register: result
+- name: verify test create server with firewalls
+  assert:
+    that:
+      - result is changed
+
+- name: test create server with firewalls idempotence
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    firewalls:
+      - "{{ hcloud_firewall_name }}"
+    image: "ubuntu-20.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
+  register: result
+- name: verify test create server with firewalls idempotence
+  assert:
+    that:
+      - result is not changed
+
+- name: test update server with firewalls
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    firewalls:
+      - "{{ hcloud_firewall_name }}2"
+    image: "ubuntu-20.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
+  register: result
+- name: verify test update server with firewalls
+  assert:
+    that:
+      - result is changed
+
+- name: test update server with firewalls idempotence
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    firewalls:
+      - "{{ hcloud_firewall_name }}2"
+    image: "ubuntu-20.04"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: present
+  register: result
+- name: verify test update server with firewalls idempotence
+  assert:
+    that:
+      - result is not changed
+
+- name: cleanup server with firewalls
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+
+- name: cleanup test create firewall
+  hcloud_firewall:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ hcloud_firewall_name }}"
+    - "{{ hcloud_firewall_name }}2"

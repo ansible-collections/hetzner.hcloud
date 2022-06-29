@@ -5,7 +5,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name }}"
     server_type: cx11
-    image: "ubuntu-18.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: present
@@ -15,13 +15,13 @@
     that:
     - setup is success
 
-- name: test create Floating IP
+- name: setup Floating IP
   hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     home_location: "fsn1"
   register: floatingIP
-- name: verify test create Floating IP
+- name: verify setup Floating IP
   assert:
     that:
       - floatingIP is success
@@ -37,6 +37,17 @@
   assert:
     that:
     - load_balancer is success
+
+- name: setup Primary IP
+  hcloud_primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    type: ipv4
+    datacenter: "fsn1-dc14"
+  register: primaryIP
+- name: verify setup Primary IP
+  assert:
+    that:
+      - primaryIP is success
 
 - name: test missing required parameter
   hcloud_rdns:
@@ -142,6 +153,21 @@
     - rdns.hcloud_rdns.ip_address == "{{ floatingIP.hcloud_floating_ip.ip}}"
     - rdns.hcloud_rdns.dns_ptr == "example.com"
 
+- name: test create rdns with primary IP
+  hcloud_rdns:
+    primary_ip: "{{ hcloud_primary_ip_name }}"
+    ip_address: "{{ primaryIP.hcloud_primary_ip.ip}}"
+    dns_ptr: "example.com"
+    state: present
+  register: rdns
+- name: verify create rdns
+  assert:
+    that:
+    - rdns is changed
+    - rdns.hcloud_rdns.primary_ip == "{{ hcloud_primary_ip_name }}"
+    - rdns.hcloud_rdns.ip_address == "{{ primaryIP.hcloud_primary_ip.ip}}"
+    - rdns.hcloud_rdns.dns_ptr == "example.com"
+
 - name: test create rdns with load balancer
   hcloud_rdns:
     load_balancer: "{{ hcloud_load_balancer_name }}"
@@ -170,6 +196,16 @@
 - name: cleanup
   hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
+    state: absent
+  register: result
+- name: verify cleanup
+  assert:
+    that:
+      - result is success
+
+- name: cleanup
+  hcloud_primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
     state: absent
   register: result
 - name: verify cleanup

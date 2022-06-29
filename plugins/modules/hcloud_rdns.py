@@ -30,6 +30,10 @@ options:
         description:
             - The name of the Hetzner Cloud Floating IP you want to add the reverse DNS entry to.
         type: str
+    primary_ip:
+        description:
+            - The name of the Hetzner Cloud Primary IP you want to add the reverse DNS entry to.
+        type: str
     load_balancer:
         description:
             - The name of the Hetzner Cloud Load Balancer you want to add the reverse DNS entry to.
@@ -74,6 +78,13 @@ EXAMPLES = """
     dns_ptr: example.com
     state: present
 
+- name: Create a reverse DNS entry for a Primary IP
+  hcloud_rdns:
+    primary_ip: my-primary-ip
+    ip_address: 123.123.123.123
+    dns_ptr: example.com
+    state: present
+
 - name: Create a reverse DNS entry for a Load Balancer
   hcloud_rdns:
     load_balancer: my-load-balancer
@@ -105,6 +116,11 @@ hcloud_rdns:
             type: str
             returned: always
             sample: my-floating-ip
+        primary_ip:
+            description: Name of the Primary IP
+            type: str
+            returned: always
+            sample: my-primary-ip
         load_balancer:
             description: Name of the Load Balancer
             type: str
@@ -154,6 +170,8 @@ class AnsibleHcloudReverseDNS(Hcloud):
             result["floating_ip"] = to_native(self.hcloud_resource.name)
         elif self.module.params.get("load_balancer"):
             result["load_balancer"] = to_native(self.hcloud_resource.name)
+        elif self.module.params.get("primary_ip"):
+            result["primary_ip"] = to_native(self.hcloud_resource.name)
         return result
 
     def _get_resource(self):
@@ -167,6 +185,12 @@ class AnsibleHcloudReverseDNS(Hcloud):
             elif self.module.params.get("floating_ip"):
                 self.hcloud_resource = self.client.floating_ips.get_by_name(
                     self.module.params.get("floating_ip")
+                )
+                if self.hcloud_resource is None:
+                    self.module.fail_json(msg="The selected Floating IP does not exist")
+            elif self.module.params.get("primary_ip"):
+                self.hcloud_resource = self.client.primary_ips.get_by_name(
+                    self.module.params.get("primary_ip")
                 )
                 if self.hcloud_resource is None:
                     self.module.fail_json(msg="The selected Floating IP does not exist")
@@ -198,6 +222,14 @@ class AnsibleHcloudReverseDNS(Hcloud):
                     }
                 else:
                     self.module.fail_json(msg="The selected Floating IP does not have this IP address")
+            elif self.module.params.get("primary_ip"):
+                if self.hcloud_resource.ip == ip_address:
+                    self.hcloud_rdns = {
+                        "ip_address": self.hcloud_resource.ip,
+                        "dns_ptr": self.hcloud_resource.dns_ptr[0]["dns_ptr"],
+                    }
+                else:
+                    self.module.fail_json(msg="The selected Primary IP does not have this IP address")
             elif self.module.params.get("load_balancer"):
                 if self.hcloud_resource.public_net.ipv4.ip == ip_address:
                     self.hcloud_rdns = {
@@ -216,6 +248,13 @@ class AnsibleHcloudReverseDNS(Hcloud):
                             "dns_ptr": ipv6_address_dns_ptr["dns_ptr"],
                         }
             elif self.module.params.get("floating_ip"):
+                for ipv6_address_dns_ptr in self.hcloud_resource.dns_ptr:
+                    if ipv6_address_dns_ptr["ip"] == ip_address:
+                        self.hcloud_rdns = {
+                            "ip_address": ipv6_address_dns_ptr["ip"],
+                            "dns_ptr": ipv6_address_dns_ptr["dns_ptr"],
+                        }
+            elif self.module.params.get("primary_ip"):
                 for ipv6_address_dns_ptr in self.hcloud_resource.dns_ptr:
                     if ipv6_address_dns_ptr["ip"] == ip_address:
                         self.hcloud_rdns = {
@@ -294,6 +333,7 @@ class AnsibleHcloudReverseDNS(Hcloud):
                 server={"type": "str"},
                 floating_ip={"type": "str"},
                 load_balancer={"type": "str"},
+                primary_ip={"type": "str"},
                 ip_address={"type": "str", "required": True},
                 dns_ptr={"type": "str"},
                 state={
@@ -302,8 +342,8 @@ class AnsibleHcloudReverseDNS(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['server', 'floating_ip', 'load_balancer']],
-            mutually_exclusive=[["server", "floating_ip", 'load_balancer']],
+            required_one_of=[['server', 'floating_ip', 'load_balancer', 'primary_ip']],
+            mutually_exclusive=[["server", "floating_ip", 'load_balancer', 'primary_ip']],
             supports_check_mode=True,
         )
 

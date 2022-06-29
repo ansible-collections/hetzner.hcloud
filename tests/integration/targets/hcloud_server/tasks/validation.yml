@@ -1,0 +1,51 @@
+# Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: setup
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+  register: result
+- name: verify setup
+  assert:
+    that:
+    - result is success
+
+- name: test missing required parameters on create server
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+  register: result
+  ignore_errors: yes
+- name: verify fail test missing required parameters on create server
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "missing required arguments: server_type, image"'
+
+- name: test create server with not existing server type
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: not-existing-server-type
+    image: ubuntu-20.04
+    state: present
+  register: result
+  ignore_errors: yes
+- name: verify fail test create server with not existing server type
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "server_type not-existing-server-type was not found"'
+
+- name: test create server with not existing image
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cx11
+    image: my-not-existing-image-20.04
+    state: present
+  register: result
+  ignore_errors: yes
+- name: verify fail test create server with not existing image
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "Image my-not-existing-image-20.04 was not found"'
