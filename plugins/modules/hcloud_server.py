@@ -433,6 +433,8 @@ class AnsibleHcloudServer(Hcloud):
                 self.module.params.get("datacenter")
             )
 
+        if self.module.params.get("state") == "stopped":
+            params["start_after_create"] = False
         if not self.module.check_mode:
             try:
                 resp = self.client.servers.create(**params)
