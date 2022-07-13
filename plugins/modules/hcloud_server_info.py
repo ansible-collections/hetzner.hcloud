@@ -153,11 +153,13 @@ class AnsibleHcloudServerInfo(Hcloud):
             if server is not None:
                 image = None if server.image is None else to_native(server.image.name)
                 placement_group = None if server.placement_group is None else to_native(server.placement_group.name)
+                ipv4_address = None if server.public_net.ipv4 is None else to_native(server.public_net.ipv4.ip)
+                ipv6 = None if server.public_net.ipv6 is None else to_native(server.public_net.ipv6.ip)
                 tmp.append({
                     "id": to_native(server.id),
                     "name": to_native(server.name),
-                    "ipv4_address": to_native(server.public_net.ipv4.ip),
-                    "ipv6": to_native(server.public_net.ipv6.ip),
+                    "ipv4_address": ipv4_address,
+                    "ipv6": ipv6,
                     "image": image,
                     "server_type": to_native(server.server_type.name),
                     "datacenter": to_native(server.datacenter.name),
