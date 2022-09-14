@@ -188,3 +188,14 @@ releases:
     release_date: '2022-06-29'
   1.8.1:
     release_date: '2022-06-29'
+  1.8.2:
+    changes:
+      bugfixes:
+      - dynamic inventory - fix crash when having servers without IPs (flexible networks)
+      - hcloud_server - When state stopped and server is created, do not start the
+        server
+      - hcloud_server_info - fix crash when having servers without IPs (flexible networks)
+    fragments:
+    - flexible-networks-hcloud-server-info.yml
+    - inventory.yml
+    release_date: '2022-09-14'

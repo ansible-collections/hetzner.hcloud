@@ -1,3 +1,0 @@
-bugfixes:
-  - hcloud_server_info - fix crash when having servers without IPs (flexible networks)
-  - hcloud_server - When state stopped and server is created, do not start the server

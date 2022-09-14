@@ -5,9 +5,18 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.8.2
+======
+
+Bugfixes
+--------
+
+- dynamic inventory - fix crash when having servers without IPs (flexible networks)
+- hcloud_server - When state stopped and server is created, do not start the server
+- hcloud_server_info - fix crash when having servers without IPs (flexible networks)
+
 v1.8.1
 ======
-This is just a rerelease of v1.8.0 with the corresponding release notes
 
 v1.8.0
 ======
@@ -15,16 +24,13 @@ v1.8.0
 New Modules
 -----------
 
-hetzner.hcloud.plugins.modules
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Hetzner
+~~~~~~~
+
+hcloud
+^^^^^^
 
 - hetzner.hcloud.hcloud_primary_ip - Create and manage cloud Primary IPs on the Hetzner Cloud.
-
-Minor Changes
--------------
-
-- hcloud_load_balancer_target - fix types in examples
-- hcloud_load_balancer_* - improve error handlings
 
 v1.7.1
 ======
