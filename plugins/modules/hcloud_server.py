@@ -97,6 +97,12 @@ options:
         description:
             - ID of the ipv6 Primary IP to use. If omitted and enable_ipv6 is true, a new ipv6 Primary IP will automatically be created.
         type: str
+    private_networks:
+        description:
+            - List of private networks the server is attached to (name or ID)
+        type: list
+        elements: str
+        default: []
     force_upgrade:
         description:
             - Deprecated
@@ -222,6 +228,16 @@ EXAMPLES = """
     name: my-server
     placement_group: null
     state: present
+
+- name: Add server with private network only
+  hcloud_server:
+    name: my-server
+    enable_ipv4: false
+    enable_ipv6: false
+    private_networks:
+      - my-network
+      - 4711
+    state: present
 """
 
 RETURN = """
@@ -260,6 +276,12 @@ hcloud_server:
             returned: always
             type: str
             sample: 2a01:4f8:1c1c:c140::/64
+        private_networks:
+            description: List of private networks the server is attached to (name or ID)
+            returned: always
+            type: list
+            elements: str
+            sample: ['my-network', 'another-network', '4711']
         location:
             description: Name of the location of the server
             returned: always
@@ -345,6 +367,7 @@ class AnsibleHcloudServer(Hcloud):
             "name": to_native(self.hcloud_server.name),
             "ipv4_address": ipv4_address,
             "ipv6": ipv6,
+            "private_networks": [to_native(net.network.name) for net in self.hcloud_server.private_net],
             "image": image,
             "server_type": to_native(self.hcloud_server.server_type.name),
             "datacenter": to_native(self.hcloud_server.datacenter.name),
@@ -400,6 +423,15 @@ class AnsibleHcloudServer(Hcloud):
             if not p:
                 p = self.client.primary_ips.get_by_id(self.module.params.get("ipv6"))
             params["public_net"].ipv6 = p
+
+        if self.module.params.get("private_networks") is not None:
+            _networks = []
+            for network_name_or_id in self.module.params.get("private_networks"):
+                _networks.append(
+                    self.client.networks.get_by_name(network_name_or_id)
+                    or self.client.networks.get_by_id(network_name_or_id)
+                )
+            params["networks"] = _networks
 
         if self.module.params.get("ssh_keys") is not None:
             params["ssh_keys"] = [
@@ -665,6 +697,34 @@ class AnsibleHcloudServer(Hcloud):
                                 self.hcloud_server.public_net.primary_ipv6.unassign().wait_until_finished()
                             primary_ip.assign(self.hcloud_server.id, "server").wait_until_finished()
                         self._mark_as_changed()
+            if "private_networks" in self.module.params:
+                if not bool(self.module.params["private_networks"]):
+                    # This handles None, "" and []
+                    networks_target = {}
+                else:
+                    _networks = {}
+                    for network_name_or_id in self.module.params.get("private_networks"):
+                        _found_network = self.client.networks.get_by_name(network_name_or_id) \
+                            or self.client.networks.get_by_id(network_name_or_id)
+                        _networks.update(
+                            {_found_network.id: _found_network}
+                        )
+                    networks_target = _networks
+                networks_is = dict()
+                for p_network in self.hcloud_server.private_net:
+                    networks_is.update({p_network.network.id: p_network.network})
+                for network_id in set(list(networks_is) + list(networks_target)):
+                    if network_id in networks_is and network_id not in networks_target:
+                        self.stop_server_if_forced()
+                        if not self.module.check_mode:
+                            self.hcloud_server.detach_from_network(networks_is[network_id]).wait_until_finished()
+                        self._mark_as_changed()
+                    elif network_id in networks_target and network_id not in networks_is:
+                        self.stop_server_if_forced()
+                        if not self.module.check_mode:
+                            self.hcloud_server.attach_to_network(networks_target[network_id]).wait_until_finished()
+                        self._mark_as_changed()
+
             server_type = self.module.params.get("server_type")
             if server_type is not None and self.hcloud_server.server_type.name != server_type:
                 self.stop_server_if_forced()
@@ -811,6 +871,7 @@ class AnsibleHcloudServer(Hcloud):
                 enable_ipv6={"type": "bool", "default": True},
                 ipv4={"type": "str"},
                 ipv6={"type": "str"},
+                private_networks={"type": "list", "elements": "str", "default": []},
                 force={"type": "bool", "default": False},
                 force_upgrade={"type": "bool", "default": False},
                 allow_deprecated_image={"type": "bool", "default": False},
