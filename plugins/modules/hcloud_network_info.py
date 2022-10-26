@@ -136,12 +136,12 @@ hcloud_network_info:
                     type: str
                     sample: cx11
                 ipv4_address:
-                    description: Public IPv4 address of the server
+                    description: Public IPv4 address of the server, None if not existing
                     returned: always
                     type: str
                     sample: 116.203.104.109
                 ipv6:
-                    description: IPv6 network of the server
+                    description: IPv6 network of the server, None if not existing
                     returned: always
                     type: str
                     sample: 2a01:4f8:1c1c:c140::/64
@@ -220,11 +220,13 @@ class AnsibleHcloudNetworkInfo(Hcloud):
                 servers = []
                 for server in network.servers:
                     image = None if server.image is None else to_native(server.image.name)
+                    ipv4_address = None if server.public_net.ipv4 is None else to_native(server.public_net.ipv4.ip)
+                    ipv6 = None if server.public_net.ipv6 is None else to_native(server.public_net.ipv6.ip)
                     prepared_server = {
                         "id": to_native(server.id),
                         "name": to_native(server.name),
-                        "ipv4_address": to_native(server.public_net.ipv4.ip),
-                        "ipv6": to_native(server.public_net.ipv6.ip),
+                        "ipv4_address": ipv4_address,
+                        "ipv6": ipv6,
                         "image": image,
                         "server_type": to_native(server.server_type.name),
                         "datacenter": to_native(server.datacenter.name),
