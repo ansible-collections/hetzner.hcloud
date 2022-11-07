@@ -1,0 +1,2 @@
+minor_changes:
+  - hcloud_firewall - add support for esp and gre protocols
