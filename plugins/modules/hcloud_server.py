@@ -339,6 +339,7 @@ class AnsibleHcloudServer(Hcloud):
         ipv4_address = None if self.hcloud_server.public_net.ipv4 is None else to_native(
             self.hcloud_server.public_net.ipv4.ip)
         ipv6 = None if self.hcloud_server.public_net.ipv6 is None else to_native(self.hcloud_server.public_net.ipv6.ip)
+        backup_window = None if self.hcloud_server.backup_window is None else to_native(self.hcloud_server.backup_window)
         return {
             "id": to_native(self.hcloud_server.id),
             "name": to_native(self.hcloud_server.name),
@@ -350,7 +351,7 @@ class AnsibleHcloudServer(Hcloud):
             "location": to_native(self.hcloud_server.datacenter.location.name),
             "placement_group": placement_group,
             "rescue_enabled": self.hcloud_server.rescue_enabled,
-            "backup_window": to_native(self.hcloud_server.backup_window),
+            "backup_window": backup_window,
             "labels": self.hcloud_server.labels,
             "delete_protection": self.hcloud_server.protection["delete"],
             "rebuild_protection": self.hcloud_server.protection["rebuild"],

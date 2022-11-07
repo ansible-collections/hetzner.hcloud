@@ -155,6 +155,7 @@ class AnsibleHcloudServerInfo(Hcloud):
                 placement_group = None if server.placement_group is None else to_native(server.placement_group.name)
                 ipv4_address = None if server.public_net.ipv4 is None else to_native(server.public_net.ipv4.ip)
                 ipv6 = None if server.public_net.ipv6 is None else to_native(server.public_net.ipv6.ip)
+                backup_window = None if server.backup_window is None else to_native(server.backup_window)
                 tmp.append({
                     "id": to_native(server.id),
                     "name": to_native(server.name),
@@ -166,7 +167,7 @@ class AnsibleHcloudServerInfo(Hcloud):
                     "location": to_native(server.datacenter.location.name),
                     "placement_group": placement_group,
                     "rescue_enabled": server.rescue_enabled,
-                    "backup_window": to_native(server.backup_window),
+                    "backup_window": backup_window,
                     "labels": server.labels,
                     "status": to_native(server.status),
                     "delete_protection": server.protection["delete"],

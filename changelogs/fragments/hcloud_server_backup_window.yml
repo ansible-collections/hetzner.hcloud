@@ -1,0 +1,3 @@
+bugfixes:
+  - hcloud_server - fix backup window was given out as "None" instead of null
+  - hcloud_server_info - fix backup window was given out as "None" instead of null
