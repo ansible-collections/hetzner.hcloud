@@ -55,17 +55,19 @@ options:
                 description:
                     - The protocol of the firewall rule.
                 type: str
-                choices: [ icmp, tcp, udp ]
+                choices: [ icmp, tcp, udp, esp, gre ]
             source_ips:
                 description:
                     - List of CIDRs that are allowed within this rule
                 type: list
                 elements: str
+                default: [ ]
             destination_ips:
                 description:
                     - List of CIDRs that are allowed within this rule
                 type: list
                 elements: str
+                default: [ ]
             description:
                 description:
                     - User defined description of this rule.
@@ -306,7 +308,7 @@ class AnsibleHcloudFirewall(Hcloud):
                     elements="dict",
                     options=dict(
                         direction={"type": "str", "choices": ["in", "out"]},
-                        protocol={"type": "str", "choices": ["icmp", "udp", "tcp"]},
+                        protocol={"type": "str", "choices": ["icmp", "udp", "tcp", "esp", "gre"]},
                         port={"type": "str"},
                         source_ips={"type": "list", "elements": "str", "default": []},
                         destination_ips={"type": "list", "elements": "str", "default": []},
