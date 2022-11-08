@@ -1,0 +1,3 @@
+bugfixes:
+  - hcloud_volume - fix server name was given out as "None" instead of null if no server was attached
+  - hcloud_volume_info - fix server name was given out as "None" instead of null if no server was attached

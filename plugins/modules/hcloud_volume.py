@@ -183,7 +183,7 @@ class AnsibleHcloudVolume(Hcloud):
     def _prepare_result(self):
         server_name = None
         if self.hcloud_volume.server is not None:
-            server_name = self.hcloud_volume.server.name
+            server_name = to_native(self.hcloud_volume.server.name)
 
         return {
             "id": to_native(self.hcloud_volume.id),
@@ -191,7 +191,7 @@ class AnsibleHcloudVolume(Hcloud):
             "size": self.hcloud_volume.size,
             "location": to_native(self.hcloud_volume.location.name),
             "labels": self.hcloud_volume.labels,
-            "server": to_native(server_name),
+            "server": server_name,
             "linux_device": to_native(self.hcloud_volume.linux_device),
             "delete_protection": self.hcloud_volume.protection["delete"],
         }
