@@ -1,0 +1,2 @@
+bugfixes:
+  - hcloud_firewall - the deletion could fail if the firewall was referenced right before
