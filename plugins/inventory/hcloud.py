@@ -26,6 +26,11 @@ DOCUMENTATION = r'''
         token:
             description: The Hetzner Cloud API Token.
             required: false
+        group:
+            description: The group all servers are automatically added to.
+            default: hcloud
+            type: str
+            required: false
         token_env:
             description: Environment variable to load the Hetzner Cloud API Token from.
             default: HCLOUD_TOKEN
@@ -233,8 +238,6 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
         # Server Type
         if server.server_type is not None:
             self.inventory.set_variable(server.name, "server_type", to_native(server.server_type.name))
-        else:
-            self.inventory.set_variable(server.name, "server_type", to_native("No server type name found."))
 
         # Datacenter
         self.inventory.set_variable(server.name, "datacenter", to_native(server.datacenter.name))
@@ -275,11 +278,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
         self._get_servers()
         self._filter_servers()
 
-        # Add a top group 'hcloud'
-        self.inventory.add_group(group="hcloud")
+        # Add a top group
+        self.inventory.add_group(group=self.get_option("group"))
 
         for server in self.servers:
-            self.inventory.add_host(server.name, group="hcloud")
+            self.inventory.add_host(server.name, group=self.get_option("group"))
             self._set_server_attributes(server)
 
             # Use constructed if applicable
