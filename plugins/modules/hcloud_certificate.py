@@ -51,6 +51,7 @@ options:
             - Certificate key in PEM format.
             - Required if certificate does not exist.
         type: list
+        default: [ ]
         elements: str
     type:
         description:

@@ -12,6 +12,7 @@ options:
     api_token:
         description:
             - This is the API Token for the Hetzner Cloud.
+            - You can also set this option by using the environment variable HCLOUD_TOKEN
         required: True
         type: str
     endpoint:
