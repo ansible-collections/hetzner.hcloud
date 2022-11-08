@@ -117,14 +117,14 @@ class AnsibleHcloudVolumeInfo(Hcloud):
             if volume is not None:
                 server_name = None
                 if volume.server is not None:
-                    server_name = volume.server.name
+                    server_name = to_native(volume.server.name)
                 tmp.append({
                     "id": to_native(volume.id),
                     "name": to_native(volume.name),
                     "size": volume.size,
                     "location": to_native(volume.location.name),
                     "labels": volume.labels,
-                    "server": to_native(server_name),
+                    "server": server_name,
                     "linux_device": to_native(volume.linux_device),
                     "delete_protection": volume.protection["delete"],
                 })
