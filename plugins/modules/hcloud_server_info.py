@@ -87,6 +87,12 @@ hcloud_server_info:
             returned: always
             type: str
             sample: 2a01:4f8:1c1c:c140::/64
+        private_networks:
+            description: List of private networks the server is attached to (name)
+            returned: always
+            type: list
+            elements: str
+            sample: ['my-network', 'another-network']
         location:
             description: Name of the location of the server
             returned: always
@@ -161,6 +167,7 @@ class AnsibleHcloudServerInfo(Hcloud):
                     "name": to_native(server.name),
                     "ipv4_address": ipv4_address,
                     "ipv6": ipv6,
+                    "private_networks": [to_native(net.network.name) for net in server.private_net],
                     "image": image,
                     "server_type": to_native(server.server_type.name),
                     "datacenter": to_native(server.datacenter.name),

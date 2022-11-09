@@ -1,0 +1,120 @@
+# Copyright: (c) 2022, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: setup create network
+  hcloud_network:
+    name: "{{ hcloud_network_name }}-1"
+    ip_range: 192.168.0.0/23
+  register: primaryNetwork
+
+- name: setup create network subnet 1
+  hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}-1"
+    ip_range: 192.168.0.0/24
+    network_zone: eu-central
+    type: cloud
+    state: present
+
+- name: setup create network subnet 2
+  hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}-1"
+    ip_range: 192.168.1.0/24
+    network_zone: eu-central
+    type: cloud
+    state: present
+
+- name: setup create secondary network
+  hcloud_network:
+    name: "{{ hcloud_network_name }}-2"
+    ip_range: 192.168.2.0/23
+  register: secondaryNetwork
+
+- name: setup create secondary network subnet 1
+  hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}-2"
+    ip_range: 192.168.2.0/24
+    network_zone: eu-central
+    type: cloud
+    state: present
+
+- name: setup create secondary network subnet 2
+  hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}-2"
+    ip_range: 192.168.3.0/24
+    network_zone: eu-central
+    type: cloud
+    state: present
+
+- name: test create server with primary network and no internet
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    datacenter: "fsn1-dc14"
+    image: "ubuntu-20.04"
+    enable_ipv4: no
+    enable_ipv6: no
+    private_networks:
+      - "{{ primaryNetwork.hcloud_network.name }}"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: stopped
+  register: result
+- name: verify test create server with primary network
+  assert:
+    that:
+      - result is changed
+
+- name: test update server by adding secondary network
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    datacenter: "fsn1-dc14"
+    image: "ubuntu-20.04"
+    enable_ipv4: no
+    enable_ipv6: no
+    private_networks:
+      - "{{ primaryNetwork.hcloud_network.name }}"
+      - "{{ secondaryNetwork.hcloud_network.id }}"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: stopped
+  register: result
+- name: verify test update server by adding secondary network
+  assert:
+    that:
+      - result is changed
+
+- name: test update server idem
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cpx11
+    datacenter: "fsn1-dc14"
+    image: "ubuntu-20.04"
+    enable_ipv4: no
+    enable_ipv6: no
+    private_networks:
+      - "{{ primaryNetwork.hcloud_network.name }}"
+      - "{{ secondaryNetwork.hcloud_network.id }}"
+    ssh_keys:
+      - ci@ansible.hetzner.cloud
+    state: stopped
+  register: result
+- name: verify test update server idem
+  assert:
+    that:
+      - result is not changed
+
+- name: cleanup server
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+- name: cleanup networks
+  hcloud_network:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ primaryNetwork.hcloud_network.name }}"
+    - "{{ secondaryNetwork.hcloud_network.id }}"
+  until: result is not failed
+  retries: 5
+  delay: 2

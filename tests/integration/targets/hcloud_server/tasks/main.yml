@@ -5,3 +5,4 @@
 #- ansible.builtin.include_tasks: basic.yml
 #- ansible.builtin.include_tasks: firewalls.yml
 - ansible.builtin.include_tasks: primary_ips.yml
+- ansible.builtin.include_tasks: private_network_only.yml
