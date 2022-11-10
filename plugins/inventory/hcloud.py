@@ -220,7 +220,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                 if server_private_network.network.id == self.network.id:
                     self.inventory.set_variable(server.name, "private_ipv4", to_native(server_private_network.ip))
 
-        if self.get_option("connect_with") == "public_ipv4":
+        if self.get_option("connect_with") == "public_ipv4" and server.public_net.ipv4:
             self.inventory.set_variable(server.name, "ansible_host", to_native(server.public_net.ipv4.ip))
         elif self.get_option("connect_with") == "hostname":
             self.inventory.set_variable(server.name, "ansible_host", to_native(server.name))
