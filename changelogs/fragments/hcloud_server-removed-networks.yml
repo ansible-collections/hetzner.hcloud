@@ -1,0 +1,2 @@
+bugfixes:
+  - hcloud_server - externally attached networks (using hcloud_server_network) were removed when not specified in the hcloud_server resource

@@ -100,9 +100,10 @@ options:
     private_networks:
         description:
             - List of private networks the server is attached to (name or ID)
+            - If None, private networks are left as they are (e.g. if previously added by hcloud_server_network),
+              if it has any other value (including []), only those networks are attached to the server.
         type: list
         elements: str
-        default: []
     force_upgrade:
         description:
             - Deprecated
@@ -697,7 +698,7 @@ class AnsibleHcloudServer(Hcloud):
                                 self.hcloud_server.public_net.primary_ipv6.unassign().wait_until_finished()
                             primary_ip.assign(self.hcloud_server.id, "server").wait_until_finished()
                         self._mark_as_changed()
-            if "private_networks" in self.module.params:
+            if "private_networks" in self.module.params and self.module.params["private_networks"] is not None:
                 if not bool(self.module.params["private_networks"]):
                     # This handles None, "" and []
                     networks_target = {}
@@ -871,7 +872,7 @@ class AnsibleHcloudServer(Hcloud):
                 enable_ipv6={"type": "bool", "default": True},
                 ipv4={"type": "str"},
                 ipv6={"type": "str"},
-                private_networks={"type": "list", "elements": "str", "default": []},
+                private_networks={"type": "list", "elements": "str", "default": None},
                 force={"type": "bool", "default": False},
                 force_upgrade={"type": "bool", "default": False},
                 allow_deprecated_image={"type": "bool", "default": False},
