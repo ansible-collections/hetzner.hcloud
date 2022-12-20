@@ -5,6 +5,14 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.9.1
+======
+
+Bugfixes
+--------
+
+- hcloud_server - externally attached networks (using hcloud_server_network) were removed when not specified in the hcloud_server resource
+
 v1.9.0
 ======
 
