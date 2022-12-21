@@ -1,0 +1,4 @@
+minor_changes:
+  - inventory plugin - Add new connect_with setting public_ipv6 to connect to discovered servers via public IPv6 address.
+breaking_changes:
+  - inventory plugin - Python v3.5+ is now required.
