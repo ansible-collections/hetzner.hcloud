@@ -222,3 +222,11 @@ releases:
     - hcloud_server_backup_window.yml
     - hcloud_volume_server_none.yml
     release_date: '2022-11-10'
+  1.9.1:
+    changes:
+      bugfixes:
+      - hcloud_server - externally attached networks (using hcloud_server_network)
+        were removed when not specified in the hcloud_server resource
+    fragments:
+    - hcloud_server-removed-networks.yml
+    release_date: '2022-12-20'
