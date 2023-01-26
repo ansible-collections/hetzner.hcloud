@@ -225,6 +225,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
         if server.public_net.ipv6:
             self.inventory.set_variable(server.name, "ipv6_network", to_native(server.public_net.ipv6.network))
             self.inventory.set_variable(server.name, "ipv6_network_mask", to_native(server.public_net.ipv6.network_mask))
+            self.inventory.set_variable(server.name, "ipv6", to_native(self._first_ipv6_address(server.public_net.ipv6.ip)))
 
         self.inventory.set_variable(
             server.name,

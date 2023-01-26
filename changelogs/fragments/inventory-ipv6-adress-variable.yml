@@ -1,0 +1,2 @@
+minor_changes:
+  - inventory plugin - Add public IPv6 address to server variables.
