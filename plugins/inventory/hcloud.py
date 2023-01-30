@@ -86,6 +86,10 @@ EXAMPLES = r"""
 # Minimal example. `HCLOUD_TOKEN` is exposed in environment.
 plugin: hcloud
 
+# Example with templated token, e.g. provided through extra vars.
+plugin: hcloud
+token: "{{ hetzner_apitoken }}"
+
 # Example with locations, types, status and token
 plugin: hcloud
 token: foobar
@@ -129,6 +133,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
 
     def _configure_hcloud_client(self):
         self.token_env = self.get_option("token_env")
+        self.templar.available_variables = self._vars
         self.api_token = self.templar.template(self.get_option("token"), fail_on_undefined=False) or os.getenv(self.token_env)
         if self.api_token is None:
             raise AnsibleError(
