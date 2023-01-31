@@ -826,7 +826,7 @@ class AnsibleHcloudServer(Hcloud):
         try:
             if not self.module.check_mode:
                 image = self._get_image()
-                self.client.servers.rebuild(self.hcloud_server, image).wait_until_finished()
+                self.client.servers.rebuild(self.hcloud_server, image).wait_until_finished(1000)  # When we rebuild the server progress takes some more time.
             self._mark_as_changed()
 
             self._get_server()
