@@ -54,6 +54,28 @@ releases:
     - fix-idempotency-floating-ip.yml
     - gh-28-allow-setting-of-protection-on-creation.yml
     release_date: '2020-10-05'
+  1.10.0:
+    changes:
+      breaking_changes:
+      - inventory plugin - Python v3.5+ is now required.
+      minor_changes:
+      - hcloud_server - add private_networks_info containing name and private ip in
+        responses
+      - hcloud_server_info - add private_networks_info containing name and private
+        ip in responses
+      - inventory plugin - Add list of all private networks to server variables.
+      - inventory plugin - Add new connect_with setting public_ipv6 to connect to
+        discovered servers via public IPv6 address.
+      - inventory plugin - Add public IPv6 address to server variables.
+      - inventory plugin - Log warning instead of crashing when some servers do not
+        work with global connect_with setting.
+    fragments:
+    - inventory-connect-via-ipv6.yml
+    - inventory-handle-invalid-connect-with.yml
+    - inventory-ipv6-adress-variable.yml
+    - inventory-private-network-info.yml
+    - server-private-networks-info.yml
+    release_date: '2023-02-01'
   1.2.0:
     changes:
       minor_changes:

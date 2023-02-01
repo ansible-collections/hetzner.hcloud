@@ -1,5 +1,0 @@
-minor_changes:
-  # From 129d3e8ddce850c6b9ae11e8583a78a2ff19b042 (#183)
-  - hcloud_server - add private_networks_info containing name and private ip in responses
-  - hcloud_server_info - add private_networks_info containing name and private ip in responses
-

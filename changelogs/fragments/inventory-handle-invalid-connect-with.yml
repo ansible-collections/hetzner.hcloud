@@ -1,2 +1,0 @@
-minor_changes:
-  - inventory plugin - Log warning instead of crashing when some servers do not work with global connect_with setting.
