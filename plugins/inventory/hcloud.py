@@ -37,7 +37,11 @@ DOCUMENTATION = r'''
             type: str
             required: false
         connect_with:
-            description: Connect to the server using the value from this field.
+            description: |
+              Connect to the server using the value from this field. This sets the `ansible_host`
+              variable to the value indicated, if that value is available. If you need further
+              customization, like falling back to private ipv4 if the server has no public ipv4,
+              you can use `compose` top-level key.
             default: public_ipv4
             type: str
             choices:
@@ -237,22 +241,14 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                 if server_private_network.network.id == self.network.id:
                     self.inventory.set_variable(server.name, "private_ipv4", to_native(server_private_network.ip))
 
-        if self.get_option("connect_with") == "public_ipv4":
-            self.inventory.set_variable(server.name, "ansible_host", to_native(server.public_net.ipv4.ip))
-        if self.get_option("connect_with") == "public_ipv6":
-            self.inventory.set_variable(server.name, "ansible_host", to_native(self._first_ipv6_address(server.public_net.ipv6.ip)))
-        elif self.get_option("connect_with") == "hostname":
-            self.inventory.set_variable(server.name, "ansible_host", to_native(server.name))
-        elif self.get_option("connect_with") == "ipv4_dns_ptr":
-            self.inventory.set_variable(server.name, "ansible_host", to_native(server.public_net.ipv4.dns_ptr))
-        elif self.get_option("connect_with") == "private_ipv4":
-            if self.get_option("network"):
-                for server_private_network in server.private_net:
-                    if server_private_network.network.id == self.network.id:
-                        self.inventory.set_variable(server.name, "ansible_host", to_native(server_private_network.ip))
-            else:
-                raise AnsibleError(
-                    "You can only connect via private IPv4 if you specify a network")
+        try:
+            self.inventory.set_variable(server.name, "ansible_host", self._get_server_ansible_host(server))
+        except AnsibleError as e:
+            # Log warning that for this host can not be connected to, using the
+            # method specified in `connect_with`. Users might use `compose` to
+            # override the connection method, or implement custom logic, so we
+            # do not need to abort if nothing matched.
+            self.display.v("[hcloud] %s" % e, server.name)
 
         # Server Type
         if server.server_type is not None:
@@ -277,6 +273,39 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
 
         # Labels
         self.inventory.set_variable(server.name, "labels", dict(server.labels))
+
+    def _get_server_ansible_host(self, server):
+        if self.get_option("connect_with") == "public_ipv4":
+            if server.public_net.ipv4:
+                return to_native(server.public_net.ipv4.ip)
+            else:
+                raise AnsibleError("Server has no public ipv4, but connect_with=public_ipv4 was specified")
+
+        if self.get_option("connect_with") == "public_ipv6":
+            if server.public_net.ipv6:
+                return to_native(self._first_ipv6_address(server.public_net.ipv6.ip))
+            else:
+                raise AnsibleError("Server has no public ipv6, but connect_with=public_ipv6 was specified")
+
+        elif self.get_option("connect_with") == "hostname":
+            # every server has a name, no need to guard this
+            return to_native(server.name)
+
+        elif self.get_option("connect_with") == "ipv4_dns_ptr":
+            if server.public_net.ipv4:
+                return to_native(server.public_net.ipv4.dns_ptr)
+            else:
+                raise AnsibleError("Server has no public ipv4, but connect_with=ipv4_dns_ptr was specified")
+
+        elif self.get_option("connect_with") == "private_ipv4":
+            if self.get_option("network"):
+                for server_private_network in server.private_net:
+                    if server_private_network.network.id == self.network.id:
+                        return to_native(server_private_network.ip)
+
+            else:
+                raise AnsibleError(
+                    "You can only connect via private IPv4 if you specify a network")
 
     def _first_ipv6_address(self, network):
         return next(IPv6Network(network).hosts())
