@@ -5,6 +5,24 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.10.0
+=======
+
+Minor Changes
+-------------
+
+- hcloud_server - add private_networks_info containing name and private ip in responses
+- hcloud_server_info - add private_networks_info containing name and private ip in responses
+- inventory plugin - Add list of all private networks to server variables.
+- inventory plugin - Add new connect_with setting public_ipv6 to connect to discovered servers via public IPv6 address.
+- inventory plugin - Add public IPv6 address to server variables.
+- inventory plugin - Log warning instead of crashing when some servers do not work with global connect_with setting.
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- inventory plugin - Python v3.5+ is now required.
+
 v1.9.1
 ======
 
