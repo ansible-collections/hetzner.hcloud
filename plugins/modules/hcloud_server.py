@@ -652,7 +652,7 @@ class AnsibleHcloudServer(Hcloud):
                     ):
                         self.stop_server_if_forced()
                         if not self.module.check_mode:
-                            self.hcloud_server.add_to_placement_group(placement_group)
+                            self.hcloud_server.add_to_placement_group(placement_group).wait_until_finished()
                         self._mark_as_changed()
 
             if "ipv4" in self.module.params:
