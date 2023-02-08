@@ -3,4 +3,4 @@
 ---
 hcloud_prefix: "tests"
 hcloud_load_balancer_name: "{{hcloud_prefix}}-i"
-hcloud_server_name: "{{hcloud_prefix}}-lb-i"
+hcloud_server_name: "{{ hcloud_prefix | truncate(45, True, '', 0) }}-lb-i"
