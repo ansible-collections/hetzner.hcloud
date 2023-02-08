@@ -96,7 +96,7 @@
       key: value
       test: "val123"
   register: result
-- name: test update certificate  with other labels
+- name: test update certificate with other labels
   assert:
     that:
       - result is changed
@@ -122,6 +122,12 @@
     that:
       - result is success
 
+- name: generate dns domain name
+  set_fact:
+    # hcloud_dns_test_domain uses random, which generates a new random number
+    # on every invocation, by saving it into a fact we generate the number once
+    hcloud_dns_test_domain: "{{ hcloud_dns_test_domain }}"
+
 - name: test create managed certificate
   hcloud_certificate:
     name: "{{ hcloud_certificate_name }}"
@@ -131,7 +137,7 @@
     labels:
       HC-Use-Staging-CA: "true"
   register: result
-- name: test rename certificate
+- name: verify create managed certificate
   assert:
     that:
       - result is changed
@@ -143,7 +149,7 @@
     id: "{{ result.hcloud_certificate.id }}"
     state: absent
   register: result
-- name: verify absent server
+- name: verify absent certificate
   assert:
     that:
       - result is success
