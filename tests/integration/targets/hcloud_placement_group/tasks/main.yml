@@ -92,7 +92,7 @@
 - name: test add server to placement group
   hcloud_server:
     name: "{{ hcloud_server_name }}"
-    placement_group: "{{ hcloud_server_name }}"
+    placement_group: "{{ hcloud_placement_group_name }}"
     force: True
     state: present
   register: result
@@ -106,7 +106,7 @@
 - name: test add server to placement group idempotence
   hcloud_server:
     name: "{{ hcloud_server_name }}"
-    placement_group: "{{ hcloud_server_name }}"
+    placement_group: "{{ hcloud_placement_group_name }}"
     force: True
     state: present
   register: result
