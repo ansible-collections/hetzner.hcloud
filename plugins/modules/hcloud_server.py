@@ -590,11 +590,12 @@ class AnsibleHcloudServer(Hcloud):
                     self.hcloud_server.disable_rescue().wait_until_finished()
                 self._mark_as_changed()
 
-            if self.module.params.get("backups") and self.hcloud_server.backup_window is None:
+            backups = self.module.params.get("backups")
+            if backups and self.hcloud_server.backup_window is None:
                 if not self.module.check_mode:
                     self.hcloud_server.enable_backup().wait_until_finished()
                 self._mark_as_changed()
-            elif not self.module.params.get("backups") and self.hcloud_server.backup_window is not None:
+            elif backups is not None and not backups and self.hcloud_server.backup_window is not None:
                 if not self.module.check_mode:
                     self.hcloud_server.disable_backup().wait_until_finished()
                 self._mark_as_changed()
