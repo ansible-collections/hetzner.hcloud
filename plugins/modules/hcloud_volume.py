@@ -165,15 +165,6 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
-try:
-    from hcloud.volumes.domain import Volume
-    from hcloud.servers.domain import Server
-    import hcloud
-except ImportError:
-    APIException = None
-    Volume = None
-    Server = None
-
 
 class AnsibleHcloudVolume(Hcloud):
     def __init__(self, module):

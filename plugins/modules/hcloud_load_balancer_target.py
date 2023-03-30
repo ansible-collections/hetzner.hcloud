@@ -144,10 +144,8 @@ from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 try:
-    from hcloud import APIException
     from hcloud.load_balancers.domain import LoadBalancerTarget, LoadBalancerTargetLabelSelector, LoadBalancerTargetIP
 except ImportError:
-    APIException = None
     LoadBalancerTarget = None
     LoadBalancerTargetLabelSelector = None
     LoadBalancerTargetIP = None

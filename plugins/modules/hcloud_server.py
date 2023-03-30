@@ -342,18 +342,13 @@ try:
     from hcloud.volumes.domain import Volume
     from hcloud.ssh_keys.domain import SSHKey
     from hcloud.servers.domain import Server, ServerCreatePublicNetwork
-    from hcloud.firewalls.domain import Firewall, FirewallResource
-    from hcloud.primary_ips.domain import PrimaryIP
-    from hcloud import APIException
+    from hcloud.firewalls.domain import FirewallResource
 except ImportError:
-    APIException = None
     Volume = None
     SSHKey = None
     Server = None
     ServerCreatePublicNetwork = None
-    Firewall = None
     FirewallResource = None
-    PrimaryIP = None
 
 
 class AnsibleHcloudServer(Hcloud):
