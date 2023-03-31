@@ -4,3 +4,62 @@
     name: "{{ hcloud_ssh_key_name }}"
     public_key: "{{ test_ssh_keypair.public_key }}"
   register: test_ssh_key
+
+- name: Create test_network
+  hetzner.hcloud.network:
+    name: "{{ hcloud_network_name }}"
+    ip_range: 10.0.0.0/16
+    labels:
+      key: value
+  register: test_network
+
+- name: Create test_subnetwork
+  hetzner.hcloud.subnetwork:
+    network: "{{ hcloud_network_name }}"
+    type: server
+    network_zone: eu-central
+    ip_range: 10.0.1.0/24
+  register: test_subnetwork
+
+- name: Create test_primary_ipv4_1
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}v4-1"
+    type: ipv4
+    datacenter: fsn1-dc14
+  register: test_primary_ipv4_1
+
+- name: Create test_primary_ipv4_2
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}v4-2"
+    type: ipv4
+    datacenter: fsn1-dc14
+  register: test_primary_ipv4_2
+
+- name: Create test_primary_ipv6
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}v6"
+    type: ipv6
+    datacenter: fsn1-dc14
+  register: test_primary_ipv6
+
+- name: Create test_firewall_1
+  hetzner.hcloud.firewall:
+    name: "{{ hcloud_firewall_name }}-1"
+    rules:
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+  register: test_firewall_1
+
+- name: Create test_firewall_2
+  hetzner.hcloud.firewall:
+    name: "{{ hcloud_firewall_name }}-2"
+    rules:
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+  register: test_firewall_2

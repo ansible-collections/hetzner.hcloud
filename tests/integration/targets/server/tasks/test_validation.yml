@@ -1,51 +1,45 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: setup
+- name: Test missing required parameters
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    state: absent
-  register: result
-- name: verify setup
-  assert:
-    that:
-      - result is success
-
-- name: test missing required parameters on create server
-  hetzner.hcloud.server:
-    name: "{{ hcloud_server_name }}"
-  register: result
+    state: present
   ignore_errors: true
-- name: verify fail test missing required parameters on create server
-  assert:
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
     that:
       - result is failed
-      - 'result.msg == "missing required arguments: server_type, image"'
+      - >-
+        result.msg == "missing required arguments: server_type, image"
 
-- name: test create server with not existing server type
+- name: Test create server with invalid server type
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: not-existing-server-type
+    server_type: invalid-server-type
     image: ubuntu-22.04
     state: present
-  register: result
   ignore_errors: true
-- name: verify fail test create server with not existing server type
-  assert:
+  register: result
+- name: Verify create server with invalid server type
+  ansible.builtin.assert:
     that:
       - result is failed
-      - 'result.msg == "server_type not-existing-server-type was not found"'
+      - >-
+        result.msg == "Invalid server type ID `invalid-server-type`: server_type invalid-server-type was not found"
 
-- name: test create server with not existing image
+- name: Test create server with invalid image
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: cx11
-    image: my-not-existing-image-20.04
+    image: invalid-image
     state: present
-  register: result
   ignore_errors: true
-- name: verify fail test create server with not existing image
-  assert:
+  register: result
+- name: Verify create server with invalid image
+  ansible.builtin.assert:
     that:
       - result is failed
-      - 'result.msg == "Image my-not-existing-image-20.04 was not found"'
+      - >-
+        result.msg == "image with ID 'invalid-image' not found: Image invalid-image was not found"
