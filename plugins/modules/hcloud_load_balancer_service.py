@@ -288,7 +288,7 @@ from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 try:
-    from hcloud.load_balancers.domain import LoadBalancer, LoadBalancerService, LoadBalancerServiceHttp, \
+    from hcloud.load_balancers.domain import LoadBalancerService, LoadBalancerServiceHttp, \
         LoadBalancerHealthCheck, LoadBalancerHealtCheckHttp
     from hcloud import APIException
 except ImportError:

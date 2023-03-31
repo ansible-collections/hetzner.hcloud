@@ -142,13 +142,6 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
-try:
-    from hcloud.certificates.domain import Certificate
-    from hcloud.certificates.domain import Server
-    from hcloud import APIException
-except ImportError:
-    APIException = None
-
 
 class AnsibleHcloudCertificate(Hcloud):
     def __init__(self, module):

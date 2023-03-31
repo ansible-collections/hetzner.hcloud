@@ -143,11 +143,6 @@ from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 
-try:
-    from hcloud import APIException
-except ImportError:
-    APIException = None
-
 
 class AnsibleHcloudReverseDNS(Hcloud):
     def __init__(self, module):

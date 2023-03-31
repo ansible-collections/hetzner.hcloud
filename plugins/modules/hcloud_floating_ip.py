@@ -169,11 +169,6 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
-try:
-    from hcloud import APIException
-except ImportError:
-    APIException = None
-
 
 class AnsibleHcloudFloatingIP(Hcloud):
     def __init__(self, module):

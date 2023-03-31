@@ -133,10 +133,8 @@ from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 try:
-    from hcloud import APIException
     from hcloud.networks.domain import NetworkSubnet
 except ImportError:
-    APIException = None
     NetworkSubnet = None
 
 
