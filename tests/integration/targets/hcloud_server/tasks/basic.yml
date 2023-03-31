@@ -214,6 +214,21 @@
       - result is not changed
       - result.hcloud_server.backup_window != ""
 
+- name: test backups are not accidentally disabled
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    # Make sure that backups are not disabled because a partial server object without "backups" was supplied somewhere
+    # to update some unrelated properties.
+    # Regression test for https://github.com/ansible-collections/hetzner.hcloud/pull/196
+    # backups: true
+    state: stopped
+  register: result
+- name: verify backups are not accidentally disabled
+  assert:
+    that:
+      - result is not changed
+      - result.hcloud_server.backup_window != ""
+
 - name: test rebuild server
   hcloud_server:
     name: "{{ hcloud_server_name }}"
