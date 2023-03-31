@@ -60,3 +60,34 @@
   assert:
     that:
       - result is failed
+
+- name: test gather hcloud image infos with name
+  hcloud_image_info:
+      name: "{{ hcloud_test_image_name_os }}"
+  register: hcloud_images
+- name: verify test gather hcloud image infos with name
+  assert:
+    that:
+      - hcloud_images.hcloud_image_info | list | count == 1
+      - hcloud_images.hcloud_image_info[0].architecture == "x86"
+
+- name: test gather hcloud image infos with name and architecture
+  hcloud_image_info:
+    name: "{{ hcloud_test_image_name_os }}"
+    architecture: arm
+  register: hcloud_images
+- name: verify test gather hcloud image infos with name
+  assert:
+    that:
+      - hcloud_images.hcloud_image_info | list | count == 1
+      - hcloud_images.hcloud_image_info[0].architecture == "arm"
+
+- name: test gather hcloud image infos with architecture
+  hcloud_image_info:
+    architecture: arm
+  register: hcloud_images
+- name: verify test gather hcloud image infos with name
+  assert:
+    that:
+      - hcloud_images.hcloud_image_info | selectattr('architecture','equalto','x86') | list | count == 0
+      - hcloud_images.hcloud_image_info | selectattr('architecture','equalto','arm') | list | count  > 2
