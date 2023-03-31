@@ -1,6 +1,21 @@
 # Copyright: (c) 2022, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
+- name: setup network 1 to be absent
+  hcloud_network:
+    name: "{{ hcloud_network_name }}-1"
+    state: absent
+
+- name: setup network 2 to be absent
+  hcloud_network:
+    name: "{{ hcloud_network_name }}-2"
+    state: absent
+
+- name: setup server to be absent
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+
 - name: setup create network
   hcloud_network:
     name: "{{ hcloud_network_name }}-1"
