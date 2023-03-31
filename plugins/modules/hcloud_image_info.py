@@ -98,6 +98,11 @@ hcloud_image_info:
             returned: always
             type: str
             sample: 18.04
+        architecture:
+            description: Image is compatible with this architecture
+            returned: always
+            type: str
+            sample: x86
         labels:
             description: User-defined labels (key-value pairs)
             returned: always
@@ -127,6 +132,7 @@ class AnsibleHcloudImageInfo(Hcloud):
                     "description": to_native(image.description),
                     "os_flavor": to_native(image.os_flavor),
                     "os_version": to_native(image.os_version),
+                    "architecture": to_native(image.architecture),
                     "labels": image.labels,
                 })
         return tmp

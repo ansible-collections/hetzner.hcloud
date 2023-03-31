@@ -93,6 +93,11 @@ hcloud_server_type_info:
             returned: always
             type: str
             sample: shared
+        architecture:
+            description: Architecture of cpu
+            returned: always
+            type: str
+            sample: x86
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -118,7 +123,8 @@ class AnsibleHcloudServerTypeInfo(Hcloud):
                     "memory": server_type.memory,
                     "disk": server_type.disk,
                     "storage_type": to_native(server_type.storage_type),
-                    "cpu_type": to_native(server_type.cpu_type)
+                    "cpu_type": to_native(server_type.cpu_type),
+                    "architecture": to_native(server_type.architecture)
                 })
         return tmp
 
