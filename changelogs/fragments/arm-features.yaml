@@ -1,0 +1,6 @@
+minor_changes:
+  - inventory plugin - Add cpu architecture to server variables.
+  - hcloud_image_info - Add cpu architecture field to return value.
+  - hcloud_image_info - Allow filtering images by cpu architecture.
+  - hcloud_server_type_info - Add cpu architecture field to return value.
+  - hcloud_server - Select matching image for the cpu architecture of the server type on create & rebuild.
