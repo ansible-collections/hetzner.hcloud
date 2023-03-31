@@ -402,12 +402,14 @@ class AnsibleHcloudServer(Hcloud):
             required_params=["name", "server_type", "image"]
         )
 
+        server_type = self._get_server_type()
+
         params = {
             "name": self.module.params.get("name"),
-            "server_type": self._get_server_type(),
+            "server_type": server_type,
             "user_data": self.module.params.get("user_data"),
             "labels": self.module.params.get("labels"),
-            "image": self._get_image(),
+            "image": self._get_image(server_type),
             "placement_group": self._get_placement_group(),
             "public_net": ServerCreatePublicNetwork(
                 enable_ipv4=self.module.params.get("enable_ipv4"),
@@ -499,8 +501,8 @@ class AnsibleHcloudServer(Hcloud):
         self._mark_as_changed()
         self._get_server()
 
-    def _get_image(self):
-        image_resp = self.client.images.get_list(name=self.module.params.get("image"), include_deprecated=True)
+    def _get_image(self, server_type):
+        image_resp = self.client.images.get_list(name=self.module.params.get("image"), architecture=server_type.architecture, include_deprecated=True)
         images = getattr(image_resp, 'images')
         image = None
         if images is not None and len(images) > 0:
@@ -828,7 +830,7 @@ class AnsibleHcloudServer(Hcloud):
         )
         try:
             if not self.module.check_mode:
-                image = self._get_image()
+                image = self._get_image(self.hcloud_server.server_type)
                 self.client.servers.rebuild(self.hcloud_server, image).wait_until_finished(1000)  # When we rebuild the server progress takes some more time.
             self._mark_as_changed()
 
