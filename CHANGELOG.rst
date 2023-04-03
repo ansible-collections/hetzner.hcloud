@@ -5,6 +5,15 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.10.1
+=======
+
+Bugfixes
+--------
+
+- hcloud_server - Prevent backups from being disabled when undefined
+- hcloud_server - Server locked after attaching to placement group
+
 v1.10.0
 =======
 

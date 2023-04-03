@@ -1,2 +1,0 @@
-bugfixes:
-  - hcloud_server - Prevent backups from being disabled when undefined

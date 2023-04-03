@@ -1,2 +1,0 @@
-bugfixes:
-  - hcloud_server - Server locked after attaching to placement group
