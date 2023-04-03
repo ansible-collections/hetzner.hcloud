@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 #- ansible.builtin.include_tasks: validation.yml
-#- ansible.builtin.include_tasks: basic.yml
+- ansible.builtin.include_tasks: basic.yml
 #- ansible.builtin.include_tasks: firewalls.yml
 - ansible.builtin.include_tasks: primary_ips.yml
 - ansible.builtin.include_tasks: private_network_only.yml
