@@ -76,6 +76,15 @@ releases:
     - inventory-private-network-info.yml
     - server-private-networks-info.yml
     release_date: '2023-02-01'
+  1.10.1:
+    changes:
+      bugfixes:
+      - hcloud_server - Prevent backups from being disabled when undefined
+      - hcloud_server - Server locked after attaching to placement group
+    fragments:
+    - server-fix-backups.yml
+    - server-race-condition-pg-attach.yml
+    release_date: '2023-04-03'
   1.2.0:
     changes:
       minor_changes:
