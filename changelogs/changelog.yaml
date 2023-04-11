@@ -85,6 +85,18 @@ releases:
     - server-fix-backups.yml
     - server-race-condition-pg-attach.yml
     release_date: '2023-04-03'
+  1.11.0:
+    changes:
+      minor_changes:
+      - hcloud_image_info - Add cpu architecture field to return value.
+      - hcloud_image_info - Allow filtering images by cpu architecture.
+      - hcloud_server - Select matching image for the cpu architecture of the server
+        type on create & rebuild.
+      - hcloud_server_type_info - Add cpu architecture field to return value.
+      - inventory plugin - Add cpu architecture to server variables.
+    fragments:
+    - arm-features.yaml
+    release_date: '2023-04-11'
   1.2.0:
     changes:
       minor_changes:

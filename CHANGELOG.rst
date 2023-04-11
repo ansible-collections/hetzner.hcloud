@@ -5,6 +5,18 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.11.0
+=======
+
+Minor Changes
+-------------
+
+- hcloud_image_info - Add cpu architecture field to return value.
+- hcloud_image_info - Allow filtering images by cpu architecture.
+- hcloud_server - Select matching image for the cpu architecture of the server type on create & rebuild.
+- hcloud_server_type_info - Add cpu architecture field to return value.
+- inventory plugin - Add cpu architecture to server variables.
+
 v1.10.1
 =======
 
