@@ -217,6 +217,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
         self.inventory.set_variable(server.name, "name", to_native(server.name))
         self.inventory.set_variable(server.name, "status", to_native(server.status))
         self.inventory.set_variable(server.name, "type", to_native(server.server_type.name))
+        self.inventory.set_variable(server.name, "architecture", to_native(server.server_type.architecture))
 
         # Network
         if server.public_net.ipv4:

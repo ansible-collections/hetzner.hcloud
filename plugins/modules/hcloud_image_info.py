@@ -38,10 +38,15 @@ options:
         type: str
     type:
         description:
-            - The label selector for the images you want to get.
+            - The type for the images you want to get.
         default: system
         choices: [ system, snapshot, backup ]
         type: str
+    architecture:
+        description:
+            - The architecture for the images you want to get.
+        type: str
+        choices: [ x86, arm ]
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
@@ -98,6 +103,11 @@ hcloud_image_info:
             returned: always
             type: str
             sample: 18.04
+        architecture:
+            description: Image is compatible with this architecture
+            returned: always
+            type: str
+            sample: x86
         labels:
             description: User-defined labels (key-value pairs)
             returned: always
@@ -127,6 +137,7 @@ class AnsibleHcloudImageInfo(Hcloud):
                     "description": to_native(image.description),
                     "os_flavor": to_native(image.os_flavor),
                     "os_version": to_native(image.os_version),
+                    "architecture": to_native(image.architecture),
                     "labels": image.labels,
                 })
         return tmp
@@ -136,6 +147,11 @@ class AnsibleHcloudImageInfo(Hcloud):
             if self.module.params.get("id") is not None:
                 self.hcloud_image_info = [self.client.images.get_by_id(
                     self.module.params.get("id")
+                )]
+            elif self.module.params.get("name") is not None and self.module.params.get("architecture") is not None:
+                self.hcloud_image_info = [self.client.images.get_by_name_and_architecture(
+                    self.module.params.get("name"),
+                    self.module.params.get("architecture")
                 )]
             elif self.module.params.get("name") is not None:
                 self.hcloud_image_info = [self.client.images.get_by_name(
@@ -151,6 +167,10 @@ class AnsibleHcloudImageInfo(Hcloud):
                 if image_type:
                     params["type"] = image_type
 
+                architecture = self.module.params.get("architecture")
+                if architecture:
+                    params["architecture"] = architecture
+
                 self.hcloud_image_info = self.client.images.get_all(**params)
 
         except Exception as e:
@@ -164,6 +184,7 @@ class AnsibleHcloudImageInfo(Hcloud):
                 name={"type": "str"},
                 label_selector={"type": "str"},
                 type={"choices": ["system", "snapshot", "backup"], "default": "system", "type": "str"},
+                architecture={"choices": ["x86", "arm"], "type": "str"},
                 **Hcloud.base_module_arguments()
             ),
             supports_check_mode=True,
