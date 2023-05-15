@@ -98,6 +98,11 @@ hcloud_server_type_info:
             returned: always
             type: str
             sample: x86
+        included_traffic:
+            description: Free traffic per month in bytes
+            returned: always
+            type: int
+            sample: 21990232555520
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -124,7 +129,8 @@ class AnsibleHcloudServerTypeInfo(Hcloud):
                     "disk": server_type.disk,
                     "storage_type": to_native(server_type.storage_type),
                     "cpu_type": to_native(server_type.cpu_type),
-                    "architecture": to_native(server_type.architecture)
+                    "architecture": to_native(server_type.architecture),
+                    "included_traffic": server_type.included_traffic
                 })
         return tmp
 
