@@ -110,7 +110,6 @@ options:
             - Force the upgrade of the server.
             - Power off the server if it is running on upgrade.
         type: bool
-        default: no
     force:
         description:
             - Force the update of the server.
@@ -571,7 +570,7 @@ class AnsibleHcloudServer(Hcloud):
         return primary_ip
 
     def _update_server(self):
-        if "force_upgrade" in self.module.params:
+        if "force_upgrade" in self.module.params and self.module.params.get("force_upgrade") is not None:
             self.module.warn("force_upgrade is deprecated, use force instead")
 
         try:
@@ -879,7 +878,7 @@ class AnsibleHcloudServer(Hcloud):
                 ipv6={"type": "str"},
                 private_networks={"type": "list", "elements": "str", "default": None},
                 force={"type": "bool", "default": False},
-                force_upgrade={"type": "bool", "default": False},
+                force_upgrade={"type": "bool"},
                 allow_deprecated_image={"type": "bool", "default": False},
                 rescue_mode={"type": "str"},
                 delete_protection={"type": "bool"},
