@@ -97,6 +97,15 @@ releases:
     fragments:
     - arm-features.yaml
     release_date: '2023-04-11'
+  1.12.0:
+    changes:
+      breaking_changes:
+      - hcloud-python 1.20.0 is now required for full compatibility
+      minor_changes:
+      - hcloud_server_type_info - Add field included_traffic to returned server types
+    fragments:
+    - server-type-included-traffic.yml
+    release_date: '2023-05-16'
   1.2.0:
     changes:
       minor_changes:

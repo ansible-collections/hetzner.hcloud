@@ -5,6 +5,19 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.12.0
+=======
+
+Minor Changes
+-------------
+
+- hcloud_server_type_info - Add field included_traffic to returned server types
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- hcloud-python 1.20.0 is now required for full compatibility
+
 v1.11.0
 =======
 
