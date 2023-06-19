@@ -103,6 +103,27 @@ hcloud_server_type_info:
             returned: always
             type: int
             sample: 21990232555520
+        deprecation:
+            description: |
+              Describes if, when & how the resources was deprecated.
+              If this field is set to None the resource is not deprecated. If it has a value, it is considered deprecated.
+            returned: success
+            type: dict
+            contains:
+                announced:
+                    description: Date of when the deprecation was announced.
+                    returned: success
+                    type: str
+                    sample: "2021-11-09T09:00:00+00:00"
+                unavailable_after:
+                    description: |
+                      After the time in this field, the resource will not be available from the general listing
+                      endpoint of the resource type, and it can not be used in new resources. For example, if this is
+                      an image, you can not create new servers with this image after the mentioned date.
+                    returned: success
+                    type: str
+                    sample: "2021-12-01T00:00:00+00:00"
+
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -130,7 +151,11 @@ class AnsibleHcloudServerTypeInfo(Hcloud):
                     "storage_type": to_native(server_type.storage_type),
                     "cpu_type": to_native(server_type.cpu_type),
                     "architecture": to_native(server_type.architecture),
-                    "included_traffic": server_type.included_traffic
+                    "included_traffic": server_type.included_traffic,
+                    "deprecation": {
+                        "announced": server_type.deprecation.announced.isoformat(),
+                        "unavailable_after": server_type.deprecation.unavailable_after.isoformat(),
+                    } if server_type.deprecation is not None else None
                 })
         return tmp
 
