@@ -28,7 +28,7 @@
 - name: test gather hcloud server infos in check mode
   hcloud_server_info:
   register: server
-  check_mode: yes
+  check_mode: true
 
 - name: verify test gather hcloud server infos in check mode
   assert:
@@ -102,8 +102,8 @@
     state: stopped
     labels:
       key: value
-    enable_ipv4: no
-    enable_ipv6: no
+    enable_ipv4: false
+    enable_ipv6: false
   register: main_server
 - name: verify create server
   assert:

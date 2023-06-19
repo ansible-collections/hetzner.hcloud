@@ -78,17 +78,17 @@ options:
             - Resize the disk size, when resizing a server.
             - If you want to downgrade the server later, this value should be False.
         type: bool
-        default: no
+        default: false
     enable_ipv4:
         description:
             - Enables the public ipv4 address
         type: bool
-        default: yes
+        default: true
     enable_ipv6:
         description:
             - Enables the public ipv6 address
         type: bool
-        default: yes
+        default: true
     ipv4:
         description:
             - ID of the ipv4 Primary IP to use. If omitted and enable_ipv4 is true, a new ipv4 Primary IP will automatically be created
@@ -115,12 +115,12 @@ options:
             - Force the update of the server.
             - May power off the server if update.
         type: bool
-        default: no
+        default: false
     allow_deprecated_image:
         description:
             - Allows the creation of servers with deprecated images.
         type: bool
-        default: no
+        default: false
     user_data:
         description:
             - User Data to be passed to the server on creation.
@@ -181,7 +181,7 @@ EXAMPLES = """
   hcloud_server:
     name: my-server
     server_type: cx21
-    upgrade_disk: yes
+    upgrade_disk: true
     state: present
 
 - name: Ensure the server is absent (remove if needed)
@@ -522,7 +522,7 @@ class AnsibleHcloudServer(Hcloud):
             else:
                 self.module.fail_json(
                     msg=("You try to use a deprecated image. The image %s will continue to be available until %s." +
-                         " If you want to use this image use allow_deprecated_image=yes."
+                         " If you want to use this image use allow_deprecated_image=true."
                          ) % (image.name, available_until.strftime('%Y-%m-%d')))
         return image
 
@@ -844,7 +844,7 @@ class AnsibleHcloudServer(Hcloud):
                 return previous_server_status
             else:
                 self.module.warn(
-                    "You can not upgrade a running instance %s. You need to stop the instance or use force=yes."
+                    "You can not upgrade a running instance %s. You need to stop the instance or use force=true."
                     % self.hcloud_server.name
                 )
 

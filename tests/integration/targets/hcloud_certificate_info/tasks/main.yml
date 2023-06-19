@@ -21,7 +21,7 @@
 - name: test gather hcloud certificate infos in check mode
   hcloud_certificate_info:
   register: hcloud_certificate
-  check_mode: yes
+  check_mode: true
 - name: verify test gather hcloud certificate infos in check mode
   assert:
     that:
@@ -30,7 +30,7 @@
 - name: test gather hcloud certificate infos
   hcloud_certificate_info:
   register: hcloud_certificate
-  check_mode: yes
+  check_mode: true
 - name: verify test gather hcloud certificate infos
   assert:
     that:

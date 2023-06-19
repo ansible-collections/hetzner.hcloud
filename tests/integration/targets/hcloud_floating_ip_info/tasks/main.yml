@@ -30,7 +30,7 @@
 
 - name: test gather hcloud floating ip infos in check mode
   hcloud_floating_ip_info:
-  check_mode: yes
+  check_mode: true
   register: hcloud_floating_ips
 
 - name: verify test gather hcloud floating ip infos in check mode
@@ -69,7 +69,7 @@
   hcloud_floating_ip_info:
     id: "{{test_floating_ip.hcloud_floating_ip.id}}1"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify test gather hcloud floating ip with wrong id
   assert:
     that:

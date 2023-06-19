@@ -53,7 +53,7 @@
   hcloud_rdns:
     state: present
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters
   assert:
     that:
@@ -65,7 +65,7 @@
     ip_address: "127.0.0.1"
     state: present
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail on not existing resou
   assert:
     that:

@@ -95,13 +95,13 @@ EXAMPLES = """
   hcloud_volume:
     name: my-volume
     server: my-server
-    automount: yes
+    automount: true
     state: present
 - name: Mount a existing Volume and automount
   hcloud_volume:
     name: my-volume
     server: my-server
-    automount: yes
+    automount: true
     state: present
 - name: Ensure the Volume is absent (remove if needed)
   hcloud_volume:

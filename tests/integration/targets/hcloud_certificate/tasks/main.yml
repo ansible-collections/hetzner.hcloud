@@ -5,7 +5,7 @@
   hcloud_certificate:
     name: "{{ hcloud_certificate_name }}"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters on create certificate
   assert:
     that:
@@ -18,7 +18,7 @@
     certificate: "{{ certificate_example_com }}"
     private_key: "{{ certificate_example_com_key }}"
   register: result
-  check_mode: yes
+  check_mode: true
 - name: test create certificate with check mode
   assert:
     that:
@@ -57,7 +57,7 @@
     id: "{{ certificate.hcloud_certificate.id }}"
     name: "changed-{{ hcloud_certificate_name }}"
   register: result
-  check_mode: yes
+  check_mode: true
 - name: test create certificate with check mode
   assert:
     that:

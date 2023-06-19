@@ -12,7 +12,7 @@
 
 - name: test gather hcloud location infos in check mode
   hcloud_location_info:
-  check_mode: yes
+  check_mode: true
   register: hcloud_location
 
 - name: verify test gather hcloud location infos in check mode

@@ -17,7 +17,7 @@
     network: "{{ hcloud_network_name }}"
     state: present
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters on create route
   assert:
     that:
@@ -32,7 +32,7 @@
     network_zone: "eu-central"
     state: present
   register: result
-  check_mode: yes
+  check_mode: true
 - name: verify test create subnetwork with checkmode
   assert:
     that:

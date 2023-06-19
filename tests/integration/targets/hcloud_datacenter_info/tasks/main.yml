@@ -13,7 +13,7 @@
 - name: test gather hcloud datacenter infos in check mode
   hcloud_datacenter_info:
   register: hcloud_datacenters
-  check_mode: yes
+  check_mode: true
 
 - name: verify test gather hcloud datacenter infos in check mode
   assert:

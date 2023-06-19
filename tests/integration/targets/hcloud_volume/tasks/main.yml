@@ -19,7 +19,7 @@
     name: "{{hcloud_volume_name}}"
     server: "{{hcloud_server_name}}"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing size parameter on create Volume
   assert:
     that:
@@ -32,7 +32,7 @@
     size: 10
     location: "fsn1"
   register: result
-  check_mode: yes
+  check_mode: true
 - name: verify create Volume with check mode result
   assert:
     that:
@@ -69,7 +69,7 @@
   hcloud_volume:
     name: "{{hcloud_volume_name}}"
     server: "{{hcloud_server_name}}"
-  check_mode: yes
+  check_mode: true
   register: volume
 - name: verify test attach Volume with checkmode
   assert:
@@ -102,7 +102,7 @@
 - name: test detach Volume with checkmode
   hcloud_volume:
     name: "{{hcloud_volume_name}}"
-  check_mode: yes
+  check_mode: true
   register: volume
 - name: verify detach Volume with checkmode
   assert:
@@ -202,7 +202,7 @@
   hcloud_volume:
     name: "{{hcloud_volume_name}}"
     state: absent
-  ignore_errors: yes
+  ignore_errors: true
   register: result
 - name: verify delete Volume fails if it is protected
   assert:
@@ -248,7 +248,7 @@
   hcloud_volume:
     name: "{{hcloud_volume_name}}"
     state: absent
-  ignore_errors: yes
+  ignore_errors: true
   register: result
 - name: verify delete Volume fails if it is protected
   assert:

@@ -41,7 +41,7 @@
   hcloud_load_balancer_network:
     state: present
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters on create load_balancer network
   assert:
     that:
@@ -80,7 +80,7 @@
     load_balancer: "{{hcloud_load_balancer_name}}"
     state: present
   register: result
-  check_mode: yes
+  check_mode: true
 - name: verify test create load_balancer network with checkmode
   assert:
     that:

@@ -5,7 +5,7 @@
     image: ubuntu-22.04
     state: present
   register: result
-  check_mode: yes
+  check_mode: true
 - name: test create server server
   assert:
     that:
@@ -43,7 +43,7 @@
     name: "{{ hcloud_server_name }}"
     state: stopped
   register: result
-  check_mode: yes
+  check_mode: true
 - name: verify stop server with check mode
   assert:
     that:
@@ -309,7 +309,7 @@
   hcloud_server:
     name: "{{hcloud_server_name}}"
     state: absent
-  ignore_errors: yes
+  ignore_errors: true
   register: result
 - name: verify delete server fails if it is protected
   assert:
@@ -322,7 +322,7 @@
     name: "{{hcloud_server_name}}"
     image: ubuntu-22.04
     state: rebuild
-  ignore_errors: yes
+  ignore_errors: true
   register: result
 - name: verify rebuild server fails if it is protected
   assert:
@@ -579,7 +579,7 @@
   hcloud_server:
     name: "{{hcloud_server_name}}"
     state: absent
-  ignore_errors: yes
+  ignore_errors: true
   register: result
 - name: verify delete server fails if it is protected
   assert:

@@ -46,7 +46,7 @@
 
 - name: test gather hcloud network info in check mode
   hcloud_network_info:
-  check_mode: yes
+  check_mode: true
   register: hcloud_network
 - name: verify test gather hcloud network info in check mode
   assert:

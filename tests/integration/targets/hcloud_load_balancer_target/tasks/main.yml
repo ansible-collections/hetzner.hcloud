@@ -59,7 +59,7 @@
     server: "{{hcloud_server_name}}"
     state: present
   register: result
-  check_mode: yes
+  check_mode: true
 - name: verify test create load_balancer target with checkmode
   assert:
     that:

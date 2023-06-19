@@ -16,7 +16,7 @@
   hcloud_route:
     state: present
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters on create route
   assert:
     that:
@@ -30,7 +30,7 @@
     gateway: "10.0.1.1"
     state: present
   register: result
-  check_mode: yes
+  check_mode: true
 - name: verify test create route with checkmode
   assert:
     that:
@@ -70,7 +70,7 @@
     gateway: "10.0.1.2"
     state: present
   register: route
-  ignore_errors: yes
+  ignore_errors: true
 - name: verfiy fail create route with wrong gateway
   assert:
     that:

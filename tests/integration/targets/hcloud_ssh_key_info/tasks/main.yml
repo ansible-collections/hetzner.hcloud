@@ -23,7 +23,7 @@
 - name: test gather hcloud ssh key infos in check mode
   hcloud_ssh_key_info:
   register: hcloud_ssh_key
-  check_mode: yes
+  check_mode: true
 - name: verify test gather hcloud ssh key infos in check mode
   assert:
     that:
@@ -32,7 +32,7 @@
 - name: test gather hcloud ssh key infos
   hcloud_ssh_key_info:
   register: hcloud_ssh_key
-  check_mode: yes
+  check_mode: true
 - name: verify test gather hcloud ssh key infos
   assert:
     that:

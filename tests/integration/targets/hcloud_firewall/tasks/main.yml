@@ -9,7 +9,7 @@
 - name: test missing required parameters on create firewall
   hcloud_firewall:
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters on create firewall
   assert:
     that:
@@ -20,7 +20,7 @@
   hcloud_firewall:
     name: "{{ hcloud_firewall_name }}"
   register: result
-  check_mode: yes
+  check_mode: true
 - name: test create firewall with check mode
   assert:
     that:
@@ -144,7 +144,7 @@
     id: "{{ firewall.hcloud_firewall.id }}"
     name: "changed-{{ hcloud_firewall_name }}"
   register: result
-  check_mode: yes
+  check_mode: true
 - name: test create firewall with check mode
   assert:
     that:

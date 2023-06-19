@@ -5,7 +5,7 @@
   hcloud_ssh_key:
     name: "{{ hcloud_ssh_key_name }}"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters on create ssh_key
   assert:
     that:
@@ -17,7 +17,7 @@
     name: "{{ hcloud_ssh_key_name }}"
     public_key: "{{ key_material }}"
   register: result
-  check_mode: yes
+  check_mode: true
 - name: test create ssh key with check mode
   assert:
     that:
@@ -54,7 +54,7 @@
     id: "{{ sshKey.hcloud_ssh_key.id }}"
     name: "changed-{{ hcloud_ssh_key_name }}"
   register: result
-  check_mode: yes
+  check_mode: true
 - name: test create ssh key with check mode
   assert:
     that:
@@ -138,7 +138,7 @@
     name: "{{ hcloud_ssh_key_name }}othername"
     public_key: "{{ hcloud_doubled_ssh_key_public_key }}"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify failed correctly
   assert:
     that:

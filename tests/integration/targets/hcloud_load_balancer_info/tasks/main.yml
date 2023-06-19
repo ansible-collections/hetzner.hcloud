@@ -71,7 +71,7 @@
 
 - name: test gather hcloud Load Balancer infos in check mode
   hcloud_load_balancer_info:
-  check_mode: yes
+  check_mode: true
   register: hcloud_load_balancers
 
 - name: verify test gather hcloud Load Balancer infos in check mode
@@ -110,7 +110,7 @@
   hcloud_load_balancer_info:
     id: "{{test_load_balancer.hcloud_load_balancer.id}}1"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify test gather hcloud Load Balancer with wrong id
   assert:
     that:

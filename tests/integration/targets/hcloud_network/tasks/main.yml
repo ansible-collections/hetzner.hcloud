@@ -15,7 +15,7 @@
   hcloud_network:
     name: "{{hcloud_network_name}}"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail missing ip_range parameter on create Network result
   assert:
     that:
@@ -27,7 +27,7 @@
     name: "{{hcloud_network_name}}"
     ip_range: "10.0.0.0/16"
   register: result
-  check_mode: yes
+  check_mode: true
 - name: verify create Network with check mode result
   assert:
     that:
@@ -138,7 +138,7 @@
   hcloud_network:
     name: "{{hcloud_network_name}}"
     state: absent
-  ignore_errors: yes
+  ignore_errors: true
   register: result
 - name: verify delete Network
   assert:
@@ -184,7 +184,7 @@
   hcloud_network:
     name: "{{hcloud_network_name}}"
     state: absent
-  ignore_errors: yes
+  ignore_errors: true
   register: result
 - name: verify delete Network
   assert:

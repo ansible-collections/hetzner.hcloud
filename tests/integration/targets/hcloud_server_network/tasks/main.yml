@@ -42,7 +42,7 @@
   hcloud_server_network:
     state: present
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters on create server network
   assert:
     that:
@@ -55,7 +55,7 @@
     server: "{{hcloud_server_name}}"
     state: present
   register: result
-  check_mode: yes
+  check_mode: true
 - name: verify test create server network with checkmode
   assert:
     that:

@@ -14,7 +14,7 @@
   hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters on create Load Balancer
   assert:
     that:
@@ -28,7 +28,7 @@
     network_zone: eu-central
     state: present
   register: result
-  check_mode: yes
+  check_mode: true
 - name: test create Load Balancer with check mode
   assert:
     that:
@@ -110,7 +110,7 @@
   hcloud_load_balancer:
     name: "{{hcloud_load_balancer_name}}"
     state: absent
-  ignore_errors: yes
+  ignore_errors: true
   register: result
 - name: verify delete Load Balancer fails if it is protected
   assert:
@@ -218,7 +218,7 @@
     name: "{{ hcloud_load_balancer_name }}"
     state: "absent"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify test delete Load Balancer
   assert:
     that:

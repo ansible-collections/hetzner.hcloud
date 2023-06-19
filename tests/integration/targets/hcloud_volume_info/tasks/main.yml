@@ -23,7 +23,7 @@
 - name: test gather hcloud volume infos in check mode
   hcloud_volume_info:
   register: hcloud_volume
-  check_mode: yes
+  check_mode: true
 
 - name: verify test gather hcloud volume infos in check mode
   vars:
