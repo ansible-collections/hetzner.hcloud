@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_primary_ip_info
 
@@ -26,21 +26,21 @@ options:
         description:
             - The ID of the Primary IP you want to get.
         type: int
-    label_selector:
-        description:
-            - The label selector for the Primary IP you want to get.
-        type: str
     name:
         description:
             - The name for the Primary IP you want to get.
         type: str
+    label_selector:
+        description:
+            - The label selector for the Primary IP you want to get.
+        type: str
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
-- name: Gather all hcloud Primary IPs
+- name: Gather hcloud Primary IP infos
   hcloud_primary_ip_info:
   register: output
 
@@ -125,11 +125,6 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
-try:
-    from hcloud import APIException
-except ImportError:
-    APIException = None
-
 
 class AnsibleHcloudPrimaryIPInfo(Hcloud):
     def __init__(self, module):
@@ -143,39 +138,37 @@ class AnsibleHcloudPrimaryIPInfo(Hcloud):
             if primary_ip is not None:
                 dns_ptr = None
                 if len(primary_ip.dns_ptr) > 0:
-                    dns_ptr = primary_ip.dns_ptr[0]["dns_ptr"]                    
+                    dns_ptr = primary_ip.dns_ptr[0]["dns_ptr"]
                 tmp.append({
                     "id": to_native(primary_ip.id),
                     "name": to_native(primary_ip.name),
                     "ip": to_native(primary_ip.ip),
                     "type": to_native(primary_ip.type),
-                    "assignee_id": to_native(primary_ip.assignee_id),
+                    "assignee_id": to_native(primary_ip.assignee_id) if primary_ip.assignee_id is not None else None,
                     "assignee_type": to_native(primary_ip.assignee_type),
                     "home_location": to_native(primary_ip.datacenter.name),
-                    "dns_ptr": to_native(dns_ptr),
+                    "dns_ptr": to_native(dns_ptr) if dns_ptr is not None else None,
                     "labels": primary_ip.labels,
-                    "delete_protection": primary_ip.protection["delete"],
+                    "delete_protection": primary_ip.protection.delete,
                 })
 
         return tmp
 
     def get_primary_ips(self):
         try:
-            # if self.module.params.get("id") is not None:
-            #     self.hcloud_primary_ip_info = [self.client.primary_ips.get_by_id(
-            #         self.module.params.get("id")
-            #     )]
-            # elif self.module.params.get("name") is not None:
-            #     self.hcloud_primary_ip_info = [self.client.primary_ips.get_by_name(
-            #         self.module.params.get("name")
-            #     )]
-            # elif self.module.params.get("label_selector") is not None:
-            #     self.hcloud_primary_ip_info = self.client.primary_ips.get_all(
-            #         label_selector=self.module.params.get("label_selector"))
-            # else:
-            #     self.hcloud_primary_ip_info = self.client.primary_ips.get_all()
-
-            self.hcloud_primary_ip_info = self.client.primary_ips.get_all()
+            if self.module.params.get("id") is not None:
+                self.hcloud_primary_ip_info = [self.client.primary_ips.get_by_id(
+                    self.module.params.get("id")
+                )]
+            elif self.module.params.get("name") is not None:
+                self.hcloud_primary_ip_info = [self.client.primary_ips.get_by_name(
+                    self.module.params.get("name")
+                )]
+            elif self.module.params.get("label_selector") is not None:
+                self.hcloud_primary_ip_info = self.client.primary_ips.get_all(
+                    label_selector=self.module.params.get("label_selector"))
+            else:
+                self.hcloud_primary_ip_info = self.client.primary_ips.get_all()
 
         except Exception as e:
             self.module.fail_json(msg=e.message)
