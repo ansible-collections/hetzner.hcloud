@@ -33,7 +33,7 @@
     server_type: cpx11
     firewalls:
       - "{{ hcloud_firewall_name }}"
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: present
@@ -49,7 +49,7 @@
     server_type: cpx11
     firewalls:
       - "{{ hcloud_firewall_name }}"
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: present
@@ -65,7 +65,7 @@
     server_type: cpx11
     firewalls:
       - "{{ hcloud_firewall_name }}2"
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: present
@@ -81,7 +81,7 @@
     server_type: cpx11
     firewalls:
       - "{{ hcloud_firewall_name }}2"
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: present

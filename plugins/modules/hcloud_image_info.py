@@ -87,7 +87,7 @@ hcloud_image_info:
             description: Name of the image
             returned: always
             type: str
-            sample: ubuntu-18.04
+            sample: ubuntu-22.04
         description:
             description: Detail description of the image
             returned: always

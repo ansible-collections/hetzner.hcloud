@@ -27,7 +27,7 @@
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     datacenter: "fsn1-dc14"
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ipv4: "{{primaryIPv4.hcloud_primary_ip.id}}"
     ipv6: "{{primaryIPv6.hcloud_primary_ip.id}}"
     ssh_keys:
@@ -44,7 +44,7 @@
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     datacenter: "fsn1-dc14"
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ipv4: "{{secondPrimaryIPv4.hcloud_primary_ip.id}}"
     ipv6: ""
     enable_ipv6: no

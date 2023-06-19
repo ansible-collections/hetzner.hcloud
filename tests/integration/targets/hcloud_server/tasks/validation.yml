@@ -26,7 +26,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name }}"
     server_type: not-existing-server-type
-    image: ubuntu-20.04
+    image: ubuntu-22.04
     state: present
   register: result
   ignore_errors: yes

@@ -164,14 +164,14 @@ EXAMPLES = """
   hcloud_server:
     name: my-server
     server_type: cx11
-    image: ubuntu-18.04
+    image: ubuntu-22.04
     state: present
 
 - name: Create a basic server with ssh key
   hcloud_server:
     name: my-server
     server_type: cx11
-    image: ubuntu-18.04
+    image: ubuntu-22.04
     location: fsn1
     ssh_keys:
       - me@myorganisation
@@ -213,7 +213,7 @@ EXAMPLES = """
 - name: Ensure the server is rebuild
   hcloud_server:
     name: my-server
-    image: ubuntu-18.04
+    image: ubuntu-22.04
     state: rebuild
 
 - name: Add server to placement group
