@@ -335,7 +335,8 @@ hcloud_server:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
-from datetime import timedelta
+from ansible_collections.hetzner.hcloud.plugins.module_utils.utc import utc
+from datetime import timedelta, datetime
 
 try:
     from hcloud.volumes.domain import Volume
@@ -535,7 +536,27 @@ class AnsibleHcloudServer(Hcloud):
             except Exception:
                 self.module.fail_json(msg="server_type %s was not found" % self.module.params.get('server_type'))
 
+        self._check_and_warn_deprecated_server(server_type)
+
         return server_type
+
+    def _check_and_warn_deprecated_server(self, server_type):
+        if server_type.deprecation is None:
+            return
+
+        if server_type.deprecation.unavailable_after < datetime.now(utc):
+            self.module.warn(
+                'Attention: The server plan %s is deprecated and can no longer be ordered. Existing servers of ' % server_type.name
+                + 'that plan will continue to work as before and no action is required on your part. It is possible '
+                'to migrate this server to another server plan by setting the server_type parameter on the hetzner.hcloud.hcloud_server module.'
+            )
+        else:
+            self.module.warn(
+                'Attention: The server plan % is deprecated and will no longer be available for order as of ' % server_type.name
+                + '%s. Existing servers of that plan will continue to work as before ' % server_type.deprecation.unavailable_after.strftime("%Y-%m-%d")
+                + 'and no action is required on your part. It is possible to migrate this server to another server plan by setting '
+                'the server_type parameter on the hetzner.hcloud.hcloud_server module.'
+            )
 
     def _get_placement_group(self):
         if self.module.params.get("placement_group") is None:
@@ -731,20 +752,26 @@ class AnsibleHcloudServer(Hcloud):
                         self._mark_as_changed()
 
             server_type = self.module.params.get("server_type")
-            if server_type is not None and self.hcloud_server.server_type.name != server_type:
-                self.stop_server_if_forced()
+            if server_type is not None:
+                if self.hcloud_server.server_type.name == server_type:
+                    # Check if we should warn for using an deprecated server type
+                    self._check_and_warn_deprecated_server(self.hcloud_server.server_type)
 
-                timeout = 100
-                if self.module.params.get("upgrade_disk"):
-                    timeout = (
-                        1000
-                    )  # When we upgrade the disk to the resize progress takes some more time.
-                if not self.module.check_mode:
-                    self.hcloud_server.change_type(
-                        server_type=self._get_server_type(),
-                        upgrade_disk=self.module.params.get("upgrade_disk"),
-                    ).wait_until_finished(timeout)
-                self._mark_as_changed()
+                else:
+                    # Server type should be changed
+                    self.stop_server_if_forced()
+
+                    timeout = 100
+                    if self.module.params.get("upgrade_disk"):
+                        timeout = (
+                            1000
+                        )  # When we upgrade the disk to the resize progress takes some more time.
+                    if not self.module.check_mode:
+                        self.hcloud_server.change_type(
+                            server_type=self._get_server_type(),
+                            upgrade_disk=self.module.params.get("upgrade_disk"),
+                        ).wait_until_finished(timeout)
+                    self._mark_as_changed()
 
             if (
                     not self.module.check_mode and
