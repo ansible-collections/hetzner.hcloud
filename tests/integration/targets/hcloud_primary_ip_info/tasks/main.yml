@@ -56,6 +56,24 @@
     that:
       - hcloud_primary_ips.hcloud_primary_ip_info | list | count == 0
 
+- name: test gather hcloud primary ip infos with correct name
+  hcloud_primary_ip_info:
+    name: "{{ hcloud_primary_ip_name }}"
+  register: hcloud_primary_ips
+- name: verify test gather hcloud primary ip with correct name
+  assert:
+    that:
+      - hcloud_primary_ips.hcloud_primary_ip_info|selectattr('name','equalto','{{ test_primary_ip.hcloud_primary_ip.name }}') | list | count == 1
+
+- name: test gather hcloud primary ip infos with wrong name
+  hcloud_primary_ip_info:
+    name: "wrong-name"
+  register: hcloud_primary_ips
+- name: verify test gather hcloud primary ip with wrong name
+  assert:
+    that:
+      - hcloud_primary_ips.hcloud_primary_ip_info | list | count == 0
+
 - name: test gather hcloud primary ip infos with correct id
   hcloud_primary_ip_info:
     id: "{{test_primary_ip.hcloud_primary_ip.id}}"
