@@ -19,7 +19,6 @@
     that:
       - hcloud_images.hcloud_image_info| list | count > 2
 
-
 - name: test gather hcloud image infos with correct label selector
   hcloud_image_info:
     label_selector: "key=value"
@@ -52,8 +51,8 @@
 
 - name: test gather hcloud image infos with wrong id
   hcloud_image_info:
-      id: "{{hcloud_test_image_id}}1"
-      type: snapshot
+    id: "{{hcloud_test_image_id}}1"
+    type: snapshot
   ignore_errors: yes
   register: result
 - name: verify test gather hcloud image with wrong id
@@ -63,7 +62,7 @@
 
 - name: test gather hcloud image infos with name
   hcloud_image_info:
-      name: "{{ hcloud_test_image_name_os }}"
+    name: "{{ hcloud_test_image_name_os }}"
   register: hcloud_images
 - name: verify test gather hcloud image infos with name
   assert:

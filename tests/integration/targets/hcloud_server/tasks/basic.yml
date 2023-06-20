@@ -353,7 +353,7 @@
 - name: verify absent server
   assert:
     that:
-    - result is success
+      - result is success
 
 - name: test create server with ssh key
   hcloud_server:
@@ -372,7 +372,6 @@
       - main_server.hcloud_server.server_type == "cx11"
       - main_server.hcloud_server.status == "running"
       - main_server.root_password != ""
-
 
 - name: test activate rescue mode with check_mode
   hcloud_server:
@@ -435,7 +434,7 @@
 - name: verify absent server
   assert:
     that:
-    - result is success
+      - result is success
 
 - name: test create server with rescue_mode
   hcloud_server:
@@ -457,7 +456,6 @@
       - main_server.root_password != ""
       - main_server.hcloud_server.rescue_enabled is sameas true
 
-
 - name: absent server
   hcloud_server:
     name: "{{ hcloud_server_name }}"
@@ -466,7 +464,7 @@
 - name: verify absent server
   assert:
     that:
-    - result is success
+      - result is success
 - name: test create server with labels
   hcloud_server:
     name: "{{ hcloud_server_name}}"
@@ -530,7 +528,7 @@
 - name: verify cleanup
   assert:
     that:
-    - result is success
+      - result is success
 
 - name: test create server with enabled backups
   hcloud_server:
@@ -556,7 +554,7 @@
 - name: verify cleanup
   assert:
     that:
-    - result is success
+      - result is success
 
 - name: test create server with protection
   hcloud_server:
@@ -612,4 +610,4 @@
 - name: verify cleanup
   assert:
     that:
-    - result is success
+      - result is success

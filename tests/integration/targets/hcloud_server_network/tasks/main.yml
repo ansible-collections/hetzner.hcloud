@@ -10,7 +10,7 @@
 - name: verify setup network
   assert:
     that:
-    - network is success
+      - network is success
 
 - name: setup subnetwork
   hcloud_subnetwork:
@@ -23,7 +23,7 @@
 - name: verify subnetwork
   assert:
     that:
-    - subnetwork is success
+      - subnetwork is success
 
 - name: setup server
   hcloud_server:
@@ -59,7 +59,7 @@
 - name: verify test create server network with checkmode
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test create server network
   hcloud_server_network:
@@ -70,9 +70,9 @@
 - name: verify create server network
   assert:
     that:
-    - serverNetwork is changed
-    - serverNetwork.hcloud_server_network.network == hcloud_network_name
-    - serverNetwork.hcloud_server_network.server == hcloud_server_name
+      - serverNetwork is changed
+      - serverNetwork.hcloud_server_network.network == hcloud_network_name
+      - serverNetwork.hcloud_server_network.server == hcloud_server_name
 
 - name: test create server network idempotency
   hcloud_server_network:
@@ -83,7 +83,7 @@
 - name: verify create server network idempotency
   assert:
     that:
-    - serverNetwork is not changed
+      - serverNetwork is not changed
 
 - name: test absent server network
   hcloud_server_network:
@@ -94,7 +94,7 @@
 - name: verify test absent server network
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test create server network with specified ip
   hcloud_server_network:
@@ -106,10 +106,10 @@
 - name: verify create server network with specified ip
   assert:
     that:
-    - serverNetwork is changed
-    - serverNetwork.hcloud_server_network.network == hcloud_network_name
-    - serverNetwork.hcloud_server_network.server == hcloud_server_name
-    - serverNetwork.hcloud_server_network.ip == "10.0.0.2"
+      - serverNetwork is changed
+      - serverNetwork.hcloud_server_network.network == hcloud_network_name
+      - serverNetwork.hcloud_server_network.server == hcloud_server_name
+      - serverNetwork.hcloud_server_network.ip == "10.0.0.2"
 
 - name: cleanup create server network with specified ip
   hcloud_server_network:
@@ -120,7 +120,7 @@
 - name: verify cleanup create server network with specified ip
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test create server network with alias ips
   hcloud_server_network:
@@ -135,12 +135,12 @@
 - name: verify create server network with alias ips
   assert:
     that:
-    - serverNetwork is changed
-    - serverNetwork.hcloud_server_network.network == hcloud_network_name
-    - serverNetwork.hcloud_server_network.server == hcloud_server_name
-    - serverNetwork.hcloud_server_network.ip == "10.0.0.2"
-    - 'serverNetwork.hcloud_server_network.alias_ips[0] == "10.0.2.3"'
-    - 'serverNetwork.hcloud_server_network.alias_ips[1] == "10.0.1.2"'
+      - serverNetwork is changed
+      - serverNetwork.hcloud_server_network.network == hcloud_network_name
+      - serverNetwork.hcloud_server_network.server == hcloud_server_name
+      - serverNetwork.hcloud_server_network.ip == "10.0.0.2"
+      - 'serverNetwork.hcloud_server_network.alias_ips[0] == "10.0.2.3"'
+      - 'serverNetwork.hcloud_server_network.alias_ips[1] == "10.0.1.2"'
 
 - name: test update server network with alias ips
   hcloud_server_network:
@@ -155,12 +155,12 @@
 - name: verify create server network with alias ips
   assert:
     that:
-    - serverNetwork is changed
-    - serverNetwork.hcloud_server_network.network == hcloud_network_name
-    - serverNetwork.hcloud_server_network.server == hcloud_server_name
-    - serverNetwork.hcloud_server_network.ip == "10.0.0.2"
-    - 'serverNetwork.hcloud_server_network.alias_ips[0] == "10.0.2.3"'
-    - 'serverNetwork.hcloud_server_network.alias_ips[1] == "10.0.3.1"'
+      - serverNetwork is changed
+      - serverNetwork.hcloud_server_network.network == hcloud_network_name
+      - serverNetwork.hcloud_server_network.server == hcloud_server_name
+      - serverNetwork.hcloud_server_network.ip == "10.0.0.2"
+      - 'serverNetwork.hcloud_server_network.alias_ips[0] == "10.0.2.3"'
+      - 'serverNetwork.hcloud_server_network.alias_ips[1] == "10.0.3.1"'
 
 - name: test update server network with alias ips idempotency
   hcloud_server_network:
@@ -175,7 +175,7 @@
 - name: verify create server network with alias ips idempotency
   assert:
     that:
-    - serverNetwork is not changed
+      - serverNetwork is not changed
 
 - name: cleanup create server network with alias ips
   hcloud_server_network:
@@ -186,7 +186,7 @@
 - name: verify cleanup create server network with alias ips
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: cleanup server
   hcloud_server:
@@ -196,7 +196,7 @@
 - name: verify cleanup server
   assert:
     that:
-    - result is success
+      - result is success
 
 - name: cleanup subnetwork
   hcloud_subnetwork:
@@ -209,7 +209,7 @@
 - name: verify cleanup subnetwork
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: cleanup
   hcloud_network:

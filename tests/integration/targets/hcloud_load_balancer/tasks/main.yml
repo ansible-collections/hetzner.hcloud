@@ -9,7 +9,7 @@
 - name: verify setup
   assert:
     that:
-    - result is success
+      - result is success
 - name: test missing required parameters on create Load Balancer
   hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
@@ -139,7 +139,7 @@
 - name: verify absent Load Balancer
   assert:
     that:
-    - result is success
+      - result is success
 
 - name: test create Load Balancer with labels
   hcloud_load_balancer:
@@ -198,7 +198,7 @@
 - name: verify cleanup
   assert:
     that:
-    - result is success
+      - result is success
 
 - name: test create Load Balancer with delete protection
   hcloud_load_balancer:

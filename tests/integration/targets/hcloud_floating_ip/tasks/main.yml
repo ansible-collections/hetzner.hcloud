@@ -62,7 +62,6 @@
       - result is failed
       - 'result.msg == "one of the following is required: id, name"'
 
-
 - name: test invalid type
   hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"

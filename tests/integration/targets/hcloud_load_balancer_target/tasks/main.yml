@@ -63,7 +63,7 @@
 - name: verify test create load_balancer target with checkmode
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test create load_balancer target
   hcloud_load_balancer_target:
@@ -75,10 +75,10 @@
 - name: verify create load_balancer target
   assert:
     that:
-    - load_balancer_target is changed
-    - load_balancer_target.hcloud_load_balancer_target.type == "server"
-    - load_balancer_target.hcloud_load_balancer_target.server == hcloud_server_name
-    - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
+      - load_balancer_target is changed
+      - load_balancer_target.hcloud_load_balancer_target.type == "server"
+      - load_balancer_target.hcloud_load_balancer_target.server == hcloud_server_name
+      - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
 
 - name: test create load_balancer target idempotency
   hcloud_load_balancer_target:
@@ -90,7 +90,7 @@
 - name: verify create load_balancer target idempotency
   assert:
     that:
-    - load_balancer_target is not changed
+      - load_balancer_target is not changed
 
 - name: test absent load_balancer target
   hcloud_load_balancer_target:
@@ -102,7 +102,7 @@
 - name: verify test absent load_balancer target
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test create label_selector target
   hcloud_load_balancer_target:
@@ -114,10 +114,10 @@
 - name: verify create label_selector target
   assert:
     that:
-    - load_balancer_target is changed
-    - load_balancer_target.hcloud_load_balancer_target.type == "label_selector"
-    - load_balancer_target.hcloud_load_balancer_target.label_selector == "application=backend"
-    - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
+      - load_balancer_target is changed
+      - load_balancer_target.hcloud_load_balancer_target.type == "label_selector"
+      - load_balancer_target.hcloud_load_balancer_target.label_selector == "application=backend"
+      - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
 
 - name: test create ip target
   hcloud_load_balancer_target:
@@ -129,10 +129,10 @@
 - name: verify create ip target
   assert:
     that:
-    - load_balancer_target is changed
-    - load_balancer_target.hcloud_load_balancer_target.type == "ip"
-    - load_balancer_target.hcloud_load_balancer_target.ip == hcloud_testing_ip
-    - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
+      - load_balancer_target is changed
+      - load_balancer_target.hcloud_load_balancer_target.type == "ip"
+      - load_balancer_target.hcloud_load_balancer_target.ip == hcloud_testing_ip
+      - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
 
 - name: cleanup load_balancer
   hcloud_load_balancer:

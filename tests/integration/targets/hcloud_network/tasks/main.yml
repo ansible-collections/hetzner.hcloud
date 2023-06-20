@@ -9,7 +9,7 @@
 - name: verify setup
   assert:
     that:
-    - result is success
+      - result is success
 
 - name: test missing ip_range parameter on create Network
   hcloud_network:
@@ -167,7 +167,6 @@
   assert:
     that:
       - result is success
-
 
 - name: test create Network with delete protection
   hcloud_network:

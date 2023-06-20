@@ -10,7 +10,7 @@
 - name: verify setup
   assert:
     that:
-    - network is success
+      - network is success
 
 - name: test missing required parameters on create route
   hcloud_subnetwork:
@@ -36,7 +36,7 @@
 - name: verify test create subnetwork with checkmode
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test create subnetwork
   hcloud_subnetwork:
@@ -49,11 +49,11 @@
 - name: verify create subnetwork
   assert:
     that:
-    - subnet is changed
-    - subnet.hcloud_subnetwork.network == "{{ hcloud_network_name }}"
-    - subnet.hcloud_subnetwork.ip_range == "10.0.0.0/16"
-    - subnet.hcloud_subnetwork.type == "cloud"
-    - subnet.hcloud_subnetwork.network_zone == "eu-central"
+      - subnet is changed
+      - subnet.hcloud_subnetwork.network == "{{ hcloud_network_name }}"
+      - subnet.hcloud_subnetwork.ip_range == "10.0.0.0/16"
+      - subnet.hcloud_subnetwork.type == "cloud"
+      - subnet.hcloud_subnetwork.network_zone == "eu-central"
 
 - name: test create subnetwork idempotency
   hcloud_subnetwork:
@@ -66,7 +66,7 @@
 - name: verify create subnetwork idempotency
   assert:
     that:
-    - result is not changed
+      - result is not changed
 
 - name: test absent subnetwork
   hcloud_subnetwork:
@@ -79,7 +79,7 @@
 - name: verify test absent subnetwork
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test vswitch subnetwork
   hcloud_subnetwork:
@@ -93,12 +93,12 @@
 - name: verify test vswitch subnetwork
   assert:
     that:
-    - subnet is changed
-    - subnet.hcloud_subnetwork.network == "{{ hcloud_network_name }}"
-    - subnet.hcloud_subnetwork.ip_range == "10.0.0.0/16"
-    - subnet.hcloud_subnetwork.type == "vswitch"
-    - subnet.hcloud_subnetwork.network_zone == "eu-central"
-    - subnet.hcloud_subnetwork.vswitch_id == hetzner_vswitch_id
+      - subnet is changed
+      - subnet.hcloud_subnetwork.network == "{{ hcloud_network_name }}"
+      - subnet.hcloud_subnetwork.ip_range == "10.0.0.0/16"
+      - subnet.hcloud_subnetwork.type == "vswitch"
+      - subnet.hcloud_subnetwork.network_zone == "eu-central"
+      - subnet.hcloud_subnetwork.vswitch_id == hetzner_vswitch_id
 
 - name: test absent subnetwork
   hcloud_subnetwork:
@@ -112,7 +112,7 @@
 - name: verify test absent subnetwork
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: cleanup
   hcloud_network:

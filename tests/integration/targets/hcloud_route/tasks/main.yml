@@ -10,7 +10,7 @@
 - name: verify setup
   assert:
     that:
-    - network is success
+      - network is success
 
 - name: test missing required parameters on create route
   hcloud_route:
@@ -34,7 +34,7 @@
 - name: verify test create route with checkmode
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test create route
   hcloud_route:
@@ -46,10 +46,10 @@
 - name: verify create route
   assert:
     that:
-    - route is changed
-    - route.hcloud_route.network == "{{ hcloud_network_name }}"
-    - route.hcloud_route.destination == "10.100.1.0/24"
-    - route.hcloud_route.gateway == "10.0.1.1"
+      - route is changed
+      - route.hcloud_route.network == "{{ hcloud_network_name }}"
+      - route.hcloud_route.destination == "10.100.1.0/24"
+      - route.hcloud_route.gateway == "10.0.1.1"
 
 - name: test create route idempotency
   hcloud_route:
@@ -61,7 +61,7 @@
 - name: verify create route idempotency
   assert:
     that:
-    - result is not changed
+      - result is not changed
 
 - name: test fail create route with wrong gateway
   hcloud_route:
@@ -74,7 +74,7 @@
 - name: verfiy fail create route with wrong gateway
   assert:
     that:
-    - route is failed
+      - route is failed
 
 - name: test absent route
   hcloud_route:
@@ -86,7 +86,7 @@
 - name: verify test absent route
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: cleanup
   hcloud_network:

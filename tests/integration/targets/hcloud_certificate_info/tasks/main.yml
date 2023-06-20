@@ -1,7 +1,6 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-
 - name: create certificate
   hcloud_certificate:
     name: "{{ hcloud_certificate_name }}"
@@ -26,7 +25,7 @@
 - name: verify test gather hcloud certificate infos in check mode
   assert:
     that:
-     - hcloud_certificate.hcloud_certificate_info| list | count >= 1
+      - hcloud_certificate.hcloud_certificate_info| list | count >= 1
 
 - name: test gather hcloud certificate infos
   hcloud_certificate_info:
@@ -35,7 +34,7 @@
 - name: verify test gather hcloud certificate infos
   assert:
     that:
-     - hcloud_certificate.hcloud_certificate_info| list | count >= 1
+      - hcloud_certificate.hcloud_certificate_info| list | count >= 1
 
 - name: test gather hcloud certificate infos with correct label selector
   hcloud_certificate_info:

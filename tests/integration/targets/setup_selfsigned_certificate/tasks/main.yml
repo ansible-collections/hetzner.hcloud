@@ -22,6 +22,6 @@
 - name: set facts for future roles
   set_fact:
     certificate_example_com: "{{ lookup('file',certificate_example_com.path) }}"
-    certificate_example_com_key:  "{{ lookup('file',certificate_example_com_key.path) }}"
+    certificate_example_com_key: "{{ lookup('file',certificate_example_com_key.path) }}"
   tags:
     - prepare

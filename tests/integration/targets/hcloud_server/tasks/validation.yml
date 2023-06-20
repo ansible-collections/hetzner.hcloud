@@ -9,7 +9,7 @@
 - name: verify setup
   assert:
     that:
-    - result is success
+      - result is success
 
 - name: test missing required parameters on create server
   hcloud_server:

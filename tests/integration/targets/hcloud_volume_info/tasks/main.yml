@@ -65,7 +65,7 @@
 
 - name: test gather hcloud volume infos with wrong name
   hcloud_volume_info:
-      name: "{{hcloud_volume_name}}1"
+    name: "{{hcloud_volume_name}}1"
   register: hcloud_volume
 - name: verify test gather hcloud volume infos with wrong name
   assert:
@@ -83,7 +83,7 @@
 
 - name: test gather hcloud volume infos with wrong id
   hcloud_volume_info:
-      name: "4711"
+    name: "4711"
   register: hcloud_volume
 - name: verify test gather hcloud volume infos with wrong id
   assert:
@@ -98,4 +98,4 @@
 - name: verify cleanup
   assert:
     that:
-    - result is success
+      - result is success

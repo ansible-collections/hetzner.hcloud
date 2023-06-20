@@ -13,7 +13,7 @@
 - name: verify setup
   assert:
     that:
-    - setup is success
+      - setup is success
 
 - name: setup Floating IP
   hcloud_floating_ip:
@@ -36,7 +36,7 @@
 - name: verify setup
   assert:
     that:
-    - load_balancer is success
+      - load_balancer is success
 
 - name: setup Primary IP
   hcloud_primary_ip:
@@ -81,10 +81,10 @@
 - name: verify create rdns
   assert:
     that:
-    - rdns is changed
-    - rdns.hcloud_rdns.server == "{{ hcloud_server_name }}"
-    - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
-    - rdns.hcloud_rdns.dns_ptr == "example.com"
+      - rdns is changed
+      - rdns.hcloud_rdns.server == "{{ hcloud_server_name }}"
+      - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+      - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: test create rdns idempotency
   hcloud_rdns:
@@ -96,7 +96,7 @@
 - name: verify create rdns idempotency
   assert:
     that:
-    - result is not changed
+      - result is not changed
 
 - name: test absent rdns
   hcloud_rdns:
@@ -107,7 +107,7 @@
 - name: verify test absent rdns
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test update rdns
   hcloud_rdns:
@@ -119,10 +119,10 @@
 - name: verify update rdns
   assert:
     that:
-    - rdns is changed
-    - rdns.hcloud_rdns.server == "{{ hcloud_server_name }}"
-    - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv4_address }}"
-    - rdns.hcloud_rdns.dns_ptr == "example.com"
+      - rdns is changed
+      - rdns.hcloud_rdns.server == "{{ hcloud_server_name }}"
+      - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv4_address }}"
+      - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: test reset rdns
   hcloud_rdns:
@@ -133,10 +133,10 @@
 - name: verify reset rdns
   assert:
     that:
-    - rdns is changed
-    - rdns.hcloud_rdns.server == "{{ hcloud_server_name }}"
-    - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv4_address }}"
-    - rdns.hcloud_rdns.dns_ptr != "example.com"
+      - rdns is changed
+      - rdns.hcloud_rdns.server == "{{ hcloud_server_name }}"
+      - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv4_address }}"
+      - rdns.hcloud_rdns.dns_ptr != "example.com"
 
 - name: test create rdns with floating IP
   hcloud_rdns:
@@ -148,10 +148,10 @@
 - name: verify create rdns
   assert:
     that:
-    - rdns is changed
-    - rdns.hcloud_rdns.floating_ip == "{{ hcloud_floating_ip_name }}"
-    - rdns.hcloud_rdns.ip_address == "{{ floatingIP.hcloud_floating_ip.ip}}"
-    - rdns.hcloud_rdns.dns_ptr == "example.com"
+      - rdns is changed
+      - rdns.hcloud_rdns.floating_ip == "{{ hcloud_floating_ip_name }}"
+      - rdns.hcloud_rdns.ip_address == "{{ floatingIP.hcloud_floating_ip.ip}}"
+      - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: test create rdns with primary IP
   hcloud_rdns:
@@ -163,10 +163,10 @@
 - name: verify create rdns
   assert:
     that:
-    - rdns is changed
-    - rdns.hcloud_rdns.primary_ip == "{{ hcloud_primary_ip_name }}"
-    - rdns.hcloud_rdns.ip_address == "{{ primaryIP.hcloud_primary_ip.ip}}"
-    - rdns.hcloud_rdns.dns_ptr == "example.com"
+      - rdns is changed
+      - rdns.hcloud_rdns.primary_ip == "{{ hcloud_primary_ip_name }}"
+      - rdns.hcloud_rdns.ip_address == "{{ primaryIP.hcloud_primary_ip.ip}}"
+      - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: test create rdns with load balancer
   hcloud_rdns:
@@ -178,10 +178,10 @@
 - name: verify create rdns with load balancer
   assert:
     that:
-    - rdns is changed
-    - rdns.hcloud_rdns.load_balancer == "{{ hcloud_load_balancer_name }}"
-    - rdns.hcloud_rdns.ip_address == "{{ load_balancer.hcloud_load_balancer.ipv4_address }}"
-    - rdns.hcloud_rdns.dns_ptr == "example.com"
+      - rdns is changed
+      - rdns.hcloud_rdns.load_balancer == "{{ hcloud_load_balancer_name }}"
+      - rdns.hcloud_rdns.ip_address == "{{ load_balancer.hcloud_load_balancer.ipv4_address }}"
+      - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: cleanup
   hcloud_server:

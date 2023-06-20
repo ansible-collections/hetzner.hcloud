@@ -231,7 +231,6 @@
     that:
       - result is success
 
-
 - name: test create Volume with delete protection
   hcloud_volume:
     name: "{{hcloud_volume_name}}"
@@ -286,4 +285,4 @@
 - name: verify cleanup
   assert:
     that:
-    - result is success
+      - result is success
