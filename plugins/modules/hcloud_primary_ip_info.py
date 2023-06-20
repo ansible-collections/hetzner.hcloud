@@ -149,7 +149,7 @@ class AnsibleHcloudPrimaryIPInfo(Hcloud):
                     "home_location": to_native(primary_ip.datacenter.name),
                     "dns_ptr": to_native(dns_ptr) if dns_ptr is not None else None,
                     "labels": primary_ip.labels,
-                    "delete_protection": primary_ip.protection.delete,
+                    "delete_protection": primary_ip.protection["delete"],
                 })
 
         return tmp
