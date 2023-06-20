@@ -9,7 +9,7 @@
 - name: setup primary ip
   hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
-    datacenter: "fsn1"
+    datacenter: "fsn1-dc14"
     type: ipv4
     labels:
       key: value
