@@ -106,6 +106,19 @@ releases:
     fragments:
     - server-type-included-traffic.yml
     release_date: '2023-05-16'
+  1.13.0:
+    changes:
+      bugfixes:
+      - hcloud_server - TypeError when trying to use deprecated image with allow_deprecated_image
+      minor_changes:
+      - hcloud_primary_ip_info Create hcloud_primary_ip_info module
+      - hcloud_server Show warning if used server_type is deprecated.
+      - hcloud_server_type_info Return deprecation info for server types.
+    fragments:
+    - create_primary_ip_info.yml
+    - server-type-deprecation.yml
+    - server_error_deprecated_image.yml
+    release_date: '2023-06-20'
   1.2.0:
     changes:
       minor_changes:

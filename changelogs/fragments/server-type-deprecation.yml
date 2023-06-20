@@ -1,3 +1,0 @@
-minor_changes:
-- hcloud_server_type_info Return deprecation info for server types.
-- hcloud_server Show warning if used server_type is deprecated.

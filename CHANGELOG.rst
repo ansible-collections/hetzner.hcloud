@@ -5,6 +5,21 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.13.0
+=======
+
+Minor Changes
+-------------
+
+- hcloud_primary_ip_info Create hcloud_primary_ip_info module
+- hcloud_server Show warning if used server_type is deprecated.
+- hcloud_server_type_info Return deprecation info for server types.
+
+Bugfixes
+--------
+
+- hcloud_server - TypeError when trying to use deprecated image with allow_deprecated_image
+
 v1.12.0
 =======
 
