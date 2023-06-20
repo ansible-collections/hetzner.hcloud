@@ -65,7 +65,7 @@
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     datacenter: "fsn1-dc14"
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     enable_ipv4: no
     enable_ipv6: no
     private_networks:
@@ -84,7 +84,7 @@
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     datacenter: "fsn1-dc14"
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     enable_ipv4: no
     enable_ipv6: no
     private_networks:
@@ -104,7 +104,7 @@
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     datacenter: "fsn1-dc14"
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     enable_ipv4: no
     enable_ipv6: no
     private_networks:

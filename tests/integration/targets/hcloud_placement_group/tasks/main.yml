@@ -66,7 +66,7 @@
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     placement_group: "{{ hcloud_placement_group_name }}"
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: present

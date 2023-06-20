@@ -9,7 +9,7 @@
   hcloud_server:
     name: "{{hcloud_server_name}}"
     server_type: cx11
-    image: ubuntu-20.04
+    image: ubuntu-22.04
     state: started
   register: server
 - name: verify setup server

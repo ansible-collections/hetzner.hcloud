@@ -2,7 +2,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name }}"
     server_type: cx11
-    image: ubuntu-20.04
+    image: ubuntu-22.04
     state: present
   register: result
   check_mode: yes
@@ -15,7 +15,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: ubuntu-20.04
+    image: ubuntu-22.04
     enable_ipv6: False
     state: started
   register: main_server
@@ -232,7 +232,7 @@
 - name: test rebuild server
   hcloud_server:
     name: "{{ hcloud_server_name }}"
-    image: ubuntu-20.04
+    image: ubuntu-22.04
     state: rebuild
   register: result_after_test
 - name: verify rebuild server
@@ -244,7 +244,7 @@
 - name: test rebuild server with check mode
   hcloud_server:
     name: "{{ hcloud_server_name }}"
-    image: ubuntu-20.04
+    image: ubuntu-22.04
     state: rebuild
   register: result_after_test
   check_mode: true
@@ -320,7 +320,7 @@
 - name: test rebuild server fails if it is protected
   hcloud_server:
     name: "{{hcloud_server_name}}"
-    image: ubuntu-20.04
+    image: ubuntu-22.04
     state: rebuild
   ignore_errors: yes
   register: result
@@ -359,7 +359,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: started
@@ -441,7 +441,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     rescue_mode: "linux64"
@@ -471,7 +471,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     labels:
@@ -490,7 +490,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     labels:
@@ -509,7 +509,7 @@
   hcloud_server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     labels:
@@ -537,7 +537,7 @@
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     backups: true
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: present
@@ -564,7 +564,7 @@
     delete_protection: true
     rebuild_protection: true
     server_type: cpx11
-    image: "ubuntu-20.04"
+    image: "ubuntu-22.04"
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: present
