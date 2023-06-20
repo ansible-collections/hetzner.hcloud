@@ -1,2 +1,0 @@
-bugfixes:
-  - hcloud_server - TypeError when trying to use deprecated image with allow_deprecated_image
