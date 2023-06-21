@@ -10,7 +10,7 @@
 - name: verify setup network
   assert:
     that:
-    - network is success
+      - network is success
 
 - name: setup subnetwork
   hcloud_subnetwork:
@@ -23,7 +23,7 @@
 - name: verify subnetwork
   assert:
     that:
-    - subnetwork is success
+      - subnetwork is success
 
 - name: setup load_balancer
   hcloud_load_balancer:
@@ -41,7 +41,7 @@
   hcloud_load_balancer_network:
     state: present
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters on create load_balancer network
   assert:
     that:
@@ -80,11 +80,11 @@
     load_balancer: "{{hcloud_load_balancer_name}}"
     state: present
   register: result
-  check_mode: yes
+  check_mode: true
 - name: verify test create load_balancer network with checkmode
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test create load_balancer network
   hcloud_load_balancer_network:
@@ -95,9 +95,9 @@
 - name: verify create load_balancer network
   assert:
     that:
-    - load_balancerNetwork is changed
-    - load_balancerNetwork.hcloud_load_balancer_network.network == hcloud_network_name
-    - load_balancerNetwork.hcloud_load_balancer_network.load_balancer == hcloud_load_balancer_name
+      - load_balancerNetwork is changed
+      - load_balancerNetwork.hcloud_load_balancer_network.network == hcloud_network_name
+      - load_balancerNetwork.hcloud_load_balancer_network.load_balancer == hcloud_load_balancer_name
 
 - name: test create load_balancer network idempotency
   hcloud_load_balancer_network:
@@ -108,7 +108,7 @@
 - name: verify create load_balancer network idempotency
   assert:
     that:
-    - load_balancerNetwork is not changed
+      - load_balancerNetwork is not changed
 
 - name: test absent load_balancer network
   hcloud_load_balancer_network:
@@ -119,7 +119,7 @@
 - name: verify test absent load_balancer network
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test create load_balancer network with specified ip
   hcloud_load_balancer_network:
@@ -131,10 +131,10 @@
 - name: verify create load_balancer network with specified ip
   assert:
     that:
-    - load_balancerNetwork is changed
-    - load_balancerNetwork.hcloud_load_balancer_network.network == hcloud_network_name
-    - load_balancerNetwork.hcloud_load_balancer_network.load_balancer == hcloud_load_balancer_name
-    - load_balancerNetwork.hcloud_load_balancer_network.ip == "10.0.0.2"
+      - load_balancerNetwork is changed
+      - load_balancerNetwork.hcloud_load_balancer_network.network == hcloud_network_name
+      - load_balancerNetwork.hcloud_load_balancer_network.load_balancer == hcloud_load_balancer_name
+      - load_balancerNetwork.hcloud_load_balancer_network.ip == "10.0.0.2"
 
 - name: cleanup create load_balancer network with specified ip
   hcloud_load_balancer_network:
@@ -145,7 +145,7 @@
 - name: verify cleanup create load_balancer network with specified ip
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: cleanup load_balancer
   hcloud_load_balancer:
@@ -155,7 +155,7 @@
 - name: verify cleanup load_balancer
   assert:
     that:
-    - result is success
+      - result is success
 
 - name: cleanup subnetwork
   hcloud_subnetwork:
@@ -168,7 +168,7 @@
 - name: verify cleanup subnetwork
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: cleanup
   hcloud_network:

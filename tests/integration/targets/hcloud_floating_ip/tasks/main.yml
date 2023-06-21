@@ -45,7 +45,7 @@
   hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing type parameter on create Floating IP
   assert:
     that:
@@ -57,7 +57,7 @@
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters on create Floating IP
   assert:
     that:
@@ -70,7 +70,7 @@
     home_location: "fsn1"
     state: "absent"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing type parameter on delete Floating IP
   assert:
     that:
@@ -83,7 +83,7 @@
     type: ipv5
     home_location: "fsn1"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify invalid type
   assert:
     that:
@@ -96,7 +96,7 @@
     type: ipv4
     home_location: "abc"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify invalid location
   assert:
     that:
@@ -110,7 +110,7 @@
     type: ipv4
     home_location: "fsn1"
   register: floatingIP
-  check_mode: yes
+  check_mode: true
 - name: verify test create Floating IP with check mode
   assert:
     that:
@@ -149,7 +149,7 @@
     description: "changed-description"
     type: ipv4
     home_location: "fsn1"
-  check_mode: yes
+  check_mode: true
   register: floatingIP
 - name: verify test create Floating IP  with check mode
   assert:
@@ -233,7 +233,7 @@
     description: "changed-description"
     type: ipv4
     server: "{{ main_server.hcloud_server.name }}"
-  check_mode: yes
+  check_mode: true
   register: floatingIP
 - name: verify test assign Floating IP with checkmode
   assert:
@@ -317,7 +317,7 @@
   hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
-    force: yes
+    force: true
     server: "{{ main_server2.hcloud_server.name }}"
   register: floatingIP
 - name: verify test already assigned Floating IP assign with force
@@ -366,7 +366,7 @@
     name: "{{ hcloud_floating_ip_name }}"
     state: "absent"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify test delete floating ip
   assert:
     that:
@@ -454,7 +454,7 @@
     name: "{{ hcloud_floating_ip_name }}"
     state: "absent"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify test delete floating ip
   assert:
     that:

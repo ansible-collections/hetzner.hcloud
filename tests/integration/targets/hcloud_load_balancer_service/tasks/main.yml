@@ -34,11 +34,11 @@
     listen_port: 80
     state: present
   register: result
-  check_mode: yes
+  check_mode: true
 - name: verify test create load_balancer service with checkmode
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test create load_balancer service
   hcloud_load_balancer_service:
@@ -50,11 +50,11 @@
 - name: verify create load_balancer service
   assert:
     that:
-    - load_balancer_service is changed
-    - load_balancer_service.hcloud_load_balancer_service.protocol == "http"
-    - load_balancer_service.hcloud_load_balancer_service.listen_port == 80
-    - load_balancer_service.hcloud_load_balancer_service.destination_port == 80
-    - load_balancer_service.hcloud_load_balancer_service.proxyprotocol is sameas false
+      - load_balancer_service is changed
+      - load_balancer_service.hcloud_load_balancer_service.protocol == "http"
+      - load_balancer_service.hcloud_load_balancer_service.listen_port == 80
+      - load_balancer_service.hcloud_load_balancer_service.destination_port == 80
+      - load_balancer_service.hcloud_load_balancer_service.proxyprotocol is sameas false
 
 - name: test create load_balancer service idempotency
   hcloud_load_balancer_service:
@@ -66,7 +66,7 @@
 - name: verify create load_balancer service idempotency
   assert:
     that:
-    - load_balancer_service is not changed
+      - load_balancer_service is not changed
 
 - name: test update load_balancer service
   hcloud_load_balancer_service:
@@ -78,11 +78,11 @@
 - name: verify create load_balancer service
   assert:
     that:
-    - load_balancer_service is changed
-    - load_balancer_service.hcloud_load_balancer_service.protocol == "tcp"
-    - load_balancer_service.hcloud_load_balancer_service.listen_port == 80
-    - load_balancer_service.hcloud_load_balancer_service.destination_port == 80
-    - load_balancer_service.hcloud_load_balancer_service.proxyprotocol is sameas false
+      - load_balancer_service is changed
+      - load_balancer_service.hcloud_load_balancer_service.protocol == "tcp"
+      - load_balancer_service.hcloud_load_balancer_service.listen_port == 80
+      - load_balancer_service.hcloud_load_balancer_service.destination_port == 80
+      - load_balancer_service.hcloud_load_balancer_service.proxyprotocol is sameas false
 
 - name: test absent load_balancer service
   hcloud_load_balancer_service:
@@ -94,7 +94,7 @@
 - name: verify test absent load_balancer service
   assert:
     that:
-    - result is changed
+      - result is changed
 
 - name: test create load_balancer service with http
   hcloud_load_balancer_service:
@@ -103,17 +103,17 @@
     listen_port: 80
     http:
       cookie_name: "Test"
-      sticky_sessions: yes
+      sticky_sessions: true
     state: present
   register: load_balancer_service
 - name: verify create load_balancer service
   assert:
     that:
-    - load_balancer_service is changed
-    - load_balancer_service.hcloud_load_balancer_service.protocol == "http"
-    - load_balancer_service.hcloud_load_balancer_service.listen_port == 80
-    - load_balancer_service.hcloud_load_balancer_service.destination_port == 80
-    - load_balancer_service.hcloud_load_balancer_service.proxyprotocol is sameas false
+      - load_balancer_service is changed
+      - load_balancer_service.hcloud_load_balancer_service.protocol == "http"
+      - load_balancer_service.hcloud_load_balancer_service.listen_port == 80
+      - load_balancer_service.hcloud_load_balancer_service.destination_port == 80
+      - load_balancer_service.hcloud_load_balancer_service.proxyprotocol is sameas false
 
 - name: cleanup load_balancer
   hcloud_load_balancer:
@@ -123,4 +123,4 @@
 - name: verify cleanup load_balancer
   assert:
     that:
-    - result is success
+      - result is success

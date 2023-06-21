@@ -11,7 +11,7 @@
 
 - name: test gather hcloud server type infos in check mode
   hcloud_server_type_info:
-  check_mode: yes
+  check_mode: true
   register: hcloud_server_types
 
 - name: verify test gather hcloud server type infos in check mode

@@ -11,14 +11,13 @@
 
 - name: test gather hcloud image infos in check mode
   hcloud_image_info:
-  check_mode: yes
+  check_mode: true
   register: hcloud_images
 
 - name: verify test gather hcloud image infos in check mode
   assert:
     that:
       - hcloud_images.hcloud_image_info| list | count > 2
-
 
 - name: test gather hcloud image infos with correct label selector
   hcloud_image_info:
@@ -52,9 +51,9 @@
 
 - name: test gather hcloud image infos with wrong id
   hcloud_image_info:
-      id: "{{hcloud_test_image_id}}1"
-      type: snapshot
-  ignore_errors: yes
+    id: "{{hcloud_test_image_id}}1"
+    type: snapshot
+  ignore_errors: true
   register: result
 - name: verify test gather hcloud image with wrong id
   assert:
@@ -63,7 +62,7 @@
 
 - name: test gather hcloud image infos with name
   hcloud_image_info:
-      name: "{{ hcloud_test_image_name_os }}"
+    name: "{{ hcloud_test_image_name_os }}"
   register: hcloud_images
 - name: verify test gather hcloud image infos with name
   assert:

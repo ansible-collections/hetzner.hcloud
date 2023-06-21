@@ -9,13 +9,13 @@
 - name: verify setup
   assert:
     that:
-    - result is success
+      - result is success
 
 - name: test missing required parameters on create server
   hcloud_server:
     name: "{{ hcloud_server_name }}"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test missing required parameters on create server
   assert:
     that:
@@ -29,7 +29,7 @@
     image: ubuntu-22.04
     state: present
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test create server with not existing server type
   assert:
     that:
@@ -43,7 +43,7 @@
     image: my-not-existing-image-20.04
     state: present
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify fail test create server with not existing image
   assert:
     that:

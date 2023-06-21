@@ -11,7 +11,7 @@
 
 - name: test gather hcloud Load Balancer type infos in check mode
   hcloud_load_balancer_type_info:
-  check_mode: yes
+  check_mode: true
   register: hcloud_load_balancer_types
 
 - name: verify test gather hcloud Load Balancer type infos in check mode

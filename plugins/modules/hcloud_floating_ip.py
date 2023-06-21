@@ -101,7 +101,7 @@ EXAMPLES = """
   hcloud_floating_ip:
     name: my-floating-ip
     server: 1234
-    force: yes
+    force: true
     state: present
 - name: Floating IP should be absent
   hcloud_floating_ip:
@@ -264,7 +264,7 @@ class AnsibleHcloudFloatingIP(Hcloud):
                         self._mark_as_changed()
                 elif server != self.hcloud_floating_ip.server.name:
                     self.module.warn(
-                        "Floating IP is already assigned to another server %s. You need to unassign the Floating IP or use force=yes."
+                        "Floating IP is already assigned to another server %s. You need to unassign the Floating IP or use force=true."
                         % self.hcloud_floating_ip.server.name
                     )
                     self._mark_as_changed()
@@ -305,7 +305,7 @@ class AnsibleHcloudFloatingIP(Hcloud):
                         self.client.floating_ips.delete(self.hcloud_floating_ip)
                 else:
                     self.module.warn(
-                        "Floating IP is currently assigned to server %s. You need to unassign the Floating IP or use force=yes."
+                        "Floating IP is currently assigned to server %s. You need to unassign the Floating IP or use force=true."
                         % self.hcloud_floating_ip.server.name
                     )
                 self._mark_as_changed()

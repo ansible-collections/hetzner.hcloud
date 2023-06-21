@@ -47,7 +47,7 @@
     image: "ubuntu-22.04"
     ipv4: "{{secondPrimaryIPv4.hcloud_primary_ip.id}}"
     ipv6: ""
-    enable_ipv6: no
+    enable_ipv6: false
     ssh_keys:
       - ci@ansible.hetzner.cloud
     state: stopped

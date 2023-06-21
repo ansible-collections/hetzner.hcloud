@@ -12,7 +12,7 @@
     type: ipv4
     datacenter: "fsn1-dc14"
   register: primaryIP
-  check_mode: yes
+  check_mode: true
 - name: verify test create Primary IP with check mode
   assert:
     that:
@@ -149,7 +149,7 @@
     name: "{{ hcloud_primary_ip_name }}"
     state: "absent"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify test delete primary ip
   assert:
     that:
@@ -218,7 +218,7 @@
     name: "{{ hcloud_primary_ip_name }}"
     state: "absent"
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 - name: verify test delete primary ip
   assert:
     that:
