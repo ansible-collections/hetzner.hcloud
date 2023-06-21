@@ -1,6 +1,11 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
+- name: setup ensure primary ip is absent
+  hcloud_primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    state: absent
+
 - name: test create Primary IP with check mode
   hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"

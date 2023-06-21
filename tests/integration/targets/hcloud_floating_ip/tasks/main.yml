@@ -1,6 +1,21 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
+- name: setup ensure server is absent
+  hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+
+- name: setup ensure another server is absent
+  hcloud_server:
+    name: "{{ hcloud_server_name }}2"
+    state: absent
+
+- name: setup ensure floating ip is absent
+  hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    state: absent
+
 - name: setup server
   hcloud_server:
     name: "{{ hcloud_server_name }}"
@@ -61,7 +76,6 @@
     that:
       - result is failed
       - 'result.msg == "one of the following is required: id, name"'
-
 
 - name: test invalid type
   hcloud_floating_ip:
