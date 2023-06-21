@@ -20,6 +20,7 @@
       - main_network is changed
       - main_network.hcloud_network.name == "{{ hcloud_network_name }}"
       - main_network.hcloud_network.ip_range == "10.0.0.0/16"
+      - main_network.hcloud_network.expose_routes_to_vswitch is false
 - name: create subnetwork
   hcloud_subnetwork:
     network: "{{ hcloud_network_name }}"
