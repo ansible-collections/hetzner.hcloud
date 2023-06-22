@@ -119,6 +119,14 @@ releases:
     - server-type-deprecation.yml
     - server_error_deprecated_image.yml
     release_date: '2023-06-20'
+  1.14.0:
+    changes:
+      minor_changes:
+      - hcloud_network Add expose_routes_to_vswitch field.
+      - hcloud_network_info Return expose_routes_to_vswitch for network.
+    fragments:
+    - add-field-expose_routes_to_vswitch.yml
+    release_date: '2023-06-22'
   1.2.0:
     changes:
       minor_changes:

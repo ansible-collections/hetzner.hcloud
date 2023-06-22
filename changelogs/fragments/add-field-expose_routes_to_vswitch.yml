@@ -1,3 +1,0 @@
-minor_changes:
-  - hcloud_network_info Return expose_routes_to_vswitch for network.
-  - hcloud_network Add expose_routes_to_vswitch field.
