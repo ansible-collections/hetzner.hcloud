@@ -5,6 +5,15 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.14.0
+=======
+
+Minor Changes
+-------------
+
+- hcloud_network Add expose_routes_to_vswitch field.
+- hcloud_network_info Return expose_routes_to_vswitch for network.
+
 v1.13.0
 =======
 
