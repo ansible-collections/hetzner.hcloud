@@ -261,7 +261,7 @@
 
 - name: test delete Network with expose_routes_to_vswitch
   hcloud_network:
-    name: "{{hcloud_network_name}}"
+    name: "{{hcloud_network_name_with_vswitch}}"
     state: absent
   register: result
 - name: verify delete Network with expose_routes_to_vswitch
