@@ -244,7 +244,7 @@ class AnsibleHcloudNetworkInfo(Hcloud):
                     "ip_range": to_native(network.ip_range),
                     "subnetworks": subnets,
                     "routes": routes,
-                    "expose_routes_to_vswitch": to_native(network.expose_routes_to_vswitch),
+                    "expose_routes_to_vswitch": network.expose_routes_to_vswitch,
                     "servers": servers,
                     "labels": network.labels,
                     "delete_protection": network.protection["delete"],
