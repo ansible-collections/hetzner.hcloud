@@ -110,6 +110,11 @@ hcloud_network_info:
                     returned: always
                     type: str
                     sample: 10.0.0.1
+        expose_routes_to_vswitch:
+            description: Indicates if the routes from this network should be exposed to the vSwitch connection.
+            returned: always
+            type: bool
+            sample: false
         servers:
             description: Servers attached to the network
             returned: always
@@ -239,6 +244,7 @@ class AnsibleHcloudNetworkInfo(Hcloud):
                     "ip_range": to_native(network.ip_range),
                     "subnetworks": subnets,
                     "routes": routes,
+                    "expose_routes_to_vswitch": network.expose_routes_to_vswitch,
                     "servers": servers,
                     "labels": network.labels,
                     "delete_protection": network.protection["delete"],

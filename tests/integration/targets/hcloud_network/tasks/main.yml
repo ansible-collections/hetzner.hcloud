@@ -1,15 +1,13 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: setup
+- name: setup ensure network is absent
   hcloud_network:
-    name: "{{ hcloud_network_name }}"
+    name: "{{ item }}"
     state: absent
-  register: result
-- name: verify setup
-  assert:
-    that:
-      - result is success
+  with_items:
+    - "{{ hcloud_network_name }}"
+    - "{{ hcloud_network_name_with_vswitch }}"
 
 - name: test missing ip_range parameter on create Network
   hcloud_network:
@@ -55,6 +53,31 @@
     that:
       - network is not changed
 
+- name: test create Network with expose_routes_to_vswitch
+  hcloud_network:
+    name: "{{hcloud_network_name_with_vswitch}}"
+    ip_range: "10.0.0.0/16"
+    expose_routes_to_vswitch: true
+  register: network
+- name: verify test create Network with vSwitch result
+  assert:
+    that:
+      - network is changed
+      - network.hcloud_network.name == "{{hcloud_network_name_with_vswitch}}"
+      - network.hcloud_network.ip_range == "10.0.0.0/16"
+      - network.hcloud_network.expose_routes_to_vswitch is true
+
+- name: test create Network with expose_routes_to_vswitch idempotence
+  hcloud_network:
+    name: "{{hcloud_network_name_with_vswitch}}"
+    ip_range: "10.0.0.0/16"
+    expose_routes_to_vswitch: true
+  register: network
+- name: verify test create network idempotency
+  assert:
+    that:
+      - network is not changed
+
 - name: test update Network label
   hcloud_network:
     name: "{{hcloud_network_name}}"
@@ -95,6 +118,27 @@
     ip_range: "10.0.0.0/8"
   register: network
 - name: verify test update Network ip range idempotency
+  assert:
+    that:
+      - network is not changed
+
+- name: test update Network expose_routes_to_vswitch
+  hcloud_network:
+    name: "{{hcloud_network_name_with_vswitch}}"
+    expose_routes_to_vswitch: false
+  register: network
+- name: verify test update Network expose_routes_to_vswitch
+  assert:
+    that:
+      - network is changed
+      - network.hcloud_network.expose_routes_to_vswitch is false
+
+- name: test update Network expose_routes_to_vswitch idempotency
+  hcloud_network:
+    name: "{{hcloud_network_name_with_vswitch}}"
+    expose_routes_to_vswitch: false
+  register: network
+- name: verify test update Network expose_routes_to_vswitch idempotency
   assert:
     that:
       - network is not changed
@@ -209,6 +253,16 @@
     state: absent
   register: result
 - name: verify delete Network
+  assert:
+    that:
+      - result is success
+
+- name: test delete Network with expose_routes_to_vswitch
+  hcloud_network:
+    name: "{{hcloud_network_name_with_vswitch}}"
+    state: absent
+  register: result
+- name: verify delete Network with expose_routes_to_vswitch
   assert:
     that:
       - result is success

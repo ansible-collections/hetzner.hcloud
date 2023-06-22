@@ -38,6 +38,11 @@ options:
             - IP range of the Network.
             - Required if Network does not exist.
         type: str
+    expose_routes_to_vswitch:
+        description:
+            - Indicates if the routes from this network should be exposed to the vSwitch connection.
+            - The exposing only takes effect if a vSwitch connection is active.
+        type: bool
     labels:
         description:
             - User-defined labels (key-value pairs).
@@ -95,6 +100,11 @@ hcloud_network:
             type: str
             returned: always
             sample: 10.0.0.0/8
+        expose_routes_to_vswitch:
+            description: Indicates if the routes from this network should be exposed to the vSwitch connection.
+            type: bool
+            returned: always
+            sample: false
         delete_protection:
             description: True if Network is protected for deletion
             type: bool
@@ -125,6 +135,7 @@ class AnsibleHcloudNetwork(Hcloud):
             "id": to_native(self.hcloud_network.id),
             "name": to_native(self.hcloud_network.name),
             "ip_range": to_native(self.hcloud_network.ip_range),
+            "expose_routes_to_vswitch": self.hcloud_network.expose_routes_to_vswitch,
             "delete_protection": self.hcloud_network.protection["delete"],
             "labels": self.hcloud_network.labels,
         }
@@ -152,6 +163,11 @@ class AnsibleHcloudNetwork(Hcloud):
             "ip_range": self.module.params.get("ip_range"),
             "labels": self.module.params.get("labels"),
         }
+
+        expose_routes_to_vswitch = self.module.params.get("expose_routes_to_vswitch")
+        if expose_routes_to_vswitch is not None:
+            params["expose_routes_to_vswitch"] = expose_routes_to_vswitch
+
         try:
             if not self.module.check_mode:
                 self.client.networks.create(**params)
@@ -177,6 +193,12 @@ class AnsibleHcloudNetwork(Hcloud):
             if ip_range is not None and ip_range != self.hcloud_network.ip_range:
                 if not self.module.check_mode:
                     self.hcloud_network.change_ip_range(ip_range=ip_range).wait_until_finished()
+                self._mark_as_changed()
+
+            expose_routes_to_vswitch = self.module.params.get("expose_routes_to_vswitch")
+            if expose_routes_to_vswitch is not None and expose_routes_to_vswitch != self.hcloud_network.expose_routes_to_vswitch:
+                if not self.module.check_mode:
+                    self.hcloud_network.update(expose_routes_to_vswitch=expose_routes_to_vswitch)
                 self._mark_as_changed()
 
             delete_protection = self.module.params.get("delete_protection")
@@ -213,6 +235,7 @@ class AnsibleHcloudNetwork(Hcloud):
                 id={"type": "int"},
                 name={"type": "str"},
                 ip_range={"type": "str"},
+                expose_routes_to_vswitch={"type": "bool"},
                 labels={"type": "dict"},
                 delete_protection={"type": "bool"},
                 state={
