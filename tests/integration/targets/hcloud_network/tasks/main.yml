@@ -1,15 +1,13 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: setup
+- name: setup ensure network is absent
   hcloud_network:
-    name: "{{ hcloud_network_name }}"
+    name: "{{ item }}"
     state: absent
-  register: result
-- name: verify setup
-  assert:
-    that:
-      - result is success
+  with_items:
+    - "{{ hcloud_network_name }}"
+    - "{{ hcloud_network_name_with_vswitch }}"
 
 - name: test missing ip_range parameter on create Network
   hcloud_network:
