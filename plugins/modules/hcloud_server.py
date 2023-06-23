@@ -335,8 +335,7 @@ hcloud_server:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
-from ansible_collections.hetzner.hcloud.plugins.module_utils.utc import utc
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 
 try:
     from hcloud.volumes.domain import Volume
@@ -544,7 +543,7 @@ class AnsibleHcloudServer(Hcloud):
         if server_type.deprecation is None:
             return
 
-        if server_type.deprecation.unavailable_after < datetime.now(utc):
+        if server_type.deprecation.unavailable_after < datetime.now(timezone.utc):
             self.module.warn(
                 'Attention: The server plan %s is deprecated and can no longer be ordered. Existing servers of ' % server_type.name
                 + 'that plan will continue to work as before and no action is required on your part. It is possible '
