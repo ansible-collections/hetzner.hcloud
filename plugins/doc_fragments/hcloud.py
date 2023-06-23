@@ -7,7 +7,7 @@ __metaclass__ = type
 
 
 class ModuleDocFragment(object):
-    DOCUMENTATION = '''
+    DOCUMENTATION = """
 options:
     api_token:
         description:
@@ -26,4 +26,4 @@ seealso:
 - name: Documentation for Hetzner Cloud API
   description: Complete reference for the Hetzner Cloud API.
   link: https://docs.hetzner.cloud/
-'''
+"""

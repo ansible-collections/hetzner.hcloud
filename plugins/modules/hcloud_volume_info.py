@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_volume_info
 
@@ -36,7 +36,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Gather hcloud Volume infos
@@ -113,32 +113,31 @@ class AnsibleHcloudVolumeInfo(Hcloud):
                 server_name = None
                 if volume.server is not None:
                     server_name = to_native(volume.server.name)
-                tmp.append({
-                    "id": to_native(volume.id),
-                    "name": to_native(volume.name),
-                    "size": volume.size,
-                    "location": to_native(volume.location.name),
-                    "labels": volume.labels,
-                    "server": server_name,
-                    "linux_device": to_native(volume.linux_device),
-                    "delete_protection": volume.protection["delete"],
-                })
+                tmp.append(
+                    {
+                        "id": to_native(volume.id),
+                        "name": to_native(volume.name),
+                        "size": volume.size,
+                        "location": to_native(volume.location.name),
+                        "labels": volume.labels,
+                        "server": server_name,
+                        "linux_device": to_native(volume.linux_device),
+                        "delete_protection": volume.protection["delete"],
+                    }
+                )
 
         return tmp
 
     def get_volumes(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_volume_info = [self.client.volumes.get_by_id(
-                    self.module.params.get("id")
-                )]
+                self.hcloud_volume_info = [self.client.volumes.get_by_id(self.module.params.get("id"))]
             elif self.module.params.get("name") is not None:
-                self.hcloud_volume_info = [self.client.volumes.get_by_name(
-                    self.module.params.get("name")
-                )]
+                self.hcloud_volume_info = [self.client.volumes.get_by_name(self.module.params.get("name"))]
             elif self.module.params.get("label_selector") is not None:
                 self.hcloud_volume_info = self.client.volumes.get_all(
-                    label_selector=self.module.params.get("label_selector"))
+                    label_selector=self.module.params.get("label_selector")
+                )
             else:
                 self.hcloud_volume_info = self.client.volumes.get_all()
 
@@ -161,24 +160,24 @@ class AnsibleHcloudVolumeInfo(Hcloud):
 def main():
     module = AnsibleHcloudVolumeInfo.define_module()
 
-    is_old_facts = module._name == 'hcloud_volume_facts'
+    is_old_facts = module._name == "hcloud_volume_facts"
     if is_old_facts:
-        module.deprecate("The 'hcloud_volume_facts' module has been renamed to 'hcloud_volume_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
+        module.deprecate(
+            "The 'hcloud_volume_facts' module has been renamed to 'hcloud_volume_info', "
+            "and the renamed one no longer returns ansible_facts",
+            version="2.0.0",
+            collection_name="hetzner.hcloud",
+        )
 
     hcloud = AnsibleHcloudVolumeInfo(module)
 
     hcloud.get_volumes()
     result = hcloud.get_result()
     if is_old_facts:
-        ansible_info = {
-            'hcloud_volume_facts': result['hcloud_volume_info']
-        }
+        ansible_info = {"hcloud_volume_facts": result["hcloud_volume_info"]}
         module.exit_json(ansible_facts=ansible_info)
     else:
-        ansible_info = {
-            'hcloud_volume_info': result['hcloud_volume_info']
-        }
+        ansible_info = {"hcloud_volume_info": result["hcloud_volume_info"]}
         module.exit_json(**ansible_info)
 
 

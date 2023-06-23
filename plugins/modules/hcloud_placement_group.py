@@ -133,20 +133,14 @@ class AnsibleHcloudPlacementGroup(Hcloud):
     def _get_placement_group(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_placement_group = self.client.placement_groups.get_by_id(
-                    self.module.params.get("id")
-                )
+                self.hcloud_placement_group = self.client.placement_groups.get_by_id(self.module.params.get("id"))
             elif self.module.params.get("name") is not None:
-                self.hcloud_placement_group = self.client.placement_groups.get_by_name(
-                    self.module.params.get("name")
-                )
+                self.hcloud_placement_group = self.client.placement_groups.get_by_name(self.module.params.get("name"))
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_placement_group(self):
-        self.module.fail_on_missing_params(
-            required_params=["name"]
-        )
+        self.module.fail_on_missing_params(required_params=["name"])
         params = {
             "name": self.module.params.get("name"),
             "type": self.module.params.get("type"),
@@ -163,9 +157,7 @@ class AnsibleHcloudPlacementGroup(Hcloud):
     def _update_placement_group(self):
         name = self.module.params.get("name")
         if name is not None and self.hcloud_placement_group.name != name:
-            self.module.fail_on_missing_params(
-                required_params=["id"]
-            )
+            self.module.fail_on_missing_params(required_params=["id"])
             if not self.module.check_mode:
                 self.hcloud_placement_group.update(name=name)
             self._mark_as_changed()
@@ -207,8 +199,8 @@ class AnsibleHcloudPlacementGroup(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['id', 'name']],
-            required_if=[['state', 'present', ['name']]],
+            required_one_of=[["id", "name"]],
+            required_if=[["state", "present", ["name"]]],
             supports_check_mode=True,
         )
 

@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_certificate
 
@@ -68,7 +68,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic certificate
@@ -158,36 +158,28 @@ class AnsibleHcloudCertificate(Hcloud):
             "not_valid_before": to_native(self.hcloud_certificate.not_valid_before),
             "not_valid_after": to_native(self.hcloud_certificate.not_valid_after),
             "domain_names": [to_native(domain) for domain in self.hcloud_certificate.domain_names],
-            "labels": self.hcloud_certificate.labels
+            "labels": self.hcloud_certificate.labels,
         }
 
     def _get_certificate(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_certificate = self.client.certificates.get_by_id(
-                    self.module.params.get("id")
-                )
+                self.hcloud_certificate = self.client.certificates.get_by_id(self.module.params.get("id"))
             elif self.module.params.get("name") is not None:
-                self.hcloud_certificate = self.client.certificates.get_by_name(
-                    self.module.params.get("name")
-                )
+                self.hcloud_certificate = self.client.certificates.get_by_name(self.module.params.get("name"))
 
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_certificate(self):
-        self.module.fail_on_missing_params(
-            required_params=["name"]
-        )
+        self.module.fail_on_missing_params(required_params=["name"])
 
         params = {
             "name": self.module.params.get("name"),
-            "labels": self.module.params.get("labels")
+            "labels": self.module.params.get("labels"),
         }
-        if self.module.params.get('type') == 'uploaded':
-            self.module.fail_on_missing_params(
-                required_params=["certificate", "private_key"]
-            )
+        if self.module.params.get("type") == "uploaded":
+            self.module.fail_on_missing_params(required_params=["certificate", "private_key"])
             params["certificate"] = self.module.params.get("certificate")
             params["private_key"] = self.module.params.get("private_key")
             if not self.module.check_mode:
@@ -196,9 +188,7 @@ class AnsibleHcloudCertificate(Hcloud):
                 except Exception as e:
                     self.module.fail_json(msg=e.message)
         else:
-            self.module.fail_on_missing_params(
-                required_params=["domain_names"]
-            )
+            self.module.fail_on_missing_params(required_params=["domain_names"])
             params["domain_names"] = self.module.params.get("domain_names")
             if not self.module.check_mode:
                 try:
@@ -214,9 +204,7 @@ class AnsibleHcloudCertificate(Hcloud):
         try:
             name = self.module.params.get("name")
             if name is not None and self.hcloud_certificate.name != name:
-                self.module.fail_on_missing_params(
-                    required_params=["id"]
-                )
+                self.module.fail_on_missing_params(required_params=["id"])
                 if not self.module.check_mode:
                     self.hcloud_certificate.update(name=name)
                 self._mark_as_changed()
@@ -268,8 +256,8 @@ class AnsibleHcloudCertificate(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['id', 'name']],
-            required_if=[['state', 'present', ['name']]],
+            required_one_of=[["id", "name"]],
+            required_if=[["state", "present", ["name"]]],
             supports_check_mode=True,
         )
 

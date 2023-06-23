@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_server_type_info
 
@@ -35,7 +35,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Gather hcloud server type infos
@@ -141,34 +141,34 @@ class AnsibleHcloudServerTypeInfo(Hcloud):
 
         for server_type in self.hcloud_server_type_info:
             if server_type is not None:
-                tmp.append({
-                    "id": to_native(server_type.id),
-                    "name": to_native(server_type.name),
-                    "description": to_native(server_type.description),
-                    "cores": server_type.cores,
-                    "memory": server_type.memory,
-                    "disk": server_type.disk,
-                    "storage_type": to_native(server_type.storage_type),
-                    "cpu_type": to_native(server_type.cpu_type),
-                    "architecture": to_native(server_type.architecture),
-                    "included_traffic": server_type.included_traffic,
-                    "deprecation": {
-                        "announced": server_type.deprecation.announced.isoformat(),
-                        "unavailable_after": server_type.deprecation.unavailable_after.isoformat(),
-                    } if server_type.deprecation is not None else None
-                })
+                tmp.append(
+                    {
+                        "id": to_native(server_type.id),
+                        "name": to_native(server_type.name),
+                        "description": to_native(server_type.description),
+                        "cores": server_type.cores,
+                        "memory": server_type.memory,
+                        "disk": server_type.disk,
+                        "storage_type": to_native(server_type.storage_type),
+                        "cpu_type": to_native(server_type.cpu_type),
+                        "architecture": to_native(server_type.architecture),
+                        "included_traffic": server_type.included_traffic,
+                        "deprecation": {
+                            "announced": server_type.deprecation.announced.isoformat(),
+                            "unavailable_after": server_type.deprecation.unavailable_after.isoformat(),
+                        }
+                        if server_type.deprecation is not None
+                        else None,
+                    }
+                )
         return tmp
 
     def get_server_types(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_server_type_info = [self.client.server_types.get_by_id(
-                    self.module.params.get("id")
-                )]
+                self.hcloud_server_type_info = [self.client.server_types.get_by_id(self.module.params.get("id"))]
             elif self.module.params.get("name") is not None:
-                self.hcloud_server_type_info = [self.client.server_types.get_by_name(
-                    self.module.params.get("name")
-                )]
+                self.hcloud_server_type_info = [self.client.server_types.get_by_name(self.module.params.get("name"))]
             else:
                 self.hcloud_server_type_info = self.client.server_types.get_all()
 
@@ -181,7 +181,7 @@ class AnsibleHcloudServerTypeInfo(Hcloud):
             argument_spec=dict(
                 id={"type": "int"},
                 name={"type": "str"},
-                **Hcloud.base_module_arguments()
+                **Hcloud.base_module_arguments(),
             ),
             supports_check_mode=True,
         )
@@ -190,23 +190,23 @@ class AnsibleHcloudServerTypeInfo(Hcloud):
 def main():
     module = AnsibleHcloudServerTypeInfo.define_module()
 
-    is_old_facts = module._name == 'hcloud_server_type_facts'
+    is_old_facts = module._name == "hcloud_server_type_facts"
     if is_old_facts:
-        module.deprecate("The 'hcloud_server_type_info' module has been renamed to 'hcloud_server_type_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
+        module.deprecate(
+            "The 'hcloud_server_type_info' module has been renamed to 'hcloud_server_type_info', "
+            "and the renamed one no longer returns ansible_facts",
+            version="2.0.0",
+            collection_name="hetzner.hcloud",
+        )
 
     hcloud = AnsibleHcloudServerTypeInfo(module)
     hcloud.get_server_types()
     result = hcloud.get_result()
     if is_old_facts:
-        ansible_info = {
-            'hcloud_server_type_info': result['hcloud_server_type_info']
-        }
+        ansible_info = {"hcloud_server_type_info": result["hcloud_server_type_info"]}
         module.exit_json(ansible_facts=ansible_info)
     else:
-        ansible_info = {
-            'hcloud_server_type_info': result['hcloud_server_type_info']
-        }
+        ansible_info = {"hcloud_server_type_info": result["hcloud_server_type_info"]}
         module.exit_json(**ansible_info)
 
 

@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_location_info
 
@@ -35,7 +35,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Gather hcloud location infos
@@ -95,25 +95,23 @@ class AnsibleHcloudLocationInfo(Hcloud):
 
         for location in self.hcloud_location_info:
             if location is not None:
-                tmp.append({
-                    "id": to_native(location.id),
-                    "name": to_native(location.name),
-                    "description": to_native(location.description),
-                    "city": to_native(location.city),
-                    "country": to_native(location.country)
-                })
+                tmp.append(
+                    {
+                        "id": to_native(location.id),
+                        "name": to_native(location.name),
+                        "description": to_native(location.description),
+                        "city": to_native(location.city),
+                        "country": to_native(location.country),
+                    }
+                )
         return tmp
 
     def get_locations(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_location_info = [self.client.locations.get_by_id(
-                    self.module.params.get("id")
-                )]
+                self.hcloud_location_info = [self.client.locations.get_by_id(self.module.params.get("id"))]
             elif self.module.params.get("name") is not None:
-                self.hcloud_location_info = [self.client.locations.get_by_name(
-                    self.module.params.get("name")
-                )]
+                self.hcloud_location_info = [self.client.locations.get_by_name(self.module.params.get("name"))]
             else:
                 self.hcloud_location_info = self.client.locations.get_all()
 
@@ -126,7 +124,7 @@ class AnsibleHcloudLocationInfo(Hcloud):
             argument_spec=dict(
                 id={"type": "int"},
                 name={"type": "str"},
-                **Hcloud.base_module_arguments()
+                **Hcloud.base_module_arguments(),
             ),
             supports_check_mode=True,
         )
@@ -135,23 +133,23 @@ class AnsibleHcloudLocationInfo(Hcloud):
 def main():
     module = AnsibleHcloudLocationInfo.define_module()
 
-    is_old_facts = module._name == 'hcloud_location_facts'
+    is_old_facts = module._name == "hcloud_location_facts"
     if is_old_facts:
-        module.deprecate("The 'hcloud_location_info' module has been renamed to 'hcloud_location_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
+        module.deprecate(
+            "The 'hcloud_location_info' module has been renamed to 'hcloud_location_info', "
+            "and the renamed one no longer returns ansible_facts",
+            version="2.0.0",
+            collection_name="hetzner.hcloud",
+        )
 
     hcloud = AnsibleHcloudLocationInfo(module)
     hcloud.get_locations()
     result = hcloud.get_result()
     if is_old_facts:
-        ansible_info = {
-            'hcloud_location_facts': result['hcloud_location_info']
-        }
+        ansible_info = {"hcloud_location_facts": result["hcloud_location_info"]}
         module.exit_json(ansible_facts=ansible_info)
     else:
-        ansible_info = {
-            'hcloud_location_info': result['hcloud_location_info']
-        }
+        ansible_info = {"hcloud_location_info": result["hcloud_location_info"]}
         module.exit_json(**ansible_info)
 
 

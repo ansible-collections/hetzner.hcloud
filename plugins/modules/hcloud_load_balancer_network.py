@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_load_balancer_network
 
@@ -49,7 +49,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic Load Balancer network
@@ -122,9 +122,7 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
                 self.module.fail_json(msg="Network does not exist: %s" % network)
 
             load_balancer_name = self.module.params.get("load_balancer")
-            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(
-                load_balancer_name
-            )
+            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(load_balancer_name)
             if not self.hcloud_load_balancer:
                 self.module.fail_json(msg="Load balancer does not exist: %s" % load_balancer_name)
 
@@ -139,7 +137,7 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
 
     def _create_load_balancer_network(self):
         params = {
-            "network": self.hcloud_network
+            "network": self.hcloud_network,
         }
 
         if self.module.params.get("ip") is not None:
@@ -168,7 +166,8 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
             if not self.module.check_mode:
                 try:
                     self.hcloud_load_balancer.detach_from_network(
-                        self.hcloud_load_balancer_network.network).wait_until_finished()
+                        self.hcloud_load_balancer_network.network
+                    ).wait_until_finished()
                     self._mark_as_changed()
                 except Exception as e:
                     self.module.fail_json(msg=e.message)

@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_firewall
 
@@ -80,7 +80,7 @@ options:
         type: str
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic firewall
@@ -193,7 +193,7 @@ class AnsibleHcloudFirewall(Hcloud):
             "id": to_native(self.hcloud_firewall.id),
             "name": to_native(self.hcloud_firewall.name),
             "rules": [self._prepare_result_rule(rule) for rule in self.hcloud_firewall.rules],
-            "labels": self.hcloud_firewall.labels
+            "labels": self.hcloud_firewall.labels,
         }
 
     def _prepare_result_rule(self, rule):
@@ -209,24 +209,18 @@ class AnsibleHcloudFirewall(Hcloud):
     def _get_firewall(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_firewall = self.client.firewalls.get_by_id(
-                    self.module.params.get("id")
-                )
+                self.hcloud_firewall = self.client.firewalls.get_by_id(self.module.params.get("id"))
             elif self.module.params.get("name") is not None:
-                self.hcloud_firewall = self.client.firewalls.get_by_name(
-                    self.module.params.get("name")
-                )
+                self.hcloud_firewall = self.client.firewalls.get_by_name(self.module.params.get("name"))
 
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_firewall(self):
-        self.module.fail_on_missing_params(
-            required_params=["name"]
-        )
+        self.module.fail_on_missing_params(required_params=["name"])
         params = {
             "name": self.module.params.get("name"),
-            "labels": self.module.params.get("labels")
+            "labels": self.module.params.get("labels"),
         }
         rules = self.module.params.get("rules")
         if rules is not None:
@@ -252,9 +246,7 @@ class AnsibleHcloudFirewall(Hcloud):
     def _update_firewall(self):
         name = self.module.params.get("name")
         if name is not None and self.hcloud_firewall.name != name:
-            self.module.fail_on_missing_params(
-                required_params=["id"]
-            )
+            self.module.fail_on_missing_params(required_params=["id"])
             if not self.module.check_mode:
                 self.hcloud_firewall.update(name=name)
             self._mark_as_changed()
@@ -336,8 +328,8 @@ class AnsibleHcloudFirewall(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['id', 'name']],
-            required_if=[['state', 'present', ['name']]],
+            required_one_of=[["id", "name"]],
+            required_if=[["state", "present", ["name"]]],
             supports_check_mode=True,
         )
 

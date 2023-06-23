@@ -139,34 +139,35 @@ class AnsibleHcloudPrimaryIPInfo(Hcloud):
                 dns_ptr = None
                 if len(primary_ip.dns_ptr) > 0:
                     dns_ptr = primary_ip.dns_ptr[0]["dns_ptr"]
-                tmp.append({
-                    "id": to_native(primary_ip.id),
-                    "name": to_native(primary_ip.name),
-                    "ip": to_native(primary_ip.ip),
-                    "type": to_native(primary_ip.type),
-                    "assignee_id": to_native(primary_ip.assignee_id) if primary_ip.assignee_id is not None else None,
-                    "assignee_type": to_native(primary_ip.assignee_type),
-                    "home_location": to_native(primary_ip.datacenter.name),
-                    "dns_ptr": to_native(dns_ptr) if dns_ptr is not None else None,
-                    "labels": primary_ip.labels,
-                    "delete_protection": primary_ip.protection["delete"],
-                })
+                tmp.append(
+                    {
+                        "id": to_native(primary_ip.id),
+                        "name": to_native(primary_ip.name),
+                        "ip": to_native(primary_ip.ip),
+                        "type": to_native(primary_ip.type),
+                        "assignee_id": (
+                            to_native(primary_ip.assignee_id) if primary_ip.assignee_id is not None else None
+                        ),
+                        "assignee_type": to_native(primary_ip.assignee_type),
+                        "home_location": to_native(primary_ip.datacenter.name),
+                        "dns_ptr": to_native(dns_ptr) if dns_ptr is not None else None,
+                        "labels": primary_ip.labels,
+                        "delete_protection": primary_ip.protection["delete"],
+                    }
+                )
 
         return tmp
 
     def get_primary_ips(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_primary_ip_info = [self.client.primary_ips.get_by_id(
-                    self.module.params.get("id")
-                )]
+                self.hcloud_primary_ip_info = [self.client.primary_ips.get_by_id(self.module.params.get("id"))]
             elif self.module.params.get("name") is not None:
-                self.hcloud_primary_ip_info = [self.client.primary_ips.get_by_name(
-                    self.module.params.get("name")
-                )]
+                self.hcloud_primary_ip_info = [self.client.primary_ips.get_by_name(self.module.params.get("name"))]
             elif self.module.params.get("label_selector") is not None:
                 self.hcloud_primary_ip_info = self.client.primary_ips.get_all(
-                    label_selector=self.module.params.get("label_selector"))
+                    label_selector=self.module.params.get("label_selector")
+                )
             else:
                 self.hcloud_primary_ip_info = self.client.primary_ips.get_all()
 
@@ -194,9 +195,7 @@ def main():
     hcloud.get_primary_ips()
     result = hcloud.get_result()
 
-    ansible_info = {
-        'hcloud_primary_ip_info': result['hcloud_primary_ip_info']
-    }
+    ansible_info = {"hcloud_primary_ip_info": result["hcloud_primary_ip_info"]}
     module.exit_json(**ansible_info)
 
 

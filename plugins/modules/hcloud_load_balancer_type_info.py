@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_load_balancer_type_info
 
@@ -33,7 +33,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Gather hcloud Load Balancer type infos
@@ -103,27 +103,29 @@ class AnsibleHcloudLoadBalancerTypeInfo(Hcloud):
 
         for load_balancer_type in self.hcloud_load_balancer_type_info:
             if load_balancer_type is not None:
-                tmp.append({
-                    "id": to_native(load_balancer_type.id),
-                    "name": to_native(load_balancer_type.name),
-                    "description": to_native(load_balancer_type.description),
-                    "max_connections": load_balancer_type.max_connections,
-                    "max_services": load_balancer_type.max_services,
-                    "max_targets": load_balancer_type.max_targets,
-                    "max_assigned_certificates": load_balancer_type.max_assigned_certificates
-                })
+                tmp.append(
+                    {
+                        "id": to_native(load_balancer_type.id),
+                        "name": to_native(load_balancer_type.name),
+                        "description": to_native(load_balancer_type.description),
+                        "max_connections": load_balancer_type.max_connections,
+                        "max_services": load_balancer_type.max_services,
+                        "max_targets": load_balancer_type.max_targets,
+                        "max_assigned_certificates": load_balancer_type.max_assigned_certificates,
+                    }
+                )
         return tmp
 
     def get_load_balancer_types(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_load_balancer_type_info = [self.client.load_balancer_types.get_by_id(
-                    self.module.params.get("id")
-                )]
+                self.hcloud_load_balancer_type_info = [
+                    self.client.load_balancer_types.get_by_id(self.module.params.get("id"))
+                ]
             elif self.module.params.get("name") is not None:
-                self.hcloud_load_balancer_type_info = [self.client.load_balancer_types.get_by_name(
-                    self.module.params.get("name")
-                )]
+                self.hcloud_load_balancer_type_info = [
+                    self.client.load_balancer_types.get_by_name(self.module.params.get("name"))
+                ]
             else:
                 self.hcloud_load_balancer_type_info = self.client.load_balancer_types.get_all()
 
@@ -136,7 +138,7 @@ class AnsibleHcloudLoadBalancerTypeInfo(Hcloud):
             argument_spec=dict(
                 id={"type": "int"},
                 name={"type": "str"},
-                **Hcloud.base_module_arguments()
+                **Hcloud.base_module_arguments(),
             ),
             supports_check_mode=True,
         )
@@ -148,9 +150,7 @@ def main():
     hcloud = AnsibleHcloudLoadBalancerTypeInfo(module)
     hcloud.get_load_balancer_types()
     result = hcloud.get_result()
-    ansible_info = {
-        'hcloud_load_balancer_type_info': result['hcloud_load_balancer_type_info']
-    }
+    ansible_info = {"hcloud_load_balancer_type_info": result["hcloud_load_balancer_type_info"]}
     module.exit_json(**ansible_info)
 
 

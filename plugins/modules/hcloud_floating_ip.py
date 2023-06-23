@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_floating_ip
 
@@ -77,7 +77,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic IPv4 Floating IP
@@ -195,20 +195,14 @@ class AnsibleHcloudFloatingIP(Hcloud):
     def _get_floating_ip(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_floating_ip = self.client.floating_ips.get_by_id(
-                    self.module.params.get("id")
-                )
+                self.hcloud_floating_ip = self.client.floating_ips.get_by_id(self.module.params.get("id"))
             else:
-                self.hcloud_floating_ip = self.client.floating_ips.get_by_name(
-                    self.module.params.get("name")
-                )
+                self.hcloud_floating_ip = self.client.floating_ips.get_by_name(self.module.params.get("name"))
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_floating_ip(self):
-        self.module.fail_on_missing_params(
-            required_params=["type"]
-        )
+        self.module.fail_on_missing_params(required_params=["type"])
         try:
             params = {
                 "description": self.module.params.get("description"),
@@ -216,13 +210,9 @@ class AnsibleHcloudFloatingIP(Hcloud):
                 "name": self.module.params.get("name"),
             }
             if self.module.params.get("home_location") is not None:
-                params["home_location"] = self.client.locations.get_by_name(
-                    self.module.params.get("home_location")
-                )
+                params["home_location"] = self.client.locations.get_by_name(self.module.params.get("home_location"))
             elif self.module.params.get("server") is not None:
-                params["server"] = self.client.servers.get_by_name(
-                    self.module.params.get("server")
-                )
+                params["server"] = self.client.servers.get_by_name(self.module.params.get("server"))
             else:
                 self.module.fail_json(msg="one of the following is required: home_location, server")
 
@@ -258,9 +248,7 @@ class AnsibleHcloudFloatingIP(Hcloud):
             if server is not None and self.hcloud_floating_ip.server is not None:
                 if self.module.params.get("force") and server != self.hcloud_floating_ip.server.name:
                     if not self.module.check_mode:
-                        self.hcloud_floating_ip.assign(
-                            self.client.servers.get_by_name(server)
-                        )
+                        self.hcloud_floating_ip.assign(self.client.servers.get_by_name(server))
                         self._mark_as_changed()
                 elif server != self.hcloud_floating_ip.server.name:
                     self.module.warn(
@@ -270,9 +258,7 @@ class AnsibleHcloudFloatingIP(Hcloud):
                     self._mark_as_changed()
             elif server is not None and self.hcloud_floating_ip.server is None:
                 if not self.module.check_mode:
-                    self.hcloud_floating_ip.assign(
-                        self.client.servers.get_by_name(server)
-                    )
+                    self.hcloud_floating_ip.assign(self.client.servers.get_by_name(server))
                 self._mark_as_changed()
             elif server is None and self.hcloud_floating_ip.server is not None:
                 if not self.module.check_mode:
@@ -332,8 +318,8 @@ class AnsibleHcloudFloatingIP(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['id', 'name']],
-            mutually_exclusive=[['home_location', 'server']],
+            required_one_of=[["id", "name"]],
+            mutually_exclusive=[["home_location", "server"]],
             supports_check_mode=True,
         )
 

@@ -1,11 +1,11 @@
 # Copyright (c) 2019 Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
     name: hcloud
     author:
       - Lukas Kaemmerling (@lkaemmerling)
@@ -84,7 +84,7 @@ DOCUMENTATION = r'''
           type: list
           elements: str
           required: false
-'''
+"""
 
 EXAMPLES = r"""
 # Minimal example. `HCLOUD_TOKEN` is exposed in environment.
@@ -127,18 +127,21 @@ from ipaddress import IPv6Network
 try:
     from hcloud import hcloud
     from hcloud import APIException
+
     HAS_HCLOUD = True
 except ImportError:
     HAS_HCLOUD = False
 
 
 class InventoryModule(BaseInventoryPlugin, Constructable):
-    NAME = 'hetzner.hcloud.hcloud'
+    NAME = "hetzner.hcloud.hcloud"
 
     def _configure_hcloud_client(self):
         self.token_env = self.get_option("token_env")
         self.templar.available_variables = self._vars
-        self.api_token = self.templar.template(self.get_option("token"), fail_on_undefined=False) or os.getenv(self.token_env)
+        self.api_token = self.templar.template(self.get_option("token"), fail_on_undefined=False) or os.getenv(
+            self.token_env
+        )
         if self.api_token is None:
             raise AnsibleError(
                 "Please specify a token, via the option token, via environment variable HCLOUD_TOKEN "
@@ -147,10 +150,12 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
 
         self.endpoint = os.getenv("HCLOUD_ENDPOINT") or "https://api.hetzner.cloud/v1"
 
-        self.client = hcloud.Client(token=self.api_token,
-                                    api_endpoint=self.endpoint,
-                                    application_name="ansible-inventory",
-                                    application_version=__version__)
+        self.client = hcloud.Client(
+            token=self.api_token,
+            api_endpoint=self.endpoint,
+            application_name="ansible-inventory",
+            application_version=__version__,
+        )
 
     def _test_hcloud_token(self):
         try:
@@ -168,14 +173,15 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
 
     def _filter_servers(self):
         if self.get_option("network"):
-            network = self.templar.template(self.get_option("network"), fail_on_undefined=False) or self.get_option("network")
+            network = self.templar.template(self.get_option("network"), fail_on_undefined=False) or self.get_option(
+                "network"
+            )
             try:
                 self.network = self.client.networks.get_by_name(network)
                 if self.network is None:
                     self.network = self.client.networks.get_by_id(network)
             except APIException:
-                raise AnsibleError(
-                    "The given network is not found.")
+                raise AnsibleError("The given network is not found.")
 
             tmp = []
             for server in self.servers:
@@ -225,16 +231,17 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
 
         if server.public_net.ipv6:
             self.inventory.set_variable(server.name, "ipv6_network", to_native(server.public_net.ipv6.network))
-            self.inventory.set_variable(server.name, "ipv6_network_mask", to_native(server.public_net.ipv6.network_mask))
-            self.inventory.set_variable(server.name, "ipv6", to_native(self._first_ipv6_address(server.public_net.ipv6.ip)))
+            self.inventory.set_variable(
+                server.name, "ipv6_network_mask", to_native(server.public_net.ipv6.network_mask)
+            )
+            self.inventory.set_variable(
+                server.name, "ipv6", to_native(self._first_ipv6_address(server.public_net.ipv6.ip))
+            )
 
         self.inventory.set_variable(
             server.name,
             "private_networks",
-            [
-                {"name": n.network.name, "id": n.network.id, "ip": n.ip}
-                for n in server.private_net
-            ],
+            [{"name": n.network.name, "id": n.network.id, "ip": n.ip} for n in server.private_net],
         )
 
         if self.get_option("network"):
@@ -306,18 +313,14 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                         return to_native(server_private_network.ip)
 
             else:
-                raise AnsibleError(
-                    "You can only connect via private IPv4 if you specify a network")
+                raise AnsibleError("You can only connect via private IPv4 if you specify a network")
 
     def _first_ipv6_address(self, network):
         return next(IPv6Network(network).hosts())
 
     def verify_file(self, path):
         """Return the possibly of a file being consumable by this plugin."""
-        return (
-            super(InventoryModule, self).verify_file(path) and
-            path.endswith(("hcloud.yaml", "hcloud.yml"))
-        )
+        return super(InventoryModule, self).verify_file(path) and path.endswith(("hcloud.yaml", "hcloud.yml"))
 
     def parse(self, inventory, loader, path, cache=True):
         super(InventoryModule, self).parse(inventory, loader, path, cache)
@@ -339,13 +342,15 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
             self._set_server_attributes(server)
 
             # Use constructed if applicable
-            strict = self.get_option('strict')
+            strict = self.get_option("strict")
 
             # Composed variables
-            self._set_composite_vars(self.get_option('compose'), self.inventory.get_host(server.name).get_vars(), server.name, strict=strict)
+            self._set_composite_vars(
+                self.get_option("compose"), self.inventory.get_host(server.name).get_vars(), server.name, strict=strict
+            )
 
             # Complex groups based on jinja2 conditionals, hosts that meet the conditional are added to group
-            self._add_host_to_composed_groups(self.get_option('groups'), {}, server.name, strict=strict)
+            self._add_host_to_composed_groups(self.get_option("groups"), {}, server.name, strict=strict)
 
             # Create groups based on variable values and add the corresponding hosts to it
-            self._add_host_to_keyed_groups(self.get_option('keyed_groups'), {}, server.name, strict=strict)
+            self._add_host_to_keyed_groups(self.get_option("keyed_groups"), {}, server.name, strict=strict)

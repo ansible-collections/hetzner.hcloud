@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_subnetwork
 
@@ -61,7 +61,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic subnetwork
@@ -170,14 +170,12 @@ class AnsibleHcloudSubnetwork(Hcloud):
     def _create_subnetwork(self):
         params = {
             "ip_range": self.module.params.get("ip_range"),
-            "type": self.module.params.get('type'),
-            "network_zone": self.module.params.get('network_zone')
+            "type": self.module.params.get("type"),
+            "network_zone": self.module.params.get("network_zone"),
         }
-        if self.module.params.get('type') == NetworkSubnet.TYPE_VSWITCH:
-            self.module.fail_on_missing_params(
-                required_params=["vswitch_id"]
-            )
-            params["vswitch_id"] = self.module.params.get('vswitch_id')
+        if self.module.params.get("type") == NetworkSubnet.TYPE_VSWITCH:
+            self.module.fail_on_missing_params(required_params=["vswitch_id"])
+            params["vswitch_id"] = self.module.params.get("vswitch_id")
 
         if not self.module.check_mode:
             try:
@@ -213,11 +211,7 @@ class AnsibleHcloudSubnetwork(Hcloud):
             argument_spec=dict(
                 network={"type": "str", "required": True},
                 network_zone={"type": "str", "required": True},
-                type={
-                    "type": "str",
-                    "required": True,
-                    "choices": ["server", "cloud", "vswitch"]
-                },
+                type={"type": "str", "required": True, "choices": ["server", "cloud", "vswitch"]},
                 ip_range={"type": "str", "required": True},
                 vswitch_id={"type": "int"},
                 state={

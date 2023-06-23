@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_server_network
 
@@ -54,7 +54,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic server network
@@ -155,7 +155,7 @@ class AnsibleHcloudServerNetwork(Hcloud):
 
     def _create_server_network(self):
         params = {
-            "network": self.hcloud_network
+            "network": self.hcloud_network,
         }
 
         if self.module.params.get("ip") is not None:
@@ -175,7 +175,7 @@ class AnsibleHcloudServerNetwork(Hcloud):
 
     def _update_server_network(self):
         params = {
-            "network": self.hcloud_network
+            "network": self.hcloud_network,
         }
         alias_ips = self.module.params.get("alias_ips")
         if alias_ips is not None and sorted(self.hcloud_server_network.alias_ips) != sorted(alias_ips):

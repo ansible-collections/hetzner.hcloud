@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_route
 
@@ -50,7 +50,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic route
@@ -130,8 +130,7 @@ class AnsibleHcloudRoute(Hcloud):
 
     def _create_route(self):
         route = NetworkRoute(
-            destination=self.module.params.get("destination"),
-            gateway=self.module.params.get('gateway')
+            destination=self.module.params.get("destination"), gateway=self.module.params.get("gateway")
         )
 
         if not self.module.check_mode:

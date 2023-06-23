@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_image_info
 
@@ -50,7 +50,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Gather hcloud image infos
@@ -129,35 +129,37 @@ class AnsibleHcloudImageInfo(Hcloud):
 
         for image in self.hcloud_image_info:
             if image is not None:
-                tmp.append({
-                    "id": to_native(image.id),
-                    "status": to_native(image.status),
-                    "type": to_native(image.type),
-                    "name": to_native(image.name),
-                    "description": to_native(image.description),
-                    "os_flavor": to_native(image.os_flavor),
-                    "os_version": to_native(image.os_version),
-                    "architecture": to_native(image.architecture),
-                    "labels": image.labels,
-                })
+                tmp.append(
+                    {
+                        "id": to_native(image.id),
+                        "status": to_native(image.status),
+                        "type": to_native(image.type),
+                        "name": to_native(image.name),
+                        "description": to_native(image.description),
+                        "os_flavor": to_native(image.os_flavor),
+                        "os_version": to_native(image.os_version),
+                        "architecture": to_native(image.architecture),
+                        "labels": image.labels,
+                    }
+                )
         return tmp
 
     def get_images(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_image_info = [self.client.images.get_by_id(
-                    self.module.params.get("id")
-                )]
+                self.hcloud_image_info = [self.client.images.get_by_id(self.module.params.get("id"))]
             elif self.module.params.get("name") is not None and self.module.params.get("architecture") is not None:
-                self.hcloud_image_info = [self.client.images.get_by_name_and_architecture(
-                    self.module.params.get("name"),
-                    self.module.params.get("architecture")
-                )]
+                self.hcloud_image_info = [
+                    self.client.images.get_by_name_and_architecture(
+                        self.module.params.get("name"),
+                        self.module.params.get("architecture"),
+                    )
+                ]
             elif self.module.params.get("name") is not None:
-                self.module.warn("This module only returns x86 images by default. Please set architecture:x86|arm to hide this message.")
-                self.hcloud_image_info = [self.client.images.get_by_name(
-                    self.module.params.get("name")
-                )]
+                self.module.warn(
+                    "This module only returns x86 images by default. Please set architecture:x86|arm to hide this message."
+                )
+                self.hcloud_image_info = [self.client.images.get_by_name(self.module.params.get("name"))]
             else:
                 params = {}
                 label_selector = self.module.params.get("label_selector")
@@ -195,24 +197,24 @@ class AnsibleHcloudImageInfo(Hcloud):
 def main():
     module = AnsibleHcloudImageInfo.define_module()
 
-    is_old_facts = module._name == 'hcloud_image_facts'
+    is_old_facts = module._name == "hcloud_image_facts"
     if is_old_facts:
-        module.deprecate("The 'hcloud_image_facts' module has been renamed to 'hcloud_image_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
+        module.deprecate(
+            "The 'hcloud_image_facts' module has been renamed to 'hcloud_image_info', "
+            "and the renamed one no longer returns ansible_facts",
+            version="2.0.0",
+            collection_name="hetzner.hcloud",
+        )
 
     hcloud = AnsibleHcloudImageInfo(module)
     hcloud.get_images()
     result = hcloud.get_result()
 
     if is_old_facts:
-        ansible_info = {
-            'hcloud_imagen_facts': result['hcloud_image_info']
-        }
+        ansible_info = {"hcloud_imagen_facts": result["hcloud_image_info"]}
         module.exit_json(ansible_facts=ansible_info)
     else:
-        ansible_info = {
-            'hcloud_image_info': result['hcloud_image_info']
-        }
+        ansible_info = {"hcloud_image_info": result["hcloud_image_info"]}
         module.exit_json(**ansible_info)
 
 

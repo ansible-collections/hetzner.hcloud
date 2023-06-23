@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_rdns
 
@@ -61,7 +61,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a reverse DNS entry for a server
@@ -172,27 +172,19 @@ class AnsibleHcloudReverseDNS(Hcloud):
     def _get_resource(self):
         try:
             if self.module.params.get("server"):
-                self.hcloud_resource = self.client.servers.get_by_name(
-                    self.module.params.get("server")
-                )
+                self.hcloud_resource = self.client.servers.get_by_name(self.module.params.get("server"))
                 if self.hcloud_resource is None:
                     self.module.fail_json(msg="The selected server does not exist")
             elif self.module.params.get("floating_ip"):
-                self.hcloud_resource = self.client.floating_ips.get_by_name(
-                    self.module.params.get("floating_ip")
-                )
+                self.hcloud_resource = self.client.floating_ips.get_by_name(self.module.params.get("floating_ip"))
                 if self.hcloud_resource is None:
                     self.module.fail_json(msg="The selected Floating IP does not exist")
             elif self.module.params.get("primary_ip"):
-                self.hcloud_resource = self.client.primary_ips.get_by_name(
-                    self.module.params.get("primary_ip")
-                )
+                self.hcloud_resource = self.client.primary_ips.get_by_name(self.module.params.get("primary_ip"))
                 if self.hcloud_resource is None:
                     self.module.fail_json(msg="The selected Floating IP does not exist")
             elif self.module.params.get("load_balancer"):
-                self.hcloud_resource = self.client.load_balancers.get_by_name(
-                    self.module.params.get("load_balancer")
-                )
+                self.hcloud_resource = self.client.load_balancers.get_by_name(self.module.params.get("load_balancer"))
                 if self.hcloud_resource is None:
                     self.module.fail_json(msg="The selected Load Balancer does not exist")
         except Exception as e:
@@ -267,9 +259,7 @@ class AnsibleHcloudReverseDNS(Hcloud):
             self.module.fail_json(msg="The given IP address is not valid")
 
     def _create_rdns(self):
-        self.module.fail_on_missing_params(
-            required_params=["dns_ptr"]
-        )
+        self.module.fail_on_missing_params(required_params=["dns_ptr"])
         params = {
             "ip": self.module.params.get("ip_address"),
             "dns_ptr": self.module.params.get("dns_ptr"),
@@ -315,7 +305,7 @@ class AnsibleHcloudReverseDNS(Hcloud):
         if self.hcloud_rdns is not None:
             if not self.module.check_mode:
                 try:
-                    self.hcloud_resource.change_dns_ptr(ip=self.hcloud_rdns['ip_address'], dns_ptr=None)
+                    self.hcloud_resource.change_dns_ptr(ip=self.hcloud_rdns["ip_address"], dns_ptr=None)
                 except Exception as e:
                     self.module.fail_json(msg=e.message)
             self._mark_as_changed()
@@ -337,8 +327,8 @@ class AnsibleHcloudReverseDNS(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['server', 'floating_ip', 'load_balancer', 'primary_ip']],
-            mutually_exclusive=[["server", "floating_ip", 'load_balancer', 'primary_ip']],
+            required_one_of=[["server", "floating_ip", "load_balancer", "primary_ip"]],
+            mutually_exclusive=[["server", "floating_ip", "load_balancer", "primary_ip"]],
             supports_check_mode=True,
         )
 

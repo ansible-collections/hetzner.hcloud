@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_primary_ip
 
@@ -69,7 +69,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic IPv4 Primary IP
@@ -159,27 +159,19 @@ class AnsibleHcloudPrimaryIP(Hcloud):
     def _get_primary_ip(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_primary_ip = self.client.primary_ips.get_by_id(
-                    self.module.params.get("id")
-                )
+                self.hcloud_primary_ip = self.client.primary_ips.get_by_id(self.module.params.get("id"))
             else:
-                self.hcloud_primary_ip = self.client.primary_ips.get_by_name(
-                    self.module.params.get("name")
-                )
+                self.hcloud_primary_ip = self.client.primary_ips.get_by_name(self.module.params.get("name"))
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_primary_ip(self):
-        self.module.fail_on_missing_params(
-            required_params=["type", "datacenter"]
-        )
+        self.module.fail_on_missing_params(required_params=["type", "datacenter"])
         try:
             params = {
                 "type": self.module.params.get("type"),
                 "name": self.module.params.get("name"),
-                "datacenter": self.client.datacenters.get_by_name(
-                    self.module.params.get("datacenter")
-                )
+                "datacenter": self.client.datacenters.get_by_name(self.module.params.get("datacenter")),
             }
 
             if self.module.params.get("labels") is not None:
@@ -249,7 +241,7 @@ class AnsibleHcloudPrimaryIP(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['id', 'name']],
+            required_one_of=[["id", "name"]],
             supports_check_mode=True,
         )
 

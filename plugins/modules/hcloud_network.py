@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_network
 
@@ -64,7 +64,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic network
@@ -143,21 +143,14 @@ class AnsibleHcloudNetwork(Hcloud):
     def _get_network(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_network = self.client.networks.get_by_id(
-                    self.module.params.get("id")
-                )
+                self.hcloud_network = self.client.networks.get_by_id(self.module.params.get("id"))
             else:
-                self.hcloud_network = self.client.networks.get_by_name(
-                    self.module.params.get("name")
-                )
+                self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("name"))
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_network(self):
-
-        self.module.fail_on_missing_params(
-            required_params=["name", "ip_range"]
-        )
+        self.module.fail_on_missing_params(required_params=["name", "ip_range"])
         params = {
             "name": self.module.params.get("name"),
             "ip_range": self.module.params.get("ip_range"),
@@ -196,7 +189,10 @@ class AnsibleHcloudNetwork(Hcloud):
                 self._mark_as_changed()
 
             expose_routes_to_vswitch = self.module.params.get("expose_routes_to_vswitch")
-            if expose_routes_to_vswitch is not None and expose_routes_to_vswitch != self.hcloud_network.expose_routes_to_vswitch:
+            if (
+                expose_routes_to_vswitch is not None
+                and expose_routes_to_vswitch != self.hcloud_network.expose_routes_to_vswitch
+            ):
                 if not self.module.check_mode:
                     self.hcloud_network.update(expose_routes_to_vswitch=expose_routes_to_vswitch)
                 self._mark_as_changed()
@@ -244,7 +240,7 @@ class AnsibleHcloudNetwork(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['id', 'name']],
+            required_one_of=[["id", "name"]],
             supports_check_mode=True,
         )
 

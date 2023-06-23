@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_load_balancer
 
@@ -71,7 +71,7 @@ extends_documentation_fragment:
 
 requirements:
   - hcloud-python >= 1.8.0
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic Load Balancer
@@ -156,8 +156,11 @@ class AnsibleHcloudLoadBalancer(Hcloud):
         self.hcloud_load_balancer = None
 
     def _prepare_result(self):
-        private_ipv4_address = None if len(self.hcloud_load_balancer.private_net) == 0 else to_native(
-            self.hcloud_load_balancer.private_net[0].ip)
+        private_ipv4_address = (
+            None
+            if len(self.hcloud_load_balancer.private_net) == 0
+            else to_native(self.hcloud_load_balancer.private_net[0].ip)
+        )
         return {
             "id": to_native(self.hcloud_load_balancer.id),
             "name": to_native(self.hcloud_load_balancer.name),
@@ -174,21 +177,14 @@ class AnsibleHcloudLoadBalancer(Hcloud):
     def _get_load_balancer(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_load_balancer = self.client.load_balancers.get_by_id(
-                    self.module.params.get("id")
-                )
+                self.hcloud_load_balancer = self.client.load_balancers.get_by_id(self.module.params.get("id"))
             else:
-                self.hcloud_load_balancer = self.client.load_balancers.get_by_name(
-                    self.module.params.get("name")
-                )
+                self.hcloud_load_balancer = self.client.load_balancers.get_by_name(self.module.params.get("name"))
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_load_balancer(self):
-
-        self.module.fail_on_missing_params(
-            required_params=["name", "load_balancer_type"]
-        )
+        self.module.fail_on_missing_params(required_params=["name", "load_balancer_type"])
         try:
             params = {
                 "name": self.module.params.get("name"),
@@ -201,9 +197,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             if self.module.params.get("location") is None and self.module.params.get("network_zone") is None:
                 self.module.fail_json(msg="one of the following is required: location, network_zone")
             elif self.module.params.get("location") is not None and self.module.params.get("network_zone") is None:
-                params["location"] = self.client.locations.get_by_name(
-                    self.module.params.get("location")
-                )
+                params["location"] = self.client.locations.get_by_name(self.module.params.get("location"))
             elif self.module.params.get("location") is None and self.module.params.get("network_zone") is not None:
                 params["network_zone"] = self.module.params.get("network_zone")
 
@@ -236,7 +230,9 @@ class AnsibleHcloudLoadBalancer(Hcloud):
             self._get_load_balancer()
 
             disable_public_interface = self.module.params.get("disable_public_interface")
-            if disable_public_interface is not None and disable_public_interface != (not self.hcloud_load_balancer.public_net.enabled):
+            if disable_public_interface is not None and disable_public_interface != (
+                not self.hcloud_load_balancer.public_net.enabled
+            ):
                 if not self.module.check_mode:
                     if disable_public_interface is True:
                         self.hcloud_load_balancer.disable_public_interface().wait_until_finished()
@@ -245,7 +241,10 @@ class AnsibleHcloudLoadBalancer(Hcloud):
                 self._mark_as_changed()
 
             load_balancer_type = self.module.params.get("load_balancer_type")
-            if load_balancer_type is not None and self.hcloud_load_balancer.load_balancer_type.name != load_balancer_type:
+            if (
+                load_balancer_type is not None
+                and self.hcloud_load_balancer.load_balancer_type.name != load_balancer_type
+            ):
                 new_load_balancer_type = self.client.load_balancer_types.get_by_name(load_balancer_type)
                 if not new_load_balancer_type:
                     self.module.fail_json(msg="unknown load balancer type")
@@ -295,7 +294,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['id', 'name']],
+            required_one_of=[["id", "name"]],
             mutually_exclusive=[["location", "network_zone"]],
             supports_check_mode=True,
         )
