@@ -26,6 +26,12 @@ repos:
         files: \.(md|ya?ml)$
         exclude: ^changelogs/changelog.yaml$
 
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.7.0
+    hooks:
+      - id: pyupgrade
+        args: [--py37-plus]
+
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
