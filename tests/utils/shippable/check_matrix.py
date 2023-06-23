@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 """Verify the currently executing Shippable test matrix matches the one defined in the "shippable.yml" file."""
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
 
 import datetime
 import json
@@ -31,7 +29,7 @@ def main():  # type: () -> None
 
     if repo_full_name != required_repo_full_name:
         sys.stderr.write(
-            'Skipping matrix check on repo "%s" which is not "%s".\n' % (repo_full_name, required_repo_full_name)
+            f'Skipping matrix check on repo "{repo_full_name}" which is not "{required_repo_full_name}".\n'
         )
         return
 
@@ -63,7 +61,7 @@ def main():  # type: () -> None
             if not attempts_remaining:
                 fail("Unable to retrieve Shippable run %s matrix." % run_id, str(ex))
 
-            sys.stderr.write("Unable to retrieve Shippable run %s matrix: %s\n" % (run_id, ex))
+            sys.stderr.write(f"Unable to retrieve Shippable run {run_id} matrix: {ex}\n")
             sys.stderr.write("Trying again in %d seconds...\n" % sleep)
             time.sleep(sleep)
             sleep *= 2
@@ -79,10 +77,10 @@ def main():  # type: () -> None
             "Try re-running the entire matrix.%s" % hint,
         )
 
-    actual_matrix = dict(
-        (job.get("jobNumber"), dict(tuple(line.split("=", 1)) for line in job.get("env", [])).get("T", ""))
+    actual_matrix = {
+        job.get("jobNumber"): dict(tuple(line.split("=", 1)) for line in job.get("env", [])).get("T", "")
         for job in jobs
-    )
+    }
     errors = [
         (job_number, test, actual_matrix.get(job_number))
         for job_number, test in enumerate(defined_matrix, 1)
@@ -91,7 +89,7 @@ def main():  # type: () -> None
 
     if len(errors):
         error_summary = "\n".join(
-            'Job %s expected "%s" but found "%s" instead.' % (job_number, expected, actual)
+            f'Job {job_number} expected "{expected}" but found "{actual}" instead.'
             for job_number, expected, actual in errors
         )
 
@@ -109,20 +107,16 @@ def fail(message, output):  # type: (str, str) -> NoReturn
     timestamp = datetime.datetime.utcnow().replace(microsecond=0).isoformat()
 
     # hack to avoid requiring junit-xml, which isn't pre-installed on Shippable outside our test containers
-    xml = """
+    xml = f"""
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites disabled="0" errors="1" failures="0" tests="1" time="0.0">
-\t<testsuite disabled="0" errors="1" failures="0" file="None" log="None" name="ansible-test" skipped="0" tests="1" time="0" timestamp="%s" url="None">
+\t<testsuite disabled="0" errors="1" failures="0" file="None" log="None" name="ansible-test" skipped="0" tests="1" time="0" timestamp="{timestamp}" url="None">
 \t\t<testcase classname="timeout" name="timeout">
-\t\t\t<error message="%s" type="error">%s</error>
+\t\t\t<error message="{message}" type="error">{output}</error>
 \t\t</testcase>
 \t</testsuite>
 </testsuites>
-""" % (
-        timestamp,
-        message,
-        output,
-    )
+"""
 
     path = "shippable/testresults/check-matrix.xml"
     dir_path = os.path.dirname(path)

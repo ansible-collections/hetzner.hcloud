@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 
 # Simplified BSD License (see licenses/simplified_bsd.txt or https://opensource.org/licenses/BSD-2-Clause)
 
-from __future__ import absolute_import, division, print_function
-
-__metaclass__ = type
 
 from ansible.module_utils.ansible_release import __version__
 from ansible.module_utils.basic import env_fallback, missing_required_lib
@@ -18,7 +14,7 @@ except ImportError:
     HAS_HCLOUD = False
 
 
-class Hcloud(object):
+class Hcloud:
     def __init__(self, module, represent):
         self.module = module
         self.represent = represent

@@ -1,9 +1,6 @@
 # Copyright (c) 2019 Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
-
-__metaclass__ = type
 
 DOCUMENTATION = r"""
     name: hcloud
@@ -320,10 +317,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
 
     def verify_file(self, path):
         """Return the possibly of a file being consumable by this plugin."""
-        return super(InventoryModule, self).verify_file(path) and path.endswith(("hcloud.yaml", "hcloud.yml"))
+        return super().verify_file(path) and path.endswith(("hcloud.yaml", "hcloud.yml"))
 
     def parse(self, inventory, loader, path, cache=True):
-        super(InventoryModule, self).parse(inventory, loader, path, cache)
+        super().parse(inventory, loader, path, cache)
 
         if not HAS_HCLOUD:
             raise AnsibleError("The Hetzner Cloud dynamic inventory plugin requires hcloud-python.")
