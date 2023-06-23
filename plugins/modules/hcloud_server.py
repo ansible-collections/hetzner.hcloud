@@ -332,16 +332,17 @@ hcloud_server:
             version_added: "0.1.0"
 """
 
-from ansible.module_utils.basic import AnsibleModule
+from datetime import datetime, timedelta, timezone
+
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
-from datetime import timedelta, datetime, timezone
 
 try:
-    from hcloud.volumes.domain import Volume
-    from hcloud.ssh_keys.domain import SSHKey
-    from hcloud.servers.domain import Server, ServerCreatePublicNetwork
     from hcloud.firewalls.domain import FirewallResource
+    from hcloud.servers.domain import Server, ServerCreatePublicNetwork
+    from hcloud.ssh_keys.domain import SSHKey
+    from hcloud.volumes.domain import Volume
 except ImportError:
     Volume = None
     SSHKey = None

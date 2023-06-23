@@ -138,10 +138,12 @@ hcloud_rdns:
             sample: example.com
 """
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
+    utils,
+)
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 
 
 class AnsibleHcloudReverseDNS(Hcloud):

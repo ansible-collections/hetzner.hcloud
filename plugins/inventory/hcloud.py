@@ -118,15 +118,15 @@ keyed_groups:
 """
 
 import os
+from ipaddress import IPv6Network
+
 from ansible.errors import AnsibleError
 from ansible.module_utils._text import to_native
 from ansible.plugins.inventory import BaseInventoryPlugin, Constructable
 from ansible.release import __version__
-from ipaddress import IPv6Network
 
 try:
-    from hcloud import hcloud
-    from hcloud import APIException
+    from hcloud import APIException, hcloud
 
     HAS_HCLOUD = True
 except ImportError:
