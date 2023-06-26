@@ -1,0 +1,54 @@
+# Copyright: (c) 2023, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: test gather hcloud iso infos with correct id
+  hcloud_iso_info:
+    id: "{{ hcloud_iso_id }}"
+  register: hcloud_iso
+- name: verify test gather hcloud image with correct id
+  assert:
+    that:
+      - hcloud_iso.hcloud_iso_info | list | count == 1
+      - hcloud_iso.hcloud_iso_info[0].id == "{{ hcloud_iso_id }}"
+      - hcloud_iso.hcloud_iso_info[0].name == "{{ hcloud_iso_name }}"
+      - hcloud_iso.hcloud_iso_info[0].architecture == "{{ hcloud_iso_architecture }}"
+      - hcloud_iso.hcloud_iso_info[0].type == "{{ hcloud_iso_type }}"
+
+- name: test gather hcloud iso infos with wrong id
+  hcloud_iso_info:
+    id: "{{ hcloud_iso_id }}1"
+  ignore_errors: true
+  register: result
+- name: verify test gather hcloud image with wrong id
+  assert:
+    that:
+      - result is failed
+
+- name: test gather hcloud iso infos with name
+  hcloud_iso_info:
+    name: "{{ hcloud_iso_name }}"
+  register: hcloud_iso
+- name: verify test gather hcloud iso infos with name
+  assert:
+    that:
+      - hcloud_iso.hcloud_iso_info | list | count == 1
+
+- name: test list hcloud iso infos with architecture
+  hcloud_iso_info:
+    architecture: arm
+  register: hcloud_iso
+- name: verify test list hcloud iso infos with architecture
+  assert:
+    that:
+      - hcloud_iso.hcloud_iso_info | list | count > 2
+      - hcloud_iso.hcloud_iso_info | selectattr('architecture','equalto','x86') | list | count == 0
+      - hcloud_iso.hcloud_iso_info | selectattr('architecture','equalto','arm') | list | count  > 2
+
+- name: test list hcloud iso infos in check mode
+  hcloud_iso_info:
+  check_mode: true
+  register: hcloud_iso
+- name: verify test list hcloud iso infos in check mode
+  assert:
+    that:
+      - hcloud_iso.hcloud_iso_info| list | count > 2
