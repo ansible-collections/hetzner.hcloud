@@ -579,7 +579,7 @@ class AnsibleHcloudServer(Hcloud):
         if primary_ip is None:
             try:
                 primary_ip = self.client.primary_ips.get_by_id(self.module.params.get(field))
-            except Exception as e:
+            except Exception:
                 self.module.fail_json(msg="primary_ip %s was not found" % self.module.params.get(field))
 
         return primary_ip
