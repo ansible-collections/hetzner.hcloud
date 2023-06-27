@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_route
 
@@ -50,7 +46,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic route
@@ -91,8 +87,8 @@ hcloud_route:
             sample: 10.0.0.1
 """
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 try:
@@ -130,8 +126,7 @@ class AnsibleHcloudRoute(Hcloud):
 
     def _create_route(self):
         route = NetworkRoute(
-            destination=self.module.params.get("destination"),
-            gateway=self.module.params.get('gateway')
+            destination=self.module.params.get("destination"), gateway=self.module.params.get("gateway")
         )
 
         if not self.module.check_mode:

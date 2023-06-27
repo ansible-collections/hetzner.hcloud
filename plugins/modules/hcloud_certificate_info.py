@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_certificate_info
 short_description: Gather infos about your Hetzner Cloud certificates.
@@ -32,7 +28,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Gather hcloud certificate infos
@@ -86,8 +82,8 @@ hcloud_certificate_info:
             returned: always
             type: dict
 """
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 
@@ -101,31 +97,30 @@ class AnsibleHcloudCertificateInfo(Hcloud):
 
         for certificate in self.hcloud_certificate_info:
             if certificate:
-                certificates.append({
-                    "id": to_native(certificate.id),
-                    "name": to_native(certificate.name),
-                    "fingerprint": to_native(certificate.fingerprint),
-                    "certificate": to_native(certificate.certificate),
-                    "not_valid_before": to_native(certificate.not_valid_before),
-                    "not_valid_after": to_native(certificate.not_valid_after),
-                    "domain_names": [to_native(domain) for domain in certificate.domain_names],
-                    "labels": certificate.labels
-                })
+                certificates.append(
+                    {
+                        "id": to_native(certificate.id),
+                        "name": to_native(certificate.name),
+                        "fingerprint": to_native(certificate.fingerprint),
+                        "certificate": to_native(certificate.certificate),
+                        "not_valid_before": to_native(certificate.not_valid_before),
+                        "not_valid_after": to_native(certificate.not_valid_after),
+                        "domain_names": [to_native(domain) for domain in certificate.domain_names],
+                        "labels": certificate.labels,
+                    }
+                )
         return certificates
 
     def get_certificates(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_certificate_info = [self.client.certificates.get_by_id(
-                    self.module.params.get("id")
-                )]
+                self.hcloud_certificate_info = [self.client.certificates.get_by_id(self.module.params.get("id"))]
             elif self.module.params.get("name") is not None:
-                self.hcloud_certificate_info = [self.client.certificates.get_by_name(
-                    self.module.params.get("name")
-                )]
+                self.hcloud_certificate_info = [self.client.certificates.get_by_name(self.module.params.get("name"))]
             elif self.module.params.get("label_selector") is not None:
                 self.hcloud_certificate_info = self.client.certificates.get_all(
-                    label_selector=self.module.params.get("label_selector"))
+                    label_selector=self.module.params.get("label_selector")
+                )
             else:
                 self.hcloud_certificate_info = self.client.certificates.get_all()
 
@@ -152,9 +147,7 @@ def main():
     hcloud.get_certificates()
     result = hcloud.get_result()
 
-    ansible_info = {
-        'hcloud_certificate_info': result['hcloud_certificate_info']
-    }
+    ansible_info = {"hcloud_certificate_info": result["hcloud_certificate_info"]}
     module.exit_json(**ansible_info)
 
 

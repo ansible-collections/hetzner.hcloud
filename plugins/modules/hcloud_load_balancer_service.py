@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_load_balancer_service
 
@@ -140,7 +136,7 @@ extends_documentation_fragment:
 
 requirements:
   - hcloud-python >= 1.8.1
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic Load Balancer service with Port 80
@@ -283,14 +279,18 @@ hcloud_load_balancer_service:
                             sample: false
 """
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 try:
-    from hcloud.load_balancers.domain import LoadBalancerService, LoadBalancerServiceHttp, \
-        LoadBalancerHealthCheck, LoadBalancerHealtCheckHttp
     from hcloud import APIException
+    from hcloud.load_balancers.domain import (
+        LoadBalancerHealtCheckHttp,
+        LoadBalancerHealthCheck,
+        LoadBalancerService,
+        LoadBalancerServiceHttp,
+    )
 except ImportError:
     APIException = None
 
@@ -309,8 +309,9 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                 "cookie_lifetime": self.hcloud_load_balancer_service.http.cookie_name,
                 "redirect_http": self.hcloud_load_balancer_service.http.redirect_http,
                 "sticky_sessions": self.hcloud_load_balancer_service.http.sticky_sessions,
-                "certificates": [to_native(certificate.name) for certificate in
-                                 self.hcloud_load_balancer_service.http.certificates],
+                "certificates": [
+                    to_native(certificate.name) for certificate in self.hcloud_load_balancer_service.http.certificates
+                ],
             }
         health_check = {
             "protocol": to_native(self.hcloud_load_balancer_service.health_check.protocol),
@@ -324,8 +325,10 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                 "domain": to_native(self.hcloud_load_balancer_service.health_check.http.domain),
                 "path": to_native(self.hcloud_load_balancer_service.health_check.http.path),
                 "response": to_native(self.hcloud_load_balancer_service.health_check.http.response),
-                "certificates": [to_native(status_code) for status_code in
-                                 self.hcloud_load_balancer_service.health_check.http.status_codes],
+                "certificates": [
+                    to_native(status_code)
+                    for status_code in self.hcloud_load_balancer_service.health_check.http.status_codes
+                ],
                 "tls": self.hcloud_load_balancer_service.health_check.http.tls,
             }
         return {
@@ -341,9 +344,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
     def _get_load_balancer(self):
         try:
             load_balancer_name = self.module.params.get("load_balancer")
-            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(
-                load_balancer_name
-            )
+            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(load_balancer_name)
             if not self.hcloud_load_balancer:
                 self.module.fail_json(msg="Load balancer does not exist: %s" % load_balancer_name)
 
@@ -352,19 +353,14 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
             self.module.fail_json(msg=e.message)
 
     def _create_load_balancer_service(self):
-
-        self.module.fail_on_missing_params(
-            required_params=["protocol"]
-        )
+        self.module.fail_on_missing_params(required_params=["protocol"])
         if self.module.params.get("protocol") == "tcp":
-            self.module.fail_on_missing_params(
-                required_params=["destination_port"]
-            )
+            self.module.fail_on_missing_params(required_params=["destination_port"])
 
         params = {
             "protocol": self.module.params.get("protocol"),
             "listen_port": self.module.params.get("listen_port"),
-            "proxyprotocol": self.module.params.get("proxyprotocol")
+            "proxyprotocol": self.module.params.get("proxyprotocol"),
         }
 
         if self.module.params.get("destination_port"):
@@ -375,12 +371,14 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
 
         if self.module.params.get("health_check"):
             params["health_check"] = self.__get_service_health_checks(
-                health_check=self.module.params.get("health_check"))
+                health_check=self.module.params.get("health_check")
+            )
 
         if not self.module.check_mode:
             try:
                 self.hcloud_load_balancer.add_service(LoadBalancerService(**params)).wait_until_finished(
-                    max_retries=1000)
+                    max_retries=1000
+                )
             except Exception as e:
                 self.module.fail_json(msg=e.message)
         self._mark_as_changed()
@@ -404,13 +402,9 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                     hcloud_cert = None
                     try:
                         try:
-                            hcloud_cert = self.client.certificates.get_by_name(
-                                certificate
-                            )
+                            hcloud_cert = self.client.certificates.get_by_name(certificate)
                         except Exception:
-                            hcloud_cert = self.client.certificates.get_by_id(
-                                certificate
-                            )
+                            hcloud_cert = self.client.certificates.get_by_id(certificate)
                     except Exception as e:
                         self.module.fail_json(msg=e.message)
                     service_http.certificates.append(hcloud_cert)
@@ -473,12 +467,14 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
 
             if self.module.params.get("health_check") is not None:
                 params["health_check"] = self.__get_service_health_checks(
-                    health_check=self.module.params.get("health_check"))
+                    health_check=self.module.params.get("health_check")
+                )
                 changed = True
 
             if not self.module.check_mode:
                 self.hcloud_load_balancer.update_service(LoadBalancerService(**params)).wait_until_finished(
-                    max_retries=1000)
+                    max_retries=1000
+                )
         except Exception as e:
             self.module.fail_json(msg=e.message)
         self._get_load_balancer()
@@ -505,7 +501,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                 if not self.module.check_mode:
                     try:
                         self.hcloud_load_balancer.delete_service(self.hcloud_load_balancer_service).wait_until_finished(
-                            max_retries=1000)
+                            max_retries=1000
+                        )
                     except Exception as e:
                         self.module.fail_json(msg=e.message)
                 self._mark_as_changed()
@@ -528,26 +525,12 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                 http={
                     "type": "dict",
                     "options": dict(
-                        cookie_name={
-                            "type": "str"
-                        },
-                        cookie_lifetime={
-                            "type": "int"
-                        },
-                        sticky_sessions={
-                            "type": "bool",
-                            "default": False
-                        },
-                        redirect_http={
-                            "type": "bool",
-                            "default": False
-                        },
-                        certificates={
-                            "type": "list",
-                            "elements": "str"
-                        },
-
-                    )
+                        cookie_name={"type": "str"},
+                        cookie_lifetime={"type": "int"},
+                        sticky_sessions={"type": "bool", "default": False},
+                        redirect_http={"type": "bool", "default": False},
+                        certificates={"type": "list", "elements": "str"},
+                    ),
                 },
                 health_check={
                     "type": "dict",
@@ -556,42 +539,21 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                             "type": "str",
                             "choices": ["http", "https", "tcp"],
                         },
-                        port={
-                            "type": "int"
-                        },
-                        interval={
-                            "type": "int"
-                        },
-                        timeout={
-                            "type": "int"
-                        },
-                        retries={
-                            "type": "int"
-                        },
+                        port={"type": "int"},
+                        interval={"type": "int"},
+                        timeout={"type": "int"},
+                        retries={"type": "int"},
                         http={
                             "type": "dict",
                             "options": dict(
-                                domain={
-                                    "type": "str"
-                                },
-                                path={
-                                    "type": "str"
-                                },
-                                response={
-                                    "type": "str"
-                                },
-                                status_codes={
-                                    "type": "list",
-                                    "elements": "str"
-                                },
-                                tls={
-                                    "type": "bool",
-                                    "default": False
-                                },
-                            )
-                        }
-                    )
-
+                                domain={"type": "str"},
+                                path={"type": "str"},
+                                response={"type": "str"},
+                                status_codes={"type": "list", "elements": "str"},
+                                tls={"type": "bool", "default": False},
+                            ),
+                        },
+                    ),
                 },
                 state={
                     "choices": ["absent", "present"],

@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_volume
 
@@ -75,7 +71,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a Volume
@@ -161,8 +157,8 @@ hcloud_volume:
             version_added: "0.1.0"
 """
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 
@@ -190,31 +186,25 @@ class AnsibleHcloudVolume(Hcloud):
     def _get_volume(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_volume = self.client.volumes.get_by_id(
-                    self.module.params.get("id")
-                )
+                self.hcloud_volume = self.client.volumes.get_by_id(self.module.params.get("id"))
             else:
-                self.hcloud_volume = self.client.volumes.get_by_name(
-                    self.module.params.get("name")
-                )
+                self.hcloud_volume = self.client.volumes.get_by_name(self.module.params.get("name"))
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_volume(self):
-        self.module.fail_on_missing_params(
-            required_params=["name", "size"]
-        )
+        self.module.fail_on_missing_params(required_params=["name", "size"])
         params = {
             "name": self.module.params.get("name"),
             "size": self.module.params.get("size"),
             "automount": self.module.params.get("automount"),
             "format": self.module.params.get("format"),
-            "labels": self.module.params.get("labels")
+            "labels": self.module.params.get("labels"),
         }
         if self.module.params.get("server") is not None:
-            params['server'] = self.client.servers.get_by_name(self.module.params.get("server"))
+            params["server"] = self.client.servers.get_by_name(self.module.params.get("server"))
         elif self.module.params.get("location") is not None:
-            params['location'] = self.client.locations.get_by_name(self.module.params.get("location"))
+            params["location"] = self.client.locations.get_by_name(self.module.params.get("location"))
         else:
             self.module.fail_json(msg="server or location is required")
 
@@ -304,9 +294,7 @@ class AnsibleHcloudVolume(Hcloud):
                 server={"type": "str"},
                 labels={"type": "dict"},
                 automount={"type": "bool", "default": False},
-                format={"type": "str",
-                        "choices": ['xfs', 'ext4'],
-                        },
+                format={"type": "str", "choices": ["xfs", "ext4"]},
                 delete_protection={"type": "bool"},
                 state={
                     "choices": ["absent", "present"],
@@ -314,7 +302,7 @@ class AnsibleHcloudVolume(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['id', 'name']],
+            required_one_of=[["id", "name"]],
             mutually_exclusive=[["location", "server"]],
             supports_check_mode=True,
         )
@@ -326,9 +314,7 @@ def main():
     hcloud = AnsibleHcloudVolume(module)
     state = module.params.get("state")
     if state == "absent":
-        module.fail_on_missing_params(
-            required_params=["name"]
-        )
+        module.fail_on_missing_params(required_params=["name"])
         hcloud.delete_volume()
     else:
         hcloud.present_volume()

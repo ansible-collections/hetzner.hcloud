@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_server
 
@@ -157,7 +153,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic server
@@ -332,16 +328,17 @@ hcloud_server:
             version_added: "0.1.0"
 """
 
-from ansible.module_utils.basic import AnsibleModule
+from datetime import datetime, timedelta, timezone
+
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
-from datetime import timedelta, datetime, timezone
 
 try:
-    from hcloud.volumes.domain import Volume
-    from hcloud.ssh_keys.domain import SSHKey
-    from hcloud.servers.domain import Server, ServerCreatePublicNetwork
     from hcloud.firewalls.domain import FirewallResource
+    from hcloud.servers.domain import Server, ServerCreatePublicNetwork
+    from hcloud.ssh_keys.domain import SSHKey
+    from hcloud.volumes.domain import Volume
 except ImportError:
     Volume = None
     SSHKey = None
@@ -357,19 +354,25 @@ class AnsibleHcloudServer(Hcloud):
 
     def _prepare_result(self):
         image = None if self.hcloud_server.image is None else to_native(self.hcloud_server.image.name)
-        placement_group = None if self.hcloud_server.placement_group is None else to_native(
-            self.hcloud_server.placement_group.name)
-        ipv4_address = None if self.hcloud_server.public_net.ipv4 is None else to_native(
-            self.hcloud_server.public_net.ipv4.ip)
+        placement_group = (
+            None if self.hcloud_server.placement_group is None else to_native(self.hcloud_server.placement_group.name)
+        )
+        ipv4_address = (
+            None if self.hcloud_server.public_net.ipv4 is None else to_native(self.hcloud_server.public_net.ipv4.ip)
+        )
         ipv6 = None if self.hcloud_server.public_net.ipv6 is None else to_native(self.hcloud_server.public_net.ipv6.ip)
-        backup_window = None if self.hcloud_server.backup_window is None else to_native(self.hcloud_server.backup_window)
+        backup_window = (
+            None if self.hcloud_server.backup_window is None else to_native(self.hcloud_server.backup_window)
+        )
         return {
             "id": to_native(self.hcloud_server.id),
             "name": to_native(self.hcloud_server.name),
             "ipv4_address": ipv4_address,
             "ipv6": ipv6,
             "private_networks": [to_native(net.network.name) for net in self.hcloud_server.private_net],
-            "private_networks_info": [{"name": to_native(net.network.name), "ip": net.ip} for net in self.hcloud_server.private_net],
+            "private_networks_info": [
+                {"name": to_native(net.network.name), "ip": net.ip} for net in self.hcloud_server.private_net
+            ],
             "image": image,
             "server_type": to_native(self.hcloud_server.server_type.name),
             "datacenter": to_native(self.hcloud_server.datacenter.name),
@@ -386,20 +389,14 @@ class AnsibleHcloudServer(Hcloud):
     def _get_server(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_server = self.client.servers.get_by_id(
-                    self.module.params.get("id")
-                )
+                self.hcloud_server = self.client.servers.get_by_id(self.module.params.get("id"))
             else:
-                self.hcloud_server = self.client.servers.get_by_name(
-                    self.module.params.get("name")
-                )
+                self.hcloud_server = self.client.servers.get_by_name(self.module.params.get("name"))
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_server(self):
-        self.module.fail_on_missing_params(
-            required_params=["name", "server_type", "image"]
-        )
+        self.module.fail_on_missing_params(required_params=["name", "server_type", "image"])
 
         server_type = self._get_server_type()
 
@@ -412,8 +409,8 @@ class AnsibleHcloudServer(Hcloud):
             "placement_group": self._get_placement_group(),
             "public_net": ServerCreatePublicNetwork(
                 enable_ipv4=self.module.params.get("enable_ipv4"),
-                enable_ipv6=self.module.params.get("enable_ipv6")
-            )
+                enable_ipv6=self.module.params.get("enable_ipv6"),
+            ),
         }
 
         if self.module.params.get("ipv4") is not None:
@@ -438,15 +435,10 @@ class AnsibleHcloudServer(Hcloud):
             params["networks"] = _networks
 
         if self.module.params.get("ssh_keys") is not None:
-            params["ssh_keys"] = [
-                SSHKey(name=ssh_key_name)
-                for ssh_key_name in self.module.params.get("ssh_keys")
-            ]
+            params["ssh_keys"] = [SSHKey(name=ssh_key_name) for ssh_key_name in self.module.params.get("ssh_keys")]
 
         if self.module.params.get("volumes") is not None:
-            params["volumes"] = [
-                Volume(id=volume_id) for volume_id in self.module.params.get("volumes")
-            ]
+            params["volumes"] = [Volume(id=volume_id) for volume_id in self.module.params.get("volumes")]
         if self.module.params.get("firewalls") is not None:
             params["firewalls"] = []
             for fw in self.module.params.get("firewalls"):
@@ -462,13 +454,9 @@ class AnsibleHcloudServer(Hcloud):
             params["location"] = None
             params["datacenter"] = None
         elif self.module.params.get("location") is not None and self.module.params.get("datacenter") is None:
-            params["location"] = self.client.locations.get_by_name(
-                self.module.params.get("location")
-            )
+            params["location"] = self.client.locations.get_by_name(self.module.params.get("location"))
         elif self.module.params.get("location") is None and self.module.params.get("datacenter") is not None:
-            params["datacenter"] = self.client.datacenters.get_by_name(
-                self.module.params.get("datacenter")
-            )
+            params["datacenter"] = self.client.datacenters.get_by_name(self.module.params.get("datacenter"))
 
         if self.module.params.get("state") == "stopped":
             params["start_after_create"] = False
@@ -493,16 +481,22 @@ class AnsibleHcloudServer(Hcloud):
                 rebuild_protection = self.module.params.get("rebuild_protection")
                 if delete_protection is not None and rebuild_protection is not None:
                     self._get_server()
-                    self.hcloud_server.change_protection(delete=delete_protection,
-                                                         rebuild=rebuild_protection).wait_until_finished()
+                    self.hcloud_server.change_protection(
+                        delete=delete_protection,
+                        rebuild=rebuild_protection,
+                    ).wait_until_finished()
             except Exception as e:
                 self.module.fail_json(msg=e.message)
         self._mark_as_changed()
         self._get_server()
 
     def _get_image(self, server_type):
-        image_resp = self.client.images.get_list(name=self.module.params.get("image"), architecture=server_type.architecture, include_deprecated=True)
-        images = getattr(image_resp, 'images')
+        image_resp = self.client.images.get_list(
+            name=self.module.params.get("image"),
+            architecture=server_type.architecture,
+            include_deprecated=True,
+        )
+        images = getattr(image_resp, "images")
         image = None
         if images is not None and len(images) > 0:
             # If image name is not available look for id instead
@@ -511,29 +505,31 @@ class AnsibleHcloudServer(Hcloud):
             try:
                 image = self.client.images.get_by_id(self.module.params.get("image"))
             except Exception:
-                self.module.fail_json(msg="Image %s was not found" % self.module.params.get('image'))
+                self.module.fail_json(msg="Image %s was not found" % self.module.params.get("image"))
         if image.deprecated is not None:
             available_until = image.deprecated + timedelta(days=90)
             if self.module.params.get("allow_deprecated_image"):
                 self.module.warn(
-                    "You try to use a deprecated image. The image %s will continue to be available until %s." % (
-                        image.name, available_until.strftime('%Y-%m-%d')))
+                    "You try to use a deprecated image. The image %s will continue to be available until %s."
+                    % (image.name, available_until.strftime("%Y-%m-%d"))
+                )
             else:
                 self.module.fail_json(
-                    msg=("You try to use a deprecated image. The image %s will continue to be available until %s." +
-                         " If you want to use this image use allow_deprecated_image=true."
-                         ) % (image.name, available_until.strftime('%Y-%m-%d')))
+                    msg=(
+                        "You try to use a deprecated image. The image %s will continue to be available until %s."
+                        " If you want to use this image use allow_deprecated_image=true."
+                    )
+                    % (image.name, available_until.strftime("%Y-%m-%d"))
+                )
         return image
 
     def _get_server_type(self):
-        server_type = self.client.server_types.get_by_name(
-            self.module.params.get("server_type")
-        )
+        server_type = self.client.server_types.get_by_name(self.module.params.get("server_type"))
         if server_type is None:
             try:
                 server_type = self.client.server_types.get_by_id(self.module.params.get("server_type"))
             except Exception:
-                self.module.fail_json(msg="server_type %s was not found" % self.module.params.get('server_type'))
+                self.module.fail_json(msg="server_type %s was not found" % self.module.params.get("server_type"))
 
         self._check_and_warn_deprecated_server(server_type)
 
@@ -545,31 +541,33 @@ class AnsibleHcloudServer(Hcloud):
 
         if server_type.deprecation.unavailable_after < datetime.now(timezone.utc):
             self.module.warn(
-                'Attention: The server plan %s is deprecated and can no longer be ordered. Existing servers of ' % server_type.name
-                + 'that plan will continue to work as before and no action is required on your part. It is possible '
-                'to migrate this server to another server plan by setting the server_type parameter on the hetzner.hcloud.hcloud_server module.'
+                "Attention: The server plan %s is deprecated and can no longer be ordered. Existing servers of "
+                % server_type.name
+                + "that plan will continue to work as before and no action is required on your part. It is possible "
+                "to migrate this server to another server plan by setting the server_type parameter on the hetzner.hcloud.hcloud_server module."
             )
         else:
             self.module.warn(
-                'Attention: The server plan % is deprecated and will no longer be available for order as of ' % server_type.name
-                + '%s. Existing servers of that plan will continue to work as before ' % server_type.deprecation.unavailable_after.strftime("%Y-%m-%d")
-                + 'and no action is required on your part. It is possible to migrate this server to another server plan by setting '
-                'the server_type parameter on the hetzner.hcloud.hcloud_server module.'
+                "Attention: The server plan % is deprecated and will no longer be available for order as of "
+                % server_type.name
+                + "%s. Existing servers of that plan will continue to work as before "
+                % server_type.deprecation.unavailable_after.strftime("%Y-%m-%d")
+                + "and no action is required on your part. It is possible to migrate this server to another server plan by setting "
+                "the server_type parameter on the hetzner.hcloud.hcloud_server module."
             )
 
     def _get_placement_group(self):
         if self.module.params.get("placement_group") is None:
             return None
 
-        placement_group = self.client.placement_groups.get_by_name(
-            self.module.params.get("placement_group")
-        )
+        placement_group = self.client.placement_groups.get_by_name(self.module.params.get("placement_group"))
         if placement_group is None:
             try:
                 placement_group = self.client.placement_groups.get_by_id(self.module.params.get("placement_group"))
             except Exception:
                 self.module.fail_json(
-                    msg="placement_group %s was not found" % self.module.params.get("placement_group"))
+                    msg="placement_group %s was not found" % self.module.params.get("placement_group")
+                )
 
         return placement_group
 
@@ -577,15 +575,12 @@ class AnsibleHcloudServer(Hcloud):
         if self.module.params.get(field) is None:
             return None
 
-        primary_ip = self.client.primary_ips.get_by_name(
-            self.module.params.get(field)
-        )
+        primary_ip = self.client.primary_ips.get_by_name(self.module.params.get(field))
         if primary_ip is None:
             try:
                 primary_ip = self.client.primary_ips.get_by_id(self.module.params.get(field))
             except Exception as e:
-                self.module.fail_json(
-                    msg="primary_ip %s was not found" % self.module.params.get(field))
+                self.module.fail_json(msg="primary_ip %s was not found" % self.module.params.get(field))
 
         return primary_ip
 
@@ -660,12 +655,9 @@ class AnsibleHcloudServer(Hcloud):
                     self._mark_as_changed()
                 else:
                     placement_group = self._get_placement_group()
-                    if (
-                            placement_group is not None and
-                            (
-                                self.hcloud_server.placement_group is None or
-                                self.hcloud_server.placement_group.id != placement_group.id
-                            )
+                    if placement_group is not None and (
+                        self.hcloud_server.placement_group is None
+                        or self.hcloud_server.placement_group.id != placement_group.id
                     ):
                         self.stop_server_if_forced()
                         if not self.module.check_mode:
@@ -674,9 +666,9 @@ class AnsibleHcloudServer(Hcloud):
 
             if "ipv4" in self.module.params:
                 if (
-                        self.module.params["ipv4"] is None and
-                        self.hcloud_server.public_net.primary_ipv4 is not None and
-                        not self.module.params.get("enable_ipv4")
+                    self.module.params["ipv4"] is None
+                    and self.hcloud_server.public_net.primary_ipv4 is not None
+                    and not self.module.params.get("enable_ipv4")
                 ):
                     self.stop_server_if_forced()
                     if not self.module.check_mode:
@@ -684,12 +676,9 @@ class AnsibleHcloudServer(Hcloud):
                     self._mark_as_changed()
                 else:
                     primary_ip = self._get_primary_ip("ipv4")
-                    if (
-                            primary_ip is not None and
-                            (
-                                self.hcloud_server.public_net.primary_ipv4 is None or
-                                self.hcloud_server.public_net.primary_ipv4.id != primary_ip.id
-                            )
+                    if primary_ip is not None and (
+                        self.hcloud_server.public_net.primary_ipv4 is None
+                        or self.hcloud_server.public_net.primary_ipv4.id != primary_ip.id
                     ):
                         self.stop_server_if_forced()
                         if not self.module.check_mode:
@@ -699,9 +688,9 @@ class AnsibleHcloudServer(Hcloud):
                         self._mark_as_changed()
             if "ipv6" in self.module.params:
                 if (
-                        (self.module.params["ipv6"] is None or self.module.params["ipv6"] == "") and
-                        self.hcloud_server.public_net.primary_ipv6 is not None and
-                        not self.module.params.get("enable_ipv6")
+                    (self.module.params["ipv6"] is None or self.module.params["ipv6"] == "")
+                    and self.hcloud_server.public_net.primary_ipv6 is not None
+                    and not self.module.params.get("enable_ipv6")
                 ):
                     self.stop_server_if_forced()
                     if not self.module.check_mode:
@@ -709,12 +698,9 @@ class AnsibleHcloudServer(Hcloud):
                     self._mark_as_changed()
                 else:
                     primary_ip = self._get_primary_ip("ipv6")
-                    if (
-                            primary_ip is not None and
-                            (
-                                self.hcloud_server.public_net.primary_ipv6 is None or
-                                self.hcloud_server.public_net.primary_ipv6.id != primary_ip.id
-                            )
+                    if primary_ip is not None and (
+                        self.hcloud_server.public_net.primary_ipv6 is None
+                        or self.hcloud_server.public_net.primary_ipv6.id != primary_ip.id
                     ):
                         self.stop_server_if_forced()
                         if not self.module.check_mode:
@@ -729,11 +715,10 @@ class AnsibleHcloudServer(Hcloud):
                 else:
                     _networks = {}
                     for network_name_or_id in self.module.params.get("private_networks"):
-                        _found_network = self.client.networks.get_by_name(network_name_or_id) \
-                            or self.client.networks.get_by_id(network_name_or_id)
-                        _networks.update(
-                            {_found_network.id: _found_network}
-                        )
+                        _found_network = self.client.networks.get_by_name(
+                            network_name_or_id
+                        ) or self.client.networks.get_by_id(network_name_or_id)
+                        _networks.update({_found_network.id: _found_network})
                     networks_target = _networks
                 networks_is = dict()
                 for p_network in self.hcloud_server.private_net:
@@ -762,9 +747,7 @@ class AnsibleHcloudServer(Hcloud):
 
                     timeout = 100
                     if self.module.params.get("upgrade_disk"):
-                        timeout = (
-                            1000
-                        )  # When we upgrade the disk to the resize progress takes some more time.
+                        timeout = 1000  # When we upgrade the disk to the resize progress takes some more time.
                     if not self.module.check_mode:
                         self.hcloud_server.change_type(
                             server_type=self._get_server_type(),
@@ -772,26 +755,23 @@ class AnsibleHcloudServer(Hcloud):
                         ).wait_until_finished(timeout)
                     self._mark_as_changed()
 
-            if (
-                    not self.module.check_mode and
-                    (
-                        (
-                            self.module.params.get("state") == "present" and
-                            previous_server_status == Server.STATUS_RUNNING
-                        ) or
-                        self.module.params.get("state") == "started"
-                    )
+            if not self.module.check_mode and (
+                (self.module.params.get("state") == "present" and previous_server_status == Server.STATUS_RUNNING)
+                or self.module.params.get("state") == "started"
             ):
                 self.start_server()
 
             delete_protection = self.module.params.get("delete_protection")
             rebuild_protection = self.module.params.get("rebuild_protection")
             if (delete_protection is not None and rebuild_protection is not None) and (
-                    delete_protection != self.hcloud_server.protection["delete"] or rebuild_protection !=
-                    self.hcloud_server.protection["rebuild"]):
+                delete_protection != self.hcloud_server.protection["delete"]
+                or rebuild_protection != self.hcloud_server.protection["rebuild"]
+            ):
                 if not self.module.check_mode:
-                    self.hcloud_server.change_protection(delete=delete_protection,
-                                                         rebuild=rebuild_protection).wait_until_finished()
+                    self.hcloud_server.change_protection(
+                        delete=delete_protection,
+                        rebuild=rebuild_protection,
+                    ).wait_until_finished()
                 self._mark_as_changed()
             self._get_server()
         except Exception as e:
@@ -799,11 +779,13 @@ class AnsibleHcloudServer(Hcloud):
 
     def _set_rescue_mode(self, rescue_mode):
         if self.module.params.get("ssh_keys"):
-            resp = self.hcloud_server.enable_rescue(type=rescue_mode,
-                                                    ssh_keys=[self.client.ssh_keys.get_by_name(ssh_key_name).id
-                                                              for
-                                                              ssh_key_name in
-                                                              self.module.params.get("ssh_keys")])
+            resp = self.hcloud_server.enable_rescue(
+                type=rescue_mode,
+                ssh_keys=[
+                    self.client.ssh_keys.get_by_name(ssh_key_name).id
+                    for ssh_key_name in self.module.params.get("ssh_keys")
+                ],
+            )
         else:
             resp = self.hcloud_server.enable_rescue(type=rescue_mode)
         resp.action.wait_until_finished()
@@ -835,9 +817,9 @@ class AnsibleHcloudServer(Hcloud):
         previous_server_status = self.hcloud_server.status
         if previous_server_status == Server.STATUS_RUNNING and not self.module.check_mode:
             if (
-                    self.module.params.get("force_upgrade") or
-                    self.module.params.get("force") or
-                    self.module.params.get("state") == "stopped"
+                self.module.params.get("force_upgrade")
+                or self.module.params.get("force")
+                or self.module.params.get("state") == "stopped"
             ):
                 self.stop_server()  # Only stopped server can be upgraded
                 return previous_server_status
@@ -850,13 +832,12 @@ class AnsibleHcloudServer(Hcloud):
         return None
 
     def rebuild_server(self):
-        self.module.fail_on_missing_params(
-            required_params=["image"]
-        )
+        self.module.fail_on_missing_params(required_params=["image"])
         try:
             if not self.module.check_mode:
                 image = self._get_image(self.hcloud_server.server_type)
-                self.client.servers.rebuild(self.hcloud_server, image).wait_until_finished(1000)  # When we rebuild the server progress takes some more time.
+                # When we rebuild the server progress takes some more time.
+                self.client.servers.rebuild(self.hcloud_server, image).wait_until_finished(1000)
             self._mark_as_changed()
 
             self._get_server()
@@ -916,7 +897,7 @@ class AnsibleHcloudServer(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['id', 'name']],
+            required_one_of=[["id", "name"]],
             mutually_exclusive=[["location", "datacenter"]],
             required_together=[["delete_protection", "rebuild_protection"]],
             supports_check_mode=True,

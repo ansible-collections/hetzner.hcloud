@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_ssh_key_info
 short_description: Gather infos about your Hetzner Cloud ssh_keys.
@@ -38,7 +34,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Gather hcloud sshkey infos
@@ -80,8 +76,8 @@ hcloud_ssh_key_info:
             returned: always
             type: dict
 """
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 
@@ -95,32 +91,31 @@ class AnsibleHcloudSSHKeyInfo(Hcloud):
 
         for ssh_key in self.hcloud_ssh_key_info:
             if ssh_key:
-                ssh_keys.append({
-                    "id": to_native(ssh_key.id),
-                    "name": to_native(ssh_key.name),
-                    "fingerprint": to_native(ssh_key.fingerprint),
-                    "public_key": to_native(ssh_key.public_key),
-                    "labels": ssh_key.labels
-                })
+                ssh_keys.append(
+                    {
+                        "id": to_native(ssh_key.id),
+                        "name": to_native(ssh_key.name),
+                        "fingerprint": to_native(ssh_key.fingerprint),
+                        "public_key": to_native(ssh_key.public_key),
+                        "labels": ssh_key.labels,
+                    }
+                )
         return ssh_keys
 
     def get_ssh_keys(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_ssh_key_info = [self.client.ssh_keys.get_by_id(
-                    self.module.params.get("id")
-                )]
+                self.hcloud_ssh_key_info = [self.client.ssh_keys.get_by_id(self.module.params.get("id"))]
             elif self.module.params.get("name") is not None:
-                self.hcloud_ssh_key_info = [self.client.ssh_keys.get_by_name(
-                    self.module.params.get("name")
-                )]
+                self.hcloud_ssh_key_info = [self.client.ssh_keys.get_by_name(self.module.params.get("name"))]
             elif self.module.params.get("fingerprint") is not None:
-                self.hcloud_ssh_key_info = [self.client.ssh_keys.get_by_fingerprint(
-                    self.module.params.get("fingerprint")
-                )]
+                self.hcloud_ssh_key_info = [
+                    self.client.ssh_keys.get_by_fingerprint(self.module.params.get("fingerprint"))
+                ]
             elif self.module.params.get("label_selector") is not None:
                 self.hcloud_ssh_key_info = self.client.ssh_keys.get_all(
-                    label_selector=self.module.params.get("label_selector"))
+                    label_selector=self.module.params.get("label_selector")
+                )
             else:
                 self.hcloud_ssh_key_info = self.client.ssh_keys.get_all()
 
@@ -144,24 +139,24 @@ class AnsibleHcloudSSHKeyInfo(Hcloud):
 def main():
     module = AnsibleHcloudSSHKeyInfo.define_module()
 
-    is_old_facts = module._name == 'hcloud_ssh_key_facts'
+    is_old_facts = module._name == "hcloud_ssh_key_facts"
     if is_old_facts:
-        module.deprecate("The 'hcloud_ssh_key_facts' module has been renamed to 'hcloud_ssh_key_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
+        module.deprecate(
+            "The 'hcloud_ssh_key_facts' module has been renamed to 'hcloud_ssh_key_info', "
+            "and the renamed one no longer returns ansible_facts",
+            version="2.0.0",
+            collection_name="hetzner.hcloud",
+        )
 
     hcloud = AnsibleHcloudSSHKeyInfo(module)
     hcloud.get_ssh_keys()
     result = hcloud.get_result()
 
     if is_old_facts:
-        ansible_info = {
-            'hcloud_ssh_key_facts': result['hcloud_ssh_key_info']
-        }
+        ansible_info = {"hcloud_ssh_key_facts": result["hcloud_ssh_key_info"]}
         module.exit_json(ansible_facts=ansible_info)
     else:
-        ansible_info = {
-            'hcloud_ssh_key_info': result['hcloud_ssh_key_info']
-        }
+        ansible_info = {"hcloud_ssh_key_info": result["hcloud_ssh_key_info"]}
         module.exit_json(**ansible_info)
 
 

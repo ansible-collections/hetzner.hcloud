@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_network
 
@@ -64,7 +60,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic network
@@ -120,8 +116,8 @@ hcloud_network:
                 mylabel: 123
 """
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 
@@ -143,21 +139,14 @@ class AnsibleHcloudNetwork(Hcloud):
     def _get_network(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_network = self.client.networks.get_by_id(
-                    self.module.params.get("id")
-                )
+                self.hcloud_network = self.client.networks.get_by_id(self.module.params.get("id"))
             else:
-                self.hcloud_network = self.client.networks.get_by_name(
-                    self.module.params.get("name")
-                )
+                self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("name"))
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_network(self):
-
-        self.module.fail_on_missing_params(
-            required_params=["name", "ip_range"]
-        )
+        self.module.fail_on_missing_params(required_params=["name", "ip_range"])
         params = {
             "name": self.module.params.get("name"),
             "ip_range": self.module.params.get("ip_range"),
@@ -196,7 +185,10 @@ class AnsibleHcloudNetwork(Hcloud):
                 self._mark_as_changed()
 
             expose_routes_to_vswitch = self.module.params.get("expose_routes_to_vswitch")
-            if expose_routes_to_vswitch is not None and expose_routes_to_vswitch != self.hcloud_network.expose_routes_to_vswitch:
+            if (
+                expose_routes_to_vswitch is not None
+                and expose_routes_to_vswitch != self.hcloud_network.expose_routes_to_vswitch
+            ):
                 if not self.module.check_mode:
                     self.hcloud_network.update(expose_routes_to_vswitch=expose_routes_to_vswitch)
                 self._mark_as_changed()
@@ -244,7 +236,7 @@ class AnsibleHcloudNetwork(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['id', 'name']],
+            required_one_of=[["id", "name"]],
             supports_check_mode=True,
         )
 

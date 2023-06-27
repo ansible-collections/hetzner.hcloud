@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_load_balancer_network
 
@@ -49,7 +45,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic Load Balancer network
@@ -95,8 +91,8 @@ hcloud_load_balancer_network:
             sample: 10.0.0.8
 """
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 
@@ -122,9 +118,7 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
                 self.module.fail_json(msg="Network does not exist: %s" % network)
 
             load_balancer_name = self.module.params.get("load_balancer")
-            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(
-                load_balancer_name
-            )
+            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(load_balancer_name)
             if not self.hcloud_load_balancer:
                 self.module.fail_json(msg="Load balancer does not exist: %s" % load_balancer_name)
 
@@ -139,7 +133,7 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
 
     def _create_load_balancer_network(self):
         params = {
-            "network": self.hcloud_network
+            "network": self.hcloud_network,
         }
 
         if self.module.params.get("ip") is not None:
@@ -168,7 +162,8 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
             if not self.module.check_mode:
                 try:
                     self.hcloud_load_balancer.detach_from_network(
-                        self.hcloud_load_balancer_network.network).wait_until_finished()
+                        self.hcloud_load_balancer_network.network
+                    ).wait_until_finished()
                     self._mark_as_changed()
                 except Exception as e:
                     self.module.fail_json(msg=e.message)

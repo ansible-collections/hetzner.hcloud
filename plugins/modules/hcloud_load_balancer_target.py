@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_load_balancer_target
 
@@ -67,7 +63,7 @@ requirements:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a server Load Balancer target
@@ -139,12 +135,16 @@ hcloud_load_balancer_target:
             returned: always
 """
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 try:
-    from hcloud.load_balancers.domain import LoadBalancerTarget, LoadBalancerTargetLabelSelector, LoadBalancerTargetIP
+    from hcloud.load_balancers.domain import (
+        LoadBalancerTarget,
+        LoadBalancerTargetIP,
+        LoadBalancerTargetLabelSelector,
+    )
 except ImportError:
     LoadBalancerTarget = None
     LoadBalancerTargetLabelSelector = None
@@ -162,7 +162,7 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
         result = {
             "type": to_native(self.hcloud_load_balancer_target.type),
             "load_balancer": to_native(self.hcloud_load_balancer.name),
-            "use_private_ip": self.hcloud_load_balancer_target.use_private_ip
+            "use_private_ip": self.hcloud_load_balancer_target.use_private_ip,
         }
 
         if self.hcloud_load_balancer_target.type == "server":
@@ -176,9 +176,7 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
     def _get_load_balancer_and_target(self):
         try:
             load_balancer_name = self.module.params.get("load_balancer")
-            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(
-                load_balancer_name
-            )
+            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(load_balancer_name)
             if not self.hcloud_load_balancer:
                 self.module.fail_json(msg="Load balancer does not exist: %s" % load_balancer_name)
 
@@ -205,31 +203,29 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
                     self.hcloud_load_balancer_target = target
 
     def _create_load_balancer_target(self):
-        params = {
-            "target": None
-        }
+        params = {"target": None}
 
         if self.module.params.get("type") == "server":
-            self.module.fail_on_missing_params(
-                required_params=["server"]
+            self.module.fail_on_missing_params(required_params=["server"])
+            params["target"] = LoadBalancerTarget(
+                type=self.module.params.get("type"),
+                server=self.hcloud_server,
+                use_private_ip=self.module.params.get("use_private_ip"),
             )
-            params["target"] = LoadBalancerTarget(type=self.module.params.get("type"), server=self.hcloud_server,
-                                                  use_private_ip=self.module.params.get("use_private_ip"))
         elif self.module.params.get("type") == "label_selector":
-            self.module.fail_on_missing_params(
-                required_params=["label_selector"]
+            self.module.fail_on_missing_params(required_params=["label_selector"])
+            params["target"] = LoadBalancerTarget(
+                type=self.module.params.get("type"),
+                label_selector=LoadBalancerTargetLabelSelector(selector=self.module.params.get("label_selector")),
+                use_private_ip=self.module.params.get("use_private_ip"),
             )
-            params["target"] = LoadBalancerTarget(type=self.module.params.get("type"),
-                                                  label_selector=LoadBalancerTargetLabelSelector(
-                                                      selector=self.module.params.get("label_selector")),
-                                                  use_private_ip=self.module.params.get("use_private_ip"))
         elif self.module.params.get("type") == "ip":
-            self.module.fail_on_missing_params(
-                required_params=["ip"]
+            self.module.fail_on_missing_params(required_params=["ip"])
+            params["target"] = LoadBalancerTarget(
+                type=self.module.params.get("type"),
+                ip=LoadBalancerTargetIP(ip=self.module.params.get("ip")),
+                use_private_ip=False,
             )
-            params["target"] = LoadBalancerTarget(type=self.module.params.get("type"),
-                                                  ip=LoadBalancerTargetIP(ip=self.module.params.get("ip")),
-                                                  use_private_ip=False)
 
         if not self.module.check_mode:
             try:
@@ -257,26 +253,24 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
             if not self.module.check_mode:
                 target = None
                 if self.module.params.get("type") == "server":
-                    self.module.fail_on_missing_params(
-                        required_params=["server"]
-                    )
-                    target = LoadBalancerTarget(type=self.module.params.get("type"),
-                                                server=self.hcloud_server)
+                    self.module.fail_on_missing_params(required_params=["server"])
+                    target = LoadBalancerTarget(type=self.module.params.get("type"), server=self.hcloud_server)
                 elif self.module.params.get("type") == "label_selector":
-                    self.module.fail_on_missing_params(
-                        required_params=["label_selector"]
+                    self.module.fail_on_missing_params(required_params=["label_selector"])
+                    target = LoadBalancerTarget(
+                        type=self.module.params.get("type"),
+                        label_selector=LoadBalancerTargetLabelSelector(
+                            selector=self.module.params.get("label_selector")
+                        ),
+                        use_private_ip=self.module.params.get("use_private_ip"),
                     )
-                    target = LoadBalancerTarget(type=self.module.params.get("type"),
-                                                label_selector=LoadBalancerTargetLabelSelector(
-                                                    selector=self.module.params.get("label_selector")),
-                                                use_private_ip=self.module.params.get("use_private_ip"))
                 elif self.module.params.get("type") == "ip":
-                    self.module.fail_on_missing_params(
-                        required_params=["ip"]
+                    self.module.fail_on_missing_params(required_params=["ip"])
+                    target = LoadBalancerTarget(
+                        type=self.module.params.get("type"),
+                        ip=LoadBalancerTargetIP(ip=self.module.params.get("ip")),
+                        use_private_ip=False,
                     )
-                    target = LoadBalancerTarget(type=self.module.params.get("type"),
-                                                ip=LoadBalancerTargetIP(ip=self.module.params.get("ip")),
-                                                use_private_ip=False)
                 try:
                     self.hcloud_load_balancer.remove_target(target).wait_until_finished()
                 except Exception as e:

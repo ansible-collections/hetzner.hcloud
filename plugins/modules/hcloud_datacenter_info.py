@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_datacenter_info
 
@@ -34,7 +30,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Gather hcloud datacenter info
@@ -81,8 +77,8 @@ hcloud_datacenter_info:
             sample: fsn1
 """
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 
@@ -96,25 +92,23 @@ class AnsibleHcloudDatacenterInfo(Hcloud):
 
         for datacenter in self.hcloud_datacenter_info:
             if datacenter is not None:
-                tmp.append({
-                    "id": to_native(datacenter.id),
-                    "name": to_native(datacenter.name),
-                    "description": to_native(datacenter.description),
-                    "location": to_native(datacenter.location.name)
-                })
+                tmp.append(
+                    {
+                        "id": to_native(datacenter.id),
+                        "name": to_native(datacenter.name),
+                        "description": to_native(datacenter.description),
+                        "location": to_native(datacenter.location.name),
+                    }
+                )
 
         return tmp
 
     def get_datacenters(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_datacenter_info = [self.client.datacenters.get_by_id(
-                    self.module.params.get("id")
-                )]
+                self.hcloud_datacenter_info = [self.client.datacenters.get_by_id(self.module.params.get("id"))]
             elif self.module.params.get("name") is not None:
-                self.hcloud_datacenter_info = [self.client.datacenters.get_by_name(
-                    self.module.params.get("name")
-                )]
+                self.hcloud_datacenter_info = [self.client.datacenters.get_by_name(self.module.params.get("name"))]
             else:
                 self.hcloud_datacenter_info = self.client.datacenters.get_all()
 
@@ -127,7 +121,7 @@ class AnsibleHcloudDatacenterInfo(Hcloud):
             argument_spec=dict(
                 id={"type": "int"},
                 name={"type": "str"},
-                **Hcloud.base_module_arguments()
+                **Hcloud.base_module_arguments(),
             ),
             supports_check_mode=True,
         )
@@ -136,23 +130,23 @@ class AnsibleHcloudDatacenterInfo(Hcloud):
 def main():
     module = AnsibleHcloudDatacenterInfo.define_module()
 
-    is_old_facts = module._name == 'hcloud_datacenter_facts'
+    is_old_facts = module._name == "hcloud_datacenter_facts"
     if is_old_facts:
-        module.deprecate("The 'hcloud_datacenter_facts' module has been renamed to 'hcloud_datacenter_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.0.0', collection_name="hetzner.hcloud")
+        module.deprecate(
+            "The 'hcloud_datacenter_facts' module has been renamed to 'hcloud_datacenter_info', "
+            "and the renamed one no longer returns ansible_facts",
+            version="2.0.0",
+            collection_name="hetzner.hcloud",
+        )
     hcloud = AnsibleHcloudDatacenterInfo(module)
 
     hcloud.get_datacenters()
     result = hcloud.get_result()
     if is_old_facts:
-        ansible_info = {
-            'hcloud_datacenter_facts': result['hcloud_datacenter_info']
-        }
+        ansible_info = {"hcloud_datacenter_facts": result["hcloud_datacenter_info"]}
         module.exit_json(ansible_facts=ansible_info)
     else:
-        ansible_info = {
-            'hcloud_datacenter_info': result['hcloud_datacenter_info']
-        }
+        ansible_info = {"hcloud_datacenter_info": result["hcloud_datacenter_info"]}
         module.exit_json(**ansible_info)
 
 

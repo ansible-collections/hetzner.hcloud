@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: hcloud_ssh_key
 
@@ -55,7 +51,7 @@ options:
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
 
-'''
+"""
 
 EXAMPLES = """
 - name: Create a basic ssh_key
@@ -114,8 +110,8 @@ hcloud_ssh_key:
                 mylabel: 123
 """
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
+from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 
@@ -136,29 +132,21 @@ class AnsibleHcloudSSHKey(Hcloud):
     def _get_ssh_key(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_ssh_key = self.client.ssh_keys.get_by_id(
-                    self.module.params.get("id")
-                )
+                self.hcloud_ssh_key = self.client.ssh_keys.get_by_id(self.module.params.get("id"))
             elif self.module.params.get("fingerprint") is not None:
-                self.hcloud_ssh_key = self.client.ssh_keys.get_by_fingerprint(
-                    self.module.params.get("fingerprint")
-                )
+                self.hcloud_ssh_key = self.client.ssh_keys.get_by_fingerprint(self.module.params.get("fingerprint"))
             elif self.module.params.get("name") is not None:
-                self.hcloud_ssh_key = self.client.ssh_keys.get_by_name(
-                    self.module.params.get("name")
-                )
+                self.hcloud_ssh_key = self.client.ssh_keys.get_by_name(self.module.params.get("name"))
 
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
     def _create_ssh_key(self):
-        self.module.fail_on_missing_params(
-            required_params=["name", "public_key"]
-        )
+        self.module.fail_on_missing_params(required_params=["name", "public_key"])
         params = {
             "name": self.module.params.get("name"),
             "public_key": self.module.params.get("public_key"),
-            "labels": self.module.params.get("labels")
+            "labels": self.module.params.get("labels"),
         }
 
         if not self.module.check_mode:
@@ -172,9 +160,7 @@ class AnsibleHcloudSSHKey(Hcloud):
     def _update_ssh_key(self):
         name = self.module.params.get("name")
         if name is not None and self.hcloud_ssh_key.name != name:
-            self.module.fail_on_missing_params(
-                required_params=["id"]
-            )
+            self.module.fail_on_missing_params(required_params=["id"])
             if not self.module.check_mode:
                 self.hcloud_ssh_key.update(name=name)
             self._mark_as_changed()
@@ -220,8 +206,8 @@ class AnsibleHcloudSSHKey(Hcloud):
                 },
                 **Hcloud.base_module_arguments()
             ),
-            required_one_of=[['id', 'name', 'fingerprint']],
-            required_if=[['state', 'present', ['name']]],
+            required_one_of=[["id", "name", "fingerprint"]],
+            required_if=[["state", "present", ["name"]]],
             supports_check_mode=True,
         )
 
