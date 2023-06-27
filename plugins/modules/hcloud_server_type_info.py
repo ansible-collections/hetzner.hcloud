@@ -189,7 +189,7 @@ def main():
     is_old_facts = module._name == "hcloud_server_type_facts"
     if is_old_facts:
         module.deprecate(
-            "The 'hcloud_server_type_info' module has been renamed to 'hcloud_server_type_info', "
+            "The 'hcloud_server_type_facts' module has been renamed to 'hcloud_server_type_info', "
             "and the renamed one no longer returns ansible_facts",
             version="2.0.0",
             collection_name="hetzner.hcloud",
@@ -199,7 +199,12 @@ def main():
     hcloud.get_server_types()
     result = hcloud.get_result()
     if is_old_facts:
-        ansible_info = {"hcloud_server_type_info": result["hcloud_server_type_info"]}
+        ansible_info = {
+            "hcloud_server_type_facts": result["hcloud_server_type_info"],
+            # We keep the key with a naming mistake below to prevent a breaking changes.
+            # The entire module will be removed in v2.0.0
+            "hcloud_server_type_info": result["hcloud_server_type_info"],
+        }
         module.exit_json(ansible_facts=ansible_info)
     else:
         ansible_info = {"hcloud_server_type_info": result["hcloud_server_type_info"]}

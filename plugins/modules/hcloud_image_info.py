@@ -207,7 +207,12 @@ def main():
     result = hcloud.get_result()
 
     if is_old_facts:
-        ansible_info = {"hcloud_imagen_facts": result["hcloud_image_info"]}
+        ansible_info = {
+            "hcloud_image_facts": result["hcloud_image_info"],
+            # We keep the key with a typo below to prevent a breaking changes.
+            # The entire module will be removed in v2.0.0
+            "hcloud_imagen_facts": result["hcloud_image_info"],
+        }
         module.exit_json(ansible_facts=ansible_info)
     else:
         ansible_info = {"hcloud_image_info": result["hcloud_image_info"]}
