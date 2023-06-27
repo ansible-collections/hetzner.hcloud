@@ -81,10 +81,9 @@ hcloud_iso_info:
             type: str
             sample: x86
         type:
-            description: Type of the ISO.
+            description: Type of the ISO, can be one of `public`, `private`.
             returned: always
             type: str
-            choices: [public, private]
             sample: public
         deprecated:
             description: >
