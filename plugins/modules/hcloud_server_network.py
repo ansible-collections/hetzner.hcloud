@@ -111,8 +111,8 @@ hcloud_server_network:
             sample: [10.1.0.1, ...]
 """
 
-from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 
 try:
