@@ -1,0 +1,2 @@
+minor_changes:
+  - Drop support for ansible-core 2.12
