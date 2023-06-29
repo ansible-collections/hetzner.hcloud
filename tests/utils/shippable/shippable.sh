@@ -77,7 +77,8 @@ fi
 retry ansible-galaxy -vvv collection install community.general
 retry ansible-galaxy -vvv collection install ansible.netcommon
 
-retry pip install hcloud
+retry pip install python-dateutil
+retry pip install requests
 retry pip install netaddr --disable-pip-version-check
 retry ansible-galaxy -vvv collection install community.internal_test_tools
 # END: HACK
