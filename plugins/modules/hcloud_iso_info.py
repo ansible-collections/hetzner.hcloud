@@ -25,7 +25,7 @@ options:
         type: int
     name:
         description:
-            - The description of the ISO you want to get.
+            - The name of the ISO you want to get.
         type: str
     architecture:
         description:
