@@ -77,7 +77,7 @@ hcloud_iso_info:
             description: >
                 Type of cpu architecture this ISO is compatible with.
                 None indicates no restriction on the architecture (wildcard).
-            returned: when relevant
+            returned: when supported
             type: str
             sample: x86
         type:
