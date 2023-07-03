@@ -19,7 +19,7 @@ from textwrap import dedent
 logger = logging.getLogger("vendor")
 
 HCLOUD_SOURCE_URL = "https://github.com/hetznercloud/hcloud-python"
-HCLOUD_VERSION = "main"
+HCLOUD_VERSION = "v1.24.0"
 HCLOUD_VENDOR_PATH = "plugins/module_utils/vendor/hcloud"
 
 
