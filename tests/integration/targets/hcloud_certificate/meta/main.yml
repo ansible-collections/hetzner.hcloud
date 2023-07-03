@@ -1,5 +1,3 @@
+---
 dependencies:
   - setup_selfsigned_certificate
-collections:
-  - community.general.ipfilter
-  - hetzner.cloud
