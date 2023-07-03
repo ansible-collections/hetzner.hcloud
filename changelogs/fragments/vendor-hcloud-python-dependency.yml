@@ -1,0 +1,5 @@
+major_changes:
+  - Bundle hcloud python dependency inside the collection
+breaking_changes:
+  - python-dateutil >= 2.7.5 is now required by the collection
+  - requests >= 2.20 is now required by the collection
