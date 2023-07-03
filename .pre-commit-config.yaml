@@ -53,3 +53,11 @@ repos:
         entry: antsibull-changelog lint
         pass_filenames: false
         files: ^changelogs/.*$
+
+      - id: check-hcloud-vendor
+        name: check hcloud vendor
+        description: Ensure the hcloud vendored files are in sync
+        language: python
+        entry: python3 scripts/vendor.py
+        pass_filenames: false
+        files: ^scripts/vendor.py$
