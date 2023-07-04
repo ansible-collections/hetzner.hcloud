@@ -41,3 +41,14 @@ repos:
     rev: 23.3.0
     hooks:
       - id: black
+
+  - repo: local
+    hooks:
+      - id: antsibull-changelog-lint
+        name: antsibull-changelog lint
+        language: python
+        additional_dependencies:
+          - antsibull-changelog==0.21.0
+        entry: antsibull-changelog lint
+        pass_filenames: false
+        files: ^changelogs/.*$
