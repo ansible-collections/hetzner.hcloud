@@ -142,10 +142,11 @@ class AnsibleHcloudLoadBalancerTypeInfo(Hcloud):
 
 def main():
     module = AnsibleHcloudLoadBalancerTypeInfo.define_module()
-
     hcloud = AnsibleHcloudLoadBalancerTypeInfo(module)
+
     hcloud.get_load_balancer_types()
     result = hcloud.get_result()
+
     ansible_info = {"hcloud_load_balancer_type_info": result["hcloud_load_balancer_type_info"]}
     module.exit_json(**ansible_info)
 

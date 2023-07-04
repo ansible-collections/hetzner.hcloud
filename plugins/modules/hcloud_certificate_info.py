@@ -142,8 +142,8 @@ class AnsibleHcloudCertificateInfo(Hcloud):
 
 def main():
     module = AnsibleHcloudCertificateInfo.define_module()
-
     hcloud = AnsibleHcloudCertificateInfo(module)
+
     hcloud.get_certificates()
     result = hcloud.get_result()
 
