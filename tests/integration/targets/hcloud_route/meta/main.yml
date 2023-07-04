@@ -1,3 +1,0 @@
-collections:
-  - ansible.netcommon
-  - hetzner.cloud
