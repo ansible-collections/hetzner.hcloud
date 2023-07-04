@@ -127,6 +127,19 @@ releases:
     fragments:
     - add-field-expose_routes_to_vswitch.yml
     release_date: '2023-06-22'
+  1.15.0:
+    changes:
+      bugfixes:
+      - hcloud_image_info Fix facts modules deprecated result key
+      - hcloud_location_info Fix facts modules deprecation warnings
+      - hcloud_server_type_info Fix facts modules deprecated result dict
+      - hcloud_server_type_info Fix facts modules deprecation warnings
+      minor_changes:
+      - hcloud_iso_info Create hcloud_iso_info module
+    fragments:
+    - add-hcloud_iso_info-module.yml
+    - fix-facts-modules-deprecation.yml
+    release_date: '2023-07-04'
   1.2.0:
     changes:
       minor_changes:
