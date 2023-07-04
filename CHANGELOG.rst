@@ -5,6 +5,22 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.15.0
+=======
+
+Minor Changes
+-------------
+
+- hcloud_iso_info Create hcloud_iso_info module
+
+Bugfixes
+--------
+
+- hcloud_image_info Fix facts modules deprecated result key
+- hcloud_location_info Fix facts modules deprecation warnings
+- hcloud_server_type_info Fix facts modules deprecated result dict
+- hcloud_server_type_info Fix facts modules deprecation warnings
+
 v1.14.0
 =======
 
