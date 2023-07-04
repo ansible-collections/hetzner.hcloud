@@ -106,7 +106,8 @@ hcloud_server_network:
             sample: 10.0.0.8
         alias_ips:
             description: Alias IPs of the server within the Network ip range
-            type: str
+            type: list
+            elements: str
             returned: always
             sample: [10.1.0.1, ...]
 """
