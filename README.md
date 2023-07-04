@@ -55,11 +55,29 @@ ansible-test integration --color --local  -vvv hcloud_server // Executed all int
 
 ## Releasing a new version
 
-### Generating changelog from fragments
-
-1. Check if the changelog fragments are available (there should be files in `changelogs/fragments`)
-2. Run `antsibull-changelog release --version <version>`, it should remove all fragments and change
-   the `changelogs/changlog.yaml` and `CHANGELOG.rst`
-3. Push the changes to the main branch
-4. Tag the release through the Github UI, after this the Github Actions will run and publish the collection to Ansible
-   Galaxy
+1. Make sure your local `main` branch is in a clean state and is up to date.
+2. Define a new version:
+   ```sh
+   export HCLOUD_VERSION=1.15.0
+   ```
+3. Create a release branch:
+   ```sh
+   git checkout -b "release-$HCLOUD_VERSION"
+   git commit --allow-empty -m "chore: prepare v$HCLOUD_VERSION"
+   ```
+4. Generate the changelog for the new version, it should remove all fragments and change
+   the `changelogs/changelog.yaml` and `CHANGELOG.rst`:
+   ```sh
+   antsibull-changelog release --version "$HCLOUD_VERSION"
+   git add changelogs/changelog.yaml changelogs/fragments CHANGELOG.rst
+   git commit -m "regenerate changelog"
+   ```
+5. Update the `version` in the ansible galaxy metadata file:
+   ```sh
+   sed -i "s/^version: .*/version: $HCLOUD_VERSION/" galaxy.yml
+   git add galaxy.yml
+   git commit -m "bump galaxy version"
+   ```
+6. Push the changes to Github, open a Pull Request and follow the process to get the PR merged into `main`.
+7. Once the PR is merged, tag the release through the Github UI, after this the Github Actions will run and publish the collection to Ansible
+   Galaxy.
