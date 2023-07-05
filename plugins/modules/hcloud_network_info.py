@@ -277,10 +277,11 @@ class AnsibleHcloudNetworkInfo(Hcloud):
 
 def main():
     module = AnsibleHcloudNetworkInfo.define_module()
-
     hcloud = AnsibleHcloudNetworkInfo(module)
+
     hcloud.get_networks()
     result = hcloud.get_result()
+
     info = {"hcloud_network_info": result["hcloud_network_info"]}
     module.exit_json(**info)
 

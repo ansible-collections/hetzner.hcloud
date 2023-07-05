@@ -10,8 +10,6 @@ module: hcloud_ssh_key_info
 short_description: Gather infos about your Hetzner Cloud ssh_keys.
 description:
     - Gather facts about your Hetzner Cloud ssh_keys.
-    - This module was called C(hcloud_ssh_key_facts) before Ansible 2.9, returning C(ansible_facts) and C(hcloud_ssh_key_facts).
-      Note that the M(hetzner.hcloud.hcloud_ssh_key_info) module no longer returns C(ansible_facts) and the value was renamed to C(hcloud_ssh_key_info)!
 author:
     - Christopher Schmitt (@cschmitt-hcloud)
 options:
@@ -138,26 +136,13 @@ class AnsibleHcloudSSHKeyInfo(Hcloud):
 
 def main():
     module = AnsibleHcloudSSHKeyInfo.define_module()
-
-    is_old_facts = module._name == "hcloud_ssh_key_facts"
-    if is_old_facts:
-        module.deprecate(
-            "The 'hcloud_ssh_key_facts' module has been renamed to 'hcloud_ssh_key_info', "
-            "and the renamed one no longer returns ansible_facts",
-            version="2.0.0",
-            collection_name="hetzner.hcloud",
-        )
-
     hcloud = AnsibleHcloudSSHKeyInfo(module)
+
     hcloud.get_ssh_keys()
     result = hcloud.get_result()
 
-    if is_old_facts:
-        ansible_info = {"hcloud_ssh_key_facts": result["hcloud_ssh_key_info"]}
-        module.exit_json(ansible_facts=ansible_info)
-    else:
-        ansible_info = {"hcloud_ssh_key_info": result["hcloud_ssh_key_info"]}
-        module.exit_json(**ansible_info)
+    ansible_info = {"hcloud_ssh_key_info": result["hcloud_ssh_key_info"]}
+    module.exit_json(**ansible_info)
 
 
 if __name__ == "__main__":

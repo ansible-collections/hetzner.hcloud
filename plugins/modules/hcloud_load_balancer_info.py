@@ -378,8 +378,8 @@ class AnsibleHcloudLoadBalancerInfo(Hcloud):
 
 def main():
     module = AnsibleHcloudLoadBalancerInfo.define_module()
-
     hcloud = AnsibleHcloudLoadBalancerInfo(module)
+
     hcloud.get_load_balancers()
     result = hcloud.get_result()
 

@@ -1,0 +1,9 @@
+removed_features:
+  - hcloud_datacenter_facts Removed deprecated facts module
+  - hcloud_floating_ip_facts Removed deprecated facts module
+  - hcloud_image_facts Removed deprecated facts module
+  - hcloud_location_facts Removed deprecated facts module
+  - hcloud_server_facts Removed deprecated facts module
+  - hcloud_server_type_facts Removed deprecated facts module
+  - hcloud_ssh_key_facts Removed deprecated facts module
+  - hcloud_volume_facts Removed deprecated facts module

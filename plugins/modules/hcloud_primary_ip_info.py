@@ -185,7 +185,6 @@ class AnsibleHcloudPrimaryIPInfo(Hcloud):
 
 def main():
     module = AnsibleHcloudPrimaryIPInfo.define_module()
-
     hcloud = AnsibleHcloudPrimaryIPInfo(module)
 
     hcloud.get_primary_ips()
