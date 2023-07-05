@@ -6,7 +6,7 @@ try:
 except ImportError:
     requests = None
 
-from .__version__ import VERSION
+from ._version import VERSION
 from ._exceptions import APIException
 from .actions.client import ActionsClient
 from .certificates.client import CertificatesClient
