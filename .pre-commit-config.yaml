@@ -43,17 +43,14 @@ repos:
     hooks:
       - id: black
 
-  - repo: local
+  - repo: https://github.com/ansible-community/antsibull-changelog
+    rev: 0.22.0
     hooks:
       - id: antsibull-changelog-lint
-        name: antsibull-changelog lint
-        language: python
-        additional_dependencies:
-          - antsibull-changelog==0.21.0
-        entry: antsibull-changelog lint
-        pass_filenames: false
-        files: ^changelogs/.*$
+      - id: antsibull-changelog-lint-changelog-yaml
 
+  - repo: local
+    hooks:
       - id: check-hcloud-vendor
         name: check hcloud vendor
         description: Ensure the hcloud vendored files are in sync
