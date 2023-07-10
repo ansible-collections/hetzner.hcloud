@@ -1,22 +1,19 @@
 trigger:
   batch: true
   branches:
-    include:
-      - main
+    include: [main, stable-1]
 
 pr:
   autoCancel: true
   branches:
-    include:
-      - main
+    include: [main, stable-1]
 
 schedules:
   - cron: 0 9 * * *
     displayName: Nightly
     always: true
     branches:
-      include:
-        - main
+      include: [main, stable-1]
 
 variables:
   - name: checkoutPath
