@@ -2,7 +2,7 @@ release_summary: |
   This release bundles the hcloud dependency in the collection, this allows us to ship
   new features or bug fixes without having to release new major versions and require the
   users to upgrade their version of the hcloud dependency.
-major_changes:
+minor_changes:
   - Bundle hcloud python dependency inside the collection.
   - >
     python-dateutil >= 2.7.5 is now required by the collection. If you already have the
