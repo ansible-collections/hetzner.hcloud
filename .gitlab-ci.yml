@@ -1,10 +1,15 @@
+include:
+  - project: cloud/integrations/ci
+    file:
+      - default.yml
+
 stages:
   - lint
   - sanity
   - integration
 
 variables:
-  PYTHON_VERSION: "3.9"
+  PYTHON_VERSION: "3.10"
 
 default:
   image: python:$PYTHON_VERSION
