@@ -90,11 +90,9 @@ hcloud_route:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
-
-try:
-    from hcloud.networks.domain import NetworkRoute
-except ImportError:
-    NetworkRoute = None
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.networks.domain import (
+    NetworkRoute,
+)
 
 
 class AnsibleHcloudRoute(Hcloud):

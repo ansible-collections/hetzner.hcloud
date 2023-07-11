@@ -24,4 +24,6 @@ fi
 # shellcheck disable=SC2086
 ansible-test sanity --color -v --junit ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} \
     --docker --base-branch "${base_branch}" \
+    --exclude plugins/module_utils/vendor/ \
+    --exclude scripts/ \
     --allow-disabled

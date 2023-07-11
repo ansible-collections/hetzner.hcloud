@@ -5,13 +5,20 @@
 
 from ansible.module_utils.ansible_release import __version__
 from ansible.module_utils.basic import env_fallback, missing_required_lib
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor import hcloud
+
+HAS_REQUESTS = True
+HAS_DATEUTIL = True
 
 try:
-    import hcloud
-
-    HAS_HCLOUD = True
+    import requests  # pylint: disable=unused-import
 except ImportError:
-    HAS_HCLOUD = False
+    HAS_REQUESTS = False
+
+try:
+    import dateutil  # pylint: disable=unused-import
+except ImportError:
+    HAS_DATEUTIL = False
 
 
 class Hcloud:
@@ -19,8 +26,10 @@ class Hcloud:
         self.module = module
         self.represent = represent
         self.result = {"changed": False, self.represent: None}
-        if not HAS_HCLOUD:
-            module.fail_json(msg=missing_required_lib("hcloud-python"))
+        if not HAS_REQUESTS:
+            module.fail_json(msg=missing_required_lib("requests"))
+        if not HAS_DATEUTIL:
+            module.fail_json(msg=missing_required_lib("python-dateutil"))
         self._build_client()
 
     def _build_client(self):
