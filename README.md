@@ -13,6 +13,10 @@ This collection depends on the [hcloud](https://github.com/hetznercloud/hcloud-p
 
 See [here](https://github.com/ansible-collections/hetzner.hcloud/tree/master/CHANGELOG.rst).
 
+### Release policy
+
+The `main` branch is used for the development of the latest versions of the collections, and may contain breaking changes. The `stable-*` branches (e.g. `stable-1` for the `1.x.y` releases) are used to cut additional minor or patch releases if needed, but we do not provide official support for multiple versions of the collection.
+
 ## Documentation
 
 The documentation for all modules are available through `ansible-doc`.
