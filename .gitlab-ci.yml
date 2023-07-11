@@ -1,5 +1,10 @@
+include:
+  - project: cloud/integrations/ci
+    file:
+      - default.yml
+      - pre-commit.yml
+
 stages:
-  - lint
   - sanity
   - integration
 
@@ -8,16 +13,6 @@ variables:
 
 default:
   image: python:$PYTHON_VERSION
-
-pre-commit:
-  stage: lint
-
-  image: python:3.11-alpine
-  before_script:
-    - apk add build-base git
-    - pip install pre-commit
-  script:
-    - pre-commit run --all-files --show-diff-on-failure
 
 sanity:
   stage: sanity
