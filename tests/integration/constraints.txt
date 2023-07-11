@@ -1,1 +1,2 @@
-hcloud >= 1.10.0 # minimum version
+python-dateutil>=2.7.5
+requests>=2.20

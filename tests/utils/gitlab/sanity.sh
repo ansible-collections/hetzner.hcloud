@@ -43,5 +43,7 @@ pip install pylint==2.5.3
 # shellcheck disable=SC2086
 ansible-test sanity --color -v --junit ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHANGED"} \
     --base-branch "${base_branch}" \
+    --exclude plugins/module_utils/vendor/ \
+    --exclude scripts/ \
     --exclude tests/utils/ \
     "${options[@]}" --allow-disabled
