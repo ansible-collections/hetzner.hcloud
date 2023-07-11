@@ -121,13 +121,11 @@ from ansible.errors import AnsibleError
 from ansible.module_utils.common.text.converters import to_native
 from ansible.plugins.inventory import BaseInventoryPlugin, Constructable
 from ansible.release import __version__
-
-try:
-    from hcloud import APIException, hcloud
-
-    HAS_HCLOUD = True
-except ImportError:
-    HAS_HCLOUD = False
+from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import (
+    HAS_DATEUTIL,
+    HAS_REQUESTS,
+)
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor import hcloud
 
 
 class InventoryModule(BaseInventoryPlugin, Constructable):
@@ -159,7 +157,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
             # We test the API Token against the location API, because this is the API with the smallest result
             # and not controllable from the customer.
             self.client.locations.get_all()
-        except APIException:
+        except hcloud.APIException:
             raise AnsibleError("Invalid Hetzner Cloud API Token.")
 
     def _get_servers(self):
@@ -177,7 +175,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                 self.network = self.client.networks.get_by_name(network)
                 if self.network is None:
                     self.network = self.client.networks.get_by_id(network)
-            except APIException:
+            except hcloud.APIException:
                 raise AnsibleError("The given network is not found.")
 
             tmp = []
@@ -322,8 +320,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
     def parse(self, inventory, loader, path, cache=True):
         super().parse(inventory, loader, path, cache)
 
-        if not HAS_HCLOUD:
-            raise AnsibleError("The Hetzner Cloud dynamic inventory plugin requires hcloud-python.")
+        if not HAS_REQUESTS:
+            raise AnsibleError("The Hetzner Cloud dynamic inventory plugin requires requests.")
+        if not HAS_DATEUTIL:
+            raise AnsibleError("The Hetzner Cloud dynamic inventory plugin requires python-dateutil.")
 
         self._read_config_data(path)
         self._configure_hcloud_client()

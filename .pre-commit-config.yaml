@@ -1,6 +1,7 @@
 ---
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+exclude: ^plugins/module_utils/vendor/hcloud/.*$
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
@@ -52,3 +53,11 @@ repos:
         entry: antsibull-changelog lint
         pass_filenames: false
         files: ^changelogs/.*$
+
+      - id: check-hcloud-vendor
+        name: check hcloud vendor
+        description: Ensure the hcloud vendored files are in sync
+        language: python
+        entry: python3 scripts/vendor.py
+        pass_filenames: false
+        files: ^scripts/vendor.py$

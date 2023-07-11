@@ -282,17 +282,15 @@ hcloud_load_balancer_service:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
-
-try:
-    from hcloud import APIException
-    from hcloud.load_balancers.domain import (
-        LoadBalancerHealtCheckHttp,
-        LoadBalancerHealthCheck,
-        LoadBalancerService,
-        LoadBalancerServiceHttp,
-    )
-except ImportError:
-    APIException = None
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+    APIException,
+)
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.load_balancers.domain import (
+    LoadBalancerHealtCheckHttp,
+    LoadBalancerHealthCheck,
+    LoadBalancerService,
+    LoadBalancerServiceHttp,
+)
 
 
 class AnsibleHcloudLoadBalancerService(Hcloud):
