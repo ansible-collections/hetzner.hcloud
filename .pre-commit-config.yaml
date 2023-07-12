@@ -28,7 +28,7 @@ repos:
         exclude: ^changelogs/changelog.yaml$
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.7.0
+    rev: v3.9.0
     hooks:
       - id: pyupgrade
         args: [--py37-plus]
