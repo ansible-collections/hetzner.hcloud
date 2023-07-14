@@ -140,6 +140,30 @@ releases:
     - add-hcloud_iso_info-module.yml
     - fix-facts-modules-deprecation.yml
     release_date: '2023-07-04'
+  1.16.0:
+    changes:
+      minor_changes:
+      - Bundle hcloud python dependency inside the collection.
+      - 'python-dateutil >= 2.7.5 is now required by the collection. If you already
+        have the hcloud package installed, this dependency should also be installed.
+
+        '
+      - 'requests >= 2.20 is now required by the collection. If you already have the
+        hcloud package installed, this dependency should also be installed.
+
+        '
+      release_summary: 'This release bundles the hcloud dependency in the collection,
+        this allows us to ship
+
+        new features or bug fixes without having to release new major versions and
+        require the
+
+        users to upgrade their version of the hcloud dependency.
+
+        '
+    fragments:
+    - vendor-hcloud-python-dependency.yml
+    release_date: '2023-07-13'
   1.2.0:
     changes:
       minor_changes:
