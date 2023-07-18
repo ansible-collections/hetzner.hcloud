@@ -5,6 +5,24 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v1.16.0
+=======
+
+Release Summary
+---------------
+
+This release bundles the hcloud dependency in the collection, this allows us to ship
+new features or bug fixes without having to release new major versions and require the
+users to upgrade their version of the hcloud dependency.
+
+
+Minor Changes
+-------------
+
+- Bundle hcloud python dependency inside the collection.
+- python-dateutil >= 2.7.5 is now required by the collection. If you already have the hcloud package installed, this dependency should also be installed.
+- requests >= 2.20 is now required by the collection. If you already have the hcloud package installed, this dependency should also be installed.
+
 v1.15.0
 =======
 
