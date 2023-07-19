@@ -1,5 +1,7 @@
-#!/usr/bin/env python
-"""Verify the currently executing Shippable test matrix matches the one defined in the "shippable.yml" file."""
+#!/usr/bin/env python3
+
+"""Verify the currently executing Shippable test matrix matches the one defined in the "shippable.yml" file.
+"""
 
 
 import datetime
@@ -8,18 +10,12 @@ import os
 import re
 import sys
 import time
+from urllib.request import urlopen
 
 try:
     from typing import NoReturn
 except ImportError:
     NoReturn = None
-
-try:
-    # noinspection PyCompatibility
-    from urllib2 import urlopen  # pylint: disable=ansible-bad-import-from
-except ImportError:
-    # noinspection PyCompatibility
-    from urllib.request import urlopen
 
 
 def main():  # type: () -> None
