@@ -95,6 +95,9 @@ hcloud_floating_ip_info:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+    HCloudException,
+)
 
 
 class AnsibleHcloudFloatingIPInfo(Hcloud):
@@ -137,8 +140,8 @@ class AnsibleHcloudFloatingIPInfo(Hcloud):
             else:
                 self.hcloud_floating_ip_info = self.client.floating_ips.get_all()
 
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     @staticmethod
     def define_module():

@@ -111,6 +111,9 @@ hcloud_image_info:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+    HCloudException,
+)
 
 
 class AnsibleHcloudImageInfo(Hcloud):
@@ -170,8 +173,8 @@ class AnsibleHcloudImageInfo(Hcloud):
 
                 self.hcloud_image_info = self.client.images.get_all(**params)
 
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     @staticmethod
     def define_module():

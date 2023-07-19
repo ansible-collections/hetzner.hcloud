@@ -3,8 +3,11 @@
 # Simplified BSD License (see licenses/simplified_bsd.txt or https://opensource.org/licenses/BSD-2-Clause)
 
 
+import traceback
+
 from ansible.module_utils.ansible_release import __version__
 from ansible.module_utils.basic import env_fallback, missing_required_lib
+from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor import hcloud
 
 HAS_REQUESTS = True
@@ -31,6 +34,30 @@ class Hcloud:
         if not HAS_DATEUTIL:
             module.fail_json(msg=missing_required_lib("python-dateutil"))
         self._build_client()
+
+    def fail_json_hcloud(self, exception, msg=None, params=None, **kwargs):
+        last_traceback = traceback.format_exc()
+
+        failure = {}
+
+        if params is not None:
+            failure["params"] = params
+
+        if isinstance(exception, hcloud.APIException):
+            failure["message"] = exception.message
+            failure["code"] = exception.code
+            failure["details"] = exception.details
+
+        elif isinstance(exception, hcloud.actions.domain.ActionException):
+            failure["action"] = {k: getattr(exception.action, k) for k in exception.action.__slots__}
+
+        exception_message = to_native(exception)
+        if msg is not None:
+            msg = f"{exception_message}: {msg}"
+        else:
+            msg = exception_message
+
+        self.module.fail_json(msg=msg, exception=last_traceback, failure=failure, **kwargs)
 
     def _build_client(self):
         self.client = hcloud.Client(

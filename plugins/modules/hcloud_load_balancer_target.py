@@ -138,6 +138,10 @@ hcloud_load_balancer_target:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+    APIException,
+    HCloudException,
+)
 from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.load_balancers.domain import (
     LoadBalancerTarget,
     LoadBalancerTargetIP,
@@ -181,8 +185,8 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
                     self.module.fail_json(msg="Server not found: %s" % server_name)
 
             self.hcloud_load_balancer_target = None
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def _get_load_balancer_target(self):
         for target in self.hcloud_load_balancer.targets:
@@ -224,11 +228,13 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_load_balancer.add_target(**params).wait_until_finished()
-            except Exception as e:
+            except APIException as e:
                 if e.code == "locked" or e.code == "conflict":
                     self._create_load_balancer_target()
                 else:
-                    self.module.fail_json(msg=e.message)
+                    self.fail_json_hcloud(e)
+            except HCloudException as e:
+                self.fail_json_hcloud(e)
 
         self._mark_as_changed()
         self._get_load_balancer_and_target()
@@ -267,8 +273,8 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
                     )
                 try:
                     self.hcloud_load_balancer.remove_target(target).wait_until_finished()
-                except Exception as e:
-                    self.module.fail_json(msg=e.message)
+                except HCloudException as e:
+                    self.fail_json_hcloud(e)
             self._mark_as_changed()
         self.hcloud_load_balancer_target = None
 

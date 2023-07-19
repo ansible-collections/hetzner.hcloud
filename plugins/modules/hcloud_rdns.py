@@ -140,6 +140,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+    HCloudException,
+)
 
 
 class AnsibleHcloudReverseDNS(Hcloud):
@@ -185,8 +188,8 @@ class AnsibleHcloudReverseDNS(Hcloud):
                 self.hcloud_resource = self.client.load_balancers.get_by_name(self.module.params.get("load_balancer"))
                 if self.hcloud_resource is None:
                     self.module.fail_json(msg="The selected Load Balancer does not exist")
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def _get_rdns(self):
         ip_address = self.module.params.get("ip_address")
@@ -266,8 +269,8 @@ class AnsibleHcloudReverseDNS(Hcloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
-            except Exception as e:
-                self.module.fail_json(msg=e.message)
+            except HCloudException as e:
+                self.fail_json_hcloud(e)
         self._mark_as_changed()
         self._get_resource()
         self._get_rdns()
@@ -283,8 +286,8 @@ class AnsibleHcloudReverseDNS(Hcloud):
             if not self.module.check_mode:
                 try:
                     self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
-                except Exception as e:
-                    self.module.fail_json(msg=e.message)
+                except HCloudException as e:
+                    self.fail_json_hcloud(e)
             self._mark_as_changed()
             self._get_resource()
             self._get_rdns()
@@ -304,8 +307,8 @@ class AnsibleHcloudReverseDNS(Hcloud):
             if not self.module.check_mode:
                 try:
                     self.hcloud_resource.change_dns_ptr(ip=self.hcloud_rdns["ip_address"], dns_ptr=None)
-                except Exception as e:
-                    self.module.fail_json(msg=e.message)
+                except HCloudException as e:
+                    self.fail_json_hcloud(e)
             self._mark_as_changed()
         self.hcloud_rdns = None
 

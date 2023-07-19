@@ -119,6 +119,9 @@ hcloud_network:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+    HCloudException,
+)
 
 
 class AnsibleHcloudNetwork(Hcloud):
@@ -142,8 +145,8 @@ class AnsibleHcloudNetwork(Hcloud):
                 self.hcloud_network = self.client.networks.get_by_id(self.module.params.get("id"))
             else:
                 self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("name"))
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def _create_network(self):
         self.module.fail_on_missing_params(required_params=["name", "ip_range"])
@@ -165,8 +168,8 @@ class AnsibleHcloudNetwork(Hcloud):
                 if delete_protection is not None:
                     self._get_network()
                     self.hcloud_network.change_protection(delete=delete_protection).wait_until_finished()
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
         self._mark_as_changed()
         self._get_network()
 
@@ -198,8 +201,8 @@ class AnsibleHcloudNetwork(Hcloud):
                 if not self.module.check_mode:
                     self.hcloud_network.change_protection(delete=delete_protection).wait_until_finished()
                 self._mark_as_changed()
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
         self._get_network()
 
     def present_network(self):
@@ -216,8 +219,8 @@ class AnsibleHcloudNetwork(Hcloud):
                 if not self.module.check_mode:
                     self.client.networks.delete(self.hcloud_network)
                 self._mark_as_changed()
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
         self.hcloud_network = None
 
     @staticmethod
