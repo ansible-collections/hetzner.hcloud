@@ -7,7 +7,7 @@ Ansible Hetzner Cloud Collection for controlling your Hetzner Cloud Resources.
 
 ### Python version compatibility
 
-This collection depends on the [hcloud](https://github.com/hetznercloud/hcloud-python) library. Due to the [hcloud](https://github.com/hetznercloud/hcloud-python) Python Support Policy this collection requires Python 3.7 or greater.
+This collection depends on the [hcloud](https://github.com/hetznercloud/hcloud-python) library. Due to the [hcloud](https://github.com/hetznercloud/hcloud-python) Python Support Policy this collection requires Python 3.8 or greater.
 
 ## Release notes
 
