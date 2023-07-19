@@ -26,4 +26,5 @@ ansible-test sanity --color -v --junit ${COVERAGE:+"$COVERAGE"} ${CHANGED:+"$CHA
     --docker --base-branch "${base_branch}" \
     --exclude plugins/module_utils/vendor/ \
     --exclude scripts/ \
+    --exclude tests/utils/ \
     --allow-disabled
