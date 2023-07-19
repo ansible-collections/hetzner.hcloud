@@ -36,7 +36,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud sshkey infos
-  hcloud_ssh_key_info:
+  hetzner.hcloud.hcloud_ssh_key_info:
   register: output
 - name: Print the gathered infos
   debug:

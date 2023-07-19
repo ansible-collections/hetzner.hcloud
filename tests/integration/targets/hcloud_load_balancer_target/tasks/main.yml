@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup server
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{hcloud_server_name}}"
     server_type: cx11
     image: ubuntu-22.04
@@ -15,7 +15,7 @@
       - server is success
 
 - name: setup load_balancer
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{hcloud_load_balancer_name}}"
     load_balancer_type: lb11
     state: present
@@ -53,7 +53,7 @@
       - "result.msg == 'Server not found: does-not-exist'"
 
 - name: test create load_balancer target with checkmode
-  hcloud_load_balancer_target:
+  hetzner.hcloud.hcloud_load_balancer_target:
     type: "server"
     load_balancer: "{{hcloud_load_balancer_name}}"
     server: "{{hcloud_server_name}}"
@@ -66,7 +66,7 @@
       - result is changed
 
 - name: test create load_balancer target
-  hcloud_load_balancer_target:
+  hetzner.hcloud.hcloud_load_balancer_target:
     type: "server"
     load_balancer: "{{hcloud_load_balancer_name}}"
     server: "{{hcloud_server_name}}"
@@ -81,7 +81,7 @@
       - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
 
 - name: test create load_balancer target idempotency
-  hcloud_load_balancer_target:
+  hetzner.hcloud.hcloud_load_balancer_target:
     type: "server"
     load_balancer: "{{hcloud_load_balancer_name}}"
     server: "{{hcloud_server_name}}"
@@ -93,7 +93,7 @@
       - load_balancer_target is not changed
 
 - name: test absent load_balancer target
-  hcloud_load_balancer_target:
+  hetzner.hcloud.hcloud_load_balancer_target:
     type: "server"
     load_balancer: "{{hcloud_load_balancer_name}}"
     server: "{{hcloud_server_name}}"
@@ -105,7 +105,7 @@
       - result is changed
 
 - name: test create label_selector target
-  hcloud_load_balancer_target:
+  hetzner.hcloud.hcloud_load_balancer_target:
     type: "label_selector"
     load_balancer: "{{hcloud_load_balancer_name}}"
     label_selector: "application=backend"
@@ -120,7 +120,7 @@
       - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
 
 - name: test create ip target
-  hcloud_load_balancer_target:
+  hetzner.hcloud.hcloud_load_balancer_target:
     type: "ip"
     load_balancer: "{{hcloud_load_balancer_name}}"
     ip: "{{hcloud_testing_ip}}"
@@ -135,7 +135,7 @@
       - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
 
 - name: cleanup load_balancer
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result
@@ -144,7 +144,7 @@
   delay: 2
 
 - name: cleanup
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{hcloud_server_name}}"
     state: absent
   register: result

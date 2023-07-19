@@ -64,13 +64,13 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic network
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: my-network
     ip_range: 10.0.0.0/8
     state: present
 
 - name: Ensure the Network is absent (remove if needed)
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: my-network
     state: absent
 """

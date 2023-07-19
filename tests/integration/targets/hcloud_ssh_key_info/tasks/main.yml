@@ -2,13 +2,13 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup ensure ssh key is absent
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     name: "{{ hcloud_ssh_key_name }}"
     state: absent
   register: result
 
 - name: setup test ssh_key
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     name: "{{hcloud_ssh_key_name}}"
     public_key: "{{ key_material }}"
     labels:
@@ -21,7 +21,7 @@
       - result.hcloud_ssh_key.public_key == "{{ key_material }}"
 
 - name: test gather hcloud ssh key infos in check mode
-  hcloud_ssh_key_info:
+  hetzner.hcloud.hcloud_ssh_key_info:
   register: hcloud_ssh_key
   check_mode: true
 - name: verify test gather hcloud ssh key infos in check mode
@@ -30,7 +30,7 @@
       - hcloud_ssh_key.hcloud_ssh_key_info| list | count >= 1
 
 - name: test gather hcloud ssh key infos
-  hcloud_ssh_key_info:
+  hetzner.hcloud.hcloud_ssh_key_info:
   register: hcloud_ssh_key
   check_mode: true
 - name: verify test gather hcloud ssh key infos
@@ -39,7 +39,7 @@
       - hcloud_ssh_key.hcloud_ssh_key_info| list | count >= 1
 
 - name: test gather hcloud ssh key infos with correct label selector
-  hcloud_ssh_key_info:
+  hetzner.hcloud.hcloud_ssh_key_info:
     label_selector: "key=value"
   register: hcloud_ssh_key
 - name: verify test gather hcloud ssh key infos with correct label selector
@@ -48,7 +48,7 @@
       - hcloud_ssh_key.hcloud_ssh_key_info|selectattr('name','equalto','{{ hcloud_ssh_key_name }}') | list | count == 1
 
 - name: test gather hcloud ssh key infos with wrong label selector
-  hcloud_ssh_key_info:
+  hetzner.hcloud.hcloud_ssh_key_info:
     label_selector: "key!=value"
   register: hcloud_ssh_key
 - name: verify test gather hcloud ssh key infos with wrong label selector
@@ -57,7 +57,7 @@
       - hcloud_ssh_key.hcloud_ssh_key_info | list | count == 0
 
 - name: cleanup
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     name: "{{hcloud_ssh_key_name}}"
     state: absent
   register: result

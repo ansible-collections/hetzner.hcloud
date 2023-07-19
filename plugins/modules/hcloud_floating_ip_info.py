@@ -32,7 +32,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud Floating ip infos
-  hcloud_floating_ip_info:
+  hetzner.hcloud.hcloud_floating_ip_info:
   register: output
 - name: Print the gathered infos
   debug:

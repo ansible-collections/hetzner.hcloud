@@ -61,35 +61,35 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a reverse DNS entry for a server
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     server: my-server
     ip_address: 123.123.123.123
     dns_ptr: example.com
     state: present
 
 - name: Create a reverse DNS entry for a Floating IP
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     floating_ip: my-floating-ip
     ip_address: 123.123.123.123
     dns_ptr: example.com
     state: present
 
 - name: Create a reverse DNS entry for a Primary IP
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     primary_ip: my-primary-ip
     ip_address: 123.123.123.123
     dns_ptr: example.com
     state: present
 
 - name: Create a reverse DNS entry for a Load Balancer
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     load_balancer: my-load-balancer
     ip_address: 123.123.123.123
     dns_ptr: example.com
     state: present
 
 - name: Ensure the reverse DNS entry is absent (remove if needed)
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     server: my-server
     ip_address: 123.123.123.123
     dns_ptr: example.com

@@ -157,14 +157,14 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic server
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     server_type: cx11
     image: ubuntu-22.04
     state: present
 
 - name: Create a basic server with ssh key
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     server_type: cx11
     image: ubuntu-22.04
@@ -174,59 +174,59 @@ EXAMPLES = """
     state: present
 
 - name: Resize an existing server
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     server_type: cx21
     upgrade_disk: true
     state: present
 
 - name: Ensure the server is absent (remove if needed)
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     state: absent
 
 - name: Ensure the server is started
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     state: started
 
 - name: Ensure the server is stopped
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     state: stopped
 
 - name: Ensure the server is restarted
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     state: restarted
 
 - name: Ensure the server is will be booted in rescue mode and therefore restarted
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     rescue_mode: linux64
     state: restarted
 
 - name: Ensure the server is rebuild
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     image: ubuntu-22.04
     state: rebuild
 
 - name: Add server to placement group
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     placement_group: my-placement-group
     force: True
     state: present
 
 - name: Remove server from placement group
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     placement_group: null
     state: present
 
 - name: Add server with private network only
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: my-server
     enable_ipv4: false
     enable_ipv6: false

@@ -49,20 +49,20 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic Load Balancer network
-  hcloud_load_balancer_network:
+  hetzner.hcloud.hcloud_load_balancer_network:
     network: my-network
     load_balancer: my-LoadBalancer
     state: present
 
 - name: Create a Load Balancer network and specify the ip address
-  hcloud_load_balancer_network:
+  hetzner.hcloud.hcloud_load_balancer_network:
     network: my-network
     load_balancer: my-LoadBalancer
     ip: 10.0.0.1
     state: present
 
 - name: Ensure the Load Balancer network is absent (remove if needed)
-  hcloud_load_balancer_network:
+  hetzner.hcloud.hcloud_load_balancer_network:
     network: my-network
     load_balancer: my-LoadBalancer
     state: absent

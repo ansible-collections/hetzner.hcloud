@@ -37,7 +37,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud load_balancer infos
-  hcloud_load_balancer_info:
+  hetzner.hcloud.hcloud_load_balancer_info:
   register: output
 
 - name: Print the gathered infos

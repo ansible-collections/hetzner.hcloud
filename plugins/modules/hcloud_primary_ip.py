@@ -69,19 +69,19 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic IPv4 Primary IP
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: my-primary-ip
     datacenter: fsn1-dc14
     type: ipv4
     state: present
 - name: Create a basic IPv6 Primary IP
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: my-primary-ip
     datacenter: fsn1-dc14
     type: ipv6
     state: present
 - name: Primary IP should be absent
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: my-primary-ip
     state: absent
 """

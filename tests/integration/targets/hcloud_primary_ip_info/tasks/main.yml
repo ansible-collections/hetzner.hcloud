@@ -2,12 +2,12 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup ensure primary ip is absent
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     state: absent
 
 - name: setup primary ip
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     datacenter: "fsn1-dc14"
     type: ipv4
@@ -21,7 +21,7 @@
       - test_primary_ip is changed
 
 - name: test gather hcloud primary ip infos
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
   register: hcloud_primary_ips
 - name: verify test gather hcloud primary ip infos
   assert:
@@ -29,7 +29,7 @@
       - hcloud_primary_ips.hcloud_primary_ip_info| list | count >= 1
 
 - name: test gather hcloud primary ip infos in check mode
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
   check_mode: yes
   register: hcloud_primary_ips
 
@@ -39,7 +39,7 @@
       - hcloud_primary_ips.hcloud_primary_ip_info| list | count >= 1
 
 - name: test gather hcloud primary ip infos with correct label selector
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
     label_selector: "key=value"
   register: hcloud_primary_ips
 - name: verify test gather hcloud primary ip with correct label selector
@@ -48,7 +48,7 @@
       - hcloud_primary_ips.hcloud_primary_ip_info|selectattr('name','equalto','{{ test_primary_ip.hcloud_primary_ip.name }}') | list | count == 1
 
 - name: test gather hcloud primary ip infos with wrong label selector
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
     label_selector: "key!=value"
   register: hcloud_primary_ips
 - name: verify test gather hcloud primary ip with wrong label selector
@@ -57,7 +57,7 @@
       - hcloud_primary_ips.hcloud_primary_ip_info | list | count == 0
 
 - name: test gather hcloud primary ip infos with correct name
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
     name: "{{ hcloud_primary_ip_name }}"
   register: hcloud_primary_ips
 - name: verify test gather hcloud primary ip with correct name
@@ -66,7 +66,7 @@
       - hcloud_primary_ips.hcloud_primary_ip_info|selectattr('name','equalto','{{ test_primary_ip.hcloud_primary_ip.name }}') | list | count == 1
 
 - name: test gather hcloud primary ip infos with wrong name
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
     name: "wrong-name"
   register: hcloud_primary_ips
 - name: verify test gather hcloud primary ip with wrong name
@@ -75,7 +75,7 @@
       - hcloud_primary_ips.hcloud_primary_ip_info | list | count == 0
 
 - name: test gather hcloud primary ip infos with correct id
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
     id: "{{test_primary_ip.hcloud_primary_ip.id}}"
   register: hcloud_primary_ips
 - name: verify test gather hcloud primary ip with correct id
@@ -84,7 +84,7 @@
       - hcloud_primary_ips.hcloud_primary_ip_info|selectattr('name','equalto','{{ test_primary_ip.hcloud_primary_ip.name }}') | list | count == 1
 
 - name: test gather hcloud primary ip infos with wrong id
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
     id: "{{test_primary_ip.hcloud_primary_ip.id}}1"
   register: result
   ignore_errors: true
@@ -94,7 +94,7 @@
       - result is failed
 
 - name: cleanup
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     id: "{{ test_primary_ip.hcloud_primary_ip.id }}"
     state: absent
   register: result

@@ -50,14 +50,14 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic route
-  hcloud_route:
+  hetzner.hcloud.hcloud_route:
     network: my-network
     destination: 10.100.1.0/24
     gateway: 10.0.1.1
     state: present
 
 - name: Ensure the route is absent
-  hcloud_route:
+  hetzner.hcloud.hcloud_route:
     network: my-network
     destination: 10.100.1.0/24
     gateway: 10.0.1.1

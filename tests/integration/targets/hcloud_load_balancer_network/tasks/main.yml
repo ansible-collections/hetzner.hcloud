@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup network
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/8"
     state: present
@@ -13,7 +13,7 @@
       - network is success
 
 - name: setup subnetwork
-  hcloud_subnetwork:
+  hetzner.hcloud.hcloud_subnetwork:
     network: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/16"
     type: "cloud"
@@ -26,7 +26,7 @@
       - subnetwork is success
 
 - name: setup load_balancer
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{hcloud_load_balancer_name}}"
     load_balancer_type: lb11
     state: present
@@ -38,7 +38,7 @@
       - load_balancer is success
 
 - name: test missing required parameters on create load_balancer network
-  hcloud_load_balancer_network:
+  hetzner.hcloud.hcloud_load_balancer_network:
     state: present
   register: result
   ignore_errors: true
@@ -75,7 +75,7 @@
       - "result.msg == 'Network does not exist: does-not-exist'"
 
 - name: test create load_balancer network with checkmode
-  hcloud_load_balancer_network:
+  hetzner.hcloud.hcloud_load_balancer_network:
     network: "{{ hcloud_network_name }}"
     load_balancer: "{{hcloud_load_balancer_name}}"
     state: present
@@ -87,7 +87,7 @@
       - result is changed
 
 - name: test create load_balancer network
-  hcloud_load_balancer_network:
+  hetzner.hcloud.hcloud_load_balancer_network:
     network: "{{ hcloud_network_name }}"
     load_balancer: "{{hcloud_load_balancer_name}}"
     state: present
@@ -100,7 +100,7 @@
       - load_balancerNetwork.hcloud_load_balancer_network.load_balancer == hcloud_load_balancer_name
 
 - name: test create load_balancer network idempotency
-  hcloud_load_balancer_network:
+  hetzner.hcloud.hcloud_load_balancer_network:
     network: "{{ hcloud_network_name }}"
     load_balancer: "{{hcloud_load_balancer_name}}"
     state: present
@@ -111,7 +111,7 @@
       - load_balancerNetwork is not changed
 
 - name: test absent load_balancer network
-  hcloud_load_balancer_network:
+  hetzner.hcloud.hcloud_load_balancer_network:
     network: "{{ hcloud_network_name }}"
     load_balancer: "{{hcloud_load_balancer_name}}"
     state: absent
@@ -122,7 +122,7 @@
       - result is changed
 
 - name: test create load_balancer network with specified ip
-  hcloud_load_balancer_network:
+  hetzner.hcloud.hcloud_load_balancer_network:
     network: "{{ hcloud_network_name }}"
     load_balancer: "{{hcloud_load_balancer_name}}"
     ip: "10.0.0.2"
@@ -137,7 +137,7 @@
       - load_balancerNetwork.hcloud_load_balancer_network.ip == "10.0.0.2"
 
 - name: cleanup create load_balancer network with specified ip
-  hcloud_load_balancer_network:
+  hetzner.hcloud.hcloud_load_balancer_network:
     network: "{{ hcloud_network_name }}"
     load_balancer: "{{hcloud_load_balancer_name}}"
     state: absent
@@ -148,7 +148,7 @@
       - result is changed
 
 - name: cleanup load_balancer
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result
@@ -158,7 +158,7 @@
       - result is success
 
 - name: cleanup subnetwork
-  hcloud_subnetwork:
+  hetzner.hcloud.hcloud_subnetwork:
     network: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/16"
     type: "cloud"
@@ -171,7 +171,7 @@
       - result is changed
 
 - name: cleanup
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     state: absent
   register: result

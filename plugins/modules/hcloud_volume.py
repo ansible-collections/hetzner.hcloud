@@ -75,32 +75,32 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a Volume
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: my-volume
     location: fsn1
     size: 100
     state: present
 - name: Create a Volume and format it with ext4
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: my-volume
     location: fsn
     format: ext4
     size: 100
     state: present
 - name: Mount a existing Volume and automount
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: my-volume
     server: my-server
     automount: true
     state: present
 - name: Mount a existing Volume and automount
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: my-volume
     server: my-server
     automount: true
     state: present
 - name: Ensure the Volume is absent (remove if needed)
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: my-volume
     state: absent
 """

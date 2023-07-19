@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: test missing required parameters on create certificate
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     name: "{{ hcloud_certificate_name }}"
   register: result
   ignore_errors: true
@@ -13,7 +13,7 @@
       - 'result.msg == "missing required arguments: certificate, private_key"'
 
 - name: test create certificate with check mode
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     name: "{{ hcloud_certificate_name }}"
     certificate: "{{ certificate_example_com }}"
     private_key: "{{ certificate_example_com_key }}"
@@ -25,7 +25,7 @@
       - result is changed
 
 - name: test create certificate
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     name: "{{ hcloud_certificate_name }}"
     certificate: "{{ certificate_example_com }}"
     private_key: "{{ certificate_example_com_key }}"
@@ -42,7 +42,7 @@
       - certificate.hcloud_certificate.labels.key == "value"
 
 - name: test create certificate idempotence
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     name: "{{ hcloud_certificate_name }}"
     certificate: "{{ certificate_example_com }}"
     private_key: "{{ certificate_example_com_key }}"
@@ -53,7 +53,7 @@
       - result is not changed
 
 - name: test update certificate with check mode
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     id: "{{ certificate.hcloud_certificate.id }}"
     name: "changed-{{ hcloud_certificate_name }}"
   register: result
@@ -64,7 +64,7 @@
       - result is changed
 
 - name: test update certificate
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     id: "{{ certificate.hcloud_certificate.id }}"
     name: "changed-{{ hcloud_certificate_name }}"
     labels:
@@ -77,7 +77,7 @@
       - result.hcloud_certificate.name == "changed-{{ hcloud_certificate_name }}"
 
 - name: test update certificate with same labels
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     id: "{{ certificate.hcloud_certificate.id }}"
     name: "changed-{{ hcloud_certificate_name }}"
     labels:
@@ -89,7 +89,7 @@
       - result is not changed
 
 - name: test update certificate with other labels
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     id: "{{ certificate.hcloud_certificate.id }}"
     name: "changed-{{ hcloud_certificate_name }}"
     labels:
@@ -102,7 +102,7 @@
       - result is changed
 
 - name: test rename certificate
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     id: "{{ certificate.hcloud_certificate.id }}"
     name: "{{ hcloud_certificate_name }}"
   register: result
@@ -113,7 +113,7 @@
       - result.hcloud_certificate.name == "{{ hcloud_certificate_name }}"
 
 - name: absent certificate
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     id: "{{ certificate.hcloud_certificate.id }}"
     state: absent
   register: result
@@ -129,7 +129,7 @@
     hcloud_dns_test_domain: "{{ hcloud_dns_test_domain }}"
 
 - name: test create managed certificate
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     name: "{{ hcloud_certificate_name }}"
     domain_names:
       - "{{ hcloud_dns_test_domain }}"
@@ -145,7 +145,7 @@
       - result.hcloud_certificate.domain_names[0] == "{{ hcloud_dns_test_domain }}"
 
 - name: absent certificate
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     id: "{{ result.hcloud_certificate.id }}"
     state: absent
   register: result

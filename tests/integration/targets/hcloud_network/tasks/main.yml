@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup ensure network is absent
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{ item }}"
     state: absent
   with_items:
@@ -10,7 +10,7 @@
     - "{{ hcloud_network_name_with_vswitch }}"
 
 - name: test missing ip_range parameter on create Network
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
   register: result
   ignore_errors: true
@@ -21,7 +21,7 @@
       - 'result.msg == "missing required arguments: ip_range"'
 
 - name: test create Network with check mode
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     ip_range: "10.0.0.0/16"
   register: result
@@ -32,7 +32,7 @@
       - result is changed
 
 - name: test create Network
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     ip_range: "10.0.0.0/16"
   register: network
@@ -44,7 +44,7 @@
       - network.hcloud_network.ip_range == "10.0.0.0/16"
 
 - name: test create Network idempotence
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     ip_range: "10.0.0.0/16"
   register: network
@@ -54,7 +54,7 @@
       - network is not changed
 
 - name: test create Network with expose_routes_to_vswitch
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name_with_vswitch}}"
     ip_range: "10.0.0.0/16"
     expose_routes_to_vswitch: true
@@ -68,7 +68,7 @@
       - network.hcloud_network.expose_routes_to_vswitch is true
 
 - name: test create Network with expose_routes_to_vswitch idempotence
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name_with_vswitch}}"
     ip_range: "10.0.0.0/16"
     expose_routes_to_vswitch: true
@@ -79,7 +79,7 @@
       - network is not changed
 
 - name: test update Network label
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     labels:
       key: value
@@ -91,7 +91,7 @@
       - network.hcloud_network.labels.key == "value"
 
 - name: test update Network label idempotency
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     labels:
       key: value
@@ -102,7 +102,7 @@
       - network is not changed
 
 - name: test update Network ip range
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     ip_range: "10.0.0.0/8"
   register: network
@@ -113,7 +113,7 @@
       - network.hcloud_network.ip_range == "10.0.0.0/8"
 
 - name: test update Network ip range idempotency
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     ip_range: "10.0.0.0/8"
   register: network
@@ -123,7 +123,7 @@
       - network is not changed
 
 - name: test update Network expose_routes_to_vswitch
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name_with_vswitch}}"
     expose_routes_to_vswitch: false
   register: network
@@ -134,7 +134,7 @@
       - network.hcloud_network.expose_routes_to_vswitch is false
 
 - name: test update Network expose_routes_to_vswitch idempotency
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name_with_vswitch}}"
     expose_routes_to_vswitch: false
   register: network
@@ -144,7 +144,7 @@
       - network is not changed
 
 - name: test update Network delete protection
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     ip_range: "10.0.0.0/8"
     delete_protection: true
@@ -156,7 +156,7 @@
       - network.hcloud_network.delete_protection is sameas true
 
 - name: test update Network delete protection idempotency
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     ip_range: "10.0.0.0/8"
     delete_protection: true
@@ -168,7 +168,7 @@
       - network.hcloud_network.delete_protection is sameas true
 
 - name: test Network without delete protection set to be idempotent
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     ip_range: "10.0.0.0/8"
   register: network
@@ -179,7 +179,7 @@
       - network.hcloud_network.delete_protection is sameas true
 
 - name: test delete Network fails if it is protected
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     state: absent
   ignore_errors: true
@@ -191,7 +191,7 @@
       - 'result.msg == "network deletion is protected"'
 
 - name: test update Network delete protection
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     ip_range: "10.0.0.0/8"
     delete_protection: false
@@ -203,7 +203,7 @@
       - network.hcloud_network.delete_protection is sameas false
 
 - name: test delete Network
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     state: absent
   register: result
@@ -213,7 +213,7 @@
       - result is success
 
 - name: test create Network with delete protection
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     ip_range: "10.0.0.0/8"
     delete_protection: true
@@ -225,7 +225,7 @@
       - network.hcloud_network.delete_protection is sameas true
 
 - name: test delete Network fails if it is protected
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     state: absent
   ignore_errors: true
@@ -237,7 +237,7 @@
       - 'result.msg == "network deletion is protected"'
 
 - name: test update Network delete protection
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     delete_protection: false
   register: network
@@ -248,7 +248,7 @@
       - network.hcloud_network.delete_protection is sameas false
 
 - name: test delete Network
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name}}"
     state: absent
   register: result
@@ -258,7 +258,7 @@
       - result is success
 
 - name: test delete Network with expose_routes_to_vswitch
-  hcloud_network:
+  hetzner.hcloud.hcloud_network:
     name: "{{hcloud_network_name_with_vswitch}}"
     state: absent
   register: result

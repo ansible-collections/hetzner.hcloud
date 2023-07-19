@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: test gather hcloud Load Balancer type infos
-  hcloud_load_balancer_type_info:
+  hetzner.hcloud.hcloud_load_balancer_type_info:
   register: hcloud_load_balancer_types
 - name: verify test gather hcloud Load Balancer type infos
   assert:
@@ -10,7 +10,7 @@
       - hcloud_load_balancer_types.hcloud_load_balancer_type_info| list | count >= 1
 
 - name: test gather hcloud Load Balancer type infos in check mode
-  hcloud_load_balancer_type_info:
+  hetzner.hcloud.hcloud_load_balancer_type_info:
   check_mode: true
   register: hcloud_load_balancer_types
 
@@ -20,7 +20,7 @@
       - hcloud_load_balancer_types.hcloud_load_balancer_type_info| list | count >= 1
 
 - name: test gather hcloud Load Balancer type infos with name
-  hcloud_load_balancer_type_info:
+  hetzner.hcloud.hcloud_load_balancer_type_info:
     name: "{{hcloud_load_balancer_type_name}}"
   register: hcloud_load_balancer_types
 - name: verify test gather hcloud Load Balancer type with name
@@ -29,7 +29,7 @@
       - hcloud_load_balancer_types.hcloud_load_balancer_type_info|selectattr('name','equalto','{{ hcloud_load_balancer_type_name }}') | list | count == 1
 
 - name: test gather hcloud Load Balancer type infos with correct id
-  hcloud_load_balancer_type_info:
+  hetzner.hcloud.hcloud_load_balancer_type_info:
     id: "{{hcloud_load_balancer_type_id}}"
   register: hcloud_load_balancer_types
 - name: verify test gather hcloud Load Balancer type with correct id

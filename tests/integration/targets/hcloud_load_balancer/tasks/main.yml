@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result
@@ -11,7 +11,7 @@
     that:
       - result is success
 - name: test missing required parameters on create Load Balancer
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
   register: result
   ignore_errors: true
@@ -22,7 +22,7 @@
       - 'result.msg == "missing required arguments: load_balancer_type"'
 
 - name: test create Load Balancer with check mode
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb11
     network_zone: eu-central
@@ -35,7 +35,7 @@
       - result is changed
 
 - name: test create Load Balancer
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name}}"
     load_balancer_type: lb11
     network_zone: eu-central
@@ -49,7 +49,7 @@
       - main_load_balancer.hcloud_load_balancer.load_balancer_type == "lb11"
 
 - name: test create Load Balancer idempotence
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb11
     network_zone: eu-central
@@ -61,7 +61,7 @@
       - result is not changed
 
 - name: test change Load Balancer type
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb21
     state: present
@@ -74,7 +74,7 @@
       - result_after_test.hcloud_load_balancer.load_balancer_type == "lb21"
 
 - name: test Load Balancer without type set to be idempotent
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{hcloud_load_balancer_name}}"
   register: result_after_test
 - name: verify test Load Balancer without type set to be idempotent
@@ -84,7 +84,7 @@
       - result_after_test.hcloud_load_balancer.load_balancer_type == "lb21"
 
 - name: test update Load Balancer protection
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     delete_protection: true
     state: present
@@ -97,7 +97,7 @@
       - result_after_test.hcloud_load_balancer.delete_protection is sameas true
 
 - name: test Load Balancer without protection set to be idempotent
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{hcloud_load_balancer_name}}"
   register: result_after_test
 - name: verify test Load Balancer without protection set to be idempotent
@@ -107,7 +107,7 @@
       - result_after_test.hcloud_load_balancer.delete_protection is sameas true
 
 - name: test delete Load Balancer fails if it is protected
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{hcloud_load_balancer_name}}"
     state: absent
   ignore_errors: true
@@ -119,7 +119,7 @@
       - 'result.msg == "load balancer deletion is protected"'
 
 - name: test remove Load Balancer protection
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     delete_protection: false
     state: present
@@ -132,7 +132,7 @@
       - result_after_test.hcloud_load_balancer.delete_protection is sameas false
 
 - name: absent Load Balancer
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result
@@ -142,7 +142,7 @@
       - result is success
 
 - name: test create Load Balancer with labels
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name}}"
     load_balancer_type: lb11
     network_zone: eu-central
@@ -159,7 +159,7 @@
       - main_load_balancer.hcloud_load_balancer.labels.mylabel == "val123"
 
 - name: test update Load Balancer with labels
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name}}"
     load_balancer_type: lb11
     network_zone: eu-central
@@ -176,7 +176,7 @@
       - main_load_balancer.hcloud_load_balancer.labels.mylabel == "val123"
 
 - name: test update Load Balancer with labels in other order
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name}}"
     load_balancer_type: lb11
     network_zone: eu-central
@@ -191,7 +191,7 @@
       - main_load_balancer is not changed
 
 - name: cleanup with labels
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result
@@ -201,7 +201,7 @@
       - result is success
 
 - name: test create Load Balancer with delete protection
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb11
     network_zone: eu-central
@@ -214,7 +214,7 @@
       - main_load_balancer.hcloud_load_balancer.delete_protection is sameas true
 
 - name: test delete Load Balancer fails if it is protected
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: "absent"
   register: result
@@ -226,7 +226,7 @@
       - 'result.msg == "load balancer deletion is protected"'
 
 - name: test update Load Balancer delete protection
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     delete_protection: false
   register: main_load_balancer
@@ -237,7 +237,7 @@
       - main_load_balancer.hcloud_load_balancer.delete_protection is sameas false
 
 - name: test delete Load Balancer
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: "absent"
   register: result

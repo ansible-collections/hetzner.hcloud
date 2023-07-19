@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result
@@ -12,7 +12,7 @@
       - result is success
 
 - name: test missing required parameters on create server
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
   register: result
   ignore_errors: true
@@ -23,7 +23,7 @@
       - 'result.msg == "missing required arguments: server_type, image"'
 
 - name: test create server with not existing server type
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     server_type: not-existing-server-type
     image: ubuntu-22.04
@@ -37,7 +37,7 @@
       - 'result.msg == "server_type not-existing-server-type was not found"'
 
 - name: test create server with not existing image
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     server_type: cx11
     image: my-not-existing-image-20.04

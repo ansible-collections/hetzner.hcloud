@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: test gather hcloud image infos with type system
-  hcloud_image_info:
+  hetzner.hcloud.hcloud_image_info:
   register: hcloud_images
 - name: verify test gather hcloud image infos in check mode
   assert:
@@ -10,7 +10,7 @@
       - hcloud_images.hcloud_image_info| list | count > 2
 
 - name: test gather hcloud image infos in check mode
-  hcloud_image_info:
+  hetzner.hcloud.hcloud_image_info:
   check_mode: true
   register: hcloud_images
 
@@ -20,7 +20,7 @@
       - hcloud_images.hcloud_image_info| list | count > 2
 
 - name: test gather hcloud image infos with correct label selector
-  hcloud_image_info:
+  hetzner.hcloud.hcloud_image_info:
     label_selector: "key=value"
     type: snapshot
   register: hcloud_images
@@ -30,7 +30,7 @@
       - hcloud_images.hcloud_image_info|selectattr('description','equalto','{{ hcloud_test_image_name }}') | list | count == 1
 
 - name: test gather hcloud image infos with wrong label selector
-  hcloud_image_info:
+  hetzner.hcloud.hcloud_image_info:
     label_selector: "key!=value"
     type: snapshot
   register: hcloud_images
@@ -40,7 +40,7 @@
       - hcloud_images.hcloud_image_info | list | count == 0
 
 - name: test gather hcloud image infos with correct id
-  hcloud_image_info:
+  hetzner.hcloud.hcloud_image_info:
     id: "{{hcloud_test_image_id}}"
     type: snapshot
   register: hcloud_images
@@ -50,7 +50,7 @@
       - hcloud_images.hcloud_image_info|selectattr('description','equalto','{{ hcloud_test_image_name }}') | list | count == 1
 
 - name: test gather hcloud image infos with wrong id
-  hcloud_image_info:
+  hetzner.hcloud.hcloud_image_info:
     id: "{{hcloud_test_image_id}}1"
     type: snapshot
   ignore_errors: true
@@ -61,7 +61,7 @@
       - result is failed
 
 - name: test gather hcloud image infos with name
-  hcloud_image_info:
+  hetzner.hcloud.hcloud_image_info:
     name: "{{ hcloud_test_image_name_os }}"
   register: hcloud_images
 - name: verify test gather hcloud image infos with name
@@ -71,7 +71,7 @@
       - hcloud_images.hcloud_image_info[0].architecture == "x86"
 
 - name: test gather hcloud image infos with name and architecture
-  hcloud_image_info:
+  hetzner.hcloud.hcloud_image_info:
     name: "{{ hcloud_test_image_name_os }}"
     architecture: arm
   register: hcloud_images
@@ -82,7 +82,7 @@
       - hcloud_images.hcloud_image_info[0].architecture == "arm"
 
 - name: test gather hcloud image infos with architecture
-  hcloud_image_info:
+  hetzner.hcloud.hcloud_image_info:
     architecture: arm
   register: hcloud_images
 - name: verify test gather hcloud image infos with name
