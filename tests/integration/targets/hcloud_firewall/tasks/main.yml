@@ -2,12 +2,12 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup firewall to be absent
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     name: "{{ hcloud_firewall_name }}"
     state: absent
 
 - name: test missing required parameters on create firewall
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
   register: result
   ignore_errors: true
 - name: verify fail test missing required parameters on create firewall
@@ -17,7 +17,7 @@
       - 'result.msg == "one of the following is required: id, name"'
 
 - name: test create firewall with check mode
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     name: "{{ hcloud_firewall_name }}"
   register: result
   check_mode: true
@@ -27,7 +27,7 @@
       - result is changed
 
 - name: test create firewall
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     name: "{{ hcloud_firewall_name }}"
     rules:
       - direction: in
@@ -51,7 +51,7 @@
       - firewall.hcloud_firewall.rules | selectattr('description', 'equalto', 'allow icmp in') | list | count == 1
 
 - name: test create firewall idempotence
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     name: "{{ hcloud_firewall_name }}"
     rules:
       - direction: in
@@ -70,7 +70,7 @@
       - result is not changed
 
 - name: test update firewall rules
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     name: "{{ hcloud_firewall_name }}"
     rules:
       - direction: in
@@ -109,7 +109,7 @@
       - firewall.hcloud_firewall.rules | selectattr('description', 'equalto', 'allow tcp out') | list | count == 1
 
 - name: test update firewall rules idempotence
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     name: "{{ hcloud_firewall_name }}"
     rules:
       - direction: in
@@ -140,7 +140,7 @@
       - result is not changed
 
 - name: test update firewall with check mode
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     id: "{{ firewall.hcloud_firewall.id }}"
     name: "changed-{{ hcloud_firewall_name }}"
   register: result
@@ -151,7 +151,7 @@
       - result is changed
 
 - name: test update firewall
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     id: "{{ firewall.hcloud_firewall.id }}"
     name: "changed-{{ hcloud_firewall_name }}"
     labels:
@@ -164,7 +164,7 @@
       - result.hcloud_firewall.name == "changed-{{ hcloud_firewall_name }}"
 
 - name: test update firewall with same labels
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     id: "{{ firewall.hcloud_firewall.id }}"
     name: "changed-{{ hcloud_firewall_name }}"
     labels:
@@ -176,7 +176,7 @@
       - result is not changed
 
 - name: test update firewall with other labels
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     id: "{{ firewall.hcloud_firewall.id }}"
     name: "changed-{{ hcloud_firewall_name }}"
     labels:
@@ -189,7 +189,7 @@
       - result is changed
 
 - name: test rename firewall
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     id: "{{ firewall.hcloud_firewall.id }}"
     name: "{{ hcloud_firewall_name }}"
   register: result
@@ -200,7 +200,7 @@
       - result.hcloud_firewall.name == "{{ hcloud_firewall_name }}"
 
 - name: absent firewall
-  hcloud_firewall:
+  hetzner.hcloud.hcloud_firewall:
     id: "{{ firewall.hcloud_firewall.id }}"
     state: absent
   register: result

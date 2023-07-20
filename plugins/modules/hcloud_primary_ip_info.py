@@ -37,21 +37,21 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud Primary IP infos
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
   register: output
 
 - name: Gather hcloud Primary IP infos by id
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
     id: 673954
   register: output
 
 - name: Gather hcloud Primary IP infos by name
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
     name: srv1-v4
   register: output
 
 - name: Gather hcloud Primary IP infos by label
-  hcloud_primary_ip_info:
+  hetzner.hcloud.hcloud_primary_ip_info:
     label_selector: srv03-ips
   register: output
 

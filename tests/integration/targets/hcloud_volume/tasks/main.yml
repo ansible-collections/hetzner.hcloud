@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup server
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{hcloud_server_name}}"
     server_type: cx11
     image: ubuntu-22.04
@@ -15,7 +15,7 @@
       - vol_server is changed
 
 - name: test missing size parameter on create Volume
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     server: "{{hcloud_server_name}}"
   register: result
@@ -27,7 +27,7 @@
       - 'result.msg == "missing required arguments: size"'
 
 - name: test create Volume with check mode
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     size: 10
     location: "fsn1"
@@ -39,7 +39,7 @@
       - result is changed
 
 - name: test create Volume
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     size: 10
     location: "fsn1"
@@ -55,7 +55,7 @@
       - volume.hcloud_volume.linux_device is defined
 
 - name: test create Volume idempotence
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     size: 10
     location: "fsn1"
@@ -66,7 +66,7 @@
       - volume is not changed
 
 - name: test attach Volume with checkmode
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     server: "{{hcloud_server_name}}"
   check_mode: true
@@ -78,7 +78,7 @@
       - volume.hcloud_volume.server != "{{hcloud_server_name}}"
 
 - name: test attach Volume
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     server: "{{hcloud_server_name}}"
   register: volume
@@ -89,7 +89,7 @@
       - volume.hcloud_volume.server == "{{hcloud_server_name}}"
 
 - name: test attach Volume idempotence
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     server: "{{hcloud_server_name}}"
   register: volume
@@ -100,7 +100,7 @@
       - volume.hcloud_volume.server == "{{hcloud_server_name}}"
 
 - name: test detach Volume with checkmode
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
   check_mode: true
   register: volume
@@ -111,7 +111,7 @@
       - volume.hcloud_volume.server == "{{hcloud_server_name}}"
 
 - name: test detach Volume
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
   register: volume
 - name: verify detach volume
@@ -122,7 +122,7 @@
       - volume.hcloud_volume.server != "{{hcloud_server_name}}"
 
 - name: test update Volume label
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     labels:
       key: value
@@ -134,7 +134,7 @@
       - volume.hcloud_volume.labels.key == "value"
 
 - name: test update Volume label with the same label
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     labels:
       key: value
@@ -145,7 +145,7 @@
       - volume is not changed
 
 - name: test increase Volume size
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     size: 11
   register: volume
@@ -156,7 +156,7 @@
       - volume.hcloud_volume.size == 11
 
 - name: test decreace Volume size
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     size: 10
   register: volume
@@ -167,7 +167,7 @@
       - volume.hcloud_volume.size == 11
 
 - name: test update Volume delete protection
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     delete_protection: true
   register: volume
@@ -178,7 +178,7 @@
       - volume.hcloud_volume.delete_protection is sameas true
 
 - name: test update Volume delete protection idempotency
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     delete_protection: true
   register: volume
@@ -189,7 +189,7 @@
       - volume.hcloud_volume.delete_protection is sameas true
 
 - name: test Volume without delete protection set to be idempotent
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
   register: volume
 - name: verify test Volume without delete protection set to be idempotent
@@ -199,7 +199,7 @@
       - volume.hcloud_volume.delete_protection is sameas true
 
 - name: test delete Volume fails if it is protected
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     state: absent
   ignore_errors: true
@@ -211,7 +211,7 @@
       - 'result.msg == "volume deletion is protected"'
 
 - name: test update Volume delete protection
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     delete_protection: false
   register: volume
@@ -222,7 +222,7 @@
       - volume.hcloud_volume.delete_protection is sameas false
 
 - name: test delete Volume
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     state: absent
   register: result
@@ -232,7 +232,7 @@
       - result is success
 
 - name: test create Volume with delete protection
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     size: 10
     location: "fsn1"
@@ -245,7 +245,7 @@
       - volume.hcloud_volume.delete_protection is sameas true
 
 - name: test delete Volume fails if it is protected
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     state: absent
   ignore_errors: true
@@ -257,7 +257,7 @@
       - 'result.msg == "volume deletion is protected"'
 
 - name: test update Volume delete protection
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     delete_protection: false
   register: volume
@@ -268,7 +268,7 @@
       - volume.hcloud_volume.delete_protection is sameas false
 
 - name: test delete Volume
-  hcloud_volume:
+  hetzner.hcloud.hcloud_volume:
     name: "{{hcloud_volume_name}}"
     state: absent
   register: result
@@ -278,7 +278,7 @@
       - result is success
 
 - name: cleanup
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result

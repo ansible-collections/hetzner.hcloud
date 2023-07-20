@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     server_type: cx11
     image: "ubuntu-22.04"
@@ -16,7 +16,7 @@
       - setup is success
 
 - name: setup Floating IP
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     home_location: "fsn1"
@@ -27,7 +27,7 @@
       - floatingIP is success
 
 - name: setup Load Balancer
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name}}"
     load_balancer_type: lb11
     network_zone: eu-central
@@ -39,7 +39,7 @@
       - load_balancer is success
 
 - name: setup Primary IP
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     datacenter: "fsn1-dc14"
@@ -50,7 +50,7 @@
       - primaryIP is success
 
 - name: test missing required parameter
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     state: present
   register: result
   ignore_errors: true
@@ -60,7 +60,7 @@
       - result is failed
       - 'result.msg == "missing required arguments: ip_address"'
 - name: test fail on not existing resource
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     server: "not-existing"
     ip_address: "127.0.0.1"
     state: present
@@ -72,7 +72,7 @@
       - result is failed
       - 'result.msg == "The selected server does not exist"'
 - name: test create rdns
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     server: "{{ hcloud_server_name }}"
     ip_address: "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
     dns_ptr: "example.com"
@@ -87,7 +87,7 @@
       - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: test create rdns idempotency
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     server: "{{ hcloud_server_name }}"
     ip_address: "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
     dns_ptr: "example.com"
@@ -99,7 +99,7 @@
       - result is not changed
 
 - name: test absent rdns
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     server: "{{ hcloud_server_name }}"
     ip_address: "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
     state: absent
@@ -110,7 +110,7 @@
       - result is changed
 
 - name: test update rdns
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     server: "{{ hcloud_server_name }}"
     ip_address: "{{ setup.hcloud_server.ipv4_address }}"
     dns_ptr: "example.com"
@@ -125,7 +125,7 @@
       - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: test reset rdns
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     server: "{{ hcloud_server_name }}"
     ip_address: "{{ setup.hcloud_server.ipv4_address }}"
     state: present
@@ -139,7 +139,7 @@
       - rdns.hcloud_rdns.dns_ptr != "example.com"
 
 - name: test create rdns with floating IP
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     floating_ip: "{{ hcloud_floating_ip_name }}"
     ip_address: "{{ floatingIP.hcloud_floating_ip.ip}}"
     dns_ptr: "example.com"
@@ -154,7 +154,7 @@
       - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: test create rdns with primary IP
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     primary_ip: "{{ hcloud_primary_ip_name }}"
     ip_address: "{{ primaryIP.hcloud_primary_ip.ip}}"
     dns_ptr: "example.com"
@@ -169,7 +169,7 @@
       - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: test create rdns with load balancer
-  hcloud_rdns:
+  hetzner.hcloud.hcloud_rdns:
     load_balancer: "{{ hcloud_load_balancer_name }}"
     ip_address: "{{ load_balancer.hcloud_load_balancer.ipv4_address }}"
     dns_ptr: "example.com"
@@ -184,7 +184,7 @@
       - rdns.hcloud_rdns.dns_ptr == "example.com"
 
 - name: cleanup
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result
@@ -194,7 +194,7 @@
       - result is success
 
 - name: cleanup
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     state: absent
   register: result
@@ -204,7 +204,7 @@
       - result is success
 
 - name: cleanup
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     state: absent
   register: result
@@ -214,7 +214,7 @@
       - result is success
 
 - name: cleanup
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result

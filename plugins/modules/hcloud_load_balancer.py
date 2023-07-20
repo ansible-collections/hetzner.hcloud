@@ -71,14 +71,14 @@ requirements:
 
 EXAMPLES = """
 - name: Create a basic Load Balancer
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: my-Load Balancer
     load_balancer_type: lb11
     location: fsn1
     state: present
 
 - name: Ensure the Load Balancer is absent (remove if needed)
-  hcloud_load_balancer:
+  hetzner.hcloud.hcloud_load_balancer:
     name: my-Load Balancer
     state: absent
 

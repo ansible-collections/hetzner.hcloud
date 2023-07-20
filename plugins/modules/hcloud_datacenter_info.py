@@ -32,7 +32,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud datacenter info
-  hcloud_datacenter_info:
+  hetzner.hcloud.hcloud_datacenter_info:
   register: output
 - name: Print the gathered info
   debug:

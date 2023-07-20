@@ -68,14 +68,14 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic certificate
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     name: my-certificate
     certificate: "ssh-rsa AAAjjk76kgf...Xt"
     private_key: "ssh-rsa AAAjjk76kgf...Xt"
     state: present
 
 - name: Create a certificate with labels
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     name: my-certificate
     certificate: "ssh-rsa AAAjjk76kgf...Xt"
     private_key: "ssh-rsa AAAjjk76kgf...Xt"
@@ -85,7 +85,7 @@ EXAMPLES = """
     state: present
 
 - name: Ensure the certificate is absent (remove if needed)
-  hcloud_certificate:
+  hetzner.hcloud.hcloud_certificate:
     name: my-certificate
     state: absent
 """

@@ -140,14 +140,14 @@ requirements:
 
 EXAMPLES = """
 - name: Create a basic Load Balancer service with Port 80
-  hcloud_load_balancer_service:
+  hetzner.hcloud.hcloud_load_balancer_service:
     load_balancer: my-load-balancer
     protocol: http
     listen_port: 80
     state: present
 
 - name: Ensure the Load Balancer is absent (remove if needed)
-  hcloud_load_balancer_service:
+  hetzner.hcloud.hcloud_load_balancer_service:
     load_balancer: my-Load Balancer
     protocol: http
     listen_port: 80

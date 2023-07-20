@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: test gather hcloud server type infos
-  hcloud_server_type_info:
+  hetzner.hcloud.hcloud_server_type_info:
   register: hcloud_server_types
 - name: verify test gather hcloud server type infos
   assert:
@@ -10,7 +10,7 @@
       - hcloud_server_types.hcloud_server_type_info| list | count > 2
 
 - name: test gather hcloud server type infos in check mode
-  hcloud_server_type_info:
+  hetzner.hcloud.hcloud_server_type_info:
   check_mode: true
   register: hcloud_server_types
 
@@ -20,7 +20,7 @@
       - hcloud_server_types.hcloud_server_type_info| list | count > 2
 
 - name: test gather hcloud server type infos with name
-  hcloud_server_type_info:
+  hetzner.hcloud.hcloud_server_type_info:
     name: "{{hcloud_server_type_name}}"
   register: hcloud_server_types
 - name: verify test gather hcloud server type with name
@@ -30,7 +30,7 @@
       - hcloud_server_types.hcloud_server_type_info[0].deprecation is none # fails if cx11 is ever deprecated
 
 - name: test gather hcloud server type infos with correct id
-  hcloud_server_type_info:
+  hetzner.hcloud.hcloud_server_type_info:
     id: "{{hcloud_server_type_id}}"
   register: hcloud_server_types
 - name: verify test gather hcloud server type with correct id
@@ -39,7 +39,7 @@
       - hcloud_server_types.hcloud_server_type_info|selectattr('name','equalto','{{ hcloud_server_type_name }}') | list | count == 1
 
 - name: test gather hcloud server type infos for deprecated server type
-  hcloud_server_type_info:
+  hetzner.hcloud.hcloud_server_type_info:
     id: "{{hcloud_server_type_id_deprecated}}"
   register: hcloud_server_types
 

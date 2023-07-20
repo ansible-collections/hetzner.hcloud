@@ -2,22 +2,22 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup ensure server is absent
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     state: absent
 
 - name: setup ensure another server is absent
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}2"
     state: absent
 
 - name: setup ensure floating ip is absent
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     state: absent
 
 - name: setup server
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     server_type: cx11
     image: ubuntu-22.04
@@ -30,7 +30,7 @@
       - main_server is changed
 
 - name: setup another server
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}2"
     server_type: cx11
     image: ubuntu-22.04
@@ -42,7 +42,7 @@
       - main_server2 is changed
 
 - name: test missing type parameter on create Floating IP
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
   register: result
   ignore_errors: true
@@ -53,7 +53,7 @@
       - 'result.msg == "missing required arguments: type"'
 
 - name: test missing required parameters on create Floating IP
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
   register: result
@@ -65,7 +65,7 @@
       - 'result.msg == "one of the following is required: home_location, server"'
 
 - name: test missing type parameter on delete Floating IP
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     type: ipv4
     home_location: "fsn1"
     state: "absent"
@@ -78,7 +78,7 @@
       - 'result.msg == "one of the following is required: id, name"'
 
 - name: test invalid type
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv5
     home_location: "fsn1"
@@ -91,7 +91,7 @@
       - 'result.msg == "value of type must be one of: ipv4, ipv6, got: ipv5"'
 
 - name: test invalid location
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     home_location: "abc"
@@ -104,7 +104,7 @@
       - result.msg == "invalid input in fields 'server', 'home_location'"
 
 - name: test create Floating IP with check mode
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     description: "Web Server"
     type: ipv4
@@ -117,7 +117,7 @@
       - floatingIP is changed
 
 - name: test create Floating IP
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     description: "Web Server"
     type: ipv4
@@ -132,7 +132,7 @@
       - floatingIP.hcloud_floating_ip.home_location == "fsn1"
 
 - name: test create Floating IP idempotency
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     description: "Web Server"
     type: ipv4
@@ -144,7 +144,7 @@
       - floatingIP is not changed
 
 - name: test update Floating IP with check mode
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     description: "changed-description"
     type: ipv4
@@ -158,7 +158,7 @@
       - floatingIP.hcloud_floating_ip.description == "Web Server"
 
 - name: test update Floating IP
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     description: "changed-description"
     type: ipv4
@@ -173,7 +173,7 @@
       - floatingIP.hcloud_floating_ip.description == "changed-description"
 
 - name: test update Floating IP idempotency
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     description: "changed-description"
     type: ipv4
@@ -187,7 +187,7 @@
       - floatingIP is not changed
 
 - name: test update Floating IP with same labels
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     home_location: "fsn1"
@@ -200,7 +200,7 @@
       - floatingIP is not changed
 
 - name: test update Floating IP with other labels
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     home_location: "fsn1"
@@ -214,7 +214,7 @@
       - floatingIP is changed
 
 - name: test update Floating IP with other labels in different order
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     home_location: "fsn1"
@@ -228,7 +228,7 @@
       - floatingIP is not changed
 
 - name: test assign Floating IP with checkmode
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     description: "changed-description"
     type: ipv4
@@ -242,7 +242,7 @@
       - floatingIP.hcloud_floating_ip.server != "{{ main_server.hcloud_server.name }}"
 
 - name: test assign Floating IP
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     description: "changed-description"
     type: ipv4
@@ -255,7 +255,7 @@
       - floatingIP.hcloud_floating_ip.server == "{{ main_server.hcloud_server.name }}"
 
 - name: test assign Floating IP idempotency
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     description: "changed-description"
     type: ipv4
@@ -267,7 +267,7 @@
       - floatingIP is not changed
 
 - name: test unassign Floating IP
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     home_location: "fsn1"
@@ -279,7 +279,7 @@
       - floatingIP.hcloud_floating_ip.server != "{{ main_server.hcloud_server.name }}"
 
 - name: test unassign Floating IP idempotency
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     home_location: "fsn1"
@@ -290,7 +290,7 @@
       - floatingIP is not changed
 
 - name: test assign Floating IP again
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     server: "{{ main_server.hcloud_server.name }}"
@@ -302,7 +302,7 @@
       - floatingIP.hcloud_floating_ip.server == "{{ main_server.hcloud_server.name }}"
 
 - name: test already assigned Floating IP assign without force
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     server: "{{ main_server2.hcloud_server.name }}"
@@ -314,7 +314,7 @@
       - floatingIP.hcloud_floating_ip.server == "{{ main_server.hcloud_server.name }}"
 
 - name: test already assigned Floating IP assign with force
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     force: true
@@ -327,7 +327,7 @@
       - floatingIP.hcloud_floating_ip.server == "{{ main_server2.hcloud_server.name }}"
 
 - name: test update Floating IP delete protection
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     delete_protection: true
@@ -339,7 +339,7 @@
       - floatingIP.hcloud_floating_ip.delete_protection is sameas true
 
 - name: test update Floating IP delete protection idempotency
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     delete_protection: true
@@ -351,7 +351,7 @@
       - floatingIP.hcloud_floating_ip.delete_protection is sameas true
 
 - name: test Floating IP without delete protection set to be idempotent
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
   register: floatingIP
@@ -362,7 +362,7 @@
       - floatingIP.hcloud_floating_ip.delete_protection is sameas true
 
 - name: test delete Floating IP fails if it is protected
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     state: "absent"
   register: result
@@ -374,7 +374,7 @@
       - 'result.msg == "Floating IP deletion is protected"'
 
 - name: test update Floating IP delete protection
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     delete_protection: false
@@ -386,7 +386,7 @@
       - floatingIP.hcloud_floating_ip.delete_protection is sameas false
 
 - name: test delete floating ip
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     state: "absent"
   register: result
@@ -396,7 +396,7 @@
       - result is changed
 
 - name: test create ipv6 floating ip
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv6
     home_location: "fsn1"
@@ -408,7 +408,7 @@
       - result is changed
 
 - name: test delete ipv6 floating ip
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     state: "absent"
   register: result
@@ -418,7 +418,7 @@
       - result is changed
 
 - name: cleanup
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result
@@ -427,7 +427,7 @@
     that:
       - result is changed
 - name: cleanup another server
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ main_server2.hcloud_server.name }}"
     state: absent
   register: result
@@ -437,7 +437,7 @@
       - result is changed
 
 - name: test create Floating IP with delete protection
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     home_location: fsn1
@@ -450,7 +450,7 @@
       - floatingIP.hcloud_floating_ip.delete_protection is sameas true
 
 - name: test delete Floating IP fails if it is protected
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     state: "absent"
   register: result
@@ -462,7 +462,7 @@
       - 'result.msg == "Floating IP deletion is protected"'
 
 - name: test update Floating IP delete protection
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
     delete_protection: false
@@ -474,7 +474,7 @@
       - floatingIP.hcloud_floating_ip.delete_protection is sameas false
 
 - name: test delete floating ip
-  hcloud_floating_ip:
+  hetzner.hcloud.hcloud_floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     state: "absent"
   register: result

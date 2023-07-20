@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: test missing required parameters on create ssh_key
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     name: "{{ hcloud_ssh_key_name }}"
   register: result
   ignore_errors: true
@@ -13,7 +13,7 @@
       - 'result.msg == "missing required arguments: public_key"'
 
 - name: test create ssh key with check mode
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     name: "{{ hcloud_ssh_key_name }}"
     public_key: "{{ key_material }}"
   register: result
@@ -24,7 +24,7 @@
       - result is changed
 
 - name: test create ssh key
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     name: "{{ hcloud_ssh_key_name }}"
     public_key: "{{ key_material }}"
     labels:
@@ -40,7 +40,7 @@
       - sshKey.hcloud_ssh_key.labels.key == "value"
 
 - name: test create ssh key idempotence
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     name: "{{ hcloud_ssh_key_name }}"
     public_key: "{{ key_material }}"
   register: result
@@ -50,7 +50,7 @@
       - result is not changed
 
 - name: test update ssh key with check mode
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     id: "{{ sshKey.hcloud_ssh_key.id }}"
     name: "changed-{{ hcloud_ssh_key_name }}"
   register: result
@@ -61,7 +61,7 @@
       - result is changed
 
 - name: test update ssh key
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     id: "{{ sshKey.hcloud_ssh_key.id }}"
     name: "changed-{{ hcloud_ssh_key_name }}"
     labels:
@@ -74,7 +74,7 @@
       - result.hcloud_ssh_key.name == "changed-{{ hcloud_ssh_key_name }}"
 
 - name: test update ssh key with same labels
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     id: "{{ sshKey.hcloud_ssh_key.id }}"
     name: "changed-{{ hcloud_ssh_key_name }}"
     labels:
@@ -86,7 +86,7 @@
       - result is not changed
 
 - name: test update ssh key with other labels
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     id: "{{ sshKey.hcloud_ssh_key.id }}"
     name: "changed-{{ hcloud_ssh_key_name }}"
     labels:
@@ -99,7 +99,7 @@
       - result is changed
 
 - name: test rename ssh key
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     id: "{{ sshKey.hcloud_ssh_key.id }}"
     name: "{{ hcloud_ssh_key_name }}"
   register: result
@@ -110,7 +110,7 @@
       - result.hcloud_ssh_key.name == "{{ hcloud_ssh_key_name }}"
 
 - name: test create server with ssh key
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     server_type: cx11
     image: "ubuntu-22.04"
@@ -124,7 +124,7 @@
       - main_server is changed
 
 - name: absent ssh key
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     id: "{{ sshKey.hcloud_ssh_key.id }}"
     state: absent
   register: result
@@ -134,7 +134,7 @@
       - result is success
 
 - name: test fail cleanly on double created ssh key
-  hcloud_ssh_key:
+  hetzner.hcloud.hcloud_ssh_key:
     name: "{{ hcloud_ssh_key_name }}othername"
     public_key: "{{ hcloud_doubled_ssh_key_public_key }}"
   register: result
@@ -146,7 +146,7 @@
       - 'result.msg == "SSH key with the same fingerprint already exists"'
 
 - name: cleanup
-  hcloud_server:
+  hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result

@@ -2,12 +2,12 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup ensure primary ip is absent
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     state: absent
 
 - name: test create Primary IP with check mode
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     datacenter: "fsn1-dc14"
@@ -19,7 +19,7 @@
       - primaryIP is changed
 
 - name: test create Primary IP
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     datacenter: "fsn1-dc14"
@@ -32,7 +32,7 @@
       - primaryIP.hcloud_primary_ip.datacenter == "fsn1-dc14"
 
 - name: test create Primary IP idempotency
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     datacenter: "fsn1-dc14"
@@ -43,7 +43,7 @@
       - primaryIP is not changed
 
 - name: test update Primary IP
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     datacenter: "fsn1-dc14"
@@ -56,7 +56,7 @@
       - primaryIP is changed
 
 - name: test update Primary IP idempotency
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     datacenter: "fsn1-dc14"
@@ -69,7 +69,7 @@
       - primaryIP is not changed
 
 - name: test update Primary IP with same labels
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     datacenter: "fsn1-dc14"
@@ -82,7 +82,7 @@
       - primaryIP is not changed
 
 - name: test update Primary IP with other labels
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     datacenter: "fsn1-dc14"
@@ -96,7 +96,7 @@
       - primaryIP is changed
 
 - name: test update Primary IP with other labels in different order
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     datacenter: "fsn1-dc14"
@@ -110,7 +110,7 @@
       - primaryIP is not changed
 
 - name: test update Primary IP delete protection
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     delete_protection: true
@@ -122,7 +122,7 @@
       - primaryIP.hcloud_primary_ip.delete_protection is sameas true
 
 - name: test update Primary IP delete protection idempotency
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     delete_protection: true
@@ -134,7 +134,7 @@
       - primaryIP.hcloud_primary_ip.delete_protection is sameas true
 
 - name: test Primary IP without delete protection set to be idempotent
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
   register: primaryIP
@@ -145,7 +145,7 @@
       - primaryIP.hcloud_primary_ip.delete_protection is sameas true
 
 - name: test delete Primary IP fails if it is protected
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     state: "absent"
   register: result
@@ -157,7 +157,7 @@
       - 'result.msg == "Primary IP deletion is protected"'
 
 - name: test update Primary IP delete protection
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     delete_protection: false
@@ -169,7 +169,7 @@
       - primaryIP.hcloud_primary_ip.delete_protection is sameas false
 
 - name: test delete primary ip
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     state: "absent"
   register: result
@@ -179,7 +179,7 @@
       - result is changed
 
 - name: test create ipv6 primary ip
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv6
     datacenter: "fsn1-dc14"
@@ -191,7 +191,7 @@
       - result is changed
 
 - name: test delete ipv6 primary ip
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     state: "absent"
   register: result
@@ -201,7 +201,7 @@
       - result is changed
 
 - name: test create Primary IP with delete protection
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     datacenter: fsn1-dc14
@@ -214,7 +214,7 @@
       - primaryIP.hcloud_primary_ip.delete_protection is sameas true
 
 - name: test delete Primary IP fails if it is protected
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     state: "absent"
   register: result
@@ -226,7 +226,7 @@
       - 'result.msg == "Primary IP deletion is protected"'
 
 - name: test update Primary IP delete protection
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
     delete_protection: false
@@ -238,7 +238,7 @@
       - primaryIP.hcloud_primary_ip.delete_protection is sameas false
 
 - name: test delete primary ip
-  hcloud_primary_ip:
+  hetzner.hcloud.hcloud_primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     state: "absent"
   register: result
