@@ -284,6 +284,7 @@ from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
     APIException,
+    HCloudException,
 )
 from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.load_balancers.domain import (
     LoadBalancerHealtCheckHttp,
@@ -347,8 +348,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                 self.module.fail_json(msg="Load balancer does not exist: %s" % load_balancer_name)
 
             self._get_load_balancer_service()
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def _create_load_balancer_service(self):
         self.module.fail_on_missing_params(required_params=["protocol"])
@@ -377,8 +378,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                 self.hcloud_load_balancer.add_service(LoadBalancerService(**params)).wait_until_finished(
                     max_retries=1000
                 )
-            except Exception as e:
-                self.module.fail_json(msg=e.message)
+            except HCloudException as e:
+                self.fail_json_hcloud(e)
         self._mark_as_changed()
         self._get_load_balancer()
         self._get_load_balancer_service()
@@ -403,8 +404,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                             hcloud_cert = self.client.certificates.get_by_name(certificate)
                         except Exception:
                             hcloud_cert = self.client.certificates.get_by_id(certificate)
-                    except Exception as e:
-                        self.module.fail_json(msg=e.message)
+                    except HCloudException as e:
+                        self.fail_json_hcloud(e)
                     service_http.certificates.append(hcloud_cert)
 
         return service_http
@@ -473,8 +474,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                 self.hcloud_load_balancer.update_service(LoadBalancerService(**params)).wait_until_finished(
                     max_retries=1000
                 )
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
         self._get_load_balancer()
 
         if changed:
@@ -501,12 +502,12 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                         self.hcloud_load_balancer.delete_service(self.hcloud_load_balancer_service).wait_until_finished(
                             max_retries=1000
                         )
-                    except Exception as e:
-                        self.module.fail_json(msg=e.message)
+                    except HCloudException as e:
+                        self.fail_json_hcloud(e)
                 self._mark_as_changed()
             self.hcloud_load_balancer_service = None
         except APIException as e:
-            self.module.fail_json(msg=e.message)
+            self.fail_json_hcloud(e)
 
     @staticmethod
     def define_module():

@@ -134,6 +134,9 @@ hcloud_primary_ip:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+    HCloudException,
+)
 
 
 class AnsibleHcloudPrimaryIP(Hcloud):
@@ -158,8 +161,8 @@ class AnsibleHcloudPrimaryIP(Hcloud):
                 self.hcloud_primary_ip = self.client.primary_ips.get_by_id(self.module.params.get("id"))
             else:
                 self.hcloud_primary_ip = self.client.primary_ips.get_by_name(self.module.params.get("name"))
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def _create_primary_ip(self):
         self.module.fail_on_missing_params(required_params=["type", "datacenter"])
@@ -179,8 +182,8 @@ class AnsibleHcloudPrimaryIP(Hcloud):
                 delete_protection = self.module.params.get("delete_protection")
                 if delete_protection is not None:
                     self.hcloud_primary_ip.change_protection(delete=delete_protection).wait_until_finished()
-        except Exception as e:
-            self.module.fail_json(msg=e)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
         self._mark_as_changed()
         self._get_primary_ip()
 
@@ -199,8 +202,8 @@ class AnsibleHcloudPrimaryIP(Hcloud):
                 self._mark_as_changed()
 
             self._get_primary_ip()
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def present_primary_ip(self):
         self._get_primary_ip()
@@ -217,8 +220,8 @@ class AnsibleHcloudPrimaryIP(Hcloud):
                     self.client.primary_ips.delete(self.hcloud_primary_ip)
                 self._mark_as_changed()
             self.hcloud_primary_ip = None
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     @staticmethod
     def define_module():

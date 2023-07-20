@@ -94,6 +94,9 @@ hcloud_load_balancer_network:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+    HCloudException,
+)
 
 
 class AnsibleHcloudLoadBalancerNetwork(Hcloud):
@@ -123,8 +126,8 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
                 self.module.fail_json(msg="Load balancer does not exist: %s" % load_balancer_name)
 
             self.hcloud_load_balancer_network = None
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def _get_load_balancer_network(self):
         for privateNet in self.hcloud_load_balancer.private_net:
@@ -132,9 +135,7 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
                 self.hcloud_load_balancer_network = privateNet
 
     def _create_load_balancer_network(self):
-        params = {
-            "network": self.hcloud_network,
-        }
+        params = {"network": self.hcloud_network}
 
         if self.module.params.get("ip") is not None:
             params["ip"] = self.module.params.get("ip")
@@ -142,8 +143,8 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_load_balancer.attach_to_network(**params).wait_until_finished()
-            except Exception as e:
-                self.module.fail_json(msg=e.message)
+            except HCloudException as e:
+                self.fail_json_hcloud(e)
 
         self._mark_as_changed()
         self._get_load_balancer_and_network()
@@ -165,8 +166,8 @@ class AnsibleHcloudLoadBalancerNetwork(Hcloud):
                         self.hcloud_load_balancer_network.network
                     ).wait_until_finished()
                     self._mark_as_changed()
-                except Exception as e:
-                    self.module.fail_json(msg=e.message)
+                except HCloudException as e:
+                    self.fail_json_hcloud(e)
 
         self.hcloud_load_balancer_network = None
 

@@ -160,6 +160,9 @@ hcloud_volume:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+    HCloudException,
+)
 
 
 class AnsibleHcloudVolume(Hcloud):
@@ -189,8 +192,8 @@ class AnsibleHcloudVolume(Hcloud):
                 self.hcloud_volume = self.client.volumes.get_by_id(self.module.params.get("id"))
             else:
                 self.hcloud_volume = self.client.volumes.get_by_name(self.module.params.get("name"))
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def _create_volume(self):
         self.module.fail_on_missing_params(required_params=["name", "size"])
@@ -217,8 +220,8 @@ class AnsibleHcloudVolume(Hcloud):
                 if delete_protection is not None:
                     self._get_volume()
                     self.hcloud_volume.change_protection(delete=delete_protection).wait_until_finished()
-            except Exception as e:
-                self.module.fail_json(msg=e.message)
+            except HCloudException as e:
+                self.fail_json_hcloud(e)
         self._mark_as_changed()
         self._get_volume()
 
@@ -260,8 +263,8 @@ class AnsibleHcloudVolume(Hcloud):
                 self._mark_as_changed()
 
             self._get_volume()
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def present_volume(self):
         self._get_volume()
@@ -280,8 +283,8 @@ class AnsibleHcloudVolume(Hcloud):
                     self.client.volumes.delete(self.hcloud_volume)
                 self._mark_as_changed()
             self.hcloud_volume = None
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     @staticmethod
     def define_module():

@@ -123,6 +123,9 @@ hcloud_server_type_info:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+    HCloudException,
+)
 
 
 class AnsibleHcloudServerTypeInfo(Hcloud):
@@ -166,8 +169,8 @@ class AnsibleHcloudServerTypeInfo(Hcloud):
             else:
                 self.hcloud_server_type_info = self.client.server_types.get_all()
 
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     @staticmethod
     def define_module():

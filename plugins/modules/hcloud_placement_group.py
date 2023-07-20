@@ -110,6 +110,9 @@ hcloud_placement_group:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+    HCloudException,
+)
 
 
 class AnsibleHcloudPlacementGroup(Hcloud):
@@ -132,8 +135,8 @@ class AnsibleHcloudPlacementGroup(Hcloud):
                 self.hcloud_placement_group = self.client.placement_groups.get_by_id(self.module.params.get("id"))
             elif self.module.params.get("name") is not None:
                 self.hcloud_placement_group = self.client.placement_groups.get_by_name(self.module.params.get("name"))
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def _create_placement_group(self):
         self.module.fail_on_missing_params(required_params=["name"])
@@ -145,8 +148,8 @@ class AnsibleHcloudPlacementGroup(Hcloud):
         if not self.module.check_mode:
             try:
                 self.client.placement_groups.create(**params)
-            except Exception as e:
-                self.module.fail_json(msg=e.message, **params)
+            except HCloudException as e:
+                self.fail_json_hcloud(e, params=params)
         self._mark_as_changed()
         self._get_placement_group()
 

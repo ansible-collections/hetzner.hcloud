@@ -117,6 +117,7 @@ from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
     APIException,
+    HCloudException,
 )
 
 
@@ -140,8 +141,8 @@ class AnsibleHcloudServerNetwork(Hcloud):
             self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("network"))
             self.hcloud_server = self.client.servers.get_by_name(self.module.params.get("server"))
             self.hcloud_server_network = None
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def _get_server_network(self):
         for privateNet in self.hcloud_server.private_net:
@@ -161,8 +162,8 @@ class AnsibleHcloudServerNetwork(Hcloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_server.attach_to_network(**params).wait_until_finished()
-            except Exception as e:
-                self.module.fail_json(msg=e.message)
+            except HCloudException as e:
+                self.fail_json_hcloud(e)
 
         self._mark_as_changed()
         self._get_server_and_network()
@@ -180,7 +181,7 @@ class AnsibleHcloudServerNetwork(Hcloud):
                 try:
                     self.hcloud_server.change_alias_ips(**params).wait_until_finished()
                 except APIException as e:
-                    self.module.fail_json(msg=e.message)
+                    self.fail_json_hcloud(e)
 
             self._mark_as_changed()
         self._get_server_and_network()
@@ -201,8 +202,8 @@ class AnsibleHcloudServerNetwork(Hcloud):
             if not self.module.check_mode:
                 try:
                     self.hcloud_server.detach_from_network(self.hcloud_server_network.network).wait_until_finished()
-                except Exception as e:
-                    self.module.fail_json(msg=e.message)
+                except HCloudException as e:
+                    self.fail_json_hcloud(e)
             self._mark_as_changed()
         self.hcloud_server_network = None
 

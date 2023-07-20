@@ -173,6 +173,7 @@ from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
 from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
     APIException,
+    HCloudException,
 )
 from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.firewalls.domain import (
     FirewallRule,
@@ -209,8 +210,8 @@ class AnsibleHcloudFirewall(Hcloud):
             elif self.module.params.get("name") is not None:
                 self.hcloud_firewall = self.client.firewalls.get_by_name(self.module.params.get("name"))
 
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except HCloudException as e:
+            self.fail_json_hcloud(e)
 
     def _create_firewall(self):
         self.module.fail_on_missing_params(required_params=["name"])
@@ -234,8 +235,8 @@ class AnsibleHcloudFirewall(Hcloud):
         if not self.module.check_mode:
             try:
                 self.client.firewalls.create(**params)
-            except Exception as e:
-                self.module.fail_json(msg=e.message, **params)
+            except HCloudException as e:
+                self.fail_json_hcloud(e, params=params)
         self._mark_as_changed()
         self._get_firewall()
 
@@ -292,9 +293,9 @@ class AnsibleHcloudFirewall(Hcloud):
                             retry_count = retry_count + 1
                             time.sleep(0.5 * retry_count)
                         else:
-                            self.module.fail_json(msg=e.message)
-                    except Exception as e:
-                        self.module.fail_json(msg=e.message)
+                            self.fail_json_hcloud(e)
+                    except HCloudException as e:
+                        self.fail_json_hcloud(e)
             self._mark_as_changed()
         self.hcloud_firewall = None
 
