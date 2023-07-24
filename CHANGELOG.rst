@@ -5,6 +5,43 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v2.0.0
+======
+
+Release Summary
+---------------
+
+This release bundles the hcloud dependency in the collection, this allows us to ship
+new features or bug fixes without having to release new major versions and require the
+users to upgrade their version of the hcloud dependency.
+
+
+Minor Changes
+-------------
+
+- Bundle hcloud python dependency inside the collection.
+- python-dateutil >= 2.7.5 is now required by the collection. If you already have the hcloud package installed, this dependency should also be installed.
+- requests >= 2.20 is now required by the collection. If you already have the hcloud package installed, this dependency should also be installed.
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- Drop support for ansible-core 2.12
+- Drop support for python 3.7
+- inventory plugin - Don't set the server image variables (`image_id`, `image_os_flavor` and `image_name`) when the server image is not defined.
+
+Removed Features (previously deprecated)
+----------------------------------------
+
+- hcloud_datacenter_facts Removed deprecated facts module
+- hcloud_floating_ip_facts Removed deprecated facts module
+- hcloud_image_facts Removed deprecated facts module
+- hcloud_location_facts Removed deprecated facts module
+- hcloud_server_facts Removed deprecated facts module
+- hcloud_server_type_facts Removed deprecated facts module
+- hcloud_ssh_key_facts Removed deprecated facts module
+- hcloud_volume_facts Removed deprecated facts module
+
 v1.16.0
 =======
 

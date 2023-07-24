@@ -1,4 +1,0 @@
-breaking_changes:
-  - >
-    inventory plugin - Don't set the server image variables (`image_id`,
-    `image_os_flavor` and `image_name`) when the server image is not defined.
