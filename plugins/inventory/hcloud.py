@@ -270,10 +270,6 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                 self.inventory.set_variable(server.name, "image_name", to_native(server.image.name))
             else:
                 self.inventory.set_variable(server.name, "image_name", to_native(server.image.description))
-        else:
-            self.inventory.set_variable(server.name, "image_id", to_native("No Image ID found"))
-            self.inventory.set_variable(server.name, "image_name", to_native("No Image Name found"))
-            self.inventory.set_variable(server.name, "image_os_flavor", to_native("No Image OS Flavor found"))
 
         # Labels
         self.inventory.set_variable(server.name, "labels", dict(server.labels))
