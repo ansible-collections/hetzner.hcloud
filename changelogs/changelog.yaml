@@ -340,3 +340,47 @@ releases:
     fragments:
     - hcloud_server-removed-networks.yml
     release_date: '2022-12-20'
+  2.0.0:
+    changes:
+      breaking_changes:
+      - Drop support for ansible-core 2.12
+      - Drop support for python 3.7
+      - 'inventory plugin - Don''t set the server image variables (`image_id`, `image_os_flavor`
+        and `image_name`) when the server image is not defined.
+
+        '
+      minor_changes:
+      - Bundle hcloud python dependency inside the collection.
+      - 'python-dateutil >= 2.7.5 is now required by the collection. If you already
+        have the hcloud package installed, this dependency should also be installed.
+
+        '
+      - 'requests >= 2.20 is now required by the collection. If you already have the
+        hcloud package installed, this dependency should also be installed.
+
+        '
+      release_summary: 'This release bundles the hcloud dependency in the collection,
+        this allows us to ship
+
+        new features or bug fixes without having to release new major versions and
+        require the
+
+        users to upgrade their version of the hcloud dependency.
+
+        '
+      removed_features:
+      - hcloud_datacenter_facts Removed deprecated facts module
+      - hcloud_floating_ip_facts Removed deprecated facts module
+      - hcloud_image_facts Removed deprecated facts module
+      - hcloud_location_facts Removed deprecated facts module
+      - hcloud_server_facts Removed deprecated facts module
+      - hcloud_server_type_facts Removed deprecated facts module
+      - hcloud_ssh_key_facts Removed deprecated facts module
+      - hcloud_volume_facts Removed deprecated facts module
+    fragments:
+    - do-not-set-inventory-server-image-variables-when-undefined.yml
+    - drop-support-for-ansible-core-2.12.yml
+    - drop-support-for-python-3.7.yml
+    - remove-deprecated-facts-modules.yml
+    - vendor-hcloud-python-dependency.yml
+    release_date: '2023-07-24'
