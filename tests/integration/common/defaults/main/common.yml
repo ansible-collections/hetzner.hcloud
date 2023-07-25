@@ -1,0 +1,9 @@
+---
+# Azure Pipelines will configure this value to something similar to
+# "azp-84824-1-hetzner-2-13-test-2-13-hcloud-3-9-1-default-i"
+hcloud_prefix: "tests"
+
+# Used to namespace resources created by concurrent test pipelines/targets
+hcloud_run_ns: "{{ hcloud_prefix | md5 }}"
+hcloud_role_ns: "{{ role_name | split('_') | map('first') | join() }}"
+hcloud_ns: "ansible-{{ hcloud_run_ns }}-{{ hcloud_role_ns }}"
