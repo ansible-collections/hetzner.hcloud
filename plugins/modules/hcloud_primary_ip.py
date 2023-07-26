@@ -133,10 +133,9 @@ hcloud_primary_ip:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
-from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
-    HCloudException,
-)
+
+from ..module_utils.hcloud import Hcloud
+from ..module_utils.vendor.hcloud import HCloudException
 
 
 class AnsibleHcloudPrimaryIP(Hcloud):

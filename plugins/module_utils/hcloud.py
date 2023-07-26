@@ -8,7 +8,8 @@ import traceback
 from ansible.module_utils.ansible_release import __version__
 from ansible.module_utils.basic import env_fallback, missing_required_lib
 from ansible.module_utils.common.text.converters import to_native
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor import hcloud
+
+from ..module_utils.vendor import hcloud
 
 HAS_REQUESTS = True
 HAS_DATEUTIL = True

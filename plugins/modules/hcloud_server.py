@@ -332,23 +332,16 @@ from datetime import datetime, timedelta, timezone
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
-from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
-    HCloudException,
-)
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.firewalls.domain import (
-    FirewallResource,
-)
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.servers.domain import (
+
+from ..module_utils.hcloud import Hcloud
+from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.firewalls.domain import FirewallResource
+from ..module_utils.vendor.hcloud.servers.domain import (
     Server,
     ServerCreatePublicNetwork,
 )
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.ssh_keys.domain import (
-    SSHKey,
-)
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.volumes.domain import (
-    Volume,
-)
+from ..module_utils.vendor.hcloud.ssh_keys.domain import SSHKey
+from ..module_utils.vendor.hcloud.volumes.domain import Volume
 
 
 class AnsibleHcloudServer(Hcloud):
