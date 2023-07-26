@@ -1,4 +1,4 @@
 ---
 collections:
-  - community.general
   - ansible.netcommon
+  - community.general

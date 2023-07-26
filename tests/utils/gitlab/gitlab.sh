@@ -55,13 +55,11 @@ cp -r "." "${TEST_DIR}"
 cd "${TEST_DIR}"
 
 # STAR: HACK install dependencies
-retry ansible-galaxy -vvv collection install community.general
-retry ansible-galaxy -vvv collection install ansible.netcommon
-retry ansible-galaxy -vvv collection install community.internal_test_tools
-retry pip install netaddr --disable-pip-version-check
-retry pip install python-dateutil
-retry pip install requests
+retry pip install -r tests/integration/requirements.txt -c tests/integration/constraints.txt
+retry ansible-galaxy -vvv collection install -r tests/requirements.yml
+
 retry pip install rstcheck
+retry ansible-galaxy -vvv collection install community.internal_test_tools
 # END: HACK
 
 export PYTHONIOENCODING='utf-8'

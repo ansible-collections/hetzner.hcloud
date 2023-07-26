@@ -1,0 +1,125 @@
+# Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: setup
+  hetzner.hcloud.hcloud_network:
+    name: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/8"
+    state: present
+  register: network
+- name: verify setup
+  assert:
+    that:
+      - network is success
+
+- name: test missing required parameters on create route
+  hetzner.hcloud.hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}"
+    state: present
+  register: result
+  ignore_errors: true
+- name: verify fail test missing required parameters on create route
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "missing required arguments: ip_range, network_zone, type"'
+
+- name: test create subnetwork with checkmode
+  hetzner.hcloud.hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/16"
+    type: "server"
+    network_zone: "eu-central"
+    state: present
+  register: result
+  check_mode: true
+- name: verify test create subnetwork with checkmode
+  assert:
+    that:
+      - result is changed
+
+- name: test create subnetwork
+  hetzner.hcloud.hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/16"
+    type: "cloud"
+    network_zone: "eu-central"
+    state: present
+  register: subnet
+- name: verify create subnetwork
+  assert:
+    that:
+      - subnet is changed
+      - subnet.hcloud_subnetwork.network == "{{ hcloud_network_name }}"
+      - subnet.hcloud_subnetwork.ip_range == "10.0.0.0/16"
+      - subnet.hcloud_subnetwork.type == "cloud"
+      - subnet.hcloud_subnetwork.network_zone == "eu-central"
+
+- name: test create subnetwork idempotency
+  hetzner.hcloud.hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/16"
+    type: "cloud"
+    network_zone: "eu-central"
+    state: present
+  register: result
+- name: verify create subnetwork idempotency
+  assert:
+    that:
+      - result is not changed
+
+- name: test absent subnetwork
+  hetzner.hcloud.hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/16"
+    type: "cloud"
+    network_zone: "eu-central"
+    state: absent
+  register: result
+- name: verify test absent subnetwork
+  assert:
+    that:
+      - result is changed
+
+- name: test vswitch subnetwork
+  hetzner.hcloud.hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/16"
+    type: "vswitch"
+    network_zone: "eu-central"
+    vswitch_id: "{{ hetzner_vswitch_id }}"
+    state: present
+  register: subnet
+- name: verify test vswitch subnetwork
+  assert:
+    that:
+      - subnet is changed
+      - subnet.hcloud_subnetwork.network == "{{ hcloud_network_name }}"
+      - subnet.hcloud_subnetwork.ip_range == "10.0.0.0/16"
+      - subnet.hcloud_subnetwork.type == "vswitch"
+      - subnet.hcloud_subnetwork.network_zone == "eu-central"
+      - subnet.hcloud_subnetwork.vswitch_id == hetzner_vswitch_id
+
+- name: test absent subnetwork
+  hetzner.hcloud.hcloud_subnetwork:
+    network: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/16"
+    type: "vswitch"
+    network_zone: "eu-central"
+    vswitch_id: "{{ hetzner_vswitch_id }}"
+    state: absent
+  register: subnet
+- name: verify test absent subnetwork
+  assert:
+    that:
+      - result is changed
+
+- name: cleanup
+  hetzner.hcloud.hcloud_network:
+    name: "{{hcloud_network_name}}"
+    state: absent
+  register: result
+- name: verify cleanup
+  assert:
+    that:
+      - result is success

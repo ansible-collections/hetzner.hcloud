@@ -1,0 +1,7 @@
+# Copyright: (c) 2023, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+hcloud_iso_id: 551
+hcloud_iso_name: systemrescuecd-x86-5.2.2.iso
+hcloud_iso_type: public
+hcloud_iso_architecture: x86

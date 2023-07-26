@@ -1,0 +1,154 @@
+# Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: setup server
+  hetzner.hcloud.hcloud_server:
+    name: "{{hcloud_server_name}}"
+    server_type: cx11
+    image: ubuntu-22.04
+    state: started
+    location: "fsn1"
+  register: server
+- name: verify setup server
+  assert:
+    that:
+      - server is success
+
+- name: setup load_balancer
+  hetzner.hcloud.hcloud_load_balancer:
+    name: "{{hcloud_load_balancer_name}}"
+    load_balancer_type: lb11
+    state: present
+    location: "fsn1"
+  register: load_balancer
+- name: verify setup load_balancer
+  assert:
+    that:
+      - load_balancer is success
+
+- name: test fail load balancer does not exist
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: server
+    load_balancer: does-not-exist
+    server: "{{ hcloud_server_name }}"
+  register: result
+  ignore_errors: true
+- name: verify test fail load_balancer does not exist
+  assert:
+    that:
+      - result is failed
+      - "result.msg == 'Load balancer does not exist: does-not-exist'"
+
+- name: test fail server does not exist
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: server
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    server: does-not-exist
+  register: result
+  ignore_errors: true
+- name: verify test fail server does not exist
+  assert:
+    that:
+      - result is failed
+      - "result.msg == 'Server not found: does-not-exist'"
+
+- name: test create load_balancer target with checkmode
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: "server"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    server: "{{hcloud_server_name}}"
+    state: present
+  register: result
+  check_mode: true
+- name: verify test create load_balancer target with checkmode
+  assert:
+    that:
+      - result is changed
+
+- name: test create load_balancer target
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: "server"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    server: "{{hcloud_server_name}}"
+    state: present
+  register: load_balancer_target
+- name: verify create load_balancer target
+  assert:
+    that:
+      - load_balancer_target is changed
+      - load_balancer_target.hcloud_load_balancer_target.type == "server"
+      - load_balancer_target.hcloud_load_balancer_target.server == hcloud_server_name
+      - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
+
+- name: test create load_balancer target idempotency
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: "server"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    server: "{{hcloud_server_name}}"
+    state: present
+  register: load_balancer_target
+- name: verify create load_balancer target idempotency
+  assert:
+    that:
+      - load_balancer_target is not changed
+
+- name: test absent load_balancer target
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: "server"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    server: "{{hcloud_server_name}}"
+    state: absent
+  register: result
+- name: verify test absent load_balancer target
+  assert:
+    that:
+      - result is changed
+
+- name: test create label_selector target
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: "label_selector"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    label_selector: "application=backend"
+    state: present
+  register: load_balancer_target
+- name: verify create label_selector target
+  assert:
+    that:
+      - load_balancer_target is changed
+      - load_balancer_target.hcloud_load_balancer_target.type == "label_selector"
+      - load_balancer_target.hcloud_load_balancer_target.label_selector == "application=backend"
+      - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
+
+- name: test create ip target
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: "ip"
+    load_balancer: "{{hcloud_load_balancer_name}}"
+    ip: "{{hcloud_testing_ip}}"
+    state: present
+  register: load_balancer_target
+- name: verify create ip target
+  assert:
+    that:
+      - load_balancer_target is changed
+      - load_balancer_target.hcloud_load_balancer_target.type == "ip"
+      - load_balancer_target.hcloud_load_balancer_target.ip == hcloud_testing_ip
+      - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
+
+- name: cleanup load_balancer
+  hetzner.hcloud.hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    state: absent
+  register: result
+  until: result is not failed
+  retries: 5
+  delay: 2
+
+- name: cleanup
+  hetzner.hcloud.hcloud_server:
+    name: "{{hcloud_server_name}}"
+    state: absent
+  register: result
+- name: verify cleanup
+  assert:
+    that:
+      - result is success

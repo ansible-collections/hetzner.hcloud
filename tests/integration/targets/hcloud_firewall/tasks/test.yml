@@ -1,0 +1,210 @@
+# Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: setup firewall to be absent
+  hetzner.hcloud.hcloud_firewall:
+    name: "{{ hcloud_firewall_name }}"
+    state: absent
+
+- name: test missing required parameters on create firewall
+  hetzner.hcloud.hcloud_firewall:
+  register: result
+  ignore_errors: true
+- name: verify fail test missing required parameters on create firewall
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "one of the following is required: id, name"'
+
+- name: test create firewall with check mode
+  hetzner.hcloud.hcloud_firewall:
+    name: "{{ hcloud_firewall_name }}"
+  register: result
+  check_mode: true
+- name: test create firewall with check mode
+  assert:
+    that:
+      - result is changed
+
+- name: test create firewall
+  hetzner.hcloud.hcloud_firewall:
+    name: "{{ hcloud_firewall_name }}"
+    rules:
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+        description: "allow icmp in"
+    labels:
+      key: value
+      my-label: label
+  register: firewall
+- name: verify create firewall
+  assert:
+    that:
+      - firewall is changed
+      - firewall.hcloud_firewall.name == "{{ hcloud_firewall_name }}"
+      - firewall.hcloud_firewall.rules | list | count == 1
+      - firewall.hcloud_firewall.rules | selectattr('direction','equalto','in') | list | count == 1
+      - firewall.hcloud_firewall.rules | selectattr('protocol','equalto','icmp') | list | count == 1
+      - firewall.hcloud_firewall.rules | selectattr('description', 'equalto', 'allow icmp in') | list | count == 1
+
+- name: test create firewall idempotence
+  hetzner.hcloud.hcloud_firewall:
+    name: "{{ hcloud_firewall_name }}"
+    rules:
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+        description: "allow icmp in"
+    labels:
+      key: value
+      my-label: label
+  register: result
+- name: verify create firewall idempotence
+  assert:
+    that:
+      - result is not changed
+
+- name: test update firewall rules
+  hetzner.hcloud.hcloud_firewall:
+    name: "{{ hcloud_firewall_name }}"
+    rules:
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+      - direction: in
+        protocol: tcp
+        port: 80
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+      - direction: out
+        protocol: tcp
+        port: 80
+        destination_ips:
+          - 0.0.0.0/0
+          - ::/0
+        description: allow tcp out
+    labels:
+      key: value
+      my-label: label
+  register: firewall
+- name: verify update firewall rules
+  assert:
+    that:
+      - firewall is changed
+      - firewall.hcloud_firewall.name == "{{ hcloud_firewall_name }}"
+      - firewall.hcloud_firewall.rules | list | count == 3
+      - firewall.hcloud_firewall.rules | selectattr('direction','equalto','in') | list | count == 2
+      - firewall.hcloud_firewall.rules | selectattr('direction','equalto','out') | list | count == 1
+      - firewall.hcloud_firewall.rules | selectattr('protocol','equalto','icmp') | list | count == 1
+      - firewall.hcloud_firewall.rules | selectattr('protocol','equalto','tcp') | list | count == 2
+      - firewall.hcloud_firewall.rules | selectattr('port','equalto','80') | list | count == 2
+      - firewall.hcloud_firewall.rules | selectattr('description', 'equalto', 'allow tcp out') | list | count == 1
+
+- name: test update firewall rules idempotence
+  hetzner.hcloud.hcloud_firewall:
+    name: "{{ hcloud_firewall_name }}"
+    rules:
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+      - direction: in
+        protocol: tcp
+        port: 80
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+      - direction: out
+        protocol: tcp
+        port: 80
+        destination_ips:
+          - 0.0.0.0/0
+          - ::/0
+        description: allow tcp out
+    labels:
+      key: value
+      my-label: label
+  register: result
+- name: verify update firewall rules idempotence
+  assert:
+    that:
+      - result is not changed
+
+- name: test update firewall with check mode
+  hetzner.hcloud.hcloud_firewall:
+    id: "{{ firewall.hcloud_firewall.id }}"
+    name: "changed-{{ hcloud_firewall_name }}"
+  register: result
+  check_mode: true
+- name: test create firewall with check mode
+  assert:
+    that:
+      - result is changed
+
+- name: test update firewall
+  hetzner.hcloud.hcloud_firewall:
+    id: "{{ firewall.hcloud_firewall.id }}"
+    name: "changed-{{ hcloud_firewall_name }}"
+    labels:
+      key: value
+  register: result
+- name: test update firewall
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_firewall.name == "changed-{{ hcloud_firewall_name }}"
+
+- name: test update firewall with same labels
+  hetzner.hcloud.hcloud_firewall:
+    id: "{{ firewall.hcloud_firewall.id }}"
+    name: "changed-{{ hcloud_firewall_name }}"
+    labels:
+      key: value
+  register: result
+- name: test update firewall with same labels
+  assert:
+    that:
+      - result is not changed
+
+- name: test update firewall with other labels
+  hetzner.hcloud.hcloud_firewall:
+    id: "{{ firewall.hcloud_firewall.id }}"
+    name: "changed-{{ hcloud_firewall_name }}"
+    labels:
+      key: value
+      test: "val123"
+  register: result
+- name: test update firewall  with other labels
+  assert:
+    that:
+      - result is changed
+
+- name: test rename firewall
+  hetzner.hcloud.hcloud_firewall:
+    id: "{{ firewall.hcloud_firewall.id }}"
+    name: "{{ hcloud_firewall_name }}"
+  register: result
+- name: test rename firewall
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_firewall.name == "{{ hcloud_firewall_name }}"
+
+- name: absent firewall
+  hetzner.hcloud.hcloud_firewall:
+    id: "{{ firewall.hcloud_firewall.id }}"
+    state: absent
+  register: result
+- name: verify absent server
+  assert:
+    that:
+      - result is success

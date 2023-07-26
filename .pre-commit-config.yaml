@@ -61,3 +61,11 @@ repos:
         entry: python3 scripts/vendor.py
         pass_filenames: false
         files: ^scripts/vendor.py$
+
+      - id: check-integration-test-files
+        name: check integration test files
+        description: Ensure the integration test files are in sync
+        language: system
+        entry: scripts/integration-test-files.sh
+        pass_filenames: false
+        files: ^(scripts/integration-test-files.sh$|tests/integration)
