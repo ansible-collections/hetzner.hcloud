@@ -94,11 +94,11 @@ hcloud_load_balancer_network:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudLoadBalancerNetwork(Hcloud):
+class AnsibleHcloudLoadBalancerNetwork(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_load_balancer_network")
         self.hcloud_network = None

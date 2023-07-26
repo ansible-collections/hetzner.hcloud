@@ -171,12 +171,12 @@ import time
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import APIException, HCloudException
 from ..module_utils.vendor.hcloud.firewalls.domain import FirewallRule
 
 
-class AnsibleHcloudFirewall(Hcloud):
+class AnsibleHcloudFirewall(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_firewall")
         self.hcloud_firewall = None

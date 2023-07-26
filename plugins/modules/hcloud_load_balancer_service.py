@@ -282,7 +282,7 @@ hcloud_load_balancer_service:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import APIException, HCloudException
 from ..module_utils.vendor.hcloud.load_balancers.domain import (
     LoadBalancerHealtCheckHttp,
@@ -292,7 +292,7 @@ from ..module_utils.vendor.hcloud.load_balancers.domain import (
 )
 
 
-class AnsibleHcloudLoadBalancerService(Hcloud):
+class AnsibleHcloudLoadBalancerService(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_load_balancer_service")
         self.hcloud_load_balancer = None

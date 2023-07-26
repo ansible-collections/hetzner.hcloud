@@ -85,11 +85,11 @@ hcloud_certificate_info:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudCertificateInfo(Hcloud):
+class AnsibleHcloudCertificateInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_certificate_info")
         self.hcloud_certificate_info = None

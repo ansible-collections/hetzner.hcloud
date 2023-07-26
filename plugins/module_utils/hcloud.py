@@ -4,6 +4,7 @@
 
 
 import traceback
+import warnings
 
 from ansible.module_utils.ansible_release import __version__
 from ansible.module_utils.basic import env_fallback, missing_required_lib
@@ -25,7 +26,7 @@ except ImportError:
     HAS_DATEUTIL = False
 
 
-class Hcloud:
+class AnsibleHCloud:
     def __init__(self, module, represent):
         self.module = module
         self.represent = represent
@@ -94,3 +95,13 @@ class Hcloud:
         if getattr(self, self.represent) is not None:
             self.result[self.represent] = self._prepare_result()
         return self.result
+
+
+class Hcloud(AnsibleHCloud):
+    def __init__(self, module, represent):
+        warnings.warn(
+            "The 'Hcloud' class is deprecated, it was renamed to 'AnsibleHCloud', please use it instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(module, represent)

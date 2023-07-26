@@ -140,11 +140,11 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudReverseDNS(Hcloud):
+class AnsibleHcloudReverseDNS(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_rdns")
         self.hcloud_resource = None
