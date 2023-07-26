@@ -166,7 +166,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 
 class AnsibleHcloudVolume(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_volume")
+        super().__init__(module, "hcloud_volume")
         self.hcloud_volume = None
 
     def _prepare_result(self):
@@ -285,8 +285,8 @@ class AnsibleHcloudVolume(Hcloud):
         except HCloudException as e:
             self.fail_json_hcloud(e)
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
@@ -302,7 +302,7 @@ class AnsibleHcloudVolume(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             required_one_of=[["id", "name"]],
             mutually_exclusive=[["location", "server"]],

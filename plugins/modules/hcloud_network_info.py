@@ -190,7 +190,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 
 class AnsibleHcloudNetworkInfo(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_network_info")
+        super().__init__(module, "hcloud_network_info")
         self.hcloud_network_info = None
 
     def _prepare_result(self):
@@ -264,14 +264,14 @@ class AnsibleHcloudNetworkInfo(Hcloud):
         except HCloudException as e:
             self.fail_json_hcloud(e)
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
                 name={"type": "str"},
                 label_selector={"type": "str"},
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             supports_check_mode=True,
         )

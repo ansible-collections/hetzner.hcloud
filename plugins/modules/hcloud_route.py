@@ -97,7 +97,7 @@ from ..module_utils.vendor.hcloud.networks.domain import NetworkRoute
 
 class AnsibleHcloudRoute(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_route")
+        super().__init__(module, "hcloud_route")
         self.hcloud_network = None
         self.hcloud_route = None
 
@@ -155,8 +155,8 @@ class AnsibleHcloudRoute(Hcloud):
             self._mark_as_changed()
         self.hcloud_route = None
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 network={"type": "str", "required": True},
@@ -166,7 +166,7 @@ class AnsibleHcloudRoute(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             supports_check_mode=True,
         )

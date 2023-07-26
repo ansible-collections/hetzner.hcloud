@@ -149,7 +149,7 @@ from ..module_utils.vendor.hcloud.load_balancers.domain import (
 
 class AnsibleHcloudLoadBalancerTarget(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_load_balancer_target")
+        super().__init__(module, "hcloud_load_balancer_target")
         self.hcloud_load_balancer = None
         self.hcloud_load_balancer_target = None
         self.hcloud_server = None
@@ -276,8 +276,8 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
             self._mark_as_changed()
         self.hcloud_load_balancer_target = None
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 type={"type": "str", "required": True, "choices": ["server", "label_selector", "ip"]},
@@ -290,7 +290,7 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             supports_check_mode=True,
         )

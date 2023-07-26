@@ -170,7 +170,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 
 class AnsibleHcloudFloatingIP(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_floating_ip")
+        super().__init__(module, "hcloud_floating_ip")
         self.hcloud_floating_ip = None
 
     def _prepare_result(self):
@@ -297,8 +297,8 @@ class AnsibleHcloudFloatingIP(Hcloud):
         except HCloudException as e:
             self.fail_json_hcloud(e)
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
@@ -314,7 +314,7 @@ class AnsibleHcloudFloatingIP(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             required_one_of=[["id", "name"]],
             mutually_exclusive=[["home_location", "server"]],

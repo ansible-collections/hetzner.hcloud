@@ -294,7 +294,7 @@ from ..module_utils.vendor.hcloud.load_balancers.domain import (
 
 class AnsibleHcloudLoadBalancerService(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_load_balancer_service")
+        super().__init__(module, "hcloud_load_balancer_service")
         self.hcloud_load_balancer = None
         self.hcloud_load_balancer_service = None
 
@@ -507,8 +507,8 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
         except APIException as e:
             self.fail_json_hcloud(e)
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 load_balancer={"type": "str", "required": True},
@@ -556,7 +556,7 @@ class AnsibleHcloudLoadBalancerService(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             supports_check_mode=True,
         )

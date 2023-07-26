@@ -117,7 +117,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 
 class AnsibleHcloudImageInfo(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_image_info")
+        super().__init__(module, "hcloud_image_info")
         self.hcloud_image_info = None
 
     def _prepare_result(self):
@@ -175,8 +175,8 @@ class AnsibleHcloudImageInfo(Hcloud):
         except HCloudException as e:
             self.fail_json_hcloud(e)
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
@@ -184,7 +184,7 @@ class AnsibleHcloudImageInfo(Hcloud):
                 label_selector={"type": "str"},
                 type={"choices": ["system", "snapshot", "backup"], "default": "system", "type": "str"},
                 architecture={"choices": ["x86", "arm"], "type": "str"},
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             supports_check_mode=True,
         )

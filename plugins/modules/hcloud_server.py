@@ -346,7 +346,7 @@ from ..module_utils.vendor.hcloud.volumes.domain import Volume
 
 class AnsibleHcloudServer(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_server")
+        super().__init__(module, "hcloud_server")
         self.hcloud_server = None
 
     def _prepare_result(self):
@@ -863,8 +863,8 @@ class AnsibleHcloudServer(Hcloud):
         except HCloudException as e:
             self.fail_json_hcloud(e)
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
@@ -896,7 +896,7 @@ class AnsibleHcloudServer(Hcloud):
                     "choices": ["absent", "present", "restarted", "started", "stopped", "rebuild"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             required_one_of=[["id", "name"]],
             mutually_exclusive=[["location", "datacenter"]],

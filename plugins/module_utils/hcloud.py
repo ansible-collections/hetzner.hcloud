@@ -71,8 +71,8 @@ class Hcloud:
     def _mark_as_changed(self):
         self.result["changed"] = True
 
-    @staticmethod
-    def base_module_arguments():
+    @classmethod
+    def base_module_arguments(cls):
         return {
             "api_token": {
                 "type": "str",
