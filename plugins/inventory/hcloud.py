@@ -121,11 +121,9 @@ from ansible.errors import AnsibleError
 from ansible.module_utils.common.text.converters import to_native
 from ansible.plugins.inventory import BaseInventoryPlugin, Constructable
 from ansible.release import __version__
-from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import (
-    HAS_DATEUTIL,
-    HAS_REQUESTS,
-)
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor import hcloud
+
+from ..module_utils.hcloud import HAS_DATEUTIL, HAS_REQUESTS
+from ..module_utils.vendor import hcloud
 
 
 class InventoryModule(BaseInventoryPlugin, Constructable):
