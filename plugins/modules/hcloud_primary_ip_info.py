@@ -126,7 +126,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 
 class AnsibleHcloudPrimaryIPInfo(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_primary_ip_info")
+        super().__init__(module, "hcloud_primary_ip_info")
         self.hcloud_primary_ip_info = None
 
     def _prepare_result(self):
@@ -172,14 +172,14 @@ class AnsibleHcloudPrimaryIPInfo(Hcloud):
         except HCloudException as e:
             self.fail_json_hcloud(e)
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
                 label_selector={"type": "str"},
                 name={"type": "str"},
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             supports_check_mode=True,
         )

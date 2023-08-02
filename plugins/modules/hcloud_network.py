@@ -125,7 +125,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 
 class AnsibleHcloudNetwork(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_network")
+        super().__init__(module, "hcloud_network")
         self.hcloud_network = None
 
     def _prepare_result(self):
@@ -222,8 +222,8 @@ class AnsibleHcloudNetwork(Hcloud):
             self.fail_json_hcloud(e)
         self.hcloud_network = None
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
@@ -236,7 +236,7 @@ class AnsibleHcloudNetwork(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             required_one_of=[["id", "name"]],
             supports_check_mode=True,

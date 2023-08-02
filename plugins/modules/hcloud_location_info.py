@@ -83,7 +83,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 
 class AnsibleHcloudLocationInfo(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_location_info")
+        super().__init__(module, "hcloud_location_info")
         self.hcloud_location_info = None
 
     def _prepare_result(self):
@@ -114,13 +114,13 @@ class AnsibleHcloudLocationInfo(Hcloud):
         except HCloudException as e:
             self.fail_json_hcloud(e)
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
                 name={"type": "str"},
-                **Hcloud.base_module_arguments(),
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )

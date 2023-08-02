@@ -146,7 +146,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 
 class AnsibleHcloudReverseDNS(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_rdns")
+        super().__init__(module, "hcloud_rdns")
         self.hcloud_resource = None
         self.hcloud_rdns = None
 
@@ -311,8 +311,8 @@ class AnsibleHcloudReverseDNS(Hcloud):
             self._mark_as_changed()
         self.hcloud_rdns = None
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 server={"type": "str"},
@@ -325,7 +325,7 @@ class AnsibleHcloudReverseDNS(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             required_one_of=[["server", "floating_ip", "load_balancer", "primary_ip"]],
             mutually_exclusive=[["server", "floating_ip", "load_balancer", "primary_ip"]],

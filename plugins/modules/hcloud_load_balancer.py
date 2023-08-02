@@ -150,7 +150,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 
 class AnsibleHcloudLoadBalancer(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_load_balancer")
+        super().__init__(module, "hcloud_load_balancer")
         self.hcloud_load_balancer = None
 
     def _prepare_result(self):
@@ -274,8 +274,8 @@ class AnsibleHcloudLoadBalancer(Hcloud):
         except HCloudException as e:
             self.fail_json_hcloud(e)
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
@@ -290,7 +290,7 @@ class AnsibleHcloudLoadBalancer(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             required_one_of=[["id", "name"]],
             mutually_exclusive=[["location", "network_zone"]],

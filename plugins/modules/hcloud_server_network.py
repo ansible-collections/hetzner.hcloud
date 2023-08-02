@@ -121,7 +121,7 @@ from ..module_utils.vendor.hcloud import APIException, HCloudException
 
 class AnsibleHcloudServerNetwork(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_server_network")
+        super().__init__(module, "hcloud_server_network")
         self.hcloud_network = None
         self.hcloud_server = None
         self.hcloud_server_network = None
@@ -205,8 +205,8 @@ class AnsibleHcloudServerNetwork(Hcloud):
             self._mark_as_changed()
         self.hcloud_server_network = None
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 network={"type": "str", "required": True},
@@ -217,7 +217,7 @@ class AnsibleHcloudServerNetwork(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             supports_check_mode=True,
         )

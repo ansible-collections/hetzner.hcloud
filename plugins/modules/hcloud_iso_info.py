@@ -103,7 +103,7 @@ from ..module_utils.hcloud import Hcloud
 
 class AnsibleHcloudIsoInfo(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_iso_info")
+        super().__init__(module, "hcloud_iso_info")
         self.hcloud_iso_info = None
 
     def _prepare_result(self):
@@ -141,15 +141,15 @@ class AnsibleHcloudIsoInfo(Hcloud):
         except Exception as e:
             self.module.fail_json(msg=e.message)
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
                 name={"type": "str"},
                 architecture={"type": "str", "choices": ["x86", "arm"]},
                 include_architecture_wildcard={"type": "bool"},
-                **Hcloud.base_module_arguments(),
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )

@@ -178,7 +178,7 @@ from ..module_utils.vendor.hcloud.firewalls.domain import FirewallRule
 
 class AnsibleHcloudFirewall(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_firewall")
+        super().__init__(module, "hcloud_firewall")
         self.hcloud_firewall = None
 
     def _prepare_result(self):
@@ -295,8 +295,8 @@ class AnsibleHcloudFirewall(Hcloud):
             self._mark_as_changed()
         self.hcloud_firewall = None
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
@@ -319,7 +319,7 @@ class AnsibleHcloudFirewall(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             required_one_of=[["id", "name"]],
             required_if=[["state", "present", ["name"]]],

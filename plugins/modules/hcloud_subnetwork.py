@@ -134,7 +134,7 @@ from ..module_utils.vendor.hcloud.networks.domain import NetworkSubnet
 
 class AnsibleHcloudSubnetwork(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_subnetwork")
+        super().__init__(module, "hcloud_subnetwork")
         self.hcloud_network = None
         self.hcloud_subnetwork = None
 
@@ -199,8 +199,8 @@ class AnsibleHcloudSubnetwork(Hcloud):
             self._mark_as_changed()
         self.hcloud_subnetwork = None
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 network={"type": "str", "required": True},
@@ -212,7 +212,7 @@ class AnsibleHcloudSubnetwork(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             supports_check_mode=True,
         )

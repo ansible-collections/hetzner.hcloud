@@ -119,7 +119,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 
 class AnsibleHcloudSSHKey(Hcloud):
     def __init__(self, module):
-        Hcloud.__init__(self, module, "hcloud_ssh_key")
+        super().__init__(module, "hcloud_ssh_key")
         self.hcloud_ssh_key = None
 
     def _prepare_result(self):
@@ -193,8 +193,8 @@ class AnsibleHcloudSSHKey(Hcloud):
             self._mark_as_changed()
         self.hcloud_ssh_key = None
 
-    @staticmethod
-    def define_module():
+    @classmethod
+    def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
@@ -206,7 +206,7 @@ class AnsibleHcloudSSHKey(Hcloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **Hcloud.base_module_arguments()
+                **super().base_module_arguments()
             ),
             required_one_of=[["id", "name", "fingerprint"]],
             required_if=[["state", "present", ["name"]]],
