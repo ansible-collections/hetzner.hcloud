@@ -46,6 +46,21 @@ repos:
   - repo: https://github.com/ansible-community/antsibull-changelog
     rev: 0.22.0
     hooks:
+      - id: shfmt
+        name: shfmt
+        description: Format shell scripts with shfmt
+        language: golang
+        additional_dependencies: [mvdan.cc/sh/v3/cmd/shfmt@v3.7.0]
+        entry: shfmt -i 2 -ci -sr -kp -w
+        types: [shell]
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.5
+    hooks:
+      - id: shellcheck
+
+  - repo: local
+    hooks:
       - id: antsibull-changelog-lint
       - id: antsibull-changelog-lint-changelog-yaml
 

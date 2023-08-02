@@ -11,39 +11,38 @@ ansible_version="${args[0]}"
 script="${args[1]}"
 
 function join {
-    local IFS="$1";
-    shift;
-    echo "$*";
+  local IFS="$1"
+  shift
+  echo "$*"
 }
 
 test="$(join / "${args[@]:1}")"
 command -v python
 python -V
 
-function retry
-{
-    # shellcheck disable=SC2034
-    for repetition in 1 2 3; do
-        set +e
-        "$@"
-        result=$?
-        set -e
-        if [ ${result} == 0 ]; then
-            return ${result}
-        fi
-        echo "@* -> ${result}"
-    done
-    echo "Command '@*' failed 3 times!"
-    exit 1
+function retry {
+  # shellcheck disable=SC2034
+  for repetition in 1 2 3; do
+    set +e
+    "$@"
+    result=$?
+    set -e
+    if [ ${result} == 0 ]; then
+      return ${result}
+    fi
+    echo "@* -> ${result}"
+  done
+  echo "Command '@*' failed 3 times!"
+  exit 1
 }
 
 command -v pip
 pip --version
 pip list --disable-pip-version-check
 if [ "${ansible_version}" == "devel" ]; then
-    retry pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
+  retry pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
 else
-    retry pip install "https://github.com/ansible/ansible/archive/stable-${ansible_version}.tar.gz" --disable-pip-version-check
+  retry pip install "https://github.com/ansible/ansible/archive/stable-${ansible_version}.tar.gz" --disable-pip-version-check
 fi
 export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
 # shellcheck disable=SC2034
@@ -65,21 +64,19 @@ retry ansible-galaxy -vvv collection install community.internal_test_tools
 export PYTHONIOENCODING='utf-8'
 
 if [ "${JOB_TRIGGERED_BY_NAME:-}" == "nightly-trigger" ]; then
-    COMPLETE=yes
+  COMPLETE=yes
 fi
-
 
 if [ -n "${COMPLETE:-}" ]; then
-    # disable change detection triggered by setting the COMPLETE environment variable to a non-empty value
-    export CHANGED=""
+  # disable change detection triggered by setting the COMPLETE environment variable to a non-empty value
+  export CHANGED=""
 elif [[ "${CI_COMMIT_MESSAGE}" =~ ci_complete ]]; then
-    # disable change detection triggered by having 'ci_complete' in the latest commit message
-    export CHANGED=""
+  # disable change detection triggered by having 'ci_complete' in the latest commit message
+  export CHANGED=""
 else
-    # enable change detection (default behavior)
-    export CHANGED=""
+  # enable change detection (default behavior)
+  export CHANGED=""
 fi
-
 
 export UNSTABLE="--allow-unstable-changed"
 
