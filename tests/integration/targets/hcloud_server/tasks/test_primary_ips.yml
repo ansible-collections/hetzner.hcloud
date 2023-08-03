@@ -31,7 +31,7 @@
     ipv4: "{{primaryIPv4.hcloud_primary_ip.id}}"
     ipv6: "{{primaryIPv6.hcloud_primary_ip.id}}"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: stopped
   register: result
 - name: verify test create server with primary ips
@@ -49,7 +49,7 @@
     ipv6: ""
     enable_ipv6: false
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: stopped
   register: result
 - name: verify test create server with primary ips

@@ -15,7 +15,7 @@
 - name: test create ssh key with check mode
   hetzner.hcloud.hcloud_ssh_key:
     name: "{{ hcloud_ssh_key_name }}"
-    public_key: "{{ key_material }}"
+    public_key: "{{ test_ssh_keypair.public_key }}"
   register: result
   check_mode: true
 - name: test create ssh key with check mode
@@ -26,23 +26,23 @@
 - name: test create ssh key
   hetzner.hcloud.hcloud_ssh_key:
     name: "{{ hcloud_ssh_key_name }}"
-    public_key: "{{ key_material }}"
+    public_key: "{{ test_ssh_keypair.public_key }}"
     labels:
       key: value
       my-label: label
-  register: sshKey
+  register: ssh_key
 - name: verify create ssh key
   assert:
     that:
-      - sshKey is changed
-      - sshKey.hcloud_ssh_key.name == "{{ hcloud_ssh_key_name }}"
-      - sshKey.hcloud_ssh_key.public_key ==  "{{ key_material }}"
-      - sshKey.hcloud_ssh_key.labels.key == "value"
+      - ssh_key is changed
+      - ssh_key.hcloud_ssh_key.name == "{{ hcloud_ssh_key_name }}"
+      - ssh_key.hcloud_ssh_key.public_key ==  "{{ test_ssh_keypair.public_key }}"
+      - ssh_key.hcloud_ssh_key.labels.key == "value"
 
 - name: test create ssh key idempotence
   hetzner.hcloud.hcloud_ssh_key:
     name: "{{ hcloud_ssh_key_name }}"
-    public_key: "{{ key_material }}"
+    public_key: "{{ test_ssh_keypair.public_key }}"
   register: result
 - name: verify create ssh key idempotence
   assert:
@@ -51,7 +51,7 @@
 
 - name: test update ssh key with check mode
   hetzner.hcloud.hcloud_ssh_key:
-    id: "{{ sshKey.hcloud_ssh_key.id }}"
+    id: "{{ ssh_key.hcloud_ssh_key.id }}"
     name: "changed-{{ hcloud_ssh_key_name }}"
   register: result
   check_mode: true
@@ -62,7 +62,7 @@
 
 - name: test update ssh key
   hetzner.hcloud.hcloud_ssh_key:
-    id: "{{ sshKey.hcloud_ssh_key.id }}"
+    id: "{{ ssh_key.hcloud_ssh_key.id }}"
     name: "changed-{{ hcloud_ssh_key_name }}"
     labels:
       key: value
@@ -75,7 +75,7 @@
 
 - name: test update ssh key with same labels
   hetzner.hcloud.hcloud_ssh_key:
-    id: "{{ sshKey.hcloud_ssh_key.id }}"
+    id: "{{ ssh_key.hcloud_ssh_key.id }}"
     name: "changed-{{ hcloud_ssh_key_name }}"
     labels:
       key: value
@@ -87,7 +87,7 @@
 
 - name: test update ssh key with other labels
   hetzner.hcloud.hcloud_ssh_key:
-    id: "{{ sshKey.hcloud_ssh_key.id }}"
+    id: "{{ ssh_key.hcloud_ssh_key.id }}"
     name: "changed-{{ hcloud_ssh_key_name }}"
     labels:
       key: value
@@ -100,7 +100,7 @@
 
 - name: test rename ssh key
   hetzner.hcloud.hcloud_ssh_key:
-    id: "{{ sshKey.hcloud_ssh_key.id }}"
+    id: "{{ ssh_key.hcloud_ssh_key.id }}"
     name: "{{ hcloud_ssh_key_name }}"
   register: result
 - name: test rename ssh key
@@ -123,20 +123,10 @@
     that:
       - main_server is changed
 
-- name: absent ssh key
-  hetzner.hcloud.hcloud_ssh_key:
-    id: "{{ sshKey.hcloud_ssh_key.id }}"
-    state: absent
-  register: result
-- name: verify absent sshkey
-  assert:
-    that:
-      - result is success
-
 - name: test fail cleanly on double created ssh key
   hetzner.hcloud.hcloud_ssh_key:
-    name: "{{ hcloud_ssh_key_name }}othername"
-    public_key: "{{ hcloud_doubled_ssh_key_public_key }}"
+    name: "{{ hcloud_ssh_key_name }}-other-name"
+    public_key: "{{ test_ssh_keypair.public_key }}"
   register: result
   ignore_errors: true
 - name: verify failed correctly
@@ -145,12 +135,12 @@
       - result is failed
       - 'result.msg == "SSH key with the same fingerprint already exists"'
 
-- name: cleanup
-  hetzner.hcloud.hcloud_server:
-    name: "{{ hcloud_server_name }}"
+- name: test delete ssh key
+  hetzner.hcloud.hcloud_ssh_key:
+    id: "{{ ssh_key.hcloud_ssh_key.id }}"
     state: absent
   register: result
-- name: verify cleanup
+- name: verify absent ssh_key
   assert:
     that:
       - result is success

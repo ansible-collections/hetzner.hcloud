@@ -1,0 +1,11 @@
+---
+- name: Create temporary file for test_ssh_keypair
+  ansible.builtin.tempfile:
+    suffix: "{{ hcloud_ssh_key_name }}"
+  register: _tmp_ssh_key_file
+
+- name: Create test_ssh_keypair
+  community.crypto.openssh_keypair:
+    path: "{{ _tmp_ssh_key_file.path }}"
+    force: true
+  register: test_ssh_keypair
