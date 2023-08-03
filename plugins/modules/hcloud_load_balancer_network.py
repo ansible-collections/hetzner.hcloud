@@ -98,7 +98,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudLoadBalancerNetwork(AnsibleHCloud):
+class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_load_balancer_network")
         self.hcloud_network = None
@@ -188,9 +188,9 @@ class AnsibleHcloudLoadBalancerNetwork(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudLoadBalancerNetwork.define_module()
+    module = AnsibleHCloudLoadBalancerNetwork.define_module()
 
-    hcloud = AnsibleHcloudLoadBalancerNetwork(module)
+    hcloud = AnsibleHCloudLoadBalancerNetwork(module)
     state = module.params["state"]
     if state == "absent":
         hcloud.delete_load_balancer_network()

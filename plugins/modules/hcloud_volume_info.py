@@ -98,7 +98,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudVolumeInfo(AnsibleHCloud):
+class AnsibleHCloudVolumeInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_volume_info")
         self.hcloud_volume_info = None
@@ -156,8 +156,8 @@ class AnsibleHcloudVolumeInfo(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudVolumeInfo.define_module()
-    hcloud = AnsibleHcloudVolumeInfo(module)
+    module = AnsibleHCloudVolumeInfo.define_module()
+    hcloud = AnsibleHCloudVolumeInfo(module)
 
     hcloud.get_volumes()
     result = hcloud.get_result()

@@ -123,7 +123,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudNetwork(AnsibleHCloud):
+class AnsibleHCloudNetwork(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_network")
         self.hcloud_network = None
@@ -244,9 +244,9 @@ class AnsibleHcloudNetwork(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudNetwork.define_module()
+    module = AnsibleHCloudNetwork.define_module()
 
-    hcloud = AnsibleHcloudNetwork(module)
+    hcloud = AnsibleHCloudNetwork(module)
     state = module.params["state"]
     if state == "absent":
         hcloud.delete_network()

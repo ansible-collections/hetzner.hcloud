@@ -119,7 +119,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import APIException, HCloudException
 
 
-class AnsibleHcloudServerNetwork(AnsibleHCloud):
+class AnsibleHCloudServerNetwork(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_server_network")
         self.hcloud_network = None
@@ -224,9 +224,9 @@ class AnsibleHcloudServerNetwork(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudServerNetwork.define_module()
+    module = AnsibleHCloudServerNetwork.define_module()
 
-    hcloud = AnsibleHcloudServerNetwork(module)
+    hcloud = AnsibleHCloudServerNetwork(module)
     state = module.params["state"]
     if state == "absent":
         hcloud.delete_server_network()

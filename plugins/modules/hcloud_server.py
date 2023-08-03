@@ -344,7 +344,7 @@ from ..module_utils.vendor.hcloud.ssh_keys.domain import SSHKey
 from ..module_utils.vendor.hcloud.volumes.domain import Volume
 
 
-class AnsibleHcloudServer(AnsibleHCloud):
+class AnsibleHCloudServer(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_server")
         self.hcloud_server = None
@@ -906,9 +906,9 @@ class AnsibleHcloudServer(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudServer.define_module()
+    module = AnsibleHCloudServer.define_module()
 
-    hcloud = AnsibleHcloudServer(module)
+    hcloud = AnsibleHCloudServer(module)
     state = module.params.get("state")
     if state == "absent":
         hcloud.delete_server()

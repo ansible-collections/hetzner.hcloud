@@ -80,7 +80,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudDatacenterInfo(AnsibleHCloud):
+class AnsibleHCloudDatacenterInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_datacenter_info")
         self.hcloud_datacenter_info = None
@@ -126,8 +126,8 @@ class AnsibleHcloudDatacenterInfo(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudDatacenterInfo.define_module()
-    hcloud = AnsibleHcloudDatacenterInfo(module)
+    module = AnsibleHCloudDatacenterInfo.define_module()
+    hcloud = AnsibleHCloudDatacenterInfo(module)
 
     hcloud.get_datacenters()
     result = hcloud.get_result()

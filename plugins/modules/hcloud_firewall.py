@@ -176,7 +176,7 @@ from ..module_utils.vendor.hcloud import APIException, HCloudException
 from ..module_utils.vendor.hcloud.firewalls.domain import FirewallRule
 
 
-class AnsibleHcloudFirewall(AnsibleHCloud):
+class AnsibleHCloudFirewall(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_firewall")
         self.hcloud_firewall = None
@@ -328,9 +328,9 @@ class AnsibleHcloudFirewall(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudFirewall.define_module()
+    module = AnsibleHCloudFirewall.define_module()
 
-    hcloud = AnsibleHcloudFirewall(module)
+    hcloud = AnsibleHCloudFirewall(module)
     state = module.params.get("state")
     if state == "absent":
         hcloud.delete_firewall()

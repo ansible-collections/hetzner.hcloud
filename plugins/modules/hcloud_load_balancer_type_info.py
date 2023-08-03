@@ -91,7 +91,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudLoadBalancerTypeInfo(AnsibleHCloud):
+class AnsibleHCloudLoadBalancerTypeInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_load_balancer_type_info")
         self.hcloud_load_balancer_type_info = None
@@ -143,8 +143,8 @@ class AnsibleHcloudLoadBalancerTypeInfo(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudLoadBalancerTypeInfo.define_module()
-    hcloud = AnsibleHcloudLoadBalancerTypeInfo(module)
+    module = AnsibleHCloudLoadBalancerTypeInfo.define_module()
+    hcloud = AnsibleHCloudLoadBalancerTypeInfo(module)
 
     hcloud.get_load_balancer_types()
     result = hcloud.get_result()

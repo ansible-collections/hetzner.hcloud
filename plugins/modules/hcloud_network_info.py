@@ -188,7 +188,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudNetworkInfo(AnsibleHCloud):
+class AnsibleHCloudNetworkInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_network_info")
         self.hcloud_network_info = None
@@ -278,8 +278,8 @@ class AnsibleHcloudNetworkInfo(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudNetworkInfo.define_module()
-    hcloud = AnsibleHcloudNetworkInfo(module)
+    module = AnsibleHCloudNetworkInfo.define_module()
+    hcloud = AnsibleHCloudNetworkInfo(module)
 
     hcloud.get_networks()
     result = hcloud.get_result()

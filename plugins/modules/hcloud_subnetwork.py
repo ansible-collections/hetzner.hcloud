@@ -132,7 +132,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.networks.domain import NetworkSubnet
 
 
-class AnsibleHcloudSubnetwork(AnsibleHCloud):
+class AnsibleHCloudSubnetwork(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_subnetwork")
         self.hcloud_network = None
@@ -219,9 +219,9 @@ class AnsibleHcloudSubnetwork(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudSubnetwork.define_module()
+    module = AnsibleHCloudSubnetwork.define_module()
 
-    hcloud = AnsibleHcloudSubnetwork(module)
+    hcloud = AnsibleHCloudSubnetwork(module)
     state = module.params["state"]
     if state == "absent":
         hcloud.delete_subnetwork()

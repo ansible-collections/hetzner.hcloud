@@ -95,7 +95,7 @@ from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.networks.domain import NetworkRoute
 
 
-class AnsibleHcloudRoute(AnsibleHCloud):
+class AnsibleHCloudRoute(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_route")
         self.hcloud_network = None
@@ -173,9 +173,9 @@ class AnsibleHcloudRoute(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudRoute.define_module()
+    module = AnsibleHCloudRoute.define_module()
 
-    hcloud = AnsibleHcloudRoute(module)
+    hcloud = AnsibleHCloudRoute(module)
     state = module.params["state"]
     if state == "absent":
         hcloud.delete_route()

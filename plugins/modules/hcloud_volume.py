@@ -164,7 +164,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudVolume(AnsibleHCloud):
+class AnsibleHCloudVolume(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_volume")
         self.hcloud_volume = None
@@ -311,9 +311,9 @@ class AnsibleHcloudVolume(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudVolume.define_module()
+    module = AnsibleHCloudVolume.define_module()
 
-    hcloud = AnsibleHcloudVolume(module)
+    hcloud = AnsibleHCloudVolume(module)
     state = module.params.get("state")
     if state == "absent":
         module.fail_on_missing_params(required_params=["name"])

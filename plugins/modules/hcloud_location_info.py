@@ -81,7 +81,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudLocationInfo(AnsibleHCloud):
+class AnsibleHCloudLocationInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_location_info")
         self.hcloud_location_info = None
@@ -127,8 +127,8 @@ class AnsibleHcloudLocationInfo(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudLocationInfo.define_module()
-    hcloud = AnsibleHcloudLocationInfo(module)
+    module = AnsibleHCloudLocationInfo.define_module()
+    hcloud = AnsibleHCloudLocationInfo(module)
 
     hcloud.get_locations()
     result = hcloud.get_result()

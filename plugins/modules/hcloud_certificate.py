@@ -141,7 +141,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudCertificate(AnsibleHCloud):
+class AnsibleHCloudCertificate(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_certificate")
         self.hcloud_certificate = None
@@ -261,9 +261,9 @@ class AnsibleHcloudCertificate(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudCertificate.define_module()
+    module = AnsibleHCloudCertificate.define_module()
 
-    hcloud = AnsibleHcloudCertificate(module)
+    hcloud = AnsibleHCloudCertificate(module)
     state = module.params.get("state")
     if state == "absent":
         hcloud.delete_certificate()

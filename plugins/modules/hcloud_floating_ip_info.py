@@ -99,7 +99,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudFloatingIPInfo(AnsibleHCloud):
+class AnsibleHCloudFloatingIPInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_floating_ip_info")
         self.hcloud_floating_ip_info = None
@@ -155,8 +155,8 @@ class AnsibleHcloudFloatingIPInfo(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudFloatingIPInfo.define_module()
-    hcloud = AnsibleHcloudFloatingIPInfo(module)
+    module = AnsibleHCloudFloatingIPInfo.define_module()
+    hcloud = AnsibleHCloudFloatingIPInfo(module)
 
     hcloud.get_floating_ips()
     result = hcloud.get_result()

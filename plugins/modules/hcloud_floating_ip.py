@@ -168,7 +168,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudFloatingIP(AnsibleHCloud):
+class AnsibleHCloudFloatingIP(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_floating_ip")
         self.hcloud_floating_ip = None
@@ -323,9 +323,9 @@ class AnsibleHcloudFloatingIP(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudFloatingIP.define_module()
+    module = AnsibleHCloudFloatingIP.define_module()
 
-    hcloud = AnsibleHcloudFloatingIP(module)
+    hcloud = AnsibleHCloudFloatingIP(module)
     state = module.params["state"]
     if state == "absent":
         hcloud.delete_floating_ip()

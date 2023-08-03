@@ -115,7 +115,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudImageInfo(AnsibleHCloud):
+class AnsibleHCloudImageInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_image_info")
         self.hcloud_image_info = None
@@ -191,8 +191,8 @@ class AnsibleHcloudImageInfo(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudImageInfo.define_module()
-    hcloud = AnsibleHcloudImageInfo(module)
+    module = AnsibleHCloudImageInfo.define_module()
+    hcloud = AnsibleHCloudImageInfo(module)
 
     hcloud.get_images()
     result = hcloud.get_result()

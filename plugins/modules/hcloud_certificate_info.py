@@ -89,7 +89,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudCertificateInfo(AnsibleHCloud):
+class AnsibleHCloudCertificateInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_certificate_info")
         self.hcloud_certificate_info = None
@@ -143,8 +143,8 @@ class AnsibleHcloudCertificateInfo(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudCertificateInfo.define_module()
-    hcloud = AnsibleHcloudCertificateInfo(module)
+    module = AnsibleHCloudCertificateInfo.define_module()
+    hcloud = AnsibleHCloudCertificateInfo(module)
 
     hcloud.get_certificates()
     result = hcloud.get_result()

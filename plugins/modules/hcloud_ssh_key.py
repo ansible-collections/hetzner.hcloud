@@ -117,7 +117,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudSSHKey(AnsibleHCloud):
+class AnsibleHCloudSSHKey(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_ssh_key")
         self.hcloud_ssh_key = None
@@ -215,9 +215,9 @@ class AnsibleHcloudSSHKey(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudSSHKey.define_module()
+    module = AnsibleHCloudSSHKey.define_module()
 
-    hcloud = AnsibleHcloudSSHKey(module)
+    hcloud = AnsibleHCloudSSHKey(module)
     state = module.params.get("state")
     if state == "absent":
         hcloud.delete_ssh_key()

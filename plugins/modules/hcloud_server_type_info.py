@@ -127,7 +127,7 @@ from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudServerTypeInfo(AnsibleHCloud):
+class AnsibleHCloudServerTypeInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_server_type_info")
         self.hcloud_server_type_info = None
@@ -184,8 +184,8 @@ class AnsibleHcloudServerTypeInfo(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudServerTypeInfo.define_module()
-    hcloud = AnsibleHcloudServerTypeInfo(module)
+    module = AnsibleHCloudServerTypeInfo.define_module()
+    hcloud = AnsibleHCloudServerTypeInfo(module)
 
     hcloud.get_server_types()
     result = hcloud.get_result()

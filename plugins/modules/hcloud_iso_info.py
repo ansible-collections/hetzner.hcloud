@@ -101,7 +101,7 @@ from ansible.module_utils.common.text.converters import to_native
 from ..module_utils.hcloud import AnsibleHCloud
 
 
-class AnsibleHcloudIsoInfo(AnsibleHCloud):
+class AnsibleHCloudIsoInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_iso_info")
         self.hcloud_iso_info = None
@@ -156,8 +156,8 @@ class AnsibleHcloudIsoInfo(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudIsoInfo.define_module()
-    hcloud = AnsibleHcloudIsoInfo(module)
+    module = AnsibleHCloudIsoInfo.define_module()
+    hcloud = AnsibleHCloudIsoInfo(module)
     hcloud.get_iso_infos()
     result = hcloud.get_result()
     ansible_info = {"hcloud_iso_info": result["hcloud_iso_info"]}
