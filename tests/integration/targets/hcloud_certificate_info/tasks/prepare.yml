@@ -1,0 +1,10 @@
+---
+- name: Create test_certificate
+  hetzner.hcloud.hcloud_certificate:
+    name: "{{ hcloud_certificate_name }}"
+    certificate: "{{ test_certificate_content }}"
+    private_key: "{{ test_certificate_privatekey_content }}"
+    labels:
+      key: value
+      my-label: label
+  register: test_certificate
