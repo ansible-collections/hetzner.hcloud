@@ -361,7 +361,7 @@
     server_type: cx11
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: started
   register: main_server
 - name: verify create server with ssh key
@@ -378,7 +378,7 @@
     name: "{{ hcloud_server_name }}"
     rescue_mode: "linux64"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: present
   register: main_server
   check_mode: true
@@ -392,7 +392,7 @@
     name: "{{ hcloud_server_name }}"
     rescue_mode: "linux64"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: present
   register: main_server
 - name: verify activate rescue mode
@@ -405,7 +405,7 @@
   hetzner.hcloud.hcloud_server:
     name: "{{ hcloud_server_name }}"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: present
   register: main_server
 - name: verify activate rescue mode
@@ -442,7 +442,7 @@
     server_type: cx11
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     rescue_mode: "linux64"
     state: started
   register: main_server
@@ -471,7 +471,7 @@
     server_type: cx11
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     labels:
       key: value
       mylabel: "val123"
@@ -490,7 +490,7 @@
     server_type: cx11
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     labels:
       key: other
       mylabel: "val123"
@@ -509,7 +509,7 @@
     server_type: cx11
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     labels:
       mylabel: "val123"
       key: other
@@ -537,7 +537,7 @@
     backups: true
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: present
   register: result
 - name: verify enable backups
@@ -564,7 +564,7 @@
     server_type: cpx11
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: present
   register: result_after_test
   ignore_errors: true

@@ -71,7 +71,7 @@
     private_networks:
       - "{{ primaryNetwork.hcloud_network.name }}"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: stopped
   register: result
 - name: verify test create server with primary network
@@ -91,7 +91,7 @@
       - "{{ primaryNetwork.hcloud_network.name }}"
       - "{{ secondaryNetwork.hcloud_network.id }}"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: stopped
   register: result
 - name: verify test update server by adding secondary network
@@ -111,7 +111,7 @@
       - "{{ primaryNetwork.hcloud_network.name }}"
       - "{{ secondaryNetwork.hcloud_network.id }}"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: stopped
   register: result
 - name: verify test update server idem

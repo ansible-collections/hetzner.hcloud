@@ -35,7 +35,7 @@
       - "{{ hcloud_firewall_name }}"
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: present
   register: result
 - name: verify test create server with firewalls
@@ -51,7 +51,7 @@
       - "{{ hcloud_firewall_name }}"
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: present
   register: result
 - name: verify test create server with firewalls idempotence
@@ -67,7 +67,7 @@
       - "{{ hcloud_firewall_name }}2"
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: present
   register: result
 - name: verify test update server with firewalls
@@ -83,7 +83,7 @@
       - "{{ hcloud_firewall_name }}2"
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: present
   register: result
 - name: verify test update server with firewalls idempotence

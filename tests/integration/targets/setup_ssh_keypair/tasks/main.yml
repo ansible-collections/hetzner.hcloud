@@ -1,0 +1,18 @@
+---
+# https://github.com/ansible-collections/community.crypto/pull/504
+- name: Create temporary directory for test_ssh_keypair
+  ansible.builtin.file:
+    state: directory
+    path: ~/tmp
+
+- name: Create temporary file for test_ssh_keypair
+  ansible.builtin.tempfile:
+    path: ~/tmp
+    suffix: "{{ hcloud_ssh_key_name }}"
+  register: _tmp_ssh_key_file
+
+- name: Create test_ssh_keypair
+  community.crypto.openssh_keypair:
+    path: "{{ _tmp_ssh_key_file.path }}"
+    force: true
+  register: test_ssh_keypair

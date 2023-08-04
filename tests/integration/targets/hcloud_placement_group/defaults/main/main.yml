@@ -3,3 +3,4 @@
 ---
 hcloud_placement_group_name: "{{ hcloud_ns }}"
 hcloud_server_name: "{{ hcloud_ns }}"
+hcloud_ssh_key_name: "{{ hcloud_ns }}"

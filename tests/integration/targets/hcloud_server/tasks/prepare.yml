@@ -1,0 +1,6 @@
+---
+- name: Create test_ssh_key
+  hetzner.hcloud.hcloud_ssh_key:
+    name: "{{ hcloud_ssh_key_name }}"
+    public_key: "{{ test_ssh_keypair.public_key }}"
+  register: test_ssh_key

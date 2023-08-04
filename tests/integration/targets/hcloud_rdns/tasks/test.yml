@@ -7,7 +7,7 @@
     server_type: cx11
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: present
   register: setup
 - name: verify setup

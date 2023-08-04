@@ -68,7 +68,7 @@
     placement_group: "{{ hcloud_placement_group_name }}"
     image: "ubuntu-22.04"
     ssh_keys:
-      - ci@ansible.hetzner.cloud
+      - "{{ hcloud_ssh_key_name }}"
     state: present
   register: server
 - name: verify create server with placement group

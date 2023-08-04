@@ -1,0 +1,10 @@
+---
+- name: Cleanup test_ssh_key
+  hetzner.hcloud.hcloud_ssh_key:
+    name: "{{ hcloud_ssh_key_name }}"
+    state: absent
+
+- name: Cleanup test_server
+  hetzner.hcloud.hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
