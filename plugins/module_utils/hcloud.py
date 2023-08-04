@@ -25,7 +25,7 @@ except ImportError:
     HAS_DATEUTIL = False
 
 
-class Hcloud:
+class AnsibleHCloud:
     def __init__(self, module, represent):
         self.module = module
         self.represent = represent

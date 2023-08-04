@@ -134,11 +134,11 @@ hcloud_primary_ip:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudPrimaryIP(Hcloud):
+class AnsibleHCloudPrimaryIP(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_primary_ip")
         self.hcloud_primary_ip = None
@@ -245,9 +245,9 @@ class AnsibleHcloudPrimaryIP(Hcloud):
 
 
 def main():
-    module = AnsibleHcloudPrimaryIP.define_module()
+    module = AnsibleHCloudPrimaryIP.define_module()
 
-    hcloud = AnsibleHcloudPrimaryIP(module)
+    hcloud = AnsibleHCloudPrimaryIP(module)
     state = module.params["state"]
     if state == "absent":
         hcloud.delete_primary_ip()

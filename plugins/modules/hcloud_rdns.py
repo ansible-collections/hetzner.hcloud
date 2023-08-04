@@ -140,11 +140,11 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudReverseDNS(Hcloud):
+class AnsibleHCloudReverseDNS(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_rdns")
         self.hcloud_resource = None
@@ -334,9 +334,9 @@ class AnsibleHcloudReverseDNS(Hcloud):
 
 
 def main():
-    module = AnsibleHcloudReverseDNS.define_module()
+    module = AnsibleHCloudReverseDNS.define_module()
 
-    hcloud = AnsibleHcloudReverseDNS(module)
+    hcloud = AnsibleHCloudReverseDNS(module)
     state = module.params["state"]
     if state == "absent":
         hcloud.delete_rdns()

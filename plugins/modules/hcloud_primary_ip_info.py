@@ -120,11 +120,11 @@ hcloud_primary_ip_info:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudPrimaryIPInfo(Hcloud):
+class AnsibleHCloudPrimaryIPInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_primary_ip_info")
         self.hcloud_primary_ip_info = None
@@ -186,8 +186,8 @@ class AnsibleHcloudPrimaryIPInfo(Hcloud):
 
 
 def main():
-    module = AnsibleHcloudPrimaryIPInfo.define_module()
-    hcloud = AnsibleHcloudPrimaryIPInfo(module)
+    module = AnsibleHCloudPrimaryIPInfo.define_module()
+    hcloud = AnsibleHCloudPrimaryIPInfo(module)
 
     hcloud.get_primary_ips()
     result = hcloud.get_result()

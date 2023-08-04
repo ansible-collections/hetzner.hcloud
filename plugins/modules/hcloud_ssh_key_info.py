@@ -77,11 +77,11 @@ hcloud_ssh_key_info:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudSSHKeyInfo(Hcloud):
+class AnsibleHCloudSSHKeyInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_ssh_key_info")
         self.hcloud_ssh_key_info = None
@@ -137,8 +137,8 @@ class AnsibleHcloudSSHKeyInfo(Hcloud):
 
 
 def main():
-    module = AnsibleHcloudSSHKeyInfo.define_module()
-    hcloud = AnsibleHcloudSSHKeyInfo(module)
+    module = AnsibleHCloudSSHKeyInfo.define_module()
+    hcloud = AnsibleHCloudSSHKeyInfo(module)
 
     hcloud.get_ssh_keys()
     result = hcloud.get_result()

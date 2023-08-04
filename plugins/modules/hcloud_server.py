@@ -333,7 +333,7 @@ from datetime import datetime, timedelta, timezone
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.firewalls.domain import FirewallResource
 from ..module_utils.vendor.hcloud.servers.domain import (
@@ -344,7 +344,7 @@ from ..module_utils.vendor.hcloud.ssh_keys.domain import SSHKey
 from ..module_utils.vendor.hcloud.volumes.domain import Volume
 
 
-class AnsibleHcloudServer(Hcloud):
+class AnsibleHCloudServer(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_server")
         self.hcloud_server = None
@@ -906,9 +906,9 @@ class AnsibleHcloudServer(Hcloud):
 
 
 def main():
-    module = AnsibleHcloudServer.define_module()
+    module = AnsibleHCloudServer.define_module()
 
-    hcloud = AnsibleHcloudServer(module)
+    hcloud = AnsibleHCloudServer(module)
     state = module.params.get("state")
     if state == "absent":
         hcloud.delete_server()

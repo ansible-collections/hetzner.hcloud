@@ -259,11 +259,11 @@ hcloud_load_balancer_info:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudLoadBalancerInfo(Hcloud):
+class AnsibleHCloudLoadBalancerInfo(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_load_balancer_info")
         self.hcloud_load_balancer_info = None
@@ -379,8 +379,8 @@ class AnsibleHcloudLoadBalancerInfo(Hcloud):
 
 
 def main():
-    module = AnsibleHcloudLoadBalancerInfo.define_module()
-    hcloud = AnsibleHcloudLoadBalancerInfo(module)
+    module = AnsibleHCloudLoadBalancerInfo.define_module()
+    hcloud = AnsibleHCloudLoadBalancerInfo(module)
 
     hcloud.get_load_balancers()
     result = hcloud.get_result()

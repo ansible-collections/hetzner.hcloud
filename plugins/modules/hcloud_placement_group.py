@@ -110,11 +110,11 @@ hcloud_placement_group:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudPlacementGroup(Hcloud):
+class AnsibleHCloudPlacementGroup(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_placement_group")
         self.hcloud_placement_group = None
@@ -204,9 +204,9 @@ class AnsibleHcloudPlacementGroup(Hcloud):
 
 
 def main():
-    module = AnsibleHcloudPlacementGroup.define_module()
+    module = AnsibleHCloudPlacementGroup.define_module()
 
-    hcloud = AnsibleHcloudPlacementGroup(module)
+    hcloud = AnsibleHCloudPlacementGroup(module)
     state = module.params.get("state")
     if state == "absent":
         hcloud.delete_placement_group()

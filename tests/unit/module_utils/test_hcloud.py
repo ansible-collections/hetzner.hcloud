@@ -2,7 +2,7 @@ import traceback
 from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
-from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Hcloud
+from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import AnsibleHCloud
 from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
     APIException,
 )
@@ -21,7 +21,7 @@ def test_hcloud_fail_json_hcloud():
         "endpoint": "https://api.hetzner.cloud/v1",
     }
 
-    hcloud = Hcloud(module, "hcloud_test")
+    hcloud = AnsibleHCloud(module, "hcloud_test")
 
     try:
         raise APIException(

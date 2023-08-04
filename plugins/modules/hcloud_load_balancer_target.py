@@ -138,7 +138,7 @@ hcloud_load_balancer_target:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import APIException, HCloudException
 from ..module_utils.vendor.hcloud.load_balancers.domain import (
     LoadBalancerTarget,
@@ -147,7 +147,7 @@ from ..module_utils.vendor.hcloud.load_balancers.domain import (
 )
 
 
-class AnsibleHcloudLoadBalancerTarget(Hcloud):
+class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_load_balancer_target")
         self.hcloud_load_balancer = None
@@ -297,9 +297,9 @@ class AnsibleHcloudLoadBalancerTarget(Hcloud):
 
 
 def main():
-    module = AnsibleHcloudLoadBalancerTarget.define_module()
+    module = AnsibleHCloudLoadBalancerTarget.define_module()
 
-    hcloud = AnsibleHcloudLoadBalancerTarget(module)
+    hcloud = AnsibleHCloudLoadBalancerTarget(module)
     state = module.params["state"]
     if state == "absent":
         hcloud.delete_load_balancer_target()

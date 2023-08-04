@@ -144,11 +144,11 @@ hcloud_load_balancer:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.hcloud import Hcloud
+from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 
 
-class AnsibleHcloudLoadBalancer(Hcloud):
+class AnsibleHCloudLoadBalancer(AnsibleHCloud):
     def __init__(self, module):
         super().__init__(module, "hcloud_load_balancer")
         self.hcloud_load_balancer = None
@@ -299,9 +299,9 @@ class AnsibleHcloudLoadBalancer(Hcloud):
 
 
 def main():
-    module = AnsibleHcloudLoadBalancer.define_module()
+    module = AnsibleHCloudLoadBalancer.define_module()
 
-    hcloud = AnsibleHcloudLoadBalancer(module)
+    hcloud = AnsibleHCloudLoadBalancer(module)
     state = module.params.get("state")
     if state == "absent":
         hcloud.delete_load_balancer()
