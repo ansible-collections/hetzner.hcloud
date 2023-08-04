@@ -15,8 +15,8 @@
 - name: test create certificate with check mode
   hetzner.hcloud.hcloud_certificate:
     name: "{{ hcloud_certificate_name }}"
-    certificate: "{{ certificate_example_com }}"
-    private_key: "{{ certificate_example_com_key }}"
+    certificate: "{{ test_certificate_content }}"
+    private_key: "{{ test_certificate_privatekey_content }}"
   register: result
   check_mode: true
 - name: test create certificate with check mode
@@ -27,8 +27,8 @@
 - name: test create certificate
   hetzner.hcloud.hcloud_certificate:
     name: "{{ hcloud_certificate_name }}"
-    certificate: "{{ certificate_example_com }}"
-    private_key: "{{ certificate_example_com_key }}"
+    certificate: "{{ test_certificate_content }}"
+    private_key: "{{ test_certificate_privatekey_content }}"
     labels:
       key: value
       my-label: label
@@ -44,8 +44,8 @@
 - name: test create certificate idempotence
   hetzner.hcloud.hcloud_certificate:
     name: "{{ hcloud_certificate_name }}"
-    certificate: "{{ certificate_example_com }}"
-    private_key: "{{ certificate_example_com_key }}"
+    certificate: "{{ test_certificate_content }}"
+    private_key: "{{ test_certificate_privatekey_content }}"
   register: result
 - name: verify create certificate idempotence
   assert:
@@ -144,12 +144,12 @@
       - result.hcloud_certificate.name == "{{ hcloud_certificate_name }}"
       - result.hcloud_certificate.domain_names[0] == "{{ hcloud_dns_test_domain }}"
 
-- name: absent certificate
+- name: test delete certificate
   hetzner.hcloud.hcloud_certificate:
     id: "{{ result.hcloud_certificate.id }}"
     state: absent
   register: result
-- name: verify absent certificate
+- name: verify test delete certificate
   assert:
     that:
       - result is success

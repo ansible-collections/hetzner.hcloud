@@ -1,27 +1,35 @@
-# Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Create temporary file for test_certificate
+  ansible.builtin.tempfile:
+    suffix: "{{ hcloud_certificate_name }}"
+  register: _tmp_certificate_file
 
-- name: create a cert temp file
-  tempfile:
-    state: file
-  register: certificate_example_com
-  tags:
-    - prepare
-- name: create a key temp file
-  tempfile:
-    state: file
-  register: certificate_example_com_key
-  tags:
-    - prepare
-    -
-- name: generate certificate
-  shell: openssl req -nodes -new -x509 -keyout {{ certificate_example_com_key.path }} -out {{ certificate_example_com.path }} -subj "/C=DE/ST=Munich/L=Bavaria/O=Dis/CN=www.example.com"
-  tags:
-    - prepare
+- name: Create certificate privatekey file
+  community.crypto.openssl_privatekey:
+    path: "{{ _tmp_certificate_file.path }}.key"
+    return_content: true
+  register: _certificate_privatekey_file
 
-- name: set facts for future roles
+- name: Create certificate signing request file
+  community.crypto.openssl_csr:
+    privatekey_path: "{{ _tmp_certificate_file.path }}.key"
+    path: "{{ _tmp_certificate_file.path }}.csr"
+    country_name: DE
+    locality_name: Bavaria
+    state_or_province_name: Munich
+    organization_name: Dis
+    common_name: www.example.com
+
+- name: Create certificate file
+  community.crypto.x509_certificate:
+    privatekey_path: "{{ _tmp_certificate_file.path }}.key"
+    csr_path: "{{ _tmp_certificate_file.path }}.csr"
+    path: "{{ _tmp_certificate_file.path }}.crt"
+    provider: selfsigned
+    return_content: true
+  register: _certificate_file
+
+- name: Save certificate files content
   set_fact:
-    certificate_example_com: "{{ lookup('file',certificate_example_com.path) }}"
-    certificate_example_com_key: "{{ lookup('file',certificate_example_com_key.path) }}"
-  tags:
-    - prepare
+    test_certificate_privatekey_content: "{{ _certificate_privatekey_file.privatekey }}"
+    test_certificate_content: "{{ _certificate_file.certificate }}"
