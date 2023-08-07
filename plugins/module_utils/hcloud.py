@@ -5,11 +5,11 @@
 
 import traceback
 
-from ansible.module_utils.ansible_release import __version__
 from ansible.module_utils.basic import env_fallback, missing_required_lib
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.vendor import hcloud
+from .version import version
 
 HAS_REQUESTS = True
 HAS_DATEUTIL = True
@@ -65,7 +65,7 @@ class AnsibleHCloud:
             token=self.module.params["api_token"],
             api_endpoint=self.module.params["endpoint"],
             application_name="ansible-module",
-            application_version=__version__,
+            application_version=version,
         )
 
     def _mark_as_changed(self):
