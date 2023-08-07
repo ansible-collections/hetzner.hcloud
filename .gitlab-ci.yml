@@ -5,6 +5,7 @@ include:
       - pre-commit.yml
 
 stages:
+  - test
   - sanity
   - integration
 
