@@ -1,57 +1,55 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: test gather hcloud location infos
+- name: Gather hcloud_location_info
   hetzner.hcloud.hcloud_location_info:
-  register: hcloud_location
-
-- name: verify test gather hcloud location infos
-  assert:
+  register: result
+- name: Verify hcloud_location_info
+  ansible.builtin.assert:
     that:
-      - hcloud_location.hcloud_location_info | list | count >= 5
+      - result.hcloud_location_info | list | count >= 5
 
-- name: test gather hcloud location infos in check mode
+- name: Gather hcloud_location_info in check mode
   hetzner.hcloud.hcloud_location_info:
   check_mode: true
-  register: hcloud_location
-
-- name: verify test gather hcloud location infos in check mode
-  assert:
+  register: result
+- name: Verify hcloud_location_info in check mode
+  ansible.builtin.assert:
     that:
-      - hcloud_location.hcloud_location_info | list | count >= 5
+      - result.hcloud_location_info | list | count >= 5
 
-- name: test gather hcloud location infos with correct name
+- name: Gather hcloud_location_info with correct name
   hetzner.hcloud.hcloud_location_info:
-    name: "{{hcloud_location_name}}"
-  register: hcloud_location
-- name: verify test gather hcloud location with correct name
-  assert:
+    name: "{{ hcloud_location_name }}"
+  register: result
+- name: Verify hcloud_location_info with correct name
+  ansible.builtin.assert:
     that:
-      - hcloud_location.hcloud_location_info|selectattr('name','equalto','{{ hcloud_location_name }}') | list | count == 1
+      - result.hcloud_location_info | selectattr('name', 'equalto', '{{ hcloud_location_name }}') | list | count == 1
 
-- name: test gather hcloud location infos with wrong name
+- name: Gather hcloud_location_info with wrong name
   hetzner.hcloud.hcloud_location_info:
-    name: "{{hcloud_location_name}}1"
-  register: hcloud_location
-- name: verify test gather hcloud location with wrong name
-  assert:
+    name: "{{ hcloud_location_name }}1"
+  register: result
+- name: Verify hcloud_location_info with wrong name
+  ansible.builtin.assert:
     that:
-      - hcloud_location.hcloud_location_info | list | count == 0
+      - result.hcloud_location_info | list | count == 0
 
-- name: test gather hcloud location infos with correct id
+- name: Gather hcloud_location_info with correct id
   hetzner.hcloud.hcloud_location_info:
-    id: "{{hcloud_location_id}}"
-  register: hcloud_location
-- name: verify test gather hcloud location with correct id
-  assert:
+    id: "{{ hcloud_location_id }}"
+  register: result
+- name: Verify hcloud_location_info with correct id
+  ansible.builtin.assert:
     that:
-      - hcloud_location.hcloud_location_info|selectattr('name','equalto','{{ hcloud_location_name }}') | list | count == 1
+      - result.hcloud_location_info | selectattr('name', 'equalto', '{{ hcloud_location_name }}') | list | count == 1
 
-- name: test gather hcloud location infos with wrong id
+- name: Gather hcloud_location_info with wrong id
   hetzner.hcloud.hcloud_location_info:
     id: 4711
-  register: hcloud_location
-- name: verify test gather hcloud location with wrong id
-  assert:
+  register: result
+- name: Verify hcloud_location_info with wrong id
+  ansible.builtin.assert:
     that:
-      - hcloud_location.hcloud_location_info | list | count == 0
+      - result.hcloud_location_info | list | count == 0
