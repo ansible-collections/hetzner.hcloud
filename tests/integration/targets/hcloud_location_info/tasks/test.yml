@@ -49,7 +49,7 @@
 
 - name: test gather hcloud location infos with wrong id
   hetzner.hcloud.hcloud_location_info:
-    name: "4711"
+    id: 4711
   register: hcloud_location
 - name: verify test gather hcloud location with wrong id
   assert:
