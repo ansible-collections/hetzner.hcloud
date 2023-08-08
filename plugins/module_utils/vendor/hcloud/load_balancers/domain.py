@@ -1,9 +1,22 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 try:
     from dateutil.parser import isoparse
 except ImportError:
     isoparse = None
 
-from ..core.domain import BaseDomain
+from ..core import BaseDomain
+
+if TYPE_CHECKING:
+    from ..actions import BoundAction
+    from ..certificates import BoundCertificate
+    from ..load_balancer_types import BoundLoadBalancerType
+    from ..locations import BoundLocation
+    from ..networks import BoundNetwork
+    from ..servers import BoundServer
+    from .client import BoundLoadBalancer
 
 
 class LoadBalancer(BaseDomain):
@@ -61,21 +74,21 @@ class LoadBalancer(BaseDomain):
 
     def __init__(
         self,
-        id,
-        name=None,
-        public_net=None,
-        private_net=None,
-        location=None,
-        algorithm=None,
-        services=None,
-        load_balancer_type=None,
-        protection=None,
-        labels=None,
-        targets=None,
-        created=None,
-        outgoing_traffic=None,
-        ingoing_traffic=None,
-        included_traffic=None,
+        id: int,
+        name: str | None = None,
+        public_net: PublicNetwork | None = None,
+        private_net: PrivateNet | None = None,
+        location: BoundLocation | None = None,
+        algorithm: LoadBalancerAlgorithm | None = None,
+        services: list[LoadBalancerService] | None = None,
+        load_balancer_type: BoundLoadBalancerType | None = None,
+        protection: dict | None = None,
+        labels: dict[str, str] | None = None,
+        targets: list[LoadBalancerTarget] | None = None,
+        created: str | None = None,
+        outgoing_traffic: int | None = None,
+        ingoing_traffic: int | None = None,
+        included_traffic: int | None = None,
     ):
         self.id = id
         self.name = name
@@ -113,12 +126,12 @@ class LoadBalancerService(BaseDomain):
 
     def __init__(
         self,
-        protocol=None,
-        listen_port=None,
-        destination_port=None,
-        proxyprotocol=None,
-        health_check=None,
-        http=None,
+        protocol: str | None = None,
+        listen_port: int | None = None,
+        destination_port: int | None = None,
+        proxyprotocol: bool | None = None,
+        health_check: LoadBalancerHealthCheck | None = None,
+        http: LoadBalancerServiceHttp | None = None,
     ):
         self.protocol = protocol
         self.listen_port = listen_port
@@ -126,6 +139,74 @@ class LoadBalancerService(BaseDomain):
         self.proxyprotocol = proxyprotocol
         self.health_check = health_check
         self.http = http
+
+    def to_payload(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {}
+
+        if self.protocol is not None:
+            payload["protocol"] = self.protocol
+        if self.listen_port is not None:
+            payload["listen_port"] = self.listen_port
+        if self.destination_port is not None:
+            payload["destination_port"] = self.destination_port
+        if self.proxyprotocol is not None:
+            payload["proxyprotocol"] = self.proxyprotocol
+
+        if self.http is not None:
+            http: dict[str, Any] = {}
+            if self.http.cookie_name is not None:
+                http["cookie_name"] = self.http.cookie_name
+            if self.http.cookie_lifetime is not None:
+                http["cookie_lifetime"] = self.http.cookie_lifetime
+            if self.http.redirect_http is not None:
+                http["redirect_http"] = self.http.redirect_http
+            if self.http.sticky_sessions is not None:
+                http["sticky_sessions"] = self.http.sticky_sessions
+
+            http["certificates"] = [
+                certificate.id for certificate in self.http.certificates or []
+            ]
+
+            payload["http"] = http
+
+        if self.health_check is not None:
+            health_check: dict[str, Any] = {
+                "protocol": self.health_check.protocol,
+                "port": self.health_check.port,
+                "interval": self.health_check.interval,
+                "timeout": self.health_check.timeout,
+                "retries": self.health_check.retries,
+            }
+            if self.health_check.protocol is not None:
+                health_check["protocol"] = self.health_check.protocol
+            if self.health_check.port is not None:
+                health_check["port"] = self.health_check.port
+            if self.health_check.interval is not None:
+                health_check["interval"] = self.health_check.interval
+            if self.health_check.timeout is not None:
+                health_check["timeout"] = self.health_check.timeout
+            if self.health_check.retries is not None:
+                health_check["retries"] = self.health_check.retries
+
+            if self.health_check.http is not None:
+                health_check_http: dict[str, Any] = {}
+                if self.health_check.http.domain is not None:
+                    health_check_http["domain"] = self.health_check.http.domain
+                if self.health_check.http.path is not None:
+                    health_check_http["path"] = self.health_check.http.path
+                if self.health_check.http.response is not None:
+                    health_check_http["response"] = self.health_check.http.response
+                if self.health_check.http.status_codes is not None:
+                    health_check_http[
+                        "status_codes"
+                    ] = self.health_check.http.status_codes
+                if self.health_check.http.tls is not None:
+                    health_check_http["tls"] = self.health_check.http.tls
+
+                health_check["http"] = health_check_http
+
+            payload["health_check"] = health_check
+        return payload
 
 
 class LoadBalancerServiceHttp(BaseDomain):
@@ -145,11 +226,11 @@ class LoadBalancerServiceHttp(BaseDomain):
 
     def __init__(
         self,
-        cookie_name=None,
-        cookie_lifetime=None,
-        certificates=None,
-        redirect_http=None,
-        sticky_sessions=None,
+        cookie_name: str | None = None,
+        cookie_lifetime: str | None = None,
+        certificates: list[BoundCertificate] | None = None,
+        redirect_http: bool | None = None,
+        sticky_sessions: bool | None = None,
     ):
         self.cookie_name = cookie_name
         self.cookie_lifetime = cookie_lifetime
@@ -177,12 +258,12 @@ class LoadBalancerHealthCheck(BaseDomain):
 
     def __init__(
         self,
-        protocol=None,
-        port=None,
-        interval=None,
-        timeout=None,
-        retries=None,
-        http=None,
+        protocol: str | None = None,
+        port: int | None = None,
+        interval: int | None = None,
+        timeout: int | None = None,
+        retries: int | None = None,
+        http: LoadBalancerHealtCheckHttp | None = None,
     ):
         self.protocol = protocol
         self.port = port
@@ -208,7 +289,12 @@ class LoadBalancerHealtCheckHttp(BaseDomain):
     """
 
     def __init__(
-        self, domain=None, path=None, response=None, status_codes=None, tls=None
+        self,
+        domain: str | None = None,
+        path: str | None = None,
+        response: str | None = None,
+        status_codes: list | None = None,
+        tls: bool | None = None,
     ):
         self.domain = domain
         self.path = path
@@ -233,13 +319,42 @@ class LoadBalancerTarget(BaseDomain):
     """
 
     def __init__(
-        self, type=None, server=None, label_selector=None, ip=None, use_private_ip=None
+        self,
+        type: str | None = None,
+        server: BoundServer | None = None,
+        label_selector: LoadBalancerTargetLabelSelector | None = None,
+        ip: LoadBalancerTargetIP | None = None,
+        use_private_ip: bool | None = None,
     ):
         self.type = type
         self.server = server
         self.label_selector = label_selector
         self.ip = ip
         self.use_private_ip = use_private_ip
+
+    def to_payload(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "type": self.type,
+        }
+        if self.use_private_ip is not None:
+            payload["use_private_ip"] = self.use_private_ip
+
+        if self.type == "server":
+            if self.server is None:
+                raise ValueError(f"server is not defined in target {self!r}")
+            payload["server"] = {"id": self.server.id}
+
+        elif self.type == "label_selector":
+            if self.label_selector is None:
+                raise ValueError(f"label_selector is not defined in target {self!r}")
+            payload["label_selector"] = {"selector": self.label_selector.selector}
+
+        elif self.type == "ip":
+            if self.ip is None:
+                raise ValueError(f"ip is not defined in target {self!r}")
+            payload["ip"] = {"ip": self.ip.ip}
+
+        return payload
 
 
 class LoadBalancerTargetLabelSelector(BaseDomain):
@@ -248,7 +363,7 @@ class LoadBalancerTargetLabelSelector(BaseDomain):
     :param selector: str Target label selector
     """
 
-    def __init__(self, selector=None):
+    def __init__(self, selector: str | None = None):
         self.selector = selector
 
 
@@ -258,7 +373,7 @@ class LoadBalancerTargetIP(BaseDomain):
     :param ip: str Target IP
     """
 
-    def __init__(self, ip=None):
+    def __init__(self, ip: str | None = None):
         self.ip = ip
 
 
@@ -269,7 +384,7 @@ class LoadBalancerAlgorithm(BaseDomain):
             Algorithm of the Load Balancer. Choices: round_robin, least_connections
     """
 
-    def __init__(self, type=None):
+    def __init__(self, type: str | None = None):
         self.type = type
 
 
@@ -285,9 +400,9 @@ class PublicNetwork(BaseDomain):
 
     def __init__(
         self,
-        ipv4,  # type: IPv4Address
-        ipv6,  # type: IPv6Network
-        enabled,  # type: bool
+        ipv4: IPv4Address,
+        ipv6: IPv6Network,
+        enabled: bool,
     ):
         self.ipv4 = ipv4
         self.ipv6 = ipv6
@@ -305,8 +420,8 @@ class IPv4Address(BaseDomain):
 
     def __init__(
         self,
-        ip,  # type: str
-        dns_ptr,  # type: str
+        ip: str,
+        dns_ptr: str,
     ):
         self.ip = ip
         self.dns_ptr = dns_ptr
@@ -323,8 +438,8 @@ class IPv6Network(BaseDomain):
 
     def __init__(
         self,
-        ip,  # type: str
-        dns_ptr,  # type: str
+        ip: str,
+        dns_ptr: str,
     ):
         self.ip = ip
         self.dns_ptr = dns_ptr
@@ -343,8 +458,8 @@ class PrivateNet(BaseDomain):
 
     def __init__(
         self,
-        network,  # type: BoundNetwork
-        ip,  # type: str
+        network: BoundNetwork,
+        ip: str,
     ):
         self.network = network
         self.ip = ip
@@ -363,8 +478,8 @@ class CreateLoadBalancerResponse(BaseDomain):
 
     def __init__(
         self,
-        load_balancer,  # type: BoundLoadBalancer
-        action,  # type: BoundAction
+        load_balancer: BoundLoadBalancer,
+        action: BoundAction,
     ):
         self.load_balancer = load_balancer
         self.action = action

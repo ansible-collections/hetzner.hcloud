@@ -1,24 +1,27 @@
-from collections import namedtuple
+from __future__ import annotations
 
 
 class BaseDomain:
     __slots__ = ()
 
     @classmethod
-    def from_dict(cls, data):
+    def from_dict(cls, data: dict):  # type: ignore[no-untyped-def]
         supported_data = {k: v for k, v in data.items() if k in cls.__slots__}
         return cls(**supported_data)
 
     def __repr__(self) -> str:
-        kwargs = [f"{key}={getattr(self, key)!r}" for key in self.__slots__]
+        kwargs = [f"{key}={getattr(self, key)!r}" for key in self.__slots__]  # type: ignore[var-annotated]
         return f"{self.__class__.__qualname__}({', '.join(kwargs)})"
 
 
 class DomainIdentityMixin:
     __slots__ = ()
 
+    id: int | None
+    name: str | None
+
     @property
-    def id_or_name(self):
+    def id_or_name(self) -> int | str:
         if self.id is not None:
             return self.id
         elif self.name is not None:
@@ -39,12 +42,12 @@ class Pagination(BaseDomain):
 
     def __init__(
         self,
-        page,
-        per_page,
-        previous_page=None,
-        next_page=None,
-        last_page=None,
-        total_entries=None,
+        page: int,
+        per_page: int,
+        previous_page: int | None = None,
+        next_page: int | None = None,
+        last_page: int | None = None,
+        total_entries: int | None = None,
     ):
         self.page = page
         self.per_page = per_page
@@ -57,23 +60,17 @@ class Pagination(BaseDomain):
 class Meta(BaseDomain):
     __slots__ = ("pagination",)
 
-    def __init__(self, pagination=None):
+    def __init__(self, pagination: Pagination | None = None):
         self.pagination = pagination
 
     @classmethod
-    def parse_meta(cls, json_content):
+    def parse_meta(cls, response: dict) -> Meta | None:
         meta = None
-        if json_content and "meta" in json_content:
+        if response and "meta" in response:
             meta = cls()
-            pagination_json = json_content["meta"].get("pagination")
-            if pagination_json:
-                pagination = Pagination(**pagination_json)
-                meta.pagination = pagination
+            try:
+                meta.pagination = Pagination(**response["meta"]["pagination"])
+            except KeyError:
+                pass
+
         return meta
-
-
-def add_meta_to_result(result, json_content, attr_name):
-    # type: (List[BoundModelBase], json, string) -> PageResult
-    class_name = f"PageResults{attr_name.capitalize()}"
-    PageResults = namedtuple(class_name, [attr_name, "meta"])
-    return PageResults(**{attr_name: result, "meta": Meta.parse_meta(json_content)})

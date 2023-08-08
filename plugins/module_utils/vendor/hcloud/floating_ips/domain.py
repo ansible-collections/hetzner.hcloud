@@ -1,9 +1,19 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 try:
     from dateutil.parser import isoparse
 except ImportError:
     isoparse = None
 
-from ..core.domain import BaseDomain
+from ..core import BaseDomain
+
+if TYPE_CHECKING:
+    from ..actions import BoundAction
+    from ..locations import BoundLocation
+    from ..servers import BoundServer
+    from .client import BoundFloatingIP
 
 
 class FloatingIP(BaseDomain):
@@ -52,18 +62,18 @@ class FloatingIP(BaseDomain):
 
     def __init__(
         self,
-        id=None,
-        type=None,
-        description=None,
-        ip=None,
-        server=None,
-        dns_ptr=None,
-        home_location=None,
-        blocked=None,
-        protection=None,
-        labels=None,
-        created=None,
-        name=None,
+        id: int | None = None,
+        type: str | None = None,
+        description: str | None = None,
+        ip: str | None = None,
+        server: BoundServer | None = None,
+        dns_ptr: list[dict] | None = None,
+        home_location: BoundLocation | None = None,
+        blocked: bool | None = None,
+        protection: dict | None = None,
+        labels: dict[str, str] | None = None,
+        created: str | None = None,
+        name: str | None = None,
     ):
         self.id = id
         self.type = type
@@ -92,8 +102,8 @@ class CreateFloatingIPResponse(BaseDomain):
 
     def __init__(
         self,
-        floating_ip,  # type: BoundFloatingIP
-        action,  # type: BoundAction
+        floating_ip: BoundFloatingIP,
+        action: BoundAction | None,
     ):
         self.floating_ip = floating_ip
         self.action = action

@@ -1,9 +1,18 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 try:
     from dateutil.parser import isoparse
 except ImportError:
     isoparse = None
 
-from ..core.domain import BaseDomain, DomainIdentityMixin
+from ..core import BaseDomain, DomainIdentityMixin
+
+if TYPE_CHECKING:
+    from ..actions import BoundAction
+    from ..servers import BoundServer, Server
+    from .client import BoundImage
 
 
 class Image(BaseDomain, DomainIdentityMixin):
@@ -67,23 +76,23 @@ class Image(BaseDomain, DomainIdentityMixin):
 
     def __init__(
         self,
-        id=None,
-        name=None,
-        type=None,
-        created=None,
-        description=None,
-        image_size=None,
-        disk_size=None,
-        deprecated=None,
-        bound_to=None,
-        os_flavor=None,
-        os_version=None,
-        architecture=None,
-        rapid_deploy=None,
-        created_from=None,
-        protection=None,
-        labels=None,
-        status=None,
+        id: int | None = None,
+        name: str | None = None,
+        type: str | None = None,
+        created: str | None = None,
+        description: str | None = None,
+        image_size: int | None = None,
+        disk_size: int | None = None,
+        deprecated: str | None = None,
+        bound_to: Server | BoundServer | None = None,
+        os_flavor: str | None = None,
+        os_version: str | None = None,
+        architecture: str | None = None,
+        rapid_deploy: bool | None = None,
+        created_from: Server | BoundServer | None = None,
+        protection: dict | None = None,
+        labels: dict[str, str] | None = None,
+        status: str | None = None,
     ):
         self.id = id
         self.name = name
@@ -117,8 +126,8 @@ class CreateImageResponse(BaseDomain):
 
     def __init__(
         self,
-        action,  # type: BoundAction
-        image,  # type: BoundImage
+        action: BoundAction,
+        image: BoundImage,
     ):
         self.action = action
         self.image = image

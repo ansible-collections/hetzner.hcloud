@@ -1,13 +1,21 @@
-from ..actions.client import BoundAction
-from ..core.client import BoundModelBase, ClientEntityBase, GetEntityByNameMixin
-from ..core.domain import add_meta_to_result
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, NamedTuple
+
+from ..actions import ActionsPageResult, BoundAction
+from ..core import BoundModelBase, ClientEntityBase, Meta
 from .domain import Network, NetworkRoute, NetworkSubnet
+
+if TYPE_CHECKING:
+    from .._client import Client
 
 
 class BoundNetwork(BoundModelBase):
+    _client: NetworksClient
+
     model = Network
 
-    def __init__(self, client, data, complete=True):
+    def __init__(self, client: NetworksClient, data: dict, complete: bool = True):
         subnets = data.get("subnets", [])
         if subnets is not None:
             subnets = [NetworkSubnet.from_dict(subnet) for subnet in subnets]
@@ -18,7 +26,7 @@ class BoundNetwork(BoundModelBase):
             routes = [NetworkRoute.from_dict(route) for route in routes]
             data["routes"] = routes
 
-        from ..servers.client import BoundServer
+        from ..servers import BoundServer
 
         servers = data.get("servers", [])
         if servers is not None:
@@ -32,10 +40,10 @@ class BoundNetwork(BoundModelBase):
 
     def update(
         self,
-        name=None,  # type: Optional[str]
-        expose_routes_to_vswitch=None,  # type: Optional[bool]
-        labels=None,  # type: Optional[Dict[str, str]]
-    ):  # type: (...) -> BoundNetwork
+        name: str | None = None,
+        expose_routes_to_vswitch: bool | None = None,
+        labels: dict[str, str] | None = None,
+    ) -> BoundNetwork:
         """Updates a network. You can update a network’s name and a networks’s labels.
 
         :param name: str (optional)
@@ -54,16 +62,20 @@ class BoundNetwork(BoundModelBase):
             labels=labels,
         )
 
-    def delete(self):
-        # type: () -> BoundAction
+    def delete(self) -> bool:
         """Deletes a network.
 
         :return: boolean
         """
         return self._client.delete(self)
 
-    def get_actions_list(self, status=None, sort=None, page=None, per_page=None):
-        # type: (Optional[List[str]], Optional[List[str]], Optional[int], Optional[int]) -> PageResults[List[BoundAction, Meta]]
+    def get_actions_list(
+        self,
+        status: list[str] | None = None,
+        sort: list[str] | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+    ) -> ActionsPageResult:
         """Returns all action objects for a network.
 
         :param status: List[str] (optional)
@@ -78,8 +90,11 @@ class BoundNetwork(BoundModelBase):
         """
         return self._client.get_actions_list(self, status, sort, page, per_page)
 
-    def get_actions(self, status=None, sort=None):
-        # type: (Optional[List[str]], Optional[List[str]]) -> List[BoundAction]
+    def get_actions(
+        self,
+        status: list[str] | None = None,
+        sort: list[str] | None = None,
+    ) -> list[BoundAction]:
         """Returns all action objects for a network.
 
         :param status: List[str] (optional)
@@ -90,8 +105,7 @@ class BoundNetwork(BoundModelBase):
         """
         return self._client.get_actions(self, status, sort)
 
-    def add_subnet(self, subnet):
-        # type: (NetworkSubnet) -> List[BoundAction]
+    def add_subnet(self, subnet: NetworkSubnet) -> BoundAction:
         """Adds a subnet entry to a network.
 
         :param subnet: :class:`NetworkSubnet <hcloud.networks.domain.NetworkSubnet>`
@@ -100,8 +114,7 @@ class BoundNetwork(BoundModelBase):
         """
         return self._client.add_subnet(self, subnet=subnet)
 
-    def delete_subnet(self, subnet):
-        # type: (NetworkSubnet) -> List[BoundAction]
+    def delete_subnet(self, subnet: NetworkSubnet) -> BoundAction:
         """Removes a subnet entry from a network
 
         :param subnet: :class:`NetworkSubnet <hcloud.networks.domain.NetworkSubnet>`
@@ -110,8 +123,7 @@ class BoundNetwork(BoundModelBase):
         """
         return self._client.delete_subnet(self, subnet=subnet)
 
-    def add_route(self, route):
-        # type: (NetworkRoute) -> List[BoundAction]
+    def add_route(self, route: NetworkRoute) -> BoundAction:
         """Adds a route entry to a network.
 
         :param route: :class:`NetworkRoute <hcloud.networks.domain.NetworkRoute>`
@@ -120,8 +132,7 @@ class BoundNetwork(BoundModelBase):
         """
         return self._client.add_route(self, route=route)
 
-    def delete_route(self, route):
-        # type: (NetworkRoute) -> List[BoundAction]
+    def delete_route(self, route: NetworkRoute) -> BoundAction:
         """Removes a route entry to a network.
 
         :param route: :class:`NetworkRoute <hcloud.networks.domain.NetworkRoute>`
@@ -130,8 +141,7 @@ class BoundNetwork(BoundModelBase):
         """
         return self._client.delete_route(self, route=route)
 
-    def change_ip_range(self, ip_range):
-        # type: (str) -> List[BoundAction]
+    def change_ip_range(self, ip_range: str) -> BoundAction:
         """Changes the IP range of a network.
 
         :param ip_range: str
@@ -140,8 +150,7 @@ class BoundNetwork(BoundModelBase):
         """
         return self._client.change_ip_range(self, ip_range=ip_range)
 
-    def change_protection(self, delete=None):
-        # type: (Optional[bool]) -> BoundAction
+    def change_protection(self, delete: bool | None = None) -> BoundAction:
         """Changes the protection configuration of a network.
 
         :param delete: boolean
@@ -151,11 +160,15 @@ class BoundNetwork(BoundModelBase):
         return self._client.change_protection(self, delete=delete)
 
 
-class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
-    results_list_attribute_name = "networks"
+class NetworksPageResult(NamedTuple):
+    networks: list[BoundNetwork]
+    meta: Meta | None
 
-    def get_by_id(self, id):
-        # type: (int) -> BoundNetwork
+
+class NetworksClient(ClientEntityBase):
+    _client: Client
+
+    def get_by_id(self, id: int) -> BoundNetwork:
         """Get a specific network
 
         :param id: int
@@ -166,12 +179,11 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
 
     def get_list(
         self,
-        name=None,  # type: Optional[str]
-        label_selector=None,  # type: Optional[str]
-        page=None,  # type: Optional[int]
-        per_page=None,  # type: Optional[int]
-    ):
-        # type: (...) -> PageResults[List[BoundNetwork], Meta]
+        name: str | None = None,
+        label_selector: str | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+    ) -> NetworksPageResult:
         """Get a list of networks from this account
 
         :param name: str (optional)
@@ -184,7 +196,7 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                Specifies how many results are returned by page
         :return: (List[:class:`BoundNetwork <hcloud.networks.client.BoundNetwork>`], :class:`Meta <hcloud.core.domain.Meta>`)
         """
-        params = {}
+        params: dict[str, Any] = {}
         if name is not None:
             params["name"] = name
         if label_selector is not None:
@@ -196,13 +208,16 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
 
         response = self._client.request(url="/networks", method="GET", params=params)
 
-        ass_networks = [
+        networks = [
             BoundNetwork(self, network_data) for network_data in response["networks"]
         ]
-        return self._add_meta_to_result(ass_networks, response)
+        return NetworksPageResult(networks, Meta.parse_meta(response))
 
-    def get_all(self, name=None, label_selector=None):
-        # type: (Optional[str], Optional[str]) -> List[BoundNetwork]
+    def get_all(
+        self,
+        name: str | None = None,
+        label_selector: str | None = None,
+    ) -> list[BoundNetwork]:
         """Get all networks from this account
 
         :param name: str (optional)
@@ -211,27 +226,26 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                Can be used to filter networks by labels. The response will only contain networks matching the label selector.
         :return: List[:class:`BoundNetwork <hcloud.networks.client.BoundNetwork>`]
         """
-        return super().get_all(name=name, label_selector=label_selector)
+        return self._iter_pages(self.get_list, name=name, label_selector=label_selector)
 
-    def get_by_name(self, name):
-        # type: (str) -> BoundNetwork
+    def get_by_name(self, name: str) -> BoundNetwork | None:
         """Get network by name
 
         :param name: str
                Used to get network by name.
         :return: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>`
         """
-        return super().get_by_name(name)
+        return self._get_first_by(name=name)
 
     def create(
         self,
-        name,  # type: str
-        ip_range,  # type: str
-        subnets=None,  # type: Optional[List[NetworkSubnet]]
-        routes=None,  # type:  Optional[List[NetworkRoute]]
-        expose_routes_to_vswitch=None,  # type: Optional[bool]
-        labels=None,  # type:  Optional[Dict[str, str]]
-    ):
+        name: str,
+        ip_range: str,
+        subnets: list[NetworkSubnet] | None = None,
+        routes: list[NetworkRoute] | None = None,
+        expose_routes_to_vswitch: bool | None = None,
+        labels: dict[str, str] | None = None,
+    ) -> BoundNetwork:
         """Creates a network with range ip_range.
 
         :param name: str
@@ -249,11 +263,11 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                 User-defined labels (key-value pairs)
         :return: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>`
         """
-        data = {"name": name, "ip_range": ip_range}
+        data: dict[str, Any] = {"name": name, "ip_range": ip_range}
         if subnets is not None:
             data_subnets = []
             for subnet in subnets:
-                data_subnet = {
+                data_subnet: dict[str, Any] = {
                     "type": subnet.type,
                     "ip_range": subnet.ip_range,
                     "network_zone": subnet.network_zone,
@@ -280,8 +294,13 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
 
         return BoundNetwork(self, response["network"])
 
-    def update(self, network, name=None, expose_routes_to_vswitch=None, labels=None):
-        # type:(Network,  Optional[str], Optional[bool], Optional[Dict[str, str]]) -> BoundNetwork
+    def update(
+        self,
+        network: Network | BoundNetwork,
+        name: str | None = None,
+        expose_routes_to_vswitch: bool | None = None,
+        labels: dict[str, str] | None = None,
+    ) -> BoundNetwork:
         """Updates a network. You can update a network’s name and a network’s labels.
 
         :param network: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>` or :class:`Network <hcloud.networks.domain.Network>`
@@ -294,7 +313,7 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                User-defined labels (key-value pairs)
         :return: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>`
         """
-        data = {}
+        data: dict[str, Any] = {}
         if name is not None:
             data.update({"name": name})
 
@@ -311,8 +330,7 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
         )
         return BoundNetwork(self, response["network"])
 
-    def delete(self, network):
-        # type: (Network) -> BoundAction
+    def delete(self, network: Network | BoundNetwork) -> bool:
         """Deletes a network.
 
         :param network: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>` or :class:`Network <hcloud.networks.domain.Network>`
@@ -322,9 +340,13 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
         return True
 
     def get_actions_list(
-        self, network, status=None, sort=None, page=None, per_page=None
-    ):
-        # type: (Network, Optional[List[str]], Optional[List[str]], Optional[int], Optional[int]) -> PageResults[List[BoundAction], Meta]
+        self,
+        network: Network | BoundNetwork,
+        status: list[str] | None = None,
+        sort: list[str] | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+    ) -> ActionsPageResult:
         """Returns all action objects for a network.
 
         :param network: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>` or :class:`Network <hcloud.networks.domain.Network>`
@@ -338,7 +360,7 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                Specifies how many results are returned by page
         :return: (List[:class:`BoundAction <hcloud.actions.client.BoundAction>`], :class:`Meta <hcloud.core.domain.Meta>`)
         """
-        params = {}
+        params: dict[str, Any] = {}
         if status is not None:
             params["status"] = status
         if sort is not None:
@@ -357,10 +379,14 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
             BoundAction(self._client.actions, action_data)
             for action_data in response["actions"]
         ]
-        return add_meta_to_result(actions, response, "actions")
+        return ActionsPageResult(actions, Meta.parse_meta(response))
 
-    def get_actions(self, network, status=None, sort=None):
-        # type: (Network, Optional[List[str]], Optional[List[str]]) -> List[BoundAction]
+    def get_actions(
+        self,
+        network: Network | BoundNetwork,
+        status: list[str] | None = None,
+        sort: list[str] | None = None,
+    ) -> list[BoundAction]:
         """Returns all action objects for a network.
 
         :param network: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>` or :class:`Network <hcloud.networks.domain.Network>`
@@ -370,10 +396,18 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                Specify how the results are sorted. Choices: `id` `id:asc` `id:desc` `command` `command:asc` `command:desc` `status` `status:asc` `status:desc` `progress` `progress:asc` `progress:desc` `started` `started:asc` `started:desc` `finished` `finished:asc` `finished:desc`
         :return: List[:class:`BoundAction <hcloud.actions.client.BoundAction>`]
         """
-        return super().get_actions(network, status=status, sort=sort)
+        return self._iter_pages(
+            self.get_actions_list,
+            network,
+            status=status,
+            sort=sort,
+        )
 
-    def add_subnet(self, network, subnet):
-        # type: (Union[Network, BoundNetwork], NetworkSubnet) -> List[BoundAction]
+    def add_subnet(
+        self,
+        network: Network | BoundNetwork,
+        subnet: NetworkSubnet,
+    ) -> BoundAction:
         """Adds a subnet entry to a network.
 
         :param network: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>` or :class:`Network <hcloud.networks.domain.Network>`
@@ -381,23 +415,27 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                        The NetworkSubnet you want to add to the Network
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
-        data = {"type": subnet.type, "network_zone": subnet.network_zone}
+        data: dict[str, Any] = {
+            "type": subnet.type,
+            "network_zone": subnet.network_zone,
+        }
         if subnet.ip_range is not None:
             data["ip_range"] = subnet.ip_range
         if subnet.vswitch_id is not None:
             data["vswitch_id"] = subnet.vswitch_id
 
         response = self._client.request(
-            url="/networks/{network_id}/actions/add_subnet".format(
-                network_id=network.id
-            ),
+            url=f"/networks/{network.id}/actions/add_subnet",
             method="POST",
             json=data,
         )
         return BoundAction(self._client.actions, response["action"])
 
-    def delete_subnet(self, network, subnet):
-        # type: (Union[Network, BoundNetwork], NetworkSubnet) -> List[BoundAction]
+    def delete_subnet(
+        self,
+        network: Network | BoundNetwork,
+        subnet: NetworkSubnet,
+    ) -> BoundAction:
         """Removes a subnet entry from a network
 
         :param network: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>` or :class:`Network <hcloud.networks.domain.Network>`
@@ -405,19 +443,20 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                        The NetworkSubnet you want to remove from the Network
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
-        data = {"ip_range": subnet.ip_range}
+        data: dict[str, Any] = {"ip_range": subnet.ip_range}
 
         response = self._client.request(
-            url="/networks/{network_id}/actions/delete_subnet".format(
-                network_id=network.id
-            ),
+            url=f"/networks/{network.id}/actions/delete_subnet",
             method="POST",
             json=data,
         )
         return BoundAction(self._client.actions, response["action"])
 
-    def add_route(self, network, route):
-        # type: (Union[Network, BoundNetwork], NetworkRoute) -> List[BoundAction]
+    def add_route(
+        self,
+        network: Network | BoundNetwork,
+        route: NetworkRoute,
+    ) -> BoundAction:
         """Adds a route entry to a network.
 
         :param network: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>` or :class:`Network <hcloud.networks.domain.Network>`
@@ -425,19 +464,23 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                     The NetworkRoute you want to add to the Network
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
-        data = {"destination": route.destination, "gateway": route.gateway}
+        data: dict[str, Any] = {
+            "destination": route.destination,
+            "gateway": route.gateway,
+        }
 
         response = self._client.request(
-            url="/networks/{network_id}/actions/add_route".format(
-                network_id=network.id
-            ),
+            url=f"/networks/{network.id}/actions/add_route",
             method="POST",
             json=data,
         )
         return BoundAction(self._client.actions, response["action"])
 
-    def delete_route(self, network, route):
-        # type: (Union[Network, BoundNetwork], NetworkRoute) -> List[BoundAction]
+    def delete_route(
+        self,
+        network: Network | BoundNetwork,
+        route: NetworkRoute,
+    ) -> BoundAction:
         """Removes a route entry to a network.
 
         :param network: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>` or :class:`Network <hcloud.networks.domain.Network>`
@@ -445,19 +488,23 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                     The NetworkRoute you want to remove from the Network
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
-        data = {"destination": route.destination, "gateway": route.gateway}
+        data: dict[str, Any] = {
+            "destination": route.destination,
+            "gateway": route.gateway,
+        }
 
         response = self._client.request(
-            url="/networks/{network_id}/actions/delete_route".format(
-                network_id=network.id
-            ),
+            url=f"/networks/{network.id}/actions/delete_route",
             method="POST",
             json=data,
         )
         return BoundAction(self._client.actions, response["action"])
 
-    def change_ip_range(self, network, ip_range):
-        # type: (Union[Network, BoundNetwork], str) -> List[BoundAction]
+    def change_ip_range(
+        self,
+        network: Network | BoundNetwork,
+        ip_range: str,
+    ) -> BoundAction:
         """Changes the IP range of a network.
 
         :param network: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>` or :class:`Network <hcloud.networks.domain.Network>`
@@ -465,19 +512,20 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                     The new prefix for the whole network.
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
-        data = {"ip_range": ip_range}
+        data: dict[str, Any] = {"ip_range": ip_range}
 
         response = self._client.request(
-            url="/networks/{network_id}/actions/change_ip_range".format(
-                network_id=network.id
-            ),
+            url=f"/networks/{network.id}/actions/change_ip_range",
             method="POST",
             json=data,
         )
         return BoundAction(self._client.actions, response["action"])
 
-    def change_protection(self, network, delete=None):
-        # type: (Union[Network, BoundNetwork], Optional[bool]) -> BoundAction
+    def change_protection(
+        self,
+        network: Network | BoundNetwork,
+        delete: bool | None = None,
+    ) -> BoundAction:
         """Changes the protection configuration of a network.
 
         :param network: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>` or :class:`Network <hcloud.networks.domain.Network>`
@@ -485,14 +533,12 @@ class NetworksClient(ClientEntityBase, GetEntityByNameMixin):
                If True, prevents the network from being deleted
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
-        data = {}
+        data: dict[str, Any] = {}
         if delete is not None:
             data.update({"delete": delete})
 
         response = self._client.request(
-            url="/networks/{network_id}/actions/change_protection".format(
-                network_id=network.id
-            ),
+            url=f"/networks/{network.id}/actions/change_protection",
             method="POST",
             json=data,
         )
