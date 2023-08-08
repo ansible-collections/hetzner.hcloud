@@ -1,9 +1,17 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 try:
     from dateutil.parser import isoparse
 except ImportError:
     isoparse = None
 
-from ..core.domain import BaseDomain
+from ..core import BaseDomain
+
+if TYPE_CHECKING:
+    from ..actions import BoundAction
+    from .client import BoundPlacementGroup
 
 
 class PlacementGroup(BaseDomain):
@@ -31,7 +39,13 @@ class PlacementGroup(BaseDomain):
     TYPE_SPREAD = "spread"
 
     def __init__(
-        self, id=None, name=None, labels=None, servers=None, type=None, created=None
+        self,
+        id: int | None = None,
+        name: str | None = None,
+        labels: dict[str, str] | None = None,
+        servers: list[int] | None = None,
+        type: str | None = None,
+        created: str | None = None,
     ):
         self.id = id
         self.name = name
@@ -54,8 +68,8 @@ class CreatePlacementGroupResponse(BaseDomain):
 
     def __init__(
         self,
-        placement_group,  # type: BoundPlacementGroup
-        action,  # type: BoundAction
+        placement_group: BoundPlacementGroup,
+        action: BoundAction | None,
     ):
         self.placement_group = placement_group
         self.action = action

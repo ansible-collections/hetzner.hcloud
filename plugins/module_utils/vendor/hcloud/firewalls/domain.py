@@ -1,9 +1,18 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 try:
     from dateutil.parser import isoparse
 except ImportError:
     isoparse = None
 
-from ..core.domain import BaseDomain
+from ..core import BaseDomain
+
+if TYPE_CHECKING:
+    from ..actions import BoundAction
+    from ..servers import BoundServer, Server
+    from .client import BoundFirewall
 
 
 class Firewall(BaseDomain):
@@ -26,7 +35,13 @@ class Firewall(BaseDomain):
     __slots__ = ("id", "name", "labels", "rules", "applied_to", "created")
 
     def __init__(
-        self, id=None, name=None, labels=None, rules=None, applied_to=None, created=None
+        self,
+        id: int | None = None,
+        name: str | None = None,
+        labels: dict[str, str] | None = None,
+        rules: list[FirewallRule] | None = None,
+        applied_to: list[FirewallResource] | None = None,
+        created: str | None = None,
     ):
         self.id = id
         self.name = name
@@ -81,12 +96,12 @@ class FirewallRule:
 
     def __init__(
         self,
-        direction,  # type: str
-        protocol,  # type: str
-        source_ips,  # type: List[str]
-        port=None,  # type: Optional[str]
-        destination_ips=None,  # type: Optional[List[str]]
-        description=None,  # type: Optional[str]
+        direction: str,
+        protocol: str,
+        source_ips: list[str],
+        port: str | None = None,
+        destination_ips: list[str] | None = None,
+        description: str | None = None,
     ):
         self.direction = direction
         self.port = port
@@ -95,18 +110,18 @@ class FirewallRule:
         self.destination_ips = destination_ips or []
         self.description = description
 
-    def to_payload(self):
-        payload = {
+    def to_payload(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {
             "direction": self.direction,
             "protocol": self.protocol,
             "source_ips": self.source_ips,
         }
         if len(self.destination_ips) > 0:
-            payload.update({"destination_ips": self.destination_ips})
+            payload["destination_ips"] = self.destination_ips
         if self.port is not None:
-            payload.update({"port": self.port})
+            payload["port"] = self.port
         if self.description is not None:
-            payload.update({"description": self.description})
+            payload["description"] = self.description
         return payload
 
 
@@ -130,23 +145,21 @@ class FirewallResource:
 
     def __init__(
         self,
-        type,  # type: str
-        server=None,  # type: Optional[Server]
-        label_selector=None,  # type: Optional[FirewallResourceLabelSelector]
+        type: str,
+        server: Server | BoundServer | None = None,
+        label_selector: FirewallResourceLabelSelector | None = None,
     ):
         self.type = type
         self.server = server
         self.label_selector = label_selector
 
-    def to_payload(self):
-        payload = {"type": self.type}
+    def to_payload(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {"type": self.type}
         if self.server is not None:
-            payload.update({"server": {"id": self.server.id}})
+            payload["server"] = {"id": self.server.id}
 
         if self.label_selector is not None:
-            payload.update(
-                {"label_selector": {"selector": self.label_selector.selector}}
-            )
+            payload["label_selector"] = {"selector": self.label_selector.selector}
         return payload
 
 
@@ -156,7 +169,7 @@ class FirewallResourceLabelSelector(BaseDomain):
     :param selector: str Target label selector
     """
 
-    def __init__(self, selector=None):
+    def __init__(self, selector: str | None = None):
         self.selector = selector
 
 
@@ -173,8 +186,8 @@ class CreateFirewallResponse(BaseDomain):
 
     def __init__(
         self,
-        firewall,  # type: BoundFirewall
-        actions,  # type: BoundAction
+        firewall: BoundFirewall,
+        actions: list[BoundAction] | None,
     ):
         self.firewall = firewall
         self.actions = actions

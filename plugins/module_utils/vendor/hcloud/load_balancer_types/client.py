@@ -1,31 +1,46 @@
-from ..core.client import BoundModelBase, ClientEntityBase, GetEntityByNameMixin
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, NamedTuple
+
+from ..core import BoundModelBase, ClientEntityBase, Meta
 from .domain import LoadBalancerType
+
+if TYPE_CHECKING:
+    from .._client import Client
 
 
 class BoundLoadBalancerType(BoundModelBase):
+    _client: LoadBalancerTypesClient
+
     model = LoadBalancerType
 
 
-class LoadBalancerTypesClient(ClientEntityBase, GetEntityByNameMixin):
-    results_list_attribute_name = "load_balancer_types"
+class LoadBalancerTypesPageResult(NamedTuple):
+    load_balancer_types: list[BoundLoadBalancerType]
+    meta: Meta | None
 
-    def get_by_id(self, id):
-        # type: (int) -> load_balancer_types.client.BoundLoadBalancerType
+
+class LoadBalancerTypesClient(ClientEntityBase):
+    _client: Client
+
+    def get_by_id(self, id: int) -> BoundLoadBalancerType:
         """Returns a specific Load Balancer Type.
 
         :param id: int
         :return: :class:`BoundLoadBalancerType <hcloud.load_balancer_type.client.BoundLoadBalancerType>`
         """
         response = self._client.request(
-            url="/load_balancer_types/{load_balancer_type_id}".format(
-                load_balancer_type_id=id
-            ),
+            url=f"/load_balancer_types/{id}",
             method="GET",
         )
         return BoundLoadBalancerType(self, response["load_balancer_type"])
 
-    def get_list(self, name=None, page=None, per_page=None):
-        # type: (Optional[str], Optional[int], Optional[int]) -> PageResults[List[BoundLoadBalancerType], Meta]
+    def get_list(
+        self,
+        name: str | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+    ) -> LoadBalancerTypesPageResult:
         """Get a list of Load Balancer types
 
         :param name: str (optional)
@@ -36,7 +51,7 @@ class LoadBalancerTypesClient(ClientEntityBase, GetEntityByNameMixin):
                Specifies how many results are returned by page
         :return: (List[:class:`BoundLoadBalancerType <hcloud.load_balancer_types.client.BoundLoadBalancerType>`], :class:`Meta <hcloud.core.domain.Meta>`)
         """
-        params = {}
+        params: dict[str, Any] = {}
         if name is not None:
             params["name"] = name
         if page is not None:
@@ -51,24 +66,24 @@ class LoadBalancerTypesClient(ClientEntityBase, GetEntityByNameMixin):
             BoundLoadBalancerType(self, load_balancer_type_data)
             for load_balancer_type_data in response["load_balancer_types"]
         ]
-        return self._add_meta_to_result(load_balancer_types, response)
+        return LoadBalancerTypesPageResult(
+            load_balancer_types, Meta.parse_meta(response)
+        )
 
-    def get_all(self, name=None):
-        # type: (Optional[str]) -> List[BoundLoadBalancerType]
+    def get_all(self, name: str | None = None) -> list[BoundLoadBalancerType]:
         """Get all Load Balancer types
 
         :param name: str (optional)
                Can be used to filter Load Balancer type by their name.
         :return: List[:class:`BoundLoadBalancerType <hcloud.load_balancer_types.client.BoundLoadBalancerType>`]
         """
-        return super().get_all(name=name)
+        return self._iter_pages(self.get_list, name=name)
 
-    def get_by_name(self, name):
-        # type: (str) -> BoundLoadBalancerType
+    def get_by_name(self, name: str) -> BoundLoadBalancerType | None:
         """Get Load Balancer type by name
 
         :param name: str
                Used to get Load Balancer type by name.
         :return: :class:`BoundLoadBalancerType <hcloud.load_balancer_types.client.BoundLoadBalancerType>`
         """
-        return super().get_by_name(name)
+        return self._get_first_by(name=name)

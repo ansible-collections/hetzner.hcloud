@@ -1,13 +1,21 @@
-import time
+from __future__ import annotations
 
-from ..core.client import BoundModelBase, ClientEntityBase
+import time
+from typing import TYPE_CHECKING, Any, NamedTuple
+
+from ..core import BoundModelBase, ClientEntityBase, Meta
 from .domain import Action, ActionFailedException, ActionTimeoutException
+
+if TYPE_CHECKING:
+    from .._client import Client
 
 
 class BoundAction(BoundModelBase):
+    _client: ActionsClient
+
     model = Action
 
-    def wait_until_finished(self, max_retries=100):
+    def wait_until_finished(self, max_retries: int = 100) -> None:
         """Wait until the specific action has status="finished" (set Client.poll_interval to specify a delay between checks)
 
         :param max_retries: int
@@ -27,11 +35,15 @@ class BoundAction(BoundModelBase):
             raise ActionFailedException(action=self)
 
 
-class ActionsClient(ClientEntityBase):
-    results_list_attribute_name = "actions"
+class ActionsPageResult(NamedTuple):
+    actions: list[BoundAction]
+    meta: Meta | None
 
-    def get_by_id(self, id):
-        # type: (int) -> BoundAction
+
+class ActionsClient(ClientEntityBase):
+    _client: Client
+
+    def get_by_id(self, id: int) -> BoundAction:
         """Get a specific action by its ID.
 
         :param id: int
@@ -43,12 +55,11 @@ class ActionsClient(ClientEntityBase):
 
     def get_list(
         self,
-        status=None,  # type: Optional[List[str]]
-        sort=None,  # type: Optional[List[str]]
-        page=None,  # type: Optional[int]
-        per_page=None,  # type: Optional[int]
-    ):
-        # type: (...) -> PageResults[List[BoundAction]]
+        status: list[str] | None = None,
+        sort: list[str] | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+    ) -> ActionsPageResult:
         """Get a list of actions from this account
 
         :param status: List[str] (optional)
@@ -61,7 +72,7 @@ class ActionsClient(ClientEntityBase):
                Specifies how many results are returned by page
         :return: (List[:class:`BoundAction <hcloud.actions.client.BoundAction>`], :class:`Meta <hcloud.core.domain.Meta>`)
         """
-        params = {}
+        params: dict[str, Any] = {}
         if status is not None:
             params["status"] = status
         if sort is not None:
@@ -75,10 +86,13 @@ class ActionsClient(ClientEntityBase):
         actions = [
             BoundAction(self, action_data) for action_data in response["actions"]
         ]
-        return self._add_meta_to_result(actions, response)
+        return ActionsPageResult(actions, Meta.parse_meta(response))
 
-    def get_all(self, status=None, sort=None):
-        # type: (Optional[List[str]], Optional[List[str]]) -> List[BoundAction]
+    def get_all(
+        self,
+        status: list[str] | None = None,
+        sort: list[str] | None = None,
+    ) -> list[BoundAction]:
         """Get all actions of the account
 
         :param status: List[str] (optional)
@@ -87,4 +101,4 @@ class ActionsClient(ClientEntityBase):
                Specify how the results are sorted. Choices: `id` `command` `status` `progress`  `started` `finished` . You can add one of ":asc", ":desc" to modify sort order. ( ":asc" is default)
         :return: List[:class:`BoundAction <hcloud.actions.client.BoundAction>`]
         """
-        return super().get_all(status=status, sort=sort)
+        return self._iter_pages(self.get_list, status=status, sort=sort)

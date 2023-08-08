@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import time
-from typing import Optional, Union
+from typing import NoReturn
 
 try:
     import requests
@@ -8,23 +10,23 @@ except ImportError:
 
 from ._version import VERSION
 from ._exceptions import APIException
-from .actions.client import ActionsClient
-from .certificates.client import CertificatesClient
-from .datacenters.client import DatacentersClient
-from .firewalls.client import FirewallsClient
-from .floating_ips.client import FloatingIPsClient
-from .images.client import ImagesClient
-from .isos.client import IsosClient
-from .load_balancer_types.client import LoadBalancerTypesClient
-from .load_balancers.client import LoadBalancersClient
-from .locations.client import LocationsClient
-from .networks.client import NetworksClient
-from .placement_groups.client import PlacementGroupsClient
-from .primary_ips.client import PrimaryIPsClient
-from .server_types.client import ServerTypesClient
-from .servers.client import ServersClient
-from .ssh_keys.client import SSHKeysClient
-from .volumes.client import VolumesClient
+from .actions import ActionsClient
+from .certificates import CertificatesClient
+from .datacenters import DatacentersClient
+from .firewalls import FirewallsClient
+from .floating_ips import FloatingIPsClient
+from .images import ImagesClient
+from .isos import IsosClient
+from .load_balancer_types import LoadBalancerTypesClient
+from .load_balancers import LoadBalancersClient
+from .locations import LocationsClient
+from .networks import NetworksClient
+from .placement_groups import PlacementGroupsClient
+from .primary_ips import PrimaryIPsClient
+from .server_types import ServerTypesClient
+from .servers import ServersClient
+from .ssh_keys import SSHKeysClient
+from .volumes import VolumesClient
 
 
 class Client:
@@ -38,9 +40,10 @@ class Client:
         self,
         token: str,
         api_endpoint: str = "https://api.hetzner.cloud/v1",
-        application_name: Optional[str] = None,
-        application_version: Optional[str] = None,
+        application_name: str | None = None,
+        application_version: str | None = None,
         poll_interval: int = 1,
+        timeout: float | tuple[float, float] | None = None,
     ):
         """Create an new Client instance
 
@@ -49,12 +52,14 @@ class Client:
         :param application_name: Your application name
         :param application_version: Your application _version
         :param poll_interval: Interval for polling information from Hetzner Cloud API in seconds
+        :param timeout: Requests timeout in seconds
         """
         self.token = token
         self._api_endpoint = api_endpoint
         self._application_name = application_name
         self._application_version = application_version
         self._requests_session = requests.Session()
+        self._requests_timeout = timeout
         self.poll_interval = poll_interval
 
         self.datacenters = DatacentersClient(self)
@@ -169,38 +174,42 @@ class Client:
         }
         return headers
 
-    def _raise_exception_from_response(self, response):
+    def _raise_exception_from_response(self, response) -> NoReturn:
         raise APIException(
             code=response.status_code,
             message=response.reason,
             details={"content": response.content},
         )
 
-    def _raise_exception_from_content(self, content: dict):
+    def _raise_exception_from_content(self, content: dict) -> NoReturn:
         raise APIException(
             code=content["error"]["code"],
             message=content["error"]["message"],
             details=content["error"]["details"],
         )
 
-    def request(
+    def request(  # type: ignore[no-untyped-def]
         self,
         method: str,
         url: str,
         tries: int = 1,
         **kwargs,
-    ) -> Union[bytes, dict]:
+    ) -> dict:
         """Perform a request to the Hetzner Cloud API, wrapper around requests.request
 
         :param method: HTTP Method to perform the Request
         :param url: URL of the Endpoint
         :param tries: Tries of the request (used internally, should not be set by the user)
+        :param timeout: Requests timeout in seconds
         :return: Response
         """
+        timeout = kwargs.pop("timeout", self._requests_timeout)
+
         response = self._requests_session.request(
             method=method,
             url=self._api_endpoint + url,
             headers=self._get_headers(),
+            timeout=timeout,
             **kwargs,
         )
 
@@ -213,13 +222,15 @@ class Client:
 
         if not response.ok:
             if content:
+                assert isinstance(content, dict)
                 if content["error"]["code"] == "rate_limit_exceeded" and tries < 5:
                     time.sleep(tries * self._retry_wait_time)
                     tries = tries + 1
                     return self.request(method, url, tries, **kwargs)
-                else:
-                    self._raise_exception_from_content(content)
+
+                self._raise_exception_from_content(content)
             else:
                 self._raise_exception_from_response(response)
 
-        return content
+        # TODO: return an empty dict instead of an empty string when content == "".
+        return content  # type: ignore[return-value]

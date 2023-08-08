@@ -1,18 +1,30 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, NamedTuple
 from warnings import warn
 
-from ..core.client import BoundModelBase, ClientEntityBase, GetEntityByNameMixin
+from ..core import BoundModelBase, ClientEntityBase, Meta
 from .domain import Iso
+
+if TYPE_CHECKING:
+    from .._client import Client
 
 
 class BoundIso(BoundModelBase):
+    _client: IsosClient
+
     model = Iso
 
 
-class IsosClient(ClientEntityBase, GetEntityByNameMixin):
-    results_list_attribute_name = "isos"
+class IsosPageResult(NamedTuple):
+    isos: list[BoundIso]
+    meta: Meta | None
 
-    def get_by_id(self, id):
-        # type: (int) -> BoundIso
+
+class IsosClient(ClientEntityBase):
+    _client: Client
+
+    def get_by_id(self, id: int) -> BoundIso:
         """Get a specific ISO by its id
 
         :param id: int
@@ -23,14 +35,13 @@ class IsosClient(ClientEntityBase, GetEntityByNameMixin):
 
     def get_list(
         self,
-        name=None,  # type: Optional[str]
-        architecture=None,  # type: Optional[List[str]]
-        include_wildcard_architecture=None,  # type: Optional[bool]
-        include_architecture_wildcard=None,  # type: Optional[bool]
-        page=None,  # type: Optional[int]
-        per_page=None,  # type: Optional[int]
-    ):
-        # type: (...) -> PageResults[List[BoundIso], Meta]
+        name: str | None = None,
+        architecture: list[str] | None = None,
+        include_wildcard_architecture: bool | None = None,
+        include_architecture_wildcard: bool | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+    ) -> IsosPageResult:
         """Get a list of ISOs
 
         :param name: str (optional)
@@ -56,7 +67,7 @@ class IsosClient(ClientEntityBase, GetEntityByNameMixin):
             )
             include_architecture_wildcard = include_wildcard_architecture
 
-        params = {}
+        params: dict[str, Any] = {}
         if name is not None:
             params["name"] = name
         if architecture is not None:
@@ -70,16 +81,15 @@ class IsosClient(ClientEntityBase, GetEntityByNameMixin):
 
         response = self._client.request(url="/isos", method="GET", params=params)
         isos = [BoundIso(self, iso_data) for iso_data in response["isos"]]
-        return self._add_meta_to_result(isos, response)
+        return IsosPageResult(isos, Meta.parse_meta(response))
 
     def get_all(
         self,
-        name=None,  # type: Optional[str]
-        architecture=None,  # type: Optional[List[str]]
-        include_wildcard_architecture=None,  # type: Optional[bool]
-        include_architecture_wildcard=None,  # type: Optional[bool]
-    ):
-        # type: (...) -> List[BoundIso]
+        name: str | None = None,
+        architecture: list[str] | None = None,
+        include_wildcard_architecture: bool | None = None,
+        include_architecture_wildcard: bool | None = None,
+    ) -> list[BoundIso]:
         """Get all ISOs
 
         :param name: str (optional)
@@ -101,18 +111,18 @@ class IsosClient(ClientEntityBase, GetEntityByNameMixin):
             )
             include_architecture_wildcard = include_wildcard_architecture
 
-        return super().get_all(
+        return self._iter_pages(
+            self.get_list,
             name=name,
             architecture=architecture,
             include_architecture_wildcard=include_architecture_wildcard,
         )
 
-    def get_by_name(self, name):
-        # type: (str) -> BoundIso
+    def get_by_name(self, name: str) -> BoundIso | None:
         """Get iso by name
 
         :param name: str
                Used to get iso by name.
         :return: :class:`BoundIso <hcloud.isos.client.BoundIso>`
         """
-        return super().get_by_name(name)
+        return self._get_first_by(name=name)

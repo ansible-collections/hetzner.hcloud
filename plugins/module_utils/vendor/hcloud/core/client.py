@@ -1,102 +1,65 @@
-from .domain import add_meta_to_result
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Callable
+
+if TYPE_CHECKING:
+    from .._client import Client
 
 
 class ClientEntityBase:
-    max_per_page = 50
-    results_list_attribute_name = None
+    _client: Client
 
-    def __init__(self, client):
+    max_per_page: int = 50
+
+    def __init__(self, client: Client):
         """
         :param client: Client
         :return self
         """
         self._client = client
 
-    def _is_list_attribute_implemented(self):
-        if self.results_list_attribute_name is None:
-            raise NotImplementedError(
-                "in order to get results list, 'results_list_attribute_name' attribute of {} has to be specified".format(
-                    self.__class__.__name__
-                )
-            )
-
-    def _add_meta_to_result(
+    def _iter_pages(  # type: ignore[no-untyped-def]
         self,
-        results,  # type: List[BoundModelBase]
-        response,  # type: json
-    ):
-        # type: (...) -> PageResult
-        self._is_list_attribute_implemented()
-        return add_meta_to_result(results, response, self.results_list_attribute_name)
-
-    def _get_all(
-        self,
-        list_function,  # type: function
-        results_list_attribute_name,  # type: str
+        list_function: Callable,
         *args,
-        **kwargs
-    ):
-        # type (...) -> List[BoundModelBase]
-
-        page = 1
-
+        **kwargs,
+    ) -> list:
         results = []
 
+        page = 1
         while page:
-            page_result = list_function(
-                page=page, per_page=self.max_per_page, *args, **kwargs
+            # The *PageResult tuples MUST have the following structure
+            # `(result: List[Bound*], meta: Meta)`
+            result, meta = list_function(
+                *args, page=page, per_page=self.max_per_page, **kwargs
             )
-            result = getattr(page_result, results_list_attribute_name)
             if result:
                 results.extend(result)
-            meta = page_result.meta
-            if (
-                meta
-                and meta.pagination
-                and meta.pagination.next_page
-                and meta.pagination.next_page
-            ):
+
+            if meta and meta.pagination and meta.pagination.next_page:
                 page = meta.pagination.next_page
             else:
-                page = None
+                page = 0
 
         return results
 
-    def get_all(self, *args, **kwargs):
-        # type: (...) -> List[BoundModelBase]
-        self._is_list_attribute_implemented()
-        return self._get_all(
-            self.get_list, self.results_list_attribute_name, *args, **kwargs
-        )
-
-    def get_actions(self, *args, **kwargs):
-        # type: (...) -> List[BoundModelBase]
-        if not hasattr(self, "get_actions_list"):
-            raise ValueError("this endpoint does not support get_actions method")
-
-        return self._get_all(self.get_actions_list, "actions", *args, **kwargs)
-
-
-class GetEntityByNameMixin:
-    """
-    Use as a mixin for ClientEntityBase classes
-    """
-
-    def get_by_name(self, name):
-        # type: (str) -> BoundModelBase
-        self._is_list_attribute_implemented()
-        response = self.get_list(name=name)
-        entities = getattr(response, self.results_list_attribute_name)
-        entity = entities[0] if entities else None
-        return entity
+    def _get_first_by(self, **kwargs):  # type: ignore[no-untyped-def]
+        assert hasattr(self, "get_list")
+        entities, _ = self.get_list(**kwargs)
+        return entities[0] if entities else None
 
 
 class BoundModelBase:
     """Bound Model Base"""
 
-    model = None
+    model: Any
 
-    def __init__(self, client, data={}, complete=True):
+    def __init__(
+        self,
+        client: ClientEntityBase,
+        data: dict,
+        complete: bool = True,
+    ):
         """
         :param client:
                 The client for the specific model to use
@@ -109,7 +72,7 @@ class BoundModelBase:
         self.complete = complete
         self.data_model = self.model.from_dict(data)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):  # type: ignore[no-untyped-def]
         """Allow magical access to the properties of the model
         :param name: str
         :return:
@@ -120,8 +83,9 @@ class BoundModelBase:
             value = getattr(self.data_model, name)
         return value
 
-    def reload(self):
+    def reload(self) -> None:
         """Reloads the model and tries to get all data from the APIx"""
+        assert hasattr(self._client, "get_by_id")
         bound_model = self._client.get_by_id(self.data_model.id)
         self.data_model = bound_model.data_model
         self.complete = True

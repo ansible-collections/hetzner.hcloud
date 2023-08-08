@@ -1,9 +1,18 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 try:
     from dateutil.parser import isoparse
 except ImportError:
     isoparse = None
 
-from ..core.domain import BaseDomain
+from ..core import BaseDomain
+
+if TYPE_CHECKING:
+    from ..actions import BoundAction
+    from ..servers import BoundServer
+    from .client import BoundNetwork
 
 
 class Network(BaseDomain):
@@ -44,16 +53,16 @@ class Network(BaseDomain):
 
     def __init__(
         self,
-        id,
-        name=None,
-        created=None,
-        ip_range=None,
-        subnets=None,
-        routes=None,
-        expose_routes_to_vswitch=None,
-        servers=None,
-        protection=None,
-        labels=None,
+        id: int,
+        name: str | None = None,
+        created: str | None = None,
+        ip_range: str | None = None,
+        subnets: list[NetworkSubnet] | None = None,
+        routes: list[NetworkRoute] | None = None,
+        expose_routes_to_vswitch: bool | None = None,
+        servers: list[BoundServer] | None = None,
+        protection: dict | None = None,
+        labels: dict[str, str] | None = None,
     ):
         self.id = id
         self.name = name
@@ -91,7 +100,12 @@ class NetworkSubnet(BaseDomain):
     __slots__ = ("type", "ip_range", "network_zone", "gateway", "vswitch_id")
 
     def __init__(
-        self, ip_range, type=None, network_zone=None, gateway=None, vswitch_id=None
+        self,
+        ip_range: str,
+        type: str | None = None,
+        network_zone: str | None = None,
+        gateway: str | None = None,
+        vswitch_id: int | None = None,
     ):
         self.type = type
         self.ip_range = ip_range
@@ -111,7 +125,7 @@ class NetworkRoute(BaseDomain):
 
     __slots__ = ("destination", "gateway")
 
-    def __init__(self, destination, gateway):
+    def __init__(self, destination: str, gateway: str):
         self.destination = destination
         self.gateway = gateway
 
@@ -129,8 +143,8 @@ class CreateNetworkResponse(BaseDomain):
 
     def __init__(
         self,
-        network,  # type: BoundNetwork
-        action,  # type: BoundAction
+        network: BoundNetwork,
+        action: BoundAction,
     ):
         self.network = network
         self.action = action

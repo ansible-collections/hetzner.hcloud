@@ -1,9 +1,27 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 try:
     from dateutil.parser import isoparse
 except ImportError:
     isoparse = None
 
-from ..core.domain import BaseDomain
+from ..core import BaseDomain
+
+if TYPE_CHECKING:
+    from ..actions import BoundAction
+    from ..datacenters import BoundDatacenter
+    from ..firewalls import BoundFirewall
+    from ..floating_ips import BoundFloatingIP
+    from ..images import BoundImage
+    from ..isos import BoundIso
+    from ..networks import BoundNetwork
+    from ..placement_groups import BoundPlacementGroup
+    from ..primary_ips import BoundPrimaryIP, PrimaryIP
+    from ..server_types import BoundServerType
+    from ..volumes import BoundVolume
+    from .client import BoundServer
 
 
 class Server(BaseDomain):
@@ -91,27 +109,27 @@ class Server(BaseDomain):
 
     def __init__(
         self,
-        id,
-        name=None,
-        status=None,
-        created=None,
-        public_net=None,
-        server_type=None,
-        datacenter=None,
-        image=None,
-        iso=None,
-        rescue_enabled=None,
-        locked=None,
-        backup_window=None,
-        outgoing_traffic=None,
-        ingoing_traffic=None,
-        included_traffic=None,
-        protection=None,
-        labels=None,
-        volumes=None,
-        private_net=None,
-        primary_disk_size=None,
-        placement_group=None,
+        id: int,
+        name: str | None = None,
+        status: str | None = None,
+        created: str | None = None,
+        public_net: PublicNetwork | None = None,
+        server_type: BoundServerType | None = None,
+        datacenter: BoundDatacenter | None = None,
+        image: BoundImage | None = None,
+        iso: BoundIso | None = None,
+        rescue_enabled: bool | None = None,
+        locked: bool | None = None,
+        backup_window: str | None = None,
+        outgoing_traffic: int | None = None,
+        ingoing_traffic: int | None = None,
+        included_traffic: int | None = None,
+        protection: dict | None = None,
+        labels: dict[str, str] | None = None,
+        volumes: list[BoundVolume] | None = None,
+        private_net: list[PrivateNet] | None = None,
+        primary_disk_size: int | None = None,
+        placement_group: BoundPlacementGroup | None = None,
     ):
         self.id = id
         self.name = name
@@ -153,10 +171,10 @@ class CreateServerResponse(BaseDomain):
 
     def __init__(
         self,
-        server,  # type: BoundServer
-        action,  # type: BoundAction
-        next_actions,  # type: List[Action]
-        root_password,  # type: str
+        server: BoundServer,
+        action: BoundAction,
+        next_actions: list[BoundAction],
+        root_password: str | None,
     ):
         self.server = server
         self.action = action
@@ -177,8 +195,8 @@ class ResetPasswordResponse(BaseDomain):
 
     def __init__(
         self,
-        action,  # type: BoundAction
-        root_password,  # type: str
+        action: BoundAction,
+        root_password: str,
     ):
         self.action = action
         self.root_password = root_password
@@ -197,8 +215,8 @@ class EnableRescueResponse(BaseDomain):
 
     def __init__(
         self,
-        action,  # type: BoundAction
-        root_password,  # type: str
+        action: BoundAction,
+        root_password: str,
     ):
         self.action = action
         self.root_password = root_password
@@ -219,9 +237,9 @@ class RequestConsoleResponse(BaseDomain):
 
     def __init__(
         self,
-        action,  # type: BoundAction
-        wss_url,  # type: str
-        password,  # type: str
+        action: BoundAction,
+        wss_url: str,
+        password: str,
     ):
         self.action = action
         self.wss_url = wss_url
@@ -250,12 +268,12 @@ class PublicNetwork(BaseDomain):
 
     def __init__(
         self,
-        ipv4,  # type: IPv4Address
-        ipv6,  # type: IPv6Network
-        floating_ips,  # type: List[BoundFloatingIP]
-        primary_ipv4,  # type: BoundPrimaryIP
-        primary_ipv6,  # type: BoundPrimaryIP
-        firewalls=None,  # type: List[PublicNetworkFirewall]
+        ipv4: IPv4Address,
+        ipv6: IPv6Network,
+        floating_ips: list[BoundFloatingIP],
+        primary_ipv4: BoundPrimaryIP | None,
+        primary_ipv6: BoundPrimaryIP | None,
+        firewalls: list[PublicNetworkFirewall] | None = None,
     ):
         self.ipv4 = ipv4
         self.ipv6 = ipv6
@@ -281,8 +299,8 @@ class PublicNetworkFirewall(BaseDomain):
 
     def __init__(
         self,
-        firewall,  # type: BoundFirewall
-        status,  # type: str
+        firewall: BoundFirewall,
+        status: str,
     ):
         self.firewall = firewall
         self.status = status
@@ -303,9 +321,9 @@ class IPv4Address(BaseDomain):
 
     def __init__(
         self,
-        ip,  # type: str
-        blocked,  # type: bool
-        dns_ptr,  # type: str
+        ip: str,
+        blocked: bool,
+        dns_ptr: str,
     ):
         self.ip = ip
         self.blocked = blocked
@@ -331,9 +349,9 @@ class IPv6Network(BaseDomain):
 
     def __init__(
         self,
-        ip,  # type: str
-        blocked,  # type: bool
-        dns_ptr,  # type: list
+        ip: str,
+        blocked: bool,
+        dns_ptr: list,
     ):
         self.ip = ip
         self.blocked = blocked
@@ -360,10 +378,10 @@ class PrivateNet(BaseDomain):
 
     def __init__(
         self,
-        network,  # type: BoundNetwork
-        ip,  # type: str
-        alias_ips,  # type: List[str]
-        mac_address,  # type: str
+        network: BoundNetwork,
+        ip: str,
+        alias_ips: list[str],
+        mac_address: str,
     ):
         self.network = network
         self.ip = ip
@@ -384,10 +402,10 @@ class ServerCreatePublicNetwork(BaseDomain):
 
     def __init__(
         self,
-        ipv4=None,  # type: hcloud.primary_ips.domain.PrimaryIP
-        ipv6=None,  # type: hcloud.primary_ips.domain.PrimaryIP
-        enable_ipv4=True,  # type: bool
-        enable_ipv6=True,  # type: bool
+        ipv4: PrimaryIP | None = None,
+        ipv6: PrimaryIP | None = None,
+        enable_ipv4: bool = True,
+        enable_ipv6: bool = True,
     ):
         self.ipv4 = ipv4
         self.ipv6 = ipv6

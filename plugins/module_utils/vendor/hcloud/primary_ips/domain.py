@@ -1,9 +1,18 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 try:
     from dateutil.parser import isoparse
 except ImportError:
     isoparse = None
 
-from ..core.domain import BaseDomain
+from ..core import BaseDomain
+
+if TYPE_CHECKING:
+    from ..actions import BoundAction
+    from ..datacenters import BoundDatacenter
+    from .client import BoundPrimaryIP
 
 
 class PrimaryIP(BaseDomain):
@@ -55,19 +64,19 @@ class PrimaryIP(BaseDomain):
 
     def __init__(
         self,
-        id=None,
-        type=None,
-        ip=None,
-        dns_ptr=None,
-        datacenter=None,
-        blocked=None,
-        protection=None,
-        labels=None,
-        created=None,
-        name=None,
-        assignee_id=None,
-        assignee_type=None,
-        auto_delete=None,
+        id: int | None = None,
+        type: str | None = None,
+        ip: str | None = None,
+        dns_ptr: list[dict] | None = None,
+        datacenter: BoundDatacenter | None = None,
+        blocked: bool | None = None,
+        protection: dict | None = None,
+        labels: dict[str, dict] | None = None,
+        created: str | None = None,
+        name: str | None = None,
+        assignee_id: int | None = None,
+        assignee_type: str | None = None,
+        auto_delete: bool | None = None,
     ):
         self.id = id
         self.type = type
@@ -97,8 +106,8 @@ class CreatePrimaryIPResponse(BaseDomain):
 
     def __init__(
         self,
-        primary_ip,  # type: BoundPrimaryIP
-        action,  # type: BoundAction
+        primary_ip: BoundPrimaryIP,
+        action: BoundAction | None,
     ):
         self.primary_ip = primary_ip
         self.action = action

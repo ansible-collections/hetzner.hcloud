@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 try:
     from dateutil.parser import isoparse
 except ImportError:
     isoparse = None
 
-from ..core.domain import BaseDomain
+from ..core import BaseDomain
 
 
 class DeprecationInfo(BaseDomain):
@@ -25,8 +27,8 @@ class DeprecationInfo(BaseDomain):
 
     def __init__(
         self,
-        announced=None,
-        unavailable_after=None,
+        announced: str | None = None,
+        unavailable_after: str | None = None,
     ):
         self.announced = isoparse(announced) if announced else None
         self.unavailable_after = (

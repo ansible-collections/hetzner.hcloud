@@ -1,14 +1,22 @@
-from ..actions.client import BoundAction
-from ..core.client import BoundModelBase, ClientEntityBase, GetEntityByNameMixin
-from ..core.domain import add_meta_to_result
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, NamedTuple
+
+from ..actions import ActionsPageResult, BoundAction
+from ..core import BoundModelBase, ClientEntityBase, Meta
 from .domain import Image
+
+if TYPE_CHECKING:
+    from .._client import Client
 
 
 class BoundImage(BoundModelBase):
+    _client: ImagesClient
+
     model = Image
 
-    def __init__(self, client, data):
-        from ..servers.client import BoundServer
+    def __init__(self, client: ImagesClient, data: dict):
+        from ..servers import BoundServer
 
         created_from = data.get("created_from")
         if created_from is not None:
@@ -23,8 +31,13 @@ class BoundImage(BoundModelBase):
 
         super().__init__(client, data)
 
-    def get_actions_list(self, sort=None, page=None, per_page=None, status=None):
-        # type: (Optional[List[str]], Optional[int], Optional[int], Optional[List[str]]) -> PageResult[BoundAction, Meta]
+    def get_actions_list(
+        self,
+        sort: list[str] | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+        status: list[str] | None = None,
+    ) -> ActionsPageResult:
         """Returns a list of action objects for the image.
 
         :param status: List[str] (optional)
@@ -41,8 +54,11 @@ class BoundImage(BoundModelBase):
             self, sort=sort, page=page, per_page=per_page, status=status
         )
 
-    def get_actions(self, sort=None, status=None):
-        # type: (Optional[List[str]], Optional[List[str]]) -> List[BoundAction]
+    def get_actions(
+        self,
+        sort: list[str] | None = None,
+        status: list[str] | None = None,
+    ) -> list[BoundAction]:
         """Returns all action objects for the image.
 
         :param status: List[str] (optional)
@@ -53,8 +69,12 @@ class BoundImage(BoundModelBase):
         """
         return self._client.get_actions(self, status=status, sort=sort)
 
-    def update(self, description=None, type=None, labels=None):
-        # type: (Optional[str], Optional[str], Optional[Dict[str, str]]) -> BoundImage
+    def update(
+        self,
+        description: str | None = None,
+        type: str | None = None,
+        labels: dict[str, str] | None = None,
+    ) -> BoundImage:
         """Updates the Image. You may change the description, convert a Backup image to a Snapshot Image or change the image labels.
 
         :param description: str (optional)
@@ -68,16 +88,14 @@ class BoundImage(BoundModelBase):
         """
         return self._client.update(self, description, type, labels)
 
-    def delete(self):
-        # type: () -> bool
+    def delete(self) -> bool:
         """Deletes an Image. Only images of type snapshot and backup can be deleted.
 
         :return: bool
         """
         return self._client.delete(self)
 
-    def change_protection(self, delete=None):
-        # type: (Optional[bool]) -> BoundAction
+    def change_protection(self, delete: bool | None = None) -> BoundAction:
         """Changes the protection configuration of the image. Can only be used on snapshots.
 
         :param delete: bool
@@ -87,18 +105,22 @@ class BoundImage(BoundModelBase):
         return self._client.change_protection(self, delete)
 
 
-class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
-    results_list_attribute_name = "images"
+class ImagesPageResult(NamedTuple):
+    images: list[BoundImage]
+    meta: Meta | None
+
+
+class ImagesClient(ClientEntityBase):
+    _client: Client
 
     def get_actions_list(
         self,
-        image,  # type: Image
-        sort=None,  # type: Optional[List[str]]
-        page=None,  # type: Optional[int]
-        per_page=None,  # type: Optional[int]
-        status=None,  # type: Optional[List[str]]
-    ):
-        # type: (...) -> PageResults[List[BoundAction], Meta]
+        image: Image | BoundImage,
+        sort: list[str] | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+        status: list[str] | None = None,
+    ) -> ActionsPageResult:
         """Returns a list of action objects for an image.
 
         :param image: :class:`BoundImage <hcloud.images.client.BoundImage>` or :class:`Image <hcloud.images.domain.Image>`
@@ -112,7 +134,7 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
                Specifies how many results are returned by page
         :return: (List[:class:`BoundAction <hcloud.actions.client.BoundAction>`], :class:`Meta <hcloud.core.domain.Meta>`)
         """
-        params = {}
+        params: dict[str, Any] = {}
         if sort is not None:
             params["sort"] = sort
         if status is not None:
@@ -130,15 +152,14 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
             BoundAction(self._client.actions, action_data)
             for action_data in response["actions"]
         ]
-        return add_meta_to_result(actions, response, "actions")
+        return ActionsPageResult(actions, Meta.parse_meta(response))
 
     def get_actions(
         self,
-        image,  # type: Image
-        sort=None,  # type: Optional[List[str]]
-        status=None,  # type: Optional[List[str]]
-    ):
-        # type: (...) -> List[BoundAction]
+        image: Image | BoundImage,
+        sort: list[str] | None = None,
+        status: list[str] | None = None,
+    ) -> list[BoundAction]:
         """Returns all action objects for an image.
 
         :param image: :class:`BoundImage <hcloud.images.client.BoundImage>` or :class:`Image <hcloud.images.domain.Image>`
@@ -148,10 +169,14 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
                Specify how the results are sorted. Choices: `id` `command` `status` `progress`  `started` `finished` . You can add one of ":asc", ":desc" to modify sort order. ( ":asc" is default)
         :return: List[:class:`BoundAction <hcloud.actions.client.BoundAction>`]
         """
-        return super().get_actions(image, sort=sort, status=status)
+        return self._iter_pages(
+            self.get_actions_list,
+            image,
+            sort=sort,
+            status=status,
+        )
 
-    def get_by_id(self, id):
-        # type: (int) -> BoundImage
+    def get_by_id(self, id: int) -> BoundImage:
         """Get a specific Image
 
         :param id: int
@@ -162,18 +187,17 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
 
     def get_list(
         self,
-        name=None,  # type: Optional[str]
-        label_selector=None,  # type: Optional[str]
-        bound_to=None,  # type: Optional[List[str]]
-        type=None,  # type: Optional[List[str]]
-        architecture=None,  # type: Optional[List[str]]
-        sort=None,  # type: Optional[List[str]]
-        page=None,  # type: Optional[int]
-        per_page=None,  # type: Optional[int]
-        status=None,  # type: Optional[List[str]]
-        include_deprecated=None,  # type: Optional[bool]
-    ):
-        # type: (...) -> PageResults[List[BoundImage]]
+        name: str | None = None,
+        label_selector: str | None = None,
+        bound_to: list[str] | None = None,
+        type: list[str] | None = None,
+        architecture: list[str] | None = None,
+        sort: list[str] | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+        status: list[str] | None = None,
+        include_deprecated: bool | None = None,
+    ) -> ImagesPageResult:
         """Get all images
 
         :param name: str (optional)
@@ -198,7 +222,7 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
                Specifies how many results are returned by page
         :return: (List[:class:`BoundImage <hcloud.images.client.BoundImage>`], :class:`Meta <hcloud.core.domain.Meta>`)
         """
-        params = {}
+        params: dict[str, Any] = {}
         if name is not None:
             params["name"] = name
         if label_selector is not None:
@@ -222,20 +246,19 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
         response = self._client.request(url="/images", method="GET", params=params)
         images = [BoundImage(self, image_data) for image_data in response["images"]]
 
-        return self._add_meta_to_result(images, response)
+        return ImagesPageResult(images, Meta.parse_meta(response))
 
     def get_all(
         self,
-        name=None,  # type: Optional[str]
-        label_selector=None,  # type: Optional[str]
-        bound_to=None,  # type: Optional[List[str]]
-        type=None,  # type: Optional[List[str]]
-        architecture=None,  # type: Optional[List[str]]
-        sort=None,  # type: Optional[List[str]]
-        status=None,  # type: Optional[List[str]]
-        include_deprecated=None,  # type: Optional[bool]
-    ):
-        # type: (...) -> List[BoundImage]
+        name: str | None = None,
+        label_selector: str | None = None,
+        bound_to: list[str] | None = None,
+        type: list[str] | None = None,
+        architecture: list[str] | None = None,
+        sort: list[str] | None = None,
+        status: list[str] | None = None,
+        include_deprecated: bool | None = None,
+    ) -> list[BoundImage]:
         """Get all images
 
         :param name: str (optional)
@@ -256,7 +279,8 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
                Include deprecated images in the response. Default: False
         :return: List[:class:`BoundImage <hcloud.images.client.BoundImage>`]
         """
-        return super().get_all(
+        return self._iter_pages(
+            self.get_list,
             name=name,
             label_selector=label_selector,
             bound_to=bound_to,
@@ -267,8 +291,7 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
             include_deprecated=include_deprecated,
         )
 
-    def get_by_name(self, name):
-        # type: (str) -> BoundImage
+    def get_by_name(self, name: str) -> BoundImage | None:
         """Get image by name
 
         Deprecated: Use get_by_name_and_architecture instead.
@@ -277,10 +300,13 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
                Used to get image by name.
         :return: :class:`BoundImage <hcloud.images.client.BoundImage>`
         """
-        return super().get_by_name(name)
+        return self._get_first_by(name=name)
 
-    def get_by_name_and_architecture(self, name, architecture):
-        # type: (str, str) -> BoundImage
+    def get_by_name_and_architecture(
+        self,
+        name: str,
+        architecture: str,
+    ) -> BoundImage | None:
         """Get image by name
 
         :param name: str
@@ -289,13 +315,15 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
                Used to identify the image.
         :return: :class:`BoundImage <hcloud.images.client.BoundImage>`
         """
-        response = self.get_list(name=name, architecture=[architecture])
-        entities = getattr(response, self.results_list_attribute_name)
-        entity = entities[0] if entities else None
-        return entity
+        return self._get_first_by(name=name, architecture=[architecture])
 
-    def update(self, image, description=None, type=None, labels=None):
-        # type:(Image,  Optional[str], Optional[str],  Optional[Dict[str, str]]) -> BoundImage
+    def update(
+        self,
+        image: Image | BoundImage,
+        description: str | None = None,
+        type: str | None = None,
+        labels: dict[str, str] | None = None,
+    ) -> BoundImage:
         """Updates the Image. You may change the description, convert a Backup image to a Snapshot Image or change the image labels.
 
         :param image: :class:`BoundImage <hcloud.images.client.BoundImage>` or :class:`Image <hcloud.images.domain.Image>`
@@ -308,7 +336,7 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
                User-defined labels (key-value pairs)
         :return: :class:`BoundImage <hcloud.images.client.BoundImage>`
         """
-        data = {}
+        data: dict[str, Any] = {}
         if description is not None:
             data.update({"description": description})
         if type is not None:
@@ -320,8 +348,7 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
         )
         return BoundImage(self, response["image"])
 
-    def delete(self, image):
-        # type: (Image) -> bool
+    def delete(self, image: Image | BoundImage) -> bool:
         """Deletes an Image. Only images of type snapshot and backup can be deleted.
 
         :param :class:`BoundImage <hcloud.images.client.BoundImage>` or :class:`Image <hcloud.images.domain.Image>`
@@ -331,8 +358,11 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
         # Return allays true, because the API does not return an action for it. When an error occurs a APIException will be raised
         return True
 
-    def change_protection(self, image, delete=None):
-        # type: (Image, Optional[bool]) -> BoundAction
+    def change_protection(
+        self,
+        image: Image | BoundImage,
+        delete: bool | None = None,
+    ) -> BoundAction:
         """Changes the protection configuration of the image. Can only be used on snapshots.
 
         :param image: :class:`BoundImage <hcloud.images.client.BoundImage>` or :class:`Image <hcloud.images.domain.Image>`
@@ -340,14 +370,12 @@ class ImagesClient(ClientEntityBase, GetEntityByNameMixin):
                If true, prevents the snapshot from being deleted
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
-        data = {}
+        data: dict[str, Any] = {}
         if delete is not None:
             data.update({"delete": delete})
 
         response = self._client.request(
-            url="/images/{image_id}/actions/change_protection".format(
-                image_id=image.id
-            ),
+            url=f"/images/{image.id}/actions/change_protection",
             method="POST",
             json=data,
         )

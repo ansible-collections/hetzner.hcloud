@@ -1,16 +1,29 @@
-from ..core.client import BoundModelBase, ClientEntityBase, GetEntityByNameMixin
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, NamedTuple
+
+from ..core import BoundModelBase, ClientEntityBase, Meta
 from .domain import ServerType
+
+if TYPE_CHECKING:
+    from .._client import Client
 
 
 class BoundServerType(BoundModelBase):
+    _client: ServerTypesClient
+
     model = ServerType
 
 
-class ServerTypesClient(ClientEntityBase, GetEntityByNameMixin):
-    results_list_attribute_name = "server_types"
+class ServerTypesPageResult(NamedTuple):
+    server_types: list[BoundServerType]
+    meta: Meta | None
 
-    def get_by_id(self, id):
-        # type: (int) -> BoundServerType
+
+class ServerTypesClient(ClientEntityBase):
+    _client: Client
+
+    def get_by_id(self, id: int) -> BoundServerType:
         """Returns a specific Server Type.
 
         :param id: int
@@ -19,8 +32,12 @@ class ServerTypesClient(ClientEntityBase, GetEntityByNameMixin):
         response = self._client.request(url=f"/server_types/{id}", method="GET")
         return BoundServerType(self, response["server_type"])
 
-    def get_list(self, name=None, page=None, per_page=None):
-        # type: (Optional[str], Optional[int], Optional[int]) -> PageResults[List[BoundServerType], Meta]
+    def get_list(
+        self,
+        name: str | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+    ) -> ServerTypesPageResult:
         """Get a list of Server types
 
         :param name: str (optional)
@@ -31,7 +48,7 @@ class ServerTypesClient(ClientEntityBase, GetEntityByNameMixin):
                Specifies how many results are returned by page
         :return: (List[:class:`BoundServerType <hcloud.server_types.client.BoundServerType>`], :class:`Meta <hcloud.core.domain.Meta>`)
         """
-        params = {}
+        params: dict[str, Any] = {}
         if name is not None:
             params["name"] = name
         if page is not None:
@@ -46,24 +63,22 @@ class ServerTypesClient(ClientEntityBase, GetEntityByNameMixin):
             BoundServerType(self, server_type_data)
             for server_type_data in response["server_types"]
         ]
-        return self._add_meta_to_result(server_types, response)
+        return ServerTypesPageResult(server_types, Meta.parse_meta(response))
 
-    def get_all(self, name=None):
-        # type: (Optional[str]) -> List[BoundServerType]
+    def get_all(self, name: str | None = None) -> list[BoundServerType]:
         """Get all Server types
 
         :param name: str (optional)
                Can be used to filter server type by their name.
         :return: List[:class:`BoundServerType <hcloud.server_types.client.BoundServerType>`]
         """
-        return super().get_all(name=name)
+        return self._iter_pages(self.get_list, name=name)
 
-    def get_by_name(self, name):
-        # type: (str) -> BoundServerType
+    def get_by_name(self, name: str) -> BoundServerType | None:
         """Get Server type by name
 
         :param name: str
                Used to get Server type by name.
         :return: :class:`BoundServerType <hcloud.server_types.client.BoundServerType>`
         """
-        return super().get_by_name(name)
+        return self._get_first_by(name=name)

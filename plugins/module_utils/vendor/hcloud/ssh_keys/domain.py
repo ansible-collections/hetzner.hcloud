@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 try:
     from dateutil.parser import isoparse
 except ImportError:
     isoparse = None
 
-from ..core.domain import BaseDomain, DomainIdentityMixin
+from ..core import BaseDomain, DomainIdentityMixin
 
 
 class SSHKey(BaseDomain, DomainIdentityMixin):
@@ -27,12 +29,12 @@ class SSHKey(BaseDomain, DomainIdentityMixin):
 
     def __init__(
         self,
-        id=None,
-        name=None,
-        fingerprint=None,
-        public_key=None,
-        labels=None,
-        created=None,
+        id: int | None = None,
+        name: str | None = None,
+        fingerprint: str | None = None,
+        public_key: str | None = None,
+        labels: dict[str, str] | None = None,
+        created: str | None = None,
     ):
         self.id = id
         self.name = name

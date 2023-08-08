@@ -1,13 +1,25 @@
-from ..actions.client import BoundAction
-from ..core.client import BoundModelBase, ClientEntityBase, GetEntityByNameMixin
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, NamedTuple
+
+from ..actions import BoundAction
+from ..core import BoundModelBase, ClientEntityBase, Meta
 from .domain import CreatePlacementGroupResponse, PlacementGroup
+
+if TYPE_CHECKING:
+    from .._client import Client
 
 
 class BoundPlacementGroup(BoundModelBase):
+    _client: PlacementGroupsClient
+
     model = PlacementGroup
 
-    def update(self, labels=None, name=None):
-        # type: (Optional[str], Optional[Dict[str, str]], Optional[str]) -> BoundPlacementGroup
+    def update(
+        self,
+        labels: dict[str, str] | None = None,
+        name: str | None = None,
+    ) -> BoundPlacementGroup:
         """Updates the name or labels of a Placement Group
 
         :param labels: Dict[str, str] (optional)
@@ -18,8 +30,7 @@ class BoundPlacementGroup(BoundModelBase):
         """
         return self._client.update(self, labels, name)
 
-    def delete(self):
-        # type: () -> bool
+    def delete(self) -> bool:
         """Deletes a Placement Group
 
         :return: boolean
@@ -27,11 +38,15 @@ class BoundPlacementGroup(BoundModelBase):
         return self._client.delete(self)
 
 
-class PlacementGroupsClient(ClientEntityBase, GetEntityByNameMixin):
-    results_list_attribute_name = "placement_groups"
+class PlacementGroupsPageResult(NamedTuple):
+    placement_groups: list[BoundPlacementGroup]
+    meta: Meta | None
 
-    def get_by_id(self, id):
-        # type: (int) -> BoundPlacementGroup
+
+class PlacementGroupsClient(ClientEntityBase):
+    _client: Client
+
+    def get_by_id(self, id: int) -> BoundPlacementGroup:
         """Returns a specific Placement Group object
 
         :param id: int
@@ -45,14 +60,13 @@ class PlacementGroupsClient(ClientEntityBase, GetEntityByNameMixin):
 
     def get_list(
         self,
-        label_selector=None,  # type: Optional[str]
-        page=None,  # type: Optional[int]
-        per_page=None,  # type: Optional[int]
-        name=None,  # type: Optional[str]
-        sort=None,  # type: Optional[List[str]]
-        type=None,  # type: Optional[str]
-    ):
-        # type: (...) -> PageResults[List[BoundPlacementGroup]]
+        label_selector: str | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+        name: str | None = None,
+        sort: list[str] | None = None,
+        type: str | None = None,
+    ) -> PlacementGroupsPageResult:
         """Get a list of Placement Groups
 
         :param label_selector: str (optional)
@@ -68,7 +82,7 @@ class PlacementGroupsClient(ClientEntityBase, GetEntityByNameMixin):
         :return: (List[:class:`BoundPlacementGroup <hcloud.placement_groups.client.BoundPlacementGroup>`], :class:`Meta <hcloud.core.domain.Meta>`)
         """
 
-        params = {}
+        params: dict[str, Any] = {}
 
         if label_selector is not None:
             params["label_selector"] = label_selector
@@ -90,10 +104,14 @@ class PlacementGroupsClient(ClientEntityBase, GetEntityByNameMixin):
             for placement_group_data in response["placement_groups"]
         ]
 
-        return self._add_meta_to_result(placement_groups, response)
+        return PlacementGroupsPageResult(placement_groups, Meta.parse_meta(response))
 
-    def get_all(self, label_selector=None, name=None, sort=None):
-        # type: (Optional[str], Optional[str],  Optional[List[str]]) -> List[BoundPlacementGroup]
+    def get_all(
+        self,
+        label_selector: str | None = None,
+        name: str | None = None,
+        sort: list[str] | None = None,
+    ) -> list[BoundPlacementGroup]:
         """Get all Placement Groups
 
         :param label_selector: str (optional)
@@ -104,25 +122,28 @@ class PlacementGroupsClient(ClientEntityBase, GetEntityByNameMixin):
                Choices: id name created (You can add one of ":asc", ":desc" to modify sort order. ( ":asc" is default))
         :return: List[:class:`BoundPlacementGroup <hcloud.placement_groups.client.BoundPlacementGroup>`]
         """
-        return super().get_all(label_selector=label_selector, name=name, sort=sort)
+        return self._iter_pages(
+            self.get_list,
+            label_selector=label_selector,
+            name=name,
+            sort=sort,
+        )
 
-    def get_by_name(self, name):
-        # type: (str) -> BoundPlacementGroup
+    def get_by_name(self, name: str) -> BoundPlacementGroup | None:
         """Get Placement Group by name
 
         :param name: str
                Used to get Placement Group by name
         :return: class:`BoundPlacementGroup <hcloud.placement_groups.client.BoundPlacementGroup>`
         """
-        return super().get_by_name(name)
+        return self._get_first_by(name=name)
 
     def create(
         self,
-        name,  # type: str
-        type,  # type: str
-        labels=None,  # type: Optional[Dict[str, str]]
-    ):
-        # type: (...) -> CreatePlacementGroupResponse
+        name: str,
+        type: str,
+        labels: dict[str, str] | None = None,
+    ) -> CreatePlacementGroupResponse:
         """Creates a new Placement Group.
 
         :param name: str
@@ -134,7 +155,7 @@ class PlacementGroupsClient(ClientEntityBase, GetEntityByNameMixin):
 
         :return: :class:`CreatePlacementGroupResponse <hcloud.placement_groups.domain.CreatePlacementGroupResponse>`
         """
-        data = {"name": name, "type": type}
+        data: dict[str, Any] = {"name": name, "type": type}
         if labels is not None:
             data["labels"] = labels
         response = self._client.request(
@@ -143,7 +164,7 @@ class PlacementGroupsClient(ClientEntityBase, GetEntityByNameMixin):
 
         action = None
         if response.get("action") is not None:
-            action = BoundAction(self._client.action, response["action"])
+            action = BoundAction(self._client.actions, response["action"])
 
         result = CreatePlacementGroupResponse(
             placement_group=BoundPlacementGroup(self, response["placement_group"]),
@@ -151,8 +172,12 @@ class PlacementGroupsClient(ClientEntityBase, GetEntityByNameMixin):
         )
         return result
 
-    def update(self, placement_group, labels=None, name=None):
-        # type: (PlacementGroup, Optional[Dict[str, str]], Optional[str]) -> BoundPlacementGroup
+    def update(
+        self,
+        placement_group: PlacementGroup | BoundPlacementGroup,
+        labels: dict[str, str] | None = None,
+        name: str | None = None,
+    ) -> BoundPlacementGroup:
         """Updates the description or labels of a Placement Group.
 
         :param placement_group: :class:`BoundPlacementGroup <hcloud.placement_groups.client.BoundPlacementGroup>` or :class:`PlacementGroup <hcloud.placement_groups.domain.PlacementGroup>`
@@ -163,32 +188,27 @@ class PlacementGroupsClient(ClientEntityBase, GetEntityByNameMixin):
         :return: :class:`BoundPlacementGroup <hcloud.placement_groups.client.BoundPlacementGroup>`
         """
 
-        data = {}
+        data: dict[str, Any] = {}
         if labels is not None:
             data["labels"] = labels
         if name is not None:
             data["name"] = name
 
         response = self._client.request(
-            url="/placement_groups/{placement_group_id}".format(
-                placement_group_id=placement_group.id
-            ),
+            url=f"/placement_groups/{placement_group.id}",
             method="PUT",
             json=data,
         )
         return BoundPlacementGroup(self, response["placement_group"])
 
-    def delete(self, placement_group):
-        # type: (PlacementGroup) -> bool
+    def delete(self, placement_group: PlacementGroup | BoundPlacementGroup) -> bool:
         """Deletes a Placement Group.
 
         :param placement_group: :class:`BoundPlacementGroup <hcloud.placement_groups.client.BoundPlacementGroup>` or :class:`PlacementGroup <hcloud.placement_groups.domain.PlacementGroup>`
         :return: boolean
         """
         self._client.request(
-            url="/placement_groups/{placement_group_id}".format(
-                placement_group_id=placement_group.id
-            ),
+            url=f"/placement_groups/{placement_group.id}",
             method="DELETE",
         )
         return True

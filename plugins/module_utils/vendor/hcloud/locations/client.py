@@ -1,16 +1,29 @@
-from ..core.client import BoundModelBase, ClientEntityBase, GetEntityByNameMixin
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, NamedTuple
+
+from ..core import BoundModelBase, ClientEntityBase, Meta
 from .domain import Location
+
+if TYPE_CHECKING:
+    from .._client import Client
 
 
 class BoundLocation(BoundModelBase):
+    _client: LocationsClient
+
     model = Location
 
 
-class LocationsClient(ClientEntityBase, GetEntityByNameMixin):
-    results_list_attribute_name = "locations"
+class LocationsPageResult(NamedTuple):
+    locations: list[BoundLocation]
+    meta: Meta | None
 
-    def get_by_id(self, id):
-        # type: (int) -> locations.client.BoundLocation
+
+class LocationsClient(ClientEntityBase):
+    _client: Client
+
+    def get_by_id(self, id: int) -> BoundLocation:
         """Get a specific location by its ID.
 
         :param id: int
@@ -19,8 +32,12 @@ class LocationsClient(ClientEntityBase, GetEntityByNameMixin):
         response = self._client.request(url=f"/locations/{id}", method="GET")
         return BoundLocation(self, response["location"])
 
-    def get_list(self, name=None, page=None, per_page=None):
-        # type: (Optional[str], Optional[int], Optional[int]) -> PageResult[List[BoundLocation], Meta]
+    def get_list(
+        self,
+        name: str | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+    ) -> LocationsPageResult:
         """Get a list of locations
 
         :param name: str (optional)
@@ -31,7 +48,7 @@ class LocationsClient(ClientEntityBase, GetEntityByNameMixin):
                Specifies how many results are returned by page
         :return: (List[:class:`BoundLocation <hcloud.locations.client.BoundLocation>`], :class:`Meta <hcloud.core.domain.Meta>`)
         """
-        params = {}
+        params: dict[str, Any] = {}
         if name is not None:
             params["name"] = name
         if page is not None:
@@ -44,24 +61,22 @@ class LocationsClient(ClientEntityBase, GetEntityByNameMixin):
             BoundLocation(self, location_data)
             for location_data in response["locations"]
         ]
-        return self._add_meta_to_result(locations, response)
+        return LocationsPageResult(locations, Meta.parse_meta(response))
 
-    def get_all(self, name=None):
-        # type: (Optional[str]) -> List[BoundLocation]
+    def get_all(self, name: str | None = None) -> list[BoundLocation]:
         """Get all locations
 
         :param name: str (optional)
                Can be used to filter locations by their name.
         :return: List[:class:`BoundLocation <hcloud.locations.client.BoundLocation>`]
         """
-        return super().get_all(name=name)
+        return self._iter_pages(self.get_list, name=name)
 
-    def get_by_name(self, name):
-        # type: (str) -> BoundLocation
+    def get_by_name(self, name: str) -> BoundLocation | None:
         """Get location by name
 
         :param name: str
                Used to get location by name.
         :return: :class:`BoundLocation <hcloud.locations.client.BoundLocation>`
         """
-        return super().get_by_name(name)
+        return self._get_first_by(name=name)
