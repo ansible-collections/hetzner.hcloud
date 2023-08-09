@@ -49,6 +49,12 @@ repos:
       - id: antsibull-changelog-lint
       - id: antsibull-changelog-lint-changelog-yaml
 
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v6.17.2
+    hooks:
+      - id: ansible-lint
+        name: ansible-lint
+
   - repo: local
     hooks:
       - id: shfmt
