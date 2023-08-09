@@ -77,7 +77,8 @@ ansible-test integration --color --local  -vvv hcloud_server // Executed all int
 5. Update the `version` in the ansible galaxy metadata file:
    ```sh
    sed -i "s/^version: .*/version: $HCLOUD_VERSION/" galaxy.yml
-   git add galaxy.yml
+   scripts/version-sync.sh
+   git add galaxy.yml plugins/module_utils/version.py
    ```
 6. Commit the changes:
    ```sh
