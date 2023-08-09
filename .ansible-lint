@@ -19,7 +19,6 @@ exclude_paths:
   - tests/integration/targets/hcloud_load_balancer_service
   - tests/integration/targets/hcloud_load_balancer_target
   - tests/integration/targets/hcloud_load_balancer_type_info
-  - tests/integration/targets/hcloud_location_info
   - tests/integration/targets/hcloud_network
   - tests/integration/targets/hcloud_network_info
   - tests/integration/targets/hcloud_placement_group
