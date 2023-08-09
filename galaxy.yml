@@ -5,7 +5,7 @@ readme: README.md
 authors:
   - Hetzner Cloud (github.com/hetznercloud)
 description: A Collection for managing Hetzner Cloud resources
-license: GPL-3.0-or-later
+license: [GPL-3.0-or-later]
 tags:
   - hetzner
   - cloud
