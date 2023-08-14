@@ -37,3 +37,6 @@ exclude_paths:
   - tests/integration/targets/hcloud_volume_info
   - tests/integration/targets/setup_selfsigned_certificate
   - tests/integration/targets/setup_ssh_keypair
+
+skip_list:
+  - sanity[cannot-ignore]

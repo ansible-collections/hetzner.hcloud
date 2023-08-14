@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: hcloud_volume_info
@@ -149,7 +151,7 @@ class AnsibleHCloudVolumeInfo(AnsibleHCloud):
                 id={"type": "int"},
                 name={"type": "str"},
                 label_selector={"type": "str"},
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )

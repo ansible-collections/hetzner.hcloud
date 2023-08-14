@@ -8,6 +8,8 @@ Fetch the desired version `HCLOUD_VERSION` from https://github.com/hetznercloud/
 move the modified files at the vendor location `HCLOUD_VENDOR_PATH`.
 """
 
+from __future__ import annotations
+
 import logging
 import re
 from pathlib import Path

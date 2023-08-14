@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: hcloud_image_info
@@ -184,7 +186,7 @@ class AnsibleHCloudImageInfo(AnsibleHCloud):
                 label_selector={"type": "str"},
                 type={"choices": ["system", "snapshot", "backup"], "default": "system", "type": "str"},
                 architecture={"choices": ["x86", "arm"], "type": "str"},
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )
