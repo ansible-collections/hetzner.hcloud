@@ -1,7 +1,6 @@
 # Copyright (c) 2019 Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-
 DOCUMENTATION = r"""
     name: hcloud
     author:
@@ -15,6 +14,7 @@ DOCUMENTATION = r"""
         - Uses a YAML configuration file that ends with hcloud.(yml|yaml).
     extends_documentation_fragment:
         - constructed
+        - inventory_cache
     options:
         plugin:
             description: marks this as an instance of the "hcloud" plugin
@@ -115,19 +115,71 @@ keyed_groups:
 """
 
 import os
+import sys
 from ipaddress import IPv6Network
+from typing import List, Optional, Tuple
 
 from ansible.errors import AnsibleError
+from ansible.inventory.manager import InventoryData
 from ansible.module_utils.common.text.converters import to_native
-from ansible.plugins.inventory import BaseInventoryPlugin, Constructable
+from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, Constructable
 
 from ..module_utils.hcloud import HAS_DATEUTIL, HAS_REQUESTS
 from ..module_utils.vendor import hcloud
+from ..module_utils.vendor.hcloud.servers import Server
 from ..module_utils.version import version
 
+if sys.version_info >= (3, 11):
+    # The typed dicts are only used to help development and we prefer not requiring
+    # the additional typing-extensions dependency
+    from typing import NotRequired, TypedDict
 
-class InventoryModule(BaseInventoryPlugin, Constructable):
+    class InventoryPrivateNetwork(TypedDict):
+        id: int
+        name: str
+        ip: str
+
+    class InventoryServer(TypedDict):
+        id: int
+        name: str
+        status: str
+        type: str
+        architecture: str
+
+        # Datacenter
+        datacenter: str
+        location: str
+
+        # Server Type
+        server_type: NotRequired[str]
+
+        # Labels
+        labels: dict[str, str]
+
+        # Network
+        ipv4: NotRequired[str]
+        ipv6: NotRequired[str]
+        ipv6_network: NotRequired[str]
+        ipv6_network_mask: NotRequired[str]
+        private_ipv4: NotRequired[str]
+        private_networks: list[InventoryPrivateNetwork]
+
+        # Image
+        image_id: int
+        image_name: str
+        image_os_flavor: str
+
+        # Ansible
+        ansible_host: str
+
+else:
+    InventoryServer = dict
+
+
+class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
     NAME = "hetzner.hcloud.hcloud"
+
+    inventory: InventoryData
 
     def _configure_hcloud_client(self):
         self.token_env = self.get_option("token_env")
@@ -211,40 +263,52 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                     tmp.append(server)
             self.servers = tmp
 
-    def _set_server_attributes(self, server):
-        self.inventory.set_variable(server.name, "id", to_native(server.id))
-        self.inventory.set_variable(server.name, "name", to_native(server.name))
-        self.inventory.set_variable(server.name, "status", to_native(server.status))
-        self.inventory.set_variable(server.name, "type", to_native(server.server_type.name))
-        self.inventory.set_variable(server.name, "architecture", to_native(server.server_type.architecture))
+    def _build_inventory_server(self, server: Server) -> InventoryServer:
+        server_dict: InventoryServer = {}
+        server_dict["id"] = server.id
+        server_dict["name"] = to_native(server.name)
+        server_dict["status"] = to_native(server.status)
+        server_dict["type"] = to_native(server.server_type.name)
+        server_dict["architecture"] = to_native(server.server_type.architecture)
 
         # Network
         if server.public_net.ipv4:
-            self.inventory.set_variable(server.name, "ipv4", to_native(server.public_net.ipv4.ip))
+            server_dict["ipv4"] = to_native(server.public_net.ipv4.ip)
 
         if server.public_net.ipv6:
-            self.inventory.set_variable(server.name, "ipv6_network", to_native(server.public_net.ipv6.network))
-            self.inventory.set_variable(
-                server.name, "ipv6_network_mask", to_native(server.public_net.ipv6.network_mask)
-            )
-            self.inventory.set_variable(
-                server.name, "ipv6", to_native(self._first_ipv6_address(server.public_net.ipv6.ip))
-            )
+            server_dict["ipv6"] = to_native(self._first_ipv6_address(server.public_net.ipv6.ip))
+            server_dict["ipv6_network"] = to_native(server.public_net.ipv6.network)
+            server_dict["ipv6_network_mask"] = to_native(server.public_net.ipv6.network_mask)
 
-        self.inventory.set_variable(
-            server.name,
-            "private_networks",
-            [{"name": n.network.name, "id": n.network.id, "ip": n.ip} for n in server.private_net],
-        )
+        server_dict["private_networks"] = [
+            {"id": v.network.id, "name": to_native(v.network.name), "ip": to_native(v.ip)} for v in server.private_net
+        ]
 
         if self.get_option("network"):
             for server_private_network in server.private_net:
                 # Set private_ipv4 if user filtered for one network
                 if server_private_network.network.id == self.network.id:
-                    self.inventory.set_variable(server.name, "private_ipv4", to_native(server_private_network.ip))
+                    server_dict["private_ipv4"] = to_native(server_private_network.ip)
+
+        # Server Type
+        if server.server_type is not None:
+            server_dict["server_type"] = to_native(server.server_type.name)
+
+        # Datacenter
+        server_dict["datacenter"] = to_native(server.datacenter.name)
+        server_dict["location"] = to_native(server.datacenter.location.name)
+
+        # Image
+        if server.image is not None:
+            server_dict["image_id"] = server.image.id
+            server_dict["image_os_flavor"] = to_native(server.image.os_flavor)
+            server_dict["image_name"] = to_native(server.image.name or server.image.description)
+
+        # Labels
+        server_dict["labels"] = dict(server.labels)
 
         try:
-            self.inventory.set_variable(server.name, "ansible_host", self._get_server_ansible_host(server))
+            server_dict["ansible_host"] = self._get_server_ansible_host(server)
         except AnsibleError as e:
             # Log warning that for this host can not be connected to, using the
             # method specified in `connect_with`. Users might use `compose` to
@@ -252,25 +316,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
             # do not need to abort if nothing matched.
             self.display.v("[hcloud] %s" % e, server.name)
 
-        # Server Type
-        if server.server_type is not None:
-            self.inventory.set_variable(server.name, "server_type", to_native(server.server_type.name))
-
-        # Datacenter
-        self.inventory.set_variable(server.name, "datacenter", to_native(server.datacenter.name))
-        self.inventory.set_variable(server.name, "location", to_native(server.datacenter.location.name))
-
-        # Image
-        if server.image is not None:
-            self.inventory.set_variable(server.name, "image_id", to_native(server.image.id))
-            self.inventory.set_variable(server.name, "image_os_flavor", to_native(server.image.os_flavor))
-            if server.image.name is not None:
-                self.inventory.set_variable(server.name, "image_name", to_native(server.image.name))
-            else:
-                self.inventory.set_variable(server.name, "image_name", to_native(server.image.description))
-
-        # Labels
-        self.inventory.set_variable(server.name, "labels", dict(server.labels))
+        return server_dict
 
     def _get_server_ansible_host(self, server):
         if self.get_option("connect_with") == "public_ipv4":
@@ -311,6 +357,37 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
         """Return the possibly of a file being consumable by this plugin."""
         return super().verify_file(path) and path.endswith(("hcloud.yaml", "hcloud.yml"))
 
+    def _get_cached_result(self, path, cache) -> Tuple[List[Optional[InventoryServer]], bool]:
+        # false when refresh_cache or --flush-cache is used
+        if not cache:
+            return None, False
+
+        # get the user-specified directive
+        if not self.get_option("cache"):
+            return None, False
+
+        cache_key = self.get_cache_key(path)
+        try:
+            cached_result = self._cache[cache_key]
+        except KeyError:
+            # if cache expires or cache file doesn"t exist
+            return None, False
+
+        return cached_result, True
+
+    def _update_cached_result(self, path, cache, result: List[InventoryServer]):
+        if not self.get_option("cache"):
+            return
+
+        cache_key = self.get_cache_key(path)
+        # We weren't explicitly told to flush the cache, and there's already a cache entry,
+        # this means that the result we're being passed came from the cache.  As such we don't
+        # want to "update" the cache as that could reset a TTL on the cache entry.
+        if cache and cache_key in self._cache:
+            return
+
+        self._cache[cache_key] = result
+
     def parse(self, inventory, loader, path, cache=True):
         super().parse(inventory, loader, path, cache)
 
@@ -322,26 +399,46 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
         self._read_config_data(path)
         self._configure_hcloud_client()
         self._test_hcloud_token()
-        self._get_servers()
-        self._filter_servers()
+
+        self.servers, cached = self._get_cached_result(path, cache)
+        if not cached:
+            self._get_servers()
+            self._filter_servers()
+            self.servers = [self._build_inventory_server(server) for server in self.servers]
 
         # Add a top group
         self.inventory.add_group(group=self.get_option("group"))
 
         for server in self.servers:
-            self.inventory.add_host(server.name, group=self.get_option("group"))
-            self._set_server_attributes(server)
+            self.inventory.add_host(server["name"], group=self.get_option("group"))
+            for key, value in server.items():
+                self.inventory.set_variable(server["name"], key, value)
 
             # Use constructed if applicable
             strict = self.get_option("strict")
 
             # Composed variables
             self._set_composite_vars(
-                self.get_option("compose"), self.inventory.get_host(server.name).get_vars(), server.name, strict=strict
+                self.get_option("compose"),
+                self.inventory.get_host(server["name"]).get_vars(),
+                server["name"],
+                strict=strict,
             )
 
             # Complex groups based on jinja2 conditionals, hosts that meet the conditional are added to group
-            self._add_host_to_composed_groups(self.get_option("groups"), {}, server.name, strict=strict)
+            self._add_host_to_composed_groups(
+                self.get_option("groups"),
+                {},
+                server["name"],
+                strict=strict,
+            )
 
             # Create groups based on variable values and add the corresponding hosts to it
-            self._add_host_to_keyed_groups(self.get_option("keyed_groups"), {}, server.name, strict=strict)
+            self._add_host_to_keyed_groups(
+                self.get_option("keyed_groups"),
+                {},
+                server["name"],
+                strict=strict,
+            )
+
+        self._update_cached_result(path, cache, self.servers)
