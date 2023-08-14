@@ -120,10 +120,10 @@ from ipaddress import IPv6Network
 from ansible.errors import AnsibleError
 from ansible.module_utils.common.text.converters import to_native
 from ansible.plugins.inventory import BaseInventoryPlugin, Constructable
-from ansible.release import __version__
 
 from ..module_utils.hcloud import HAS_DATEUTIL, HAS_REQUESTS
 from ..module_utils.vendor import hcloud
+from ..module_utils.version import version
 
 
 class InventoryModule(BaseInventoryPlugin, Constructable):
@@ -147,7 +147,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
             token=self.api_token,
             api_endpoint=self.endpoint,
             application_name="ansible-inventory",
-            application_version=__version__,
+            application_version=version,
         )
 
     def _test_hcloud_token(self):
