@@ -1,0 +1,2 @@
+minor_changes:
+  - hcloud_floating_ip_info - Allow querying floating ip by name.
