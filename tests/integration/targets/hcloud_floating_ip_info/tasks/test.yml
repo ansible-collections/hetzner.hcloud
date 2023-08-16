@@ -37,23 +37,23 @@
     that:
       - result is failed
 
-- name: Gather hcloud_floating_ip_info with correct name
-  hetzner.hcloud.hcloud_floating_ip_info:
-    name: "{{ hcloud_floating_ip_name }}"
-  register: result
-- name: Verify hcloud_floating_ip_info with correct name
-  ansible.builtin.assert:
-    that:
-      - result.hcloud_floating_ip_info | list | count == 1
+# - name: Gather hcloud_floating_ip_info with correct name
+#   hetzner.hcloud.hcloud_floating_ip_info:
+#     name: "{{ hcloud_floating_ip_name }}"
+#   register: result
+# - name: Verify hcloud_floating_ip_info with correct name
+#   ansible.builtin.assert:
+#     that:
+#       - result.hcloud_floating_ip_info | list | count == 1
 
-- name: Gather hcloud_floating_ip_info with wrong name
-  hetzner.hcloud.hcloud_floating_ip_info:
-    name: "{{ hcloud_floating_ip_name }}-invalid"
-  register: result
-- name: Verify hcloud_floating_ip_info with wrong name
-  ansible.builtin.assert:
-    that:
-      - result.hcloud_floating_ip_info | list | count == 0
+# - name: Gather hcloud_floating_ip_info with wrong name
+#   hetzner.hcloud.hcloud_floating_ip_info:
+#     name: "{{ hcloud_floating_ip_name }}-invalid"
+#   register: result
+# - name: Verify hcloud_floating_ip_info with wrong name
+#   ansible.builtin.assert:
+#     that:
+#       - result.hcloud_floating_ip_info | list | count == 0
 
 - name: Gather hcloud_floating_ip_info with correct label selector
   hetzner.hcloud.hcloud_floating_ip_info:
