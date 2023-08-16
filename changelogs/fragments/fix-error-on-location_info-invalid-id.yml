@@ -1,2 +1,0 @@
-bugfixes:
-  - hcloud_location_info - Do not error when querying a location using an invalid id.

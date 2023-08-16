@@ -20,6 +20,7 @@ options:
     id:
         description:
             - The ID of the Floating IP you want to get.
+            - The module will fail if the provided ID is invalid.
         type: int
     label_selector:
         description:

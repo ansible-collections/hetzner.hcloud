@@ -21,6 +21,7 @@ options:
     id:
         description:
             - The ID of the network you want to get.
+            - The module will fail if the provided ID is invalid.
         type: int
     name:
         description:

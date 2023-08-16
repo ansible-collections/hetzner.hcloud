@@ -82,12 +82,13 @@
 
 - name: test gather hcloud server infos with wrong id
   hetzner.hcloud.hcloud_server_info:
-    name: "4711"
+    id: "4711"
   register: server
+  ignore_errors: true
 - name: verify test gather hcloud server infos with wrong id
   assert:
     that:
-      - server.hcloud_server_info | list | count == 0
+      - server is failed
 
 - name: cleanup
   hetzner.hcloud.hcloud_server:
