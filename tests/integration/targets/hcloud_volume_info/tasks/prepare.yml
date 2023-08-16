@@ -1,0 +1,9 @@
+---
+- name: Create test_volume
+  hetzner.hcloud.hcloud_volume:
+    name: "{{ hcloud_volume_name }}"
+    size: 10
+    location: fsn1
+    labels:
+      key: value
+  register: test_volume

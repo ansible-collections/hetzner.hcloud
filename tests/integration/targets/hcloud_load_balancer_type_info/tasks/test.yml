@@ -1,38 +1,56 @@
 # Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: test gather hcloud Load Balancer type infos
+- name: Gather hcloud_load_balancer_type_info
   hetzner.hcloud.hcloud_load_balancer_type_info:
-  register: hcloud_load_balancer_types
-- name: verify test gather hcloud Load Balancer type infos
-  assert:
+  register: result
+- name: Verify hcloud_load_balancer_type_info
+  ansible.builtin.assert:
     that:
-      - hcloud_load_balancer_types.hcloud_load_balancer_type_info| list | count >= 1
+      - result.hcloud_load_balancer_type_info | list | count >= 1
 
-- name: test gather hcloud Load Balancer type infos in check mode
+- name: Gather hcloud_load_balancer_type_info in check mode
   hetzner.hcloud.hcloud_load_balancer_type_info:
   check_mode: true
-  register: hcloud_load_balancer_types
-
-- name: verify test gather hcloud Load Balancer type infos in check mode
-  assert:
+  register: result
+- name: Verify hcloud_load_balancer_type_info in check mode
+  ansible.builtin.assert:
     that:
-      - hcloud_load_balancer_types.hcloud_load_balancer_type_info| list | count >= 1
+      - result.hcloud_load_balancer_type_info | list | count >= 1
 
-- name: test gather hcloud Load Balancer type infos with name
+- name: Gather hcloud_load_balancer_type_info with correct id
   hetzner.hcloud.hcloud_load_balancer_type_info:
-    name: "{{hcloud_load_balancer_type_name}}"
-  register: hcloud_load_balancer_types
-- name: verify test gather hcloud Load Balancer type with name
-  assert:
+    id: "{{ hcloud_load_balancer_type_id }}"
+  register: result
+- name: Verify hcloud_load_balancer_type_info with correct id
+  ansible.builtin.assert:
     that:
-      - hcloud_load_balancer_types.hcloud_load_balancer_type_info|selectattr('name','equalto','{{ hcloud_load_balancer_type_name }}') | list | count == 1
+      - result.hcloud_load_balancer_type_info | list | count == 1
 
-- name: test gather hcloud Load Balancer type infos with correct id
+- name: Gather hcloud_load_balancer_type_info with wrong id
   hetzner.hcloud.hcloud_load_balancer_type_info:
-    id: "{{hcloud_load_balancer_type_id}}"
-  register: hcloud_load_balancer_types
-- name: verify test gather hcloud Load Balancer type with correct id
-  assert:
+    id: "{{ hcloud_load_balancer_type_id }}4321"
+  ignore_errors: true
+  register: result
+- name: Verify hcloud_load_balancer_type_info with wrong id
+  ansible.builtin.assert:
     that:
-      - hcloud_load_balancer_types.hcloud_load_balancer_type_info|selectattr('name','equalto','{{ hcloud_load_balancer_type_name }}') | list | count == 1
+      - result is failed
+
+- name: Gather hcloud_load_balancer_type_info with correct name
+  hetzner.hcloud.hcloud_load_balancer_type_info:
+    name: "{{ hcloud_load_balancer_type_name }}"
+  register: result
+- name: Verify hcloud_load_balancer_type_info with correct name
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_load_balancer_type_info | list | count == 1
+
+- name: Gather hcloud_load_balancer_type_info with wrong name
+  hetzner.hcloud.hcloud_load_balancer_type_info:
+    name: "{{ hcloud_load_balancer_type_name }}-invalid"
+  register: result
+- name: Verify hcloud_load_balancer_type_info with wrong name
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_load_balancer_type_info | list | count == 0

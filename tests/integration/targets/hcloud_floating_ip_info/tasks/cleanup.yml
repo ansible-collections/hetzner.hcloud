@@ -1,0 +1,5 @@
+---
+- name: Cleanup test_floating_ip
+  hetzner.hcloud.hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    state: absent

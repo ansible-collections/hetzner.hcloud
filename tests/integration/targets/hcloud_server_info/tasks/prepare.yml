@@ -1,0 +1,22 @@
+---
+- name: Create test_server
+  hetzner.hcloud.hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cx11
+    image: ubuntu-22.04
+    state: started
+    labels:
+      key: value
+  register: test_server
+
+- name: Create test_server2 (stopped + without ip)
+  hetzner.hcloud.hcloud_server:
+    name: "{{ hcloud_server_name }}2"
+    server_type: cx11
+    image: ubuntu-22.04
+    state: stopped
+    labels:
+      key: value
+    enable_ipv4: false
+    enable_ipv6: false
+  register: test_server2

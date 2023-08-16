@@ -1,54 +1,71 @@
 # Copyright: (c) 2023, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: test gather hcloud iso infos with correct id
+- name: Gather hcloud_iso_info
+  hetzner.hcloud.hcloud_iso_info:
+  register: result
+- name: Verify hcloud_iso_info
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_iso_info | list | count >= 1
+
+- name: Gather hcloud_iso_info in check mode
+  hetzner.hcloud.hcloud_iso_info:
+  check_mode: true
+  register: result
+- name: Verify hcloud_iso_info in check mode
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_iso_info | list | count >= 1
+
+- name: Gather hcloud_iso_info with correct id
   hetzner.hcloud.hcloud_iso_info:
     id: "{{ hcloud_iso_id }}"
-  register: hcloud_iso
-- name: verify test gather hcloud image with correct id
-  assert:
+  register: result
+- name: Verify hcloud_iso_info with correct id
+  ansible.builtin.assert:
     that:
-      - hcloud_iso.hcloud_iso_info | list | count == 1
-      - hcloud_iso.hcloud_iso_info[0].id == "{{ hcloud_iso_id }}"
-      - hcloud_iso.hcloud_iso_info[0].name == "{{ hcloud_iso_name }}"
-      - hcloud_iso.hcloud_iso_info[0].architecture == "{{ hcloud_iso_architecture }}"
-      - hcloud_iso.hcloud_iso_info[0].type == "{{ hcloud_iso_type }}"
+      - result.hcloud_iso_info | list | count == 1
+      - result.hcloud_iso_info[0].id == "{{ hcloud_iso_id }}"
+      - result.hcloud_iso_info[0].name == "{{ hcloud_iso_name }}"
+      - result.hcloud_iso_info[0].architecture == "{{ hcloud_iso_architecture }}"
+      - result.hcloud_iso_info[0].type == "{{ hcloud_iso_type }}"
 
-- name: test gather hcloud iso infos with wrong id
+- name: Gather hcloud_iso_info with wrong id
   hetzner.hcloud.hcloud_iso_info:
-    id: "{{ hcloud_iso_id }}1"
+    id: "{{ hcloud_iso_id }}4321"
   ignore_errors: true
   register: result
-- name: verify test gather hcloud image with wrong id
-  assert:
+- name: Verify hcloud_iso_info with wrong id
+  ansible.builtin.assert:
     that:
       - result is failed
 
-- name: test gather hcloud iso infos with name
+- name: Gather hcloud_iso_info with correct name
   hetzner.hcloud.hcloud_iso_info:
     name: "{{ hcloud_iso_name }}"
-  register: hcloud_iso
-- name: verify test gather hcloud iso infos with name
-  assert:
+  register: result
+- name: Verify hcloud_iso_info with correct name
+  ansible.builtin.assert:
     that:
-      - hcloud_iso.hcloud_iso_info | list | count == 1
+      - result.hcloud_iso_info | list | count == 1
 
-- name: test list hcloud iso infos with architecture
+- name: Gather hcloud_iso_info with wrong name
+  hetzner.hcloud.hcloud_iso_info:
+    name: "{{ hcloud_iso_name }}-invalid"
+  register: result
+- name: Verify hcloud_iso_info with wrong name
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_iso_info | list | count == 0
+
+- name: Gather hcloud_iso_info with architecture
   hetzner.hcloud.hcloud_iso_info:
     architecture: arm
-  register: hcloud_iso
-- name: verify test list hcloud iso infos with architecture
-  assert:
+  register: result
+- name: Verify hcloud_iso_info with architecture
+  ansible.builtin.assert:
     that:
-      - hcloud_iso.hcloud_iso_info | list | count > 2
-      - hcloud_iso.hcloud_iso_info | selectattr('architecture','equalto','x86') | list | count == 0
-      - hcloud_iso.hcloud_iso_info | selectattr('architecture','equalto','arm') | list | count  > 2
-
-- name: test list hcloud iso infos in check mode
-  hetzner.hcloud.hcloud_iso_info:
-  check_mode: true
-  register: hcloud_iso
-- name: verify test list hcloud iso infos in check mode
-  assert:
-    that:
-      - hcloud_iso.hcloud_iso_info| list | count > 2
+      - result.hcloud_iso_info | list | count > 2
+      - result.hcloud_iso_info | selectattr('architecture', 'equalto', 'x86') | list | count == 0
+      - result.hcloud_iso_info | selectattr('architecture', 'equalto', 'arm') | list | count  > 2

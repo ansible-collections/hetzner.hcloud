@@ -1,51 +1,69 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: test gather hcloud server type infos
+- name: Gather hcloud_server_type_info
   hetzner.hcloud.hcloud_server_type_info:
-  register: hcloud_server_types
-- name: verify test gather hcloud server type infos
-  assert:
+  register: result
+- name: Verify hcloud_server_type_info
+  ansible.builtin.assert:
     that:
-      - hcloud_server_types.hcloud_server_type_info| list | count > 2
+      - result.hcloud_server_type_info | list | count >= 3
 
-- name: test gather hcloud server type infos in check mode
+- name: Gather hcloud_server_type_info in check mode
   hetzner.hcloud.hcloud_server_type_info:
   check_mode: true
-  register: hcloud_server_types
-
-- name: verify test gather hcloud server type infos in check mode
-  assert:
+  register: result
+- name: Verify hcloud_server_type_info in check mode
+  ansible.builtin.assert:
     that:
-      - hcloud_server_types.hcloud_server_type_info| list | count > 2
+      - result.hcloud_server_type_info | list | count >= 3
 
-- name: test gather hcloud server type infos with name
+- name: Gather hcloud_server_type_info with correct id
   hetzner.hcloud.hcloud_server_type_info:
-    name: "{{hcloud_server_type_name}}"
-  register: hcloud_server_types
-- name: verify test gather hcloud server type with name
-  assert:
+    id: "{{ hcloud_server_type_id }}"
+  register: result
+- name: Verify hcloud_server_type_info with correct id
+  ansible.builtin.assert:
     that:
-      - hcloud_server_types.hcloud_server_type_info|selectattr('name','equalto','{{ hcloud_server_type_name }}') | list | count == 1
-      - hcloud_server_types.hcloud_server_type_info[0].deprecation is none # fails if cx11 is ever deprecated
+      - result.hcloud_server_type_info | list | count == 1
+      - result.hcloud_server_type_info[0].deprecation is none # fails if cx11 is ever deprecated
 
-- name: test gather hcloud server type infos with correct id
+- name: Gather hcloud_server_type_info with wrong id
   hetzner.hcloud.hcloud_server_type_info:
-    id: "{{hcloud_server_type_id}}"
-  register: hcloud_server_types
-- name: verify test gather hcloud server type with correct id
-  assert:
+    id: "{{ hcloud_server_type_id }}4321"
+  ignore_errors: true
+  register: result
+- name: Verify hcloud_server_type_info with wrong id
+  ansible.builtin.assert:
     that:
-      - hcloud_server_types.hcloud_server_type_info|selectattr('name','equalto','{{ hcloud_server_type_name }}') | list | count == 1
+      - result is failed
 
-- name: test gather hcloud server type infos for deprecated server type
+- name: Gather hcloud_server_type_info with correct name
   hetzner.hcloud.hcloud_server_type_info:
-    id: "{{hcloud_server_type_id_deprecated}}"
-  register: hcloud_server_types
-
-- name: verify test gather hcloud server type with deprecated field
-  assert:
+    name: "{{ hcloud_server_type_name }}"
+  register: result
+- name: Verify hcloud_server_type_info with correct name
+  ansible.builtin.assert:
     that:
-      - hcloud_server_types.hcloud_server_type_info[0].deprecation is not none
-      - hcloud_server_types.hcloud_server_type_info[0].deprecation.announced == '2021-11-09T09:00:00+00:00'
-      - hcloud_server_types.hcloud_server_type_info[0].deprecation.unavailable_after == '2021-12-01T00:00:00+00:00'
+      - result.hcloud_server_type_info | list | count == 1
+
+- name: Gather hcloud_server_type_info with wrong name
+  hetzner.hcloud.hcloud_server_type_info:
+    name: "{{ hcloud_server_type_name }}-invalid"
+  register: result
+- name: Verify hcloud_server_type_info with wrong name
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_server_type_info | list | count == 0
+
+- name: Gather hcloud_server_type_info with deprecated field
+  hetzner.hcloud.hcloud_server_type_info:
+    id: "{{ hcloud_server_type_id_deprecated }}"
+  register: result
+- name: Verify hcloud_server_type_info with deprecated field
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_server_type_info | list | count == 1
+      - result.hcloud_server_type_info[0].deprecation is not none
+      - result.hcloud_server_type_info[0].deprecation.announced == '2021-11-09T09:00:00+00:00'
+      - result.hcloud_server_type_info[0].deprecation.unavailable_after == '2021-12-01T00:00:00+00:00'
