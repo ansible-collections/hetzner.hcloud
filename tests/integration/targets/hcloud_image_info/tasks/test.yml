@@ -87,9 +87,10 @@
 - name: Verify hcloud_image_info with correct label selector
   ansible.builtin.assert:
     that:
+      # Snapshot names are stored in the description field
       - >
         result.hcloud_image_info
-        | selectattr('name', 'equalto', '{{ hcloud_snapshot_name }}')
+        | selectattr('description', 'equalto', '{{ hcloud_snapshot_name }}')
         | list | count == 1
 
 - name: Gather hcloud_image_info with wrong label selector
