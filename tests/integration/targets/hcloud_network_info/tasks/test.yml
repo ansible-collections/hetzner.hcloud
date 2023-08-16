@@ -103,12 +103,13 @@
 
 - name: test gather hcloud network info with wrong id
   hetzner.hcloud.hcloud_network_info:
-    name: "4711"
+    id: "4711"
   register: hcloud_network
+  ignore_errors: true
 - name: verify test gather hcloud network with wrong id
   assert:
     that:
-      - hcloud_network.hcloud_network_info | list | count == 0
+      - hcloud_network is failed
 
 - name: cleanup
   hetzner.hcloud.hcloud_network:

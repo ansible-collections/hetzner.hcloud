@@ -49,7 +49,8 @@
   hetzner.hcloud.hcloud_location_info:
     id: 4711
   register: result
+  ignore_errors: true
 - name: Verify hcloud_location_info with wrong id
   ansible.builtin.assert:
     that:
-      - result.hcloud_location_info | list | count == 0
+      - result is failed

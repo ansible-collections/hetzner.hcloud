@@ -83,12 +83,13 @@
 
 - name: test gather hcloud volume infos with wrong id
   hetzner.hcloud.hcloud_volume_info:
-    name: "4711"
+    id: "4711"
   register: hcloud_volume
+  ignore_errors: true
 - name: verify test gather hcloud volume infos with wrong id
   assert:
     that:
-      - hcloud_volume.hcloud_volume_info | list | count == 0
+      - hcloud_volume is failed
 
 - name: cleanup
   hetzner.hcloud.hcloud_volume:

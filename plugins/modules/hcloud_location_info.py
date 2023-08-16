@@ -21,6 +21,7 @@ options:
     id:
         description:
             - The ID of the location you want to get.
+            - The module will fail if the provided ID is invalid.
         type: int
     name:
         description:
@@ -78,7 +79,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.vendor.hcloud import APIException, HCloudException
+from ..module_utils.vendor.hcloud import HCloudException
 
 
 class AnsibleHCloudLocationInfo(AnsibleHCloud):
@@ -105,12 +106,7 @@ class AnsibleHCloudLocationInfo(AnsibleHCloud):
     def get_locations(self):
         try:
             if self.module.params.get("id") is not None:
-                try:
-                    self.hcloud_location_info = [self.client.locations.get_by_id(self.module.params.get("id"))]
-                except APIException as exception:
-                    self.hcloud_location_info = []
-                    if exception.code != "not_found":
-                        raise exception
+                self.hcloud_location_info = [self.client.locations.get_by_id(self.module.params.get("id"))]
             elif self.module.params.get("name") is not None:
                 self.hcloud_location_info = [self.client.locations.get_by_name(self.module.params.get("name"))]
             else:
