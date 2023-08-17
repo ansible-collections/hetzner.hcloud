@@ -29,6 +29,8 @@
       - result.hcloud_load_balancer_info[0].targets | list | count == 1
       - result.hcloud_load_balancer_info[0].targets | selectattr('type', 'equalto', 'server') | list | count == 1
       - result.hcloud_load_balancer_info[0].targets | selectattr('server', 'equalto', '{{ hcloud_server_name }}') | list | count == 1
+      - result.hcloud_load_balancer_info[0].targets[0].health_status[0].listen_port == 80
+      - result.hcloud_load_balancer_info[0].targets[0].health_status[0].status in ['healthy', 'unhealthy', 'unknown']
       - result.hcloud_load_balancer_info[0].services | list | count == 1
       - result.hcloud_load_balancer_info[0].services | selectattr('protocol', 'equalto', 'http') | list | count == 1
       - result.hcloud_load_balancer_info[0].services | selectattr('listen_port', 'equalto', 80) | list | count == 1
