@@ -7,7 +7,7 @@
 - name: Verify hcloud_server_info
   ansible.builtin.assert:
     that:
-      - result.hcloud_server_info | list | count >= 1
+      - result.hcloud_server_info | list | count >= 2
 
 - name: Gather hcloud_server_info in check mode
   hetzner.hcloud.hcloud_server_info:
@@ -16,7 +16,7 @@
 - name: Verify hcloud_server_info in check mode
   ansible.builtin.assert:
     that:
-      - result.hcloud_server_info | list | count >= 1
+      - result.hcloud_server_info | list | count >= 2
 
 - name: Gather hcloud_server_info with correct id
   hetzner.hcloud.hcloud_server_info:
