@@ -4,7 +4,7 @@ This document provide information to work with the integrations tests.
 
 ## Guidelines
 
-A set guidelines to follow when writting integrations tests.
+A set guidelines to follow when writing integrations tests.
 
 ### Prepare and cleanup
 
