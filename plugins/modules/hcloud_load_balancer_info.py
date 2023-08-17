@@ -138,6 +138,23 @@ hcloud_load_balancer_info:
                     type: bool
                     sample: true
                     returned: always
+                health_status:
+                    description:
+                        - List of health statuses of the services on this target. Only present for target types "server" and "ip".
+                    type: list
+                    returned: if I(type) is server or ip
+                    contains:
+                        listen_port:
+                            description: Load Balancer Target listen port
+                            type: int
+                            returned: always
+                            sample: 80
+                        status:
+                            description: Load Balancer Target status
+                            type: str
+                            choices: [healthy, unhealthy, unknown]
+                            returned: always
+                            sample: healthy
         services:
             description: all services from this Load Balancer
             returned: Always
@@ -345,6 +362,16 @@ class AnsibleHCloudLoadBalancerInfo(AnsibleHCloud):
             result["label_selector"] = to_native(target.label_selector.selector)
         elif target.type == "ip":
             result["ip"] = to_native(target.ip.ip)
+
+        if target.health_status is not None:
+            result["health_status"] = [
+                {
+                    "listen_port": item.listen_port,
+                    "status": item.status,
+                }
+                for item in target.health_status
+            ]
+
         return result
 
     def get_load_balancers(self):
