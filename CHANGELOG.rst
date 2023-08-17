@@ -5,6 +5,22 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v2.1.0
+======
+
+Minor Changes
+-------------
+
+- Use the collection version in the hcloud user-agent instead of the ansible-core version.
+- hcloud_floating_ip_info - Allow querying floating ip by name.
+- hcloud_load_balancer_info - Add targets health status field.
+- inventory - Allow caching the hcloud inventory.
+
+Bugfixes
+--------
+
+- `*_info` - Consistently fail on invalid ID in `*_info` modules.
+
 v2.0.0
 ======
 

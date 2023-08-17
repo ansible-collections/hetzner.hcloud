@@ -1,2 +1,0 @@
-minor_changes:
-  - hcloud_load_balancer_info - Add targets health status field.

@@ -1,2 +1,0 @@
-minor_changes:
-  - Use the collection version in the hcloud user-agent instead of the ansible-core version.
