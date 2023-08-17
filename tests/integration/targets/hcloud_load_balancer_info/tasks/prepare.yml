@@ -1,0 +1,33 @@
+---
+- name: Create test_server
+  hetzner.hcloud.hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cx11
+    image: ubuntu-22.04
+    state: started
+  register: test_server
+
+- name: Create test_load_balancer
+  hetzner.hcloud.hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    load_balancer_type: lb11
+    network_zone: eu-central
+    labels:
+      key: value
+  register: test_load_balancer
+
+- name: Create test_load_balancer_target
+  hetzner.hcloud.hcloud_load_balancer_target:
+    type: "server"
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    server: "{{ hcloud_server_name }}"
+    state: present
+  register: test_load_balancer_target
+
+- name: Create test_load_balancer_service
+  hetzner.hcloud.hcloud_load_balancer_service:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    protocol: "http"
+    listen_port: 80
+    state: present
+  register: test_load_balancer_service

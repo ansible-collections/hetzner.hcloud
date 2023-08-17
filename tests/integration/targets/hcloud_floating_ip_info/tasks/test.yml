@@ -1,86 +1,77 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: setup ensure floating ip is absent
-  hetzner.hcloud.hcloud_floating_ip:
-    name: "{{ hcloud_floating_ip_name }}"
-    state: absent
-
-- name: setup floating ip
-  hetzner.hcloud.hcloud_floating_ip:
-    name: "{{ hcloud_floating_ip_name }}"
-    home_location: "fsn1"
-    type: ipv4
-    labels:
-      key: value
-  register: test_floating_ip
-
-- name: verify setup floating ip
-  assert:
-    that:
-      - test_floating_ip is changed
-
-- name: test gather hcloud floating ip infos
+- name: Gather hcloud_floating_ip_info
   hetzner.hcloud.hcloud_floating_ip_info:
-  register: hcloud_floating_ips
-- name: verify test gather hcloud floating ip infos
-  assert:
+  register: result
+- name: Verify hcloud_floating_ip_info
+  ansible.builtin.assert:
     that:
-      - hcloud_floating_ips.hcloud_floating_ip_info| list | count >= 1
+      - result.hcloud_floating_ip_info | list | count >= 1
 
-- name: test gather hcloud floating ip infos in check mode
+- name: Gather hcloud_floating_ip_info in check mode
   hetzner.hcloud.hcloud_floating_ip_info:
   check_mode: true
-  register: hcloud_floating_ips
-
-- name: verify test gather hcloud floating ip infos in check mode
-  assert:
-    that:
-      - hcloud_floating_ips.hcloud_floating_ip_info| list | count >= 1
-
-- name: test gather hcloud floating ip infos with correct label selector
-  hetzner.hcloud.hcloud_floating_ip_info:
-    label_selector: "key=value"
-  register: hcloud_floating_ips
-- name: verify test gather hcloud floating ip with correct label selector
-  assert:
-    that:
-      - hcloud_floating_ips.hcloud_floating_ip_info|selectattr('name','equalto','{{ test_floating_ip.hcloud_floating_ip.name }}') | list | count == 1
-
-- name: test gather hcloud floating ip infos with wrong label selector
-  hetzner.hcloud.hcloud_floating_ip_info:
-    label_selector: "key!=value"
-  register: hcloud_floating_ips
-- name: verify test gather hcloud floating ip with wrong label selector
-  assert:
-    that:
-      - hcloud_floating_ips.hcloud_floating_ip_info | list | count == 0
-
-- name: test gather hcloud floating ip infos with correct id
-  hetzner.hcloud.hcloud_floating_ip_info:
-    id: "{{test_floating_ip.hcloud_floating_ip.id}}"
-  register: hcloud_floating_ips
-- name: verify test gather hcloud floating ip with correct id
-  assert:
-    that:
-      - hcloud_floating_ips.hcloud_floating_ip_info|selectattr('name','equalto','{{ test_floating_ip.hcloud_floating_ip.name }}') | list | count == 1
-
-- name: test gather hcloud floating ip infos with wrong id
-  hetzner.hcloud.hcloud_floating_ip_info:
-    id: "{{test_floating_ip.hcloud_floating_ip.id}}1"
   register: result
+- name: Verify hcloud_floating_ip_info in check mode
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_floating_ip_info | list | count >= 1
+
+- name: Gather hcloud_floating_ip_info with correct id
+  hetzner.hcloud.hcloud_floating_ip_info:
+    id: "{{ test_floating_ip.hcloud_floating_ip.id }}"
+  register: result
+- name: Verify hcloud_floating_ip_info with correct id
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_floating_ip_info | list | count == 1
+
+- name: Gather hcloud_floating_ip_info with wrong id
+  hetzner.hcloud.hcloud_floating_ip_info:
+    id: "{{ test_floating_ip.hcloud_floating_ip.id }}4321"
   ignore_errors: true
-- name: verify test gather hcloud floating ip with wrong id
-  assert:
+  register: result
+- name: Verify hcloud_floating_ip_info with wrong id
+  ansible.builtin.assert:
     that:
       - result is failed
 
-- name: cleanup
-  hetzner.hcloud.hcloud_floating_ip:
-    id: "{{ test_floating_ip.hcloud_floating_ip.id }}"
-    state: absent
+# - name: Gather hcloud_floating_ip_info with correct name
+#   hetzner.hcloud.hcloud_floating_ip_info:
+#     name: "{{ hcloud_floating_ip_name }}"
+#   register: result
+# - name: Verify hcloud_floating_ip_info with correct name
+#   ansible.builtin.assert:
+#     that:
+#       - result.hcloud_floating_ip_info | list | count == 1
+
+# - name: Gather hcloud_floating_ip_info with wrong name
+#   hetzner.hcloud.hcloud_floating_ip_info:
+#     name: "{{ hcloud_floating_ip_name }}-invalid"
+#   register: result
+# - name: Verify hcloud_floating_ip_info with wrong name
+#   ansible.builtin.assert:
+#     that:
+#       - result.hcloud_floating_ip_info | list | count == 0
+
+- name: Gather hcloud_floating_ip_info with correct label selector
+  hetzner.hcloud.hcloud_floating_ip_info:
+    label_selector: "key=value"
   register: result
-- name: verify cleanup
-  assert:
+- name: Verify hcloud_floating_ip_info with correct label selector
+  ansible.builtin.assert:
     that:
-      - result is success
+      - >
+        result.hcloud_floating_ip_info
+        | selectattr('name', 'equalto', '{{ hcloud_floating_ip_name }}')
+        | list | count == 1
+
+- name: Gather hcloud_floating_ip_info with wrong label selector
+  hetzner.hcloud.hcloud_floating_ip_info:
+    label_selector: "key!=value"
+  register: result
+- name: Verify hcloud_floating_ip_info with wrong label selector
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_floating_ip_info | list | count == 0

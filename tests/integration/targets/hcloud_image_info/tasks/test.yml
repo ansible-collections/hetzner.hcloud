@@ -1,92 +1,104 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: test gather hcloud image infos with type system
+- name: Gather hcloud_image_info
   hetzner.hcloud.hcloud_image_info:
-  register: hcloud_images
-- name: verify test gather hcloud image infos in check mode
-  assert:
+  register: result
+- name: Verify hcloud_image_info
+  ansible.builtin.assert:
     that:
-      - hcloud_images.hcloud_image_info| list | count > 2
+      - result.hcloud_image_info | list | count >= 3
 
-- name: test gather hcloud image infos in check mode
+- name: Gather hcloud_image_info with architecture
+  hetzner.hcloud.hcloud_image_info:
+    architecture: arm
+  register: result
+- name: Verify hcloud_image_info with architecture
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_image_info | selectattr('architecture', 'equalto', 'x86') | list | count == 0
+      - result.hcloud_image_info | selectattr('architecture', 'equalto', 'arm') | list | count  > 2
+
+- name: Gather hcloud_image_info in check mode
   hetzner.hcloud.hcloud_image_info:
   check_mode: true
-  register: hcloud_images
-
-- name: verify test gather hcloud image infos in check mode
-  assert:
+  register: result
+- name: Verify hcloud_image_info in check mode
+  ansible.builtin.assert:
     that:
-      - hcloud_images.hcloud_image_info| list | count > 2
+      - result.hcloud_image_info | list | count >= 3
 
-- name: test gather hcloud image infos with correct label selector
+- name: Gather hcloud_image_info with correct id
   hetzner.hcloud.hcloud_image_info:
-    label_selector: "key=value"
+    id: "{{ hcloud_snapshot_id }}"
     type: snapshot
-  register: hcloud_images
-- name: verify test gather hcloud image with correct label selector
-  assert:
+  register: result
+- name: Verify hcloud_image_info with correct id
+  ansible.builtin.assert:
     that:
-      - hcloud_images.hcloud_image_info|selectattr('description','equalto','{{ hcloud_test_image_name }}') | list | count == 1
+      - result.hcloud_image_info | list | count == 1
 
-- name: test gather hcloud image infos with wrong label selector
+- name: Gather hcloud_image_info with wrong id
   hetzner.hcloud.hcloud_image_info:
-    label_selector: "key!=value"
-    type: snapshot
-  register: hcloud_images
-- name: verify test gather hcloud image with wrong label selector
-  assert:
-    that:
-      - hcloud_images.hcloud_image_info | list | count == 0
-
-- name: test gather hcloud image infos with correct id
-  hetzner.hcloud.hcloud_image_info:
-    id: "{{hcloud_test_image_id}}"
-    type: snapshot
-  register: hcloud_images
-- name: verify test gather hcloud image with correct id
-  assert:
-    that:
-      - hcloud_images.hcloud_image_info|selectattr('description','equalto','{{ hcloud_test_image_name }}') | list | count == 1
-
-- name: test gather hcloud image infos with wrong id
-  hetzner.hcloud.hcloud_image_info:
-    id: "{{hcloud_test_image_id}}1"
+    id: "{{ hcloud_snapshot_id }}4321"
     type: snapshot
   ignore_errors: true
   register: result
-- name: verify test gather hcloud image with wrong id
-  assert:
+- name: Verify hcloud_image_info with wrong id
+  ansible.builtin.assert:
     that:
       - result is failed
 
-- name: test gather hcloud image infos with name
+- name: Gather hcloud_image_info with correct name
   hetzner.hcloud.hcloud_image_info:
-    name: "{{ hcloud_test_image_name_os }}"
-  register: hcloud_images
-- name: verify test gather hcloud image infos with name
-  assert:
+    name: "{{ hcloud_image_name }}"
+  register: result
+- name: Verify hcloud_image_info with correct name
+  ansible.builtin.assert:
     that:
-      - hcloud_images.hcloud_image_info | list | count == 1
-      - hcloud_images.hcloud_image_info[0].architecture == "x86"
+      - result.hcloud_image_info | list | count == 1
+      - result.hcloud_image_info[0].architecture == "x86"
 
-- name: test gather hcloud image infos with name and architecture
+- name: Gather hcloud_image_info with wrong name
   hetzner.hcloud.hcloud_image_info:
-    name: "{{ hcloud_test_image_name_os }}"
-    architecture: arm
-  register: hcloud_images
-- name: verify test gather hcloud image infos with name
-  assert:
+    name: "{{ hcloud_image_name }}-invalid"
+  register: result
+- name: Verify hcloud_image_info with wrong name
+  ansible.builtin.assert:
     that:
-      - hcloud_images.hcloud_image_info | list | count == 1
-      - hcloud_images.hcloud_image_info[0].architecture == "arm"
+      - result.hcloud_image_info | list | count == 0
 
-- name: test gather hcloud image infos with architecture
+- name: Gather hcloud_image_info with correct name and architecture
   hetzner.hcloud.hcloud_image_info:
+    name: "{{ hcloud_image_name }}"
     architecture: arm
-  register: hcloud_images
-- name: verify test gather hcloud image infos with name
-  assert:
+  register: result
+- name: Verify hcloud_image_info with correct name
+  ansible.builtin.assert:
     that:
-      - hcloud_images.hcloud_image_info | selectattr('architecture','equalto','x86') | list | count == 0
-      - hcloud_images.hcloud_image_info | selectattr('architecture','equalto','arm') | list | count  > 2
+      - result.hcloud_image_info | list | count == 1
+      - result.hcloud_image_info[0].architecture == "arm"
+
+- name: Gather hcloud_image_info with correct label selector
+  hetzner.hcloud.hcloud_image_info:
+    label_selector: "key=value"
+    type: snapshot
+  register: result
+- name: Verify hcloud_image_info with correct label selector
+  ansible.builtin.assert:
+    that:
+      # Snapshot names are stored in the description field
+      - >
+        result.hcloud_image_info
+        | selectattr('description', 'equalto', '{{ hcloud_snapshot_name }}')
+        | list | count == 1
+
+- name: Gather hcloud_image_info with wrong label selector
+  hetzner.hcloud.hcloud_image_info:
+    label_selector: "key!=value"
+    type: snapshot
+  register: result
+- name: Verify hcloud_image_info with wrong label selector
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_image_info | list | count == 0
