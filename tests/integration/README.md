@@ -1,6 +1,6 @@
 # Integration tests
 
-This document provide information to work with the integrations tests.
+This document provides information to work with the integration tests.
 
 ## Guidelines
 
