@@ -22,6 +22,10 @@ options:
             - The ID of the Floating IP you want to get.
             - The module will fail if the provided ID is invalid.
         type: int
+    name:
+        description:
+            - The name for the Floating IP you want to get.
+        type: str
     label_selector:
         description:
             - The label selector for the Floating IP you want to get.
@@ -133,6 +137,8 @@ class AnsibleHCloudFloatingIPInfo(AnsibleHCloud):
         try:
             if self.module.params.get("id") is not None:
                 self.hcloud_floating_ip_info = [self.client.floating_ips.get_by_id(self.module.params.get("id"))]
+            elif self.module.params.get("name") is not None:
+                self.hcloud_floating_ip_info = [self.client.floating_ips.get_by_name(self.module.params.get("name"))]
             elif self.module.params.get("label_selector") is not None:
                 self.hcloud_floating_ip_info = self.client.floating_ips.get_all(
                     label_selector=self.module.params.get("label_selector")
@@ -148,6 +154,7 @@ class AnsibleHCloudFloatingIPInfo(AnsibleHCloud):
         return AnsibleModule(
             argument_spec=dict(
                 id={"type": "int"},
+                name={"type": "str"},
                 label_selector={"type": "str"},
                 **super().base_module_arguments(),
             ),
