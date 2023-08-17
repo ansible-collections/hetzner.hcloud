@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, NamedTuple
 
-from ..actions import ActionsPageResult, BoundAction
+from ..actions import ActionsPageResult, BoundAction, ResourceActionsClient
 from ..certificates import BoundCertificate
 from ..core import BoundModelBase, ClientEntityBase, Meta
 from ..load_balancer_types import BoundLoadBalancerType
@@ -20,6 +20,7 @@ from .domain import (
     LoadBalancerService,
     LoadBalancerServiceHttp,
     LoadBalancerTarget,
+    LoadBalancerTargetHealthStatus,
     LoadBalancerTargetIP,
     LoadBalancerTargetLabelSelector,
     PrivateNet,
@@ -83,6 +84,17 @@ class BoundLoadBalancer(BoundModelBase):
                     tmp_target.use_private_ip = target["use_private_ip"]
                 elif target["type"] == "ip":
                     tmp_target.ip = LoadBalancerTargetIP(ip=target["ip"]["ip"])
+
+                target_health_status = target.get("health_status")
+                if target_health_status is not None:
+                    tmp_target.health_status = [
+                        LoadBalancerTargetHealthStatus(
+                            listen_port=target_health_status_item["listen_port"],
+                            status=target_health_status_item["status"],
+                        )
+                        for target_health_status_item in target_health_status
+                    ]
+
                 tmp_targets.append(tmp_target)
             data["targets"] = tmp_targets
 
@@ -330,6 +342,16 @@ class LoadBalancersPageResult(NamedTuple):
 
 class LoadBalancersClient(ClientEntityBase):
     _client: Client
+
+    actions: ResourceActionsClient
+    """Load Balancers scoped actions client
+
+    :type: :class:`ResourceActionsClient <hcloud.actions.client.ResourceActionsClient>`
+    """
+
+    def __init__(self, client: Client):
+        super().__init__(client)
+        self.actions = ResourceActionsClient(client, "/load_balancers")
 
     def get_by_id(self, id: int) -> BoundLoadBalancer:
         """Get a specific Load Balancer
