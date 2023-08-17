@@ -20,7 +20,7 @@ The integrations tests uses a small testing framework that helps to setup and te
 
 The integration tests handle a lot of different variables, names, identifier. To reduce this complexity, make sure to use the following naming conventions:
 
-- Any test resources MUST be resgistered using the `test_<resource>` variable name (e.g. `test_server` or `test_floating_ip`) and MUST be created and cleaned in the `tasks/prepare.yml` and `tasks/cleanup.yml`. The scope of this variable is the entire target.
+- Any test resources MUST be registered using the `test_<resource>` variable name (e.g. `test_server` or `test_floating_ip`) and MUST be created and cleaned in the `tasks/prepare.yml` and `tasks/cleanup.yml`. The scope of this variable is the entire target.
 - In `tasks/prepare.yml`, tasks names MUST start with: `Create test_<resource>` (e.g. `Create test_server` or `Create  test_floating_ip`)
 - In `tasks/cleanup.yml`, tasks names MUST start with: `Cleanup test_<resource>` (e.g. `Cleanup test_server` or `Cleanup test_floating_ip`)
 - Any fact starting with `_` is scoped the current file and MUST NOT be used outside of it.
