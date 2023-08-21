@@ -384,3 +384,20 @@ releases:
     - remove-deprecated-facts-modules.yml
     - vendor-hcloud-python-dependency.yml
     release_date: '2023-07-24'
+  2.1.0:
+    changes:
+      bugfixes:
+      - '`*_info` - Consistently fail on invalid ID in `*_info` modules.'
+      minor_changes:
+      - Use the collection version in the hcloud user-agent instead of the ansible-core
+        version.
+      - hcloud_floating_ip_info - Allow querying floating ip by name.
+      - hcloud_load_balancer_info - Add targets health status field.
+      - inventory - Allow caching the hcloud inventory.
+    fragments:
+    - add-target-health-status-in-hcloud_load_balancer_info.yml
+    - allow-caching-hcloud-inventory.yml
+    - consistently-fail-on-invalid-id.yml
+    - query-hcloud_floating_ip_info-by-name.yml
+    - use-collection-version-in-user-agent.yml
+    release_date: '2023-08-17'
