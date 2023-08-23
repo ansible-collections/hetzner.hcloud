@@ -548,7 +548,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
             )
         else:
             self.module.warn(
-                "Attention: The server plan % is deprecated and will no longer be available for order as of "
+                "Attention: The server plan %s is deprecated and will no longer be available for order as of "
                 % server_type.name
                 + "%s. Existing servers of that plan will continue to work as before "
                 % server_type.deprecation.unavailable_after.strftime("%Y-%m-%d")
