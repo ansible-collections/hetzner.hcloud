@@ -140,8 +140,8 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
             elif self.module.params.get("name") is not None:
                 self.hcloud_ssh_key = self.client.ssh_keys.get_by_name(self.module.params.get("name"))
 
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _create_ssh_key(self):
         self.module.fail_on_missing_params(required_params=["name", "public_key"])
@@ -154,8 +154,8 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
         if not self.module.check_mode:
             try:
                 self.client.ssh_keys.create(**params)
-            except HCloudException as e:
-                self.fail_json_hcloud(e)
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception)
         self._mark_as_changed()
         self._get_ssh_key()
 
@@ -188,8 +188,8 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
             if not self.module.check_mode:
                 try:
                     self.client.ssh_keys.delete(self.hcloud_ssh_key)
-                except HCloudException as e:
-                    self.fail_json_hcloud(e)
+                except HCloudException as exception:
+                    self.fail_json_hcloud(exception)
             self._mark_as_changed()
         self.hcloud_ssh_key = None
 

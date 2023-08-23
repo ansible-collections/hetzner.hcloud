@@ -125,8 +125,8 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
                 self.module.fail_json(msg=f"Load balancer does not exist: {load_balancer_name}")
 
             self.hcloud_load_balancer_network = None
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _get_load_balancer_network(self):
         for privateNet in self.hcloud_load_balancer.private_net:
@@ -142,8 +142,8 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_load_balancer.attach_to_network(**params).wait_until_finished()
-            except HCloudException as e:
-                self.fail_json_hcloud(e)
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception)
 
         self._mark_as_changed()
         self._get_load_balancer_and_network()
@@ -165,8 +165,8 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
                         self.hcloud_load_balancer_network.network
                     ).wait_until_finished()
                     self._mark_as_changed()
-                except HCloudException as e:
-                    self.fail_json_hcloud(e)
+                except HCloudException as exception:
+                    self.fail_json_hcloud(exception)
 
         self.hcloud_load_balancer_network = None
 

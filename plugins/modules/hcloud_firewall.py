@@ -206,8 +206,8 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
             elif self.module.params.get("name") is not None:
                 self.hcloud_firewall = self.client.firewalls.get_by_name(self.module.params.get("name"))
 
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _create_firewall(self):
         self.module.fail_on_missing_params(required_params=["name"])
@@ -231,8 +231,8 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
         if not self.module.check_mode:
             try:
                 self.client.firewalls.create(**params)
-            except HCloudException as e:
-                self.fail_json_hcloud(e, params=params)
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception, params=params)
         self._mark_as_changed()
         self._get_firewall()
 
@@ -284,14 +284,14 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
                     try:
                         self.client.firewalls.delete(self.hcloud_firewall)
                         break
-                    except APIException as e:
-                        if "is still in use" in e.message:
+                    except APIException as exception:
+                        if "is still in use" in exception.message:
                             retry_count = retry_count + 1
                             time.sleep(0.5 * retry_count)
                         else:
-                            self.fail_json_hcloud(e)
-                    except HCloudException as e:
-                        self.fail_json_hcloud(e)
+                            self.fail_json_hcloud(exception)
+                    except HCloudException as exception:
+                        self.fail_json_hcloud(exception)
             self._mark_as_changed()
         self.hcloud_firewall = None
 

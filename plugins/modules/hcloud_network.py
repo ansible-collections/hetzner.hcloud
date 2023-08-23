@@ -144,8 +144,8 @@ class AnsibleHCloudNetwork(AnsibleHCloud):
                 self.hcloud_network = self.client.networks.get_by_id(self.module.params.get("id"))
             else:
                 self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("name"))
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _create_network(self):
         self.module.fail_on_missing_params(required_params=["name", "ip_range"])
@@ -167,8 +167,8 @@ class AnsibleHCloudNetwork(AnsibleHCloud):
                 if delete_protection is not None:
                     self._get_network()
                     self.hcloud_network.change_protection(delete=delete_protection).wait_until_finished()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
         self._mark_as_changed()
         self._get_network()
 
@@ -200,8 +200,8 @@ class AnsibleHCloudNetwork(AnsibleHCloud):
                 if not self.module.check_mode:
                     self.hcloud_network.change_protection(delete=delete_protection).wait_until_finished()
                 self._mark_as_changed()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
         self._get_network()
 
     def present_network(self):
@@ -218,8 +218,8 @@ class AnsibleHCloudNetwork(AnsibleHCloud):
                 if not self.module.check_mode:
                     self.client.networks.delete(self.hcloud_network)
                 self._mark_as_changed()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
         self.hcloud_network = None
 
     @classmethod

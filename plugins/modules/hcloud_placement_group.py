@@ -134,8 +134,8 @@ class AnsibleHCloudPlacementGroup(AnsibleHCloud):
                 self.hcloud_placement_group = self.client.placement_groups.get_by_id(self.module.params.get("id"))
             elif self.module.params.get("name") is not None:
                 self.hcloud_placement_group = self.client.placement_groups.get_by_name(self.module.params.get("name"))
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _create_placement_group(self):
         self.module.fail_on_missing_params(required_params=["name"])
@@ -147,8 +147,8 @@ class AnsibleHCloudPlacementGroup(AnsibleHCloud):
         if not self.module.check_mode:
             try:
                 self.client.placement_groups.create(**params)
-            except HCloudException as e:
-                self.fail_json_hcloud(e, params=params)
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception, params=params)
         self._mark_as_changed()
         self._get_placement_group()
 

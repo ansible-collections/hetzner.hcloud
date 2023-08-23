@@ -173,8 +173,8 @@ class AnsibleHCloudImageInfo(AnsibleHCloud):
 
                 self.hcloud_image_info = self.client.images.get_all(**params)
 
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

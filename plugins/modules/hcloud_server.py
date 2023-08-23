@@ -389,8 +389,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 self.hcloud_server = self.client.servers.get_by_id(self.module.params.get("id"))
             else:
                 self.hcloud_server = self.client.servers.get_by_name(self.module.params.get("name"))
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _create_server(self):
         self.module.fail_on_missing_params(required_params=["name", "server_type", "image"])
@@ -482,8 +482,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                         delete=delete_protection,
                         rebuild=rebuild_protection,
                     ).wait_until_finished()
-            except HCloudException as e:
-                self.fail_json_hcloud(e)
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception)
         self._mark_as_changed()
         self._get_server()
 
@@ -501,8 +501,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
         else:
             try:
                 image = self.client.images.get_by_id(self.module.params.get("image"))
-            except HCloudException as e:
-                self.fail_json_hcloud(e, msg=f"Image {self.module.params.get('image')} was not found")
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception, msg=f"Image {self.module.params.get('image')} was not found")
         if image.deprecated is not None:
             available_until = image.deprecated + timedelta(days=90)
             if self.module.params.get("allow_deprecated_image"):
@@ -525,9 +525,9 @@ class AnsibleHCloudServer(AnsibleHCloud):
         if server_type is None:
             try:
                 server_type = self.client.server_types.get_by_id(self.module.params.get("server_type"))
-            except HCloudException as e:
+            except HCloudException as exception:
                 self.fail_json_hcloud(
-                    e,
+                    exception,
                     msg=f"server_type {self.module.params.get('server_type')} was not found",
                 )
 
@@ -566,9 +566,9 @@ class AnsibleHCloudServer(AnsibleHCloud):
         if placement_group is None:
             try:
                 placement_group = self.client.placement_groups.get_by_id(self.module.params.get("placement_group"))
-            except HCloudException as e:
+            except HCloudException as exception:
                 self.fail_json_hcloud(
-                    e,
+                    exception,
                     msg=f"placement_group {self.module.params.get('placement_group')} was not found",
                 )
 
@@ -582,8 +582,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
         if primary_ip is None:
             try:
                 primary_ip = self.client.primary_ips.get_by_id(self.module.params.get(field))
-            except HCloudException as e:
-                self.fail_json_hcloud(e, msg=f"primary_ip {self.module.params.get(field)} was not found")
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception, msg=f"primary_ip {self.module.params.get(field)} was not found")
 
         return primary_ip
 
@@ -777,8 +777,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                     ).wait_until_finished()
                 self._mark_as_changed()
             self._get_server()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _set_rescue_mode(self, rescue_mode):
         if self.module.params.get("ssh_keys"):
@@ -802,8 +802,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                         self.client.servers.power_on(self.hcloud_server).wait_until_finished()
                     self._mark_as_changed()
                 self._get_server()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def stop_server(self):
         try:
@@ -813,8 +813,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                         self.client.servers.power_off(self.hcloud_server).wait_until_finished()
                     self._mark_as_changed()
                 self._get_server()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def stop_server_if_forced(self):
         previous_server_status = self.hcloud_server.status
@@ -844,8 +844,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
             self._mark_as_changed()
 
             self._get_server()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def present_server(self):
         self._get_server()
@@ -862,8 +862,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                     self.client.servers.delete(self.hcloud_server).wait_until_finished()
                 self._mark_as_changed()
             self.hcloud_server = None
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

@@ -191,8 +191,8 @@ class AnsibleHCloudVolume(AnsibleHCloud):
                 self.hcloud_volume = self.client.volumes.get_by_id(self.module.params.get("id"))
             else:
                 self.hcloud_volume = self.client.volumes.get_by_name(self.module.params.get("name"))
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _create_volume(self):
         self.module.fail_on_missing_params(required_params=["name", "size"])
@@ -219,8 +219,8 @@ class AnsibleHCloudVolume(AnsibleHCloud):
                 if delete_protection is not None:
                     self._get_volume()
                     self.hcloud_volume.change_protection(delete=delete_protection).wait_until_finished()
-            except HCloudException as e:
-                self.fail_json_hcloud(e)
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception)
         self._mark_as_changed()
         self._get_volume()
 
@@ -262,8 +262,8 @@ class AnsibleHCloudVolume(AnsibleHCloud):
                 self._mark_as_changed()
 
             self._get_volume()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def present_volume(self):
         self._get_volume()
@@ -282,8 +282,8 @@ class AnsibleHCloudVolume(AnsibleHCloud):
                     self.client.volumes.delete(self.hcloud_volume)
                 self._mark_as_changed()
             self.hcloud_volume = None
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

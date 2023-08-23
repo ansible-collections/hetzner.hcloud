@@ -169,8 +169,8 @@ class AnsibleHCloudServerTypeInfo(AnsibleHCloud):
             else:
                 self.hcloud_server_type_info = self.client.server_types.get_all()
 
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

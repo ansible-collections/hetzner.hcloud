@@ -309,12 +309,12 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         try:
             server_dict["ansible_host"] = self._get_server_ansible_host(server)
-        except AnsibleError as e:
+        except AnsibleError as exception:
             # Log warning that for this host can not be connected to, using the
             # method specified in `connect_with`. Users might use `compose` to
             # override the connection method, or implement custom logic, so we
             # do not need to abort if nothing matched.
-            self.display.v(f"[hcloud] {e}", server.name)
+            self.display.v(f"[hcloud] {exception}", server.name)
 
         return server_dict
 

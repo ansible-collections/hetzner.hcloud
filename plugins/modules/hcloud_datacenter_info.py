@@ -111,8 +111,8 @@ class AnsibleHCloudDatacenterInfo(AnsibleHCloud):
             else:
                 self.hcloud_datacenter_info = self.client.datacenters.get_all()
 
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

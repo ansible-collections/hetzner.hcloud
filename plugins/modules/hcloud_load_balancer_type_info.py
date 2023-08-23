@@ -128,8 +128,8 @@ class AnsibleHCloudLoadBalancerTypeInfo(AnsibleHCloud):
             else:
                 self.hcloud_load_balancer_type_info = self.client.load_balancer_types.get_all()
 
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

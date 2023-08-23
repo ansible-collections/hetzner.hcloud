@@ -196,8 +196,8 @@ class AnsibleHCloudFloatingIP(AnsibleHCloud):
                 self.hcloud_floating_ip = self.client.floating_ips.get_by_id(self.module.params.get("id"))
             else:
                 self.hcloud_floating_ip = self.client.floating_ips.get_by_name(self.module.params.get("name"))
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _create_floating_ip(self):
         self.module.fail_on_missing_params(required_params=["type"])
@@ -223,8 +223,8 @@ class AnsibleHCloudFloatingIP(AnsibleHCloud):
                 delete_protection = self.module.params.get("delete_protection")
                 if delete_protection is not None:
                     self.hcloud_floating_ip.change_protection(delete=delete_protection).wait_until_finished()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
         self._mark_as_changed()
         self._get_floating_ip()
 
@@ -271,8 +271,8 @@ class AnsibleHCloudFloatingIP(AnsibleHCloud):
                 self._mark_as_changed()
 
             self._get_floating_ip()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def present_floating_ip(self):
         self._get_floating_ip()
@@ -296,8 +296,8 @@ class AnsibleHCloudFloatingIP(AnsibleHCloud):
                     )
                 self._mark_as_changed()
             self.hcloud_floating_ip = None
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

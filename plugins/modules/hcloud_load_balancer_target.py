@@ -183,8 +183,8 @@ class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
                     self.module.fail_json(msg=f"Server not found: {server_name}")
 
             self.hcloud_load_balancer_target = None
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _get_load_balancer_target(self):
         for target in self.hcloud_load_balancer.targets:
@@ -226,13 +226,13 @@ class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_load_balancer.add_target(**params).wait_until_finished()
-            except APIException as e:
-                if e.code == "locked" or e.code == "conflict":
+            except APIException as exception:
+                if exception.code == "locked" or exception.code == "conflict":
                     self._create_load_balancer_target()
                 else:
-                    self.fail_json_hcloud(e)
-            except HCloudException as e:
-                self.fail_json_hcloud(e)
+                    self.fail_json_hcloud(exception)
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception)
 
         self._mark_as_changed()
         self._get_load_balancer_and_target()
@@ -271,8 +271,8 @@ class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
                     )
                 try:
                     self.hcloud_load_balancer.remove_target(target).wait_until_finished()
-                except HCloudException as e:
-                    self.fail_json_hcloud(e)
+                except HCloudException as exception:
+                    self.fail_json_hcloud(exception)
             self._mark_as_changed()
         self.hcloud_load_balancer_target = None
 
