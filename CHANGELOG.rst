@@ -5,6 +5,14 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v2.1.1
+======
+
+Bugfixes
+--------
+
+- hcloud_server - Fix string formatting error on deprecated server type warning
+
 v2.1.0
 ======
 
