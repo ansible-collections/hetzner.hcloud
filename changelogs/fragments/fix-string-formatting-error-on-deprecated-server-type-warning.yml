@@ -1,0 +1,2 @@
+bugfixes:
+  - hcloud_server - Fix string formatting error on deprecated server type warning
