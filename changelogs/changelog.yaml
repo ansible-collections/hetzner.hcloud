@@ -401,3 +401,10 @@ releases:
     - query-hcloud_floating_ip_info-by-name.yml
     - use-collection-version-in-user-agent.yml
     release_date: '2023-08-17'
+  2.1.1:
+    changes:
+      bugfixes:
+      - hcloud_server - Fix string formatting error on deprecated server type warning
+    fragments:
+    - fix-string-formatting-error-on-deprecated-server-type-warning.yml
+    release_date: '2023-08-23'
