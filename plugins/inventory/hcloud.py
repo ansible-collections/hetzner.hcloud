@@ -314,7 +314,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             # method specified in `connect_with`. Users might use `compose` to
             # override the connection method, or implement custom logic, so we
             # do not need to abort if nothing matched.
-            self.display.v("[hcloud] %s" % e, server.name)
+            self.display.v(f"[hcloud] {e}", server.name)
 
         return server_dict
 

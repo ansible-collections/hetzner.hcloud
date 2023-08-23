@@ -502,21 +502,21 @@ class AnsibleHCloudServer(AnsibleHCloud):
             try:
                 image = self.client.images.get_by_id(self.module.params.get("image"))
             except HCloudException as e:
-                self.fail_json_hcloud(e, msg="Image %s was not found" % self.module.params.get("image"))
+                self.fail_json_hcloud(e, msg=f"Image {self.module.params.get('image')} was not found")
         if image.deprecated is not None:
             available_until = image.deprecated + timedelta(days=90)
             if self.module.params.get("allow_deprecated_image"):
                 self.module.warn(
-                    "You try to use a deprecated image. The image %s will continue to be available until %s."
-                    % (image.name, available_until.strftime("%Y-%m-%d"))
+                    f"You try to use a deprecated image. The image {image.name} will "
+                    f"continue to be available until {available_until.strftime('%Y-%m-%d')}."
                 )
             else:
                 self.module.fail_json(
                     msg=(
-                        "You try to use a deprecated image. The image %s will continue to be available until %s."
-                        " If you want to use this image use allow_deprecated_image=true."
+                        f"You try to use a deprecated image. The image {image.name} will "
+                        f"continue to be available until {available_until.strftime('%Y-%m-%d')}. "
+                        "If you want to use this image use allow_deprecated_image=true."
                     )
-                    % (image.name, available_until.strftime("%Y-%m-%d"))
                 )
         return image
 
@@ -528,7 +528,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
             except HCloudException as e:
                 self.fail_json_hcloud(
                     e,
-                    msg="server_type %s was not found" % self.module.params.get("server_type"),
+                    msg=f"server_type {self.module.params.get('server_type')} was not found",
                 )
 
         self._check_and_warn_deprecated_server(server_type)
@@ -541,18 +541,20 @@ class AnsibleHCloudServer(AnsibleHCloud):
 
         if server_type.deprecation.unavailable_after < datetime.now(timezone.utc):
             self.module.warn(
-                "Attention: The server plan %s is deprecated and can no longer be ordered. Existing servers of "
-                % server_type.name
-                + "that plan will continue to work as before and no action is required on your part. It is possible "
-                "to migrate this server to another server plan by setting the server_type parameter on the hetzner.hcloud.hcloud_server module."
+                f"Attention: The server plan {server_type.name} is deprecated and can "
+                "no longer be ordered. Existing servers of that plan will continue to "
+                "work as before and no action is required on your part. "
+                "It is possible to migrate this server to another server plan by setting "
+                "the server_type parameter on the hetzner.hcloud.hcloud_server module."
             )
         else:
+            server_type_unavailable_date = server_type.deprecation.unavailable_after.strftime("%Y-%m-%d")
             self.module.warn(
-                "Attention: The server plan %s is deprecated and will no longer be available for order as of "
-                % server_type.name
-                + "%s. Existing servers of that plan will continue to work as before "
-                % server_type.deprecation.unavailable_after.strftime("%Y-%m-%d")
-                + "and no action is required on your part. It is possible to migrate this server to another server plan by setting "
+                f"Attention: The server plan {server_type.name} is deprecated and will "
+                f"no longer be available for order as of {server_type_unavailable_date}. "
+                "Existing servers of that plan will continue to work as before and no "
+                "action is required on your part. "
+                "It is possible to migrate this server to another server plan by setting "
                 "the server_type parameter on the hetzner.hcloud.hcloud_server module."
             )
 
@@ -567,7 +569,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
             except HCloudException as e:
                 self.fail_json_hcloud(
                     e,
-                    msg="placement_group %s was not found" % self.module.params.get("placement_group"),
+                    msg=f"placement_group {self.module.params.get('placement_group')} was not found",
                 )
 
         return placement_group
@@ -581,7 +583,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
             try:
                 primary_ip = self.client.primary_ips.get_by_id(self.module.params.get(field))
             except HCloudException as e:
-                self.fail_json_hcloud(e, msg="primary_ip %s was not found" % self.module.params.get(field))
+                self.fail_json_hcloud(e, msg=f"primary_ip {self.module.params.get(field)} was not found")
 
         return primary_ip
 
@@ -643,7 +645,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                         if not self.module.check_mode:
                             fw = self.client.firewalls.get_by_name(fname)
                             if fw is None:
-                                self.module.fail_json(msg="firewall %s was not found" % fname)
+                                self.module.fail_json(msg=f"firewall {fname} was not found")
                             r = FirewallResource(type="server", server=self.hcloud_server)
                             actions = self.client.firewalls.apply_to_resources(fw, [r])
                             for a in actions:
@@ -826,8 +828,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 return previous_server_status
             else:
                 self.module.warn(
-                    "You can not upgrade a running instance %s. You need to stop the instance or use force=true."
-                    % self.hcloud_server.name
+                    f"You can not upgrade a running instance {self.hcloud_server.name}. "
+                    "You need to stop the instance or use force=true."
                 )
 
         return None
@@ -896,7 +898,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                     "choices": ["absent", "present", "restarted", "started", "stopped", "rebuild"],
                     "default": "present",
                 },
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             required_one_of=[["id", "name"]],
             mutually_exclusive=[["location", "datacenter"]],

@@ -117,12 +117,12 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
             network = self.module.params.get("network")
             self.hcloud_network = self.client.networks.get_by_name(network)
             if not self.hcloud_network:
-                self.module.fail_json(msg="Network does not exist: %s" % network)
+                self.module.fail_json(msg=f"Network does not exist: {network}")
 
             load_balancer_name = self.module.params.get("load_balancer")
             self.hcloud_load_balancer = self.client.load_balancers.get_by_name(load_balancer_name)
             if not self.hcloud_load_balancer:
-                self.module.fail_json(msg="Load balancer does not exist: %s" % load_balancer_name)
+                self.module.fail_json(msg=f"Load balancer does not exist: {load_balancer_name}")
 
             self.hcloud_load_balancer_network = None
         except HCloudException as e:
@@ -181,7 +181,7 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )
