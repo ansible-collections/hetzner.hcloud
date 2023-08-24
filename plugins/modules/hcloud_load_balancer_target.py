@@ -174,13 +174,13 @@ class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
             load_balancer_name = self.module.params.get("load_balancer")
             self.hcloud_load_balancer = self.client.load_balancers.get_by_name(load_balancer_name)
             if not self.hcloud_load_balancer:
-                self.module.fail_json(msg="Load balancer does not exist: %s" % load_balancer_name)
+                self.module.fail_json(msg=f"Load balancer does not exist: {load_balancer_name}")
 
             if self.module.params.get("type") == "server":
                 server_name = self.module.params.get("server")
                 self.hcloud_server = self.client.servers.get_by_name(server_name)
                 if not self.hcloud_server:
-                    self.module.fail_json(msg="Server not found: %s" % server_name)
+                    self.module.fail_json(msg=f"Server not found: {server_name}")
 
             self.hcloud_load_balancer_target = None
         except HCloudException as e:
@@ -290,7 +290,7 @@ class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )
