@@ -166,8 +166,8 @@ class AnsibleHCloudCertificate(AnsibleHCloud):
             elif self.module.params.get("name") is not None:
                 self.hcloud_certificate = self.client.certificates.get_by_name(self.module.params.get("name"))
 
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _create_certificate(self):
         self.module.fail_on_missing_params(required_params=["name"])
@@ -183,8 +183,8 @@ class AnsibleHCloudCertificate(AnsibleHCloud):
             if not self.module.check_mode:
                 try:
                     self.client.certificates.create(**params)
-                except HCloudException as e:
-                    self.fail_json_hcloud(e)
+                except HCloudException as exception:
+                    self.fail_json_hcloud(exception)
         else:
             self.module.fail_on_missing_params(required_params=["domain_names"])
             params["domain_names"] = self.module.params.get("domain_names")
@@ -192,8 +192,8 @@ class AnsibleHCloudCertificate(AnsibleHCloud):
                 try:
                     resp = self.client.certificates.create_managed(**params)
                     resp.action.wait_until_finished(max_retries=1000)
-                except HCloudException as e:
-                    self.fail_json_hcloud(e)
+                except HCloudException as exception:
+                    self.fail_json_hcloud(exception)
 
         self._mark_as_changed()
         self._get_certificate()
@@ -212,8 +212,8 @@ class AnsibleHCloudCertificate(AnsibleHCloud):
                 if not self.module.check_mode:
                     self.hcloud_certificate.update(labels=labels)
                 self._mark_as_changed()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
         self._get_certificate()
 
     def present_certificate(self):
@@ -229,8 +229,8 @@ class AnsibleHCloudCertificate(AnsibleHCloud):
             if not self.module.check_mode:
                 try:
                     self.client.certificates.delete(self.hcloud_certificate)
-                except HCloudException as e:
-                    self.fail_json_hcloud(e)
+                except HCloudException as exception:
+                    self.fail_json_hcloud(exception)
             self._mark_as_changed()
         self.hcloud_certificate = None
 

@@ -127,8 +127,8 @@ class AnsibleHCloudCertificateInfo(AnsibleHCloud):
             else:
                 self.hcloud_certificate_info = self.client.certificates.get_all()
 
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

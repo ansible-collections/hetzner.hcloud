@@ -139,8 +139,8 @@ class AnsibleHCloudIsoInfo(AnsibleHCloud):
                     include_wildcard_architecture=self.module.params.get("include_wildcard_architecture"),
                 )
 
-        except Exception as e:
-            self.module.fail_json(msg=e.message)
+        except Exception as exception:
+            self.module.fail_json(msg=exception.message)
 
     @classmethod
     def define_module(cls):

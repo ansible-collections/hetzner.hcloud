@@ -140,8 +140,8 @@ class AnsibleHCloudVolumeInfo(AnsibleHCloud):
             else:
                 self.hcloud_volume_info = self.client.volumes.get_all()
 
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

@@ -178,8 +178,8 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
                 self.hcloud_load_balancer = self.client.load_balancers.get_by_id(self.module.params.get("id"))
             else:
                 self.hcloud_load_balancer = self.client.load_balancers.get_by_name(self.module.params.get("name"))
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _create_load_balancer(self):
         self.module.fail_on_missing_params(required_params=["name", "load_balancer_type"])
@@ -207,8 +207,8 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
                 if delete_protection is not None:
                     self._get_load_balancer()
                     self.hcloud_load_balancer.change_protection(delete=delete_protection).wait_until_finished()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
         self._mark_as_changed()
         self._get_load_balancer()
 
@@ -253,8 +253,8 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
 
                 self._mark_as_changed()
             self._get_load_balancer()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def present_load_balancer(self):
         self._get_load_balancer()
@@ -271,8 +271,8 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
                     self.client.load_balancers.delete(self.hcloud_load_balancer)
                 self._mark_as_changed()
             self.hcloud_load_balancer = None
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

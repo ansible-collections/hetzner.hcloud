@@ -160,8 +160,8 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
                 self.hcloud_primary_ip = self.client.primary_ips.get_by_id(self.module.params.get("id"))
             else:
                 self.hcloud_primary_ip = self.client.primary_ips.get_by_name(self.module.params.get("name"))
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _create_primary_ip(self):
         self.module.fail_on_missing_params(required_params=["type", "datacenter"])
@@ -181,8 +181,8 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
                 delete_protection = self.module.params.get("delete_protection")
                 if delete_protection is not None:
                     self.hcloud_primary_ip.change_protection(delete=delete_protection).wait_until_finished()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
         self._mark_as_changed()
         self._get_primary_ip()
 
@@ -201,8 +201,8 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
                 self._mark_as_changed()
 
             self._get_primary_ip()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def present_primary_ip(self):
         self._get_primary_ip()
@@ -219,8 +219,8 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
                     self.client.primary_ips.delete(self.hcloud_primary_ip)
                 self._mark_as_changed()
             self.hcloud_primary_ip = None
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

@@ -389,8 +389,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 self.hcloud_server = self.client.servers.get_by_id(self.module.params.get("id"))
             else:
                 self.hcloud_server = self.client.servers.get_by_name(self.module.params.get("name"))
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _create_server(self):
         self.module.fail_on_missing_params(required_params=["name", "server_type", "image"])
@@ -411,16 +411,16 @@ class AnsibleHCloudServer(AnsibleHCloud):
         }
 
         if self.module.params.get("ipv4") is not None:
-            p = self.client.primary_ips.get_by_name(self.module.params.get("ipv4"))
-            if not p:
-                p = self.client.primary_ips.get_by_id(self.module.params.get("ipv4"))
-            params["public_net"].ipv4 = p
+            primary_ip = self.client.primary_ips.get_by_name(self.module.params.get("ipv4"))
+            if not primary_ip:
+                primary_ip = self.client.primary_ips.get_by_id(self.module.params.get("ipv4"))
+            params["public_net"].ipv4 = primary_ip
 
         if self.module.params.get("ipv6") is not None:
-            p = self.client.primary_ips.get_by_name(self.module.params.get("ipv6"))
-            if not p:
-                p = self.client.primary_ips.get_by_id(self.module.params.get("ipv6"))
-            params["public_net"].ipv6 = p
+            primary_ip = self.client.primary_ips.get_by_name(self.module.params.get("ipv6"))
+            if not primary_ip:
+                primary_ip = self.client.primary_ips.get_by_id(self.module.params.get("ipv6"))
+            params["public_net"].ipv6 = primary_ip
 
         if self.module.params.get("private_networks") is not None:
             _networks = []
@@ -438,13 +438,13 @@ class AnsibleHCloudServer(AnsibleHCloud):
             params["volumes"] = [Volume(id=volume_id) for volume_id in self.module.params.get("volumes")]
         if self.module.params.get("firewalls") is not None:
             params["firewalls"] = []
-            for fw in self.module.params.get("firewalls"):
-                f = self.client.firewalls.get_by_name(fw)
-                if f is not None:
+            for firewall_param in self.module.params.get("firewalls"):
+                firewall = self.client.firewalls.get_by_name(firewall_param)
+                if firewall is not None:
                     # When firewall name is not available look for id instead
-                    params["firewalls"].append(f)
+                    params["firewalls"].append(firewall)
                 else:
-                    params["firewalls"].append(self.client.firewalls.get_by_id(fw))
+                    params["firewalls"].append(self.client.firewalls.get_by_id(firewall_param))
 
         if self.module.params.get("location") is None and self.module.params.get("datacenter") is None:
             # When not given, the API will choose the location.
@@ -482,8 +482,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                         delete=delete_protection,
                         rebuild=rebuild_protection,
                     ).wait_until_finished()
-            except HCloudException as e:
-                self.fail_json_hcloud(e)
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception)
         self._mark_as_changed()
         self._get_server()
 
@@ -501,8 +501,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
         else:
             try:
                 image = self.client.images.get_by_id(self.module.params.get("image"))
-            except HCloudException as e:
-                self.fail_json_hcloud(e, msg=f"Image {self.module.params.get('image')} was not found")
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception, msg=f"Image {self.module.params.get('image')} was not found")
         if image.deprecated is not None:
             available_until = image.deprecated + timedelta(days=90)
             if self.module.params.get("allow_deprecated_image"):
@@ -525,9 +525,9 @@ class AnsibleHCloudServer(AnsibleHCloud):
         if server_type is None:
             try:
                 server_type = self.client.server_types.get_by_id(self.module.params.get("server_type"))
-            except HCloudException as e:
+            except HCloudException as exception:
                 self.fail_json_hcloud(
-                    e,
+                    exception,
                     msg=f"server_type {self.module.params.get('server_type')} was not found",
                 )
 
@@ -566,9 +566,9 @@ class AnsibleHCloudServer(AnsibleHCloud):
         if placement_group is None:
             try:
                 placement_group = self.client.placement_groups.get_by_id(self.module.params.get("placement_group"))
-            except HCloudException as e:
+            except HCloudException as exception:
                 self.fail_json_hcloud(
-                    e,
+                    exception,
                     msg=f"placement_group {self.module.params.get('placement_group')} was not found",
                 )
 
@@ -582,8 +582,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
         if primary_ip is None:
             try:
                 primary_ip = self.client.primary_ips.get_by_id(self.module.params.get(field))
-            except HCloudException as e:
-                self.fail_json_hcloud(e, msg=f"primary_ip {self.module.params.get(field)} was not found")
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception, msg=f"primary_ip {self.module.params.get(field)} was not found")
 
         return primary_ip
 
@@ -626,30 +626,35 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 for current_firewall in self.hcloud_server.public_net.firewalls:
                     if current_firewall.firewall.name not in wanted_firewalls:
                         self._mark_as_changed()
-                        if not self.module.check_mode:
-                            r = FirewallResource(type="server", server=self.hcloud_server)
-                            actions = self.client.firewalls.remove_from_resources(current_firewall.firewall, [r])
-                            for a in actions:
-                                a.wait_until_finished()
+                        if self.module.check_mode:
+                            continue
+
+                        firewall_resource = FirewallResource(type="server", server=self.hcloud_server)
+                        actions = self.client.firewalls.remove_from_resources(
+                            current_firewall.firewall,
+                            [firewall_resource],
+                        )
+                        for action in actions:
+                            action.wait_until_finished()
 
                 # Adding wanted firewalls that doesn't exist yet
-                for fname in wanted_firewalls:
+                for firewall_name in wanted_firewalls:
                     found = False
-                    for f in self.hcloud_server.public_net.firewalls:
-                        if f.firewall.name == fname:
+                    for firewall in self.hcloud_server.public_net.firewalls:
+                        if firewall.firewall.name == firewall_name:
                             found = True
                             break
 
                     if not found:
                         self._mark_as_changed()
                         if not self.module.check_mode:
-                            fw = self.client.firewalls.get_by_name(fname)
-                            if fw is None:
-                                self.module.fail_json(msg=f"firewall {fname} was not found")
-                            r = FirewallResource(type="server", server=self.hcloud_server)
-                            actions = self.client.firewalls.apply_to_resources(fw, [r])
-                            for a in actions:
-                                a.wait_until_finished()
+                            firewall = self.client.firewalls.get_by_name(firewall_name)
+                            if firewall is None:
+                                self.module.fail_json(msg=f"firewall {firewall_name} was not found")
+                            firewall_resource = FirewallResource(type="server", server=self.hcloud_server)
+                            actions = self.client.firewalls.apply_to_resources(firewall, [firewall_resource])
+                            for action in actions:
+                                action.wait_until_finished()
 
             if "placement_group" in self.module.params:
                 if self.module.params["placement_group"] is None and self.hcloud_server.placement_group is not None:
@@ -777,8 +782,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                     ).wait_until_finished()
                 self._mark_as_changed()
             self._get_server()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _set_rescue_mode(self, rescue_mode):
         if self.module.params.get("ssh_keys"):
@@ -802,8 +807,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                         self.client.servers.power_on(self.hcloud_server).wait_until_finished()
                     self._mark_as_changed()
                 self._get_server()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def stop_server(self):
         try:
@@ -813,8 +818,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                         self.client.servers.power_off(self.hcloud_server).wait_until_finished()
                     self._mark_as_changed()
                 self._get_server()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def stop_server_if_forced(self):
         previous_server_status = self.hcloud_server.status
@@ -844,8 +849,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
             self._mark_as_changed()
 
             self._get_server()
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def present_server(self):
         self._get_server()
@@ -862,8 +867,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
                     self.client.servers.delete(self.hcloud_server).wait_until_finished()
                 self._mark_as_changed()
             self.hcloud_server = None
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

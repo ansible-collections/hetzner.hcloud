@@ -170,8 +170,8 @@ class AnsibleHCloudPrimaryIPInfo(AnsibleHCloud):
             else:
                 self.hcloud_primary_ip_info = self.client.primary_ips.get_all()
 
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):

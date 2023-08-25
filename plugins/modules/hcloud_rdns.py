@@ -187,8 +187,8 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
                 self.hcloud_resource = self.client.load_balancers.get_by_name(self.module.params.get("load_balancer"))
                 if self.hcloud_resource is None:
                     self.module.fail_json(msg="The selected Load Balancer does not exist")
-        except HCloudException as e:
-            self.fail_json_hcloud(e)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     def _get_rdns(self):
         ip_address = self.module.params.get("ip_address")
@@ -268,8 +268,8 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
         if not self.module.check_mode:
             try:
                 self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
-            except HCloudException as e:
-                self.fail_json_hcloud(e)
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception)
         self._mark_as_changed()
         self._get_resource()
         self._get_rdns()
@@ -285,8 +285,8 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
             if not self.module.check_mode:
                 try:
                     self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
-                except HCloudException as e:
-                    self.fail_json_hcloud(e)
+                except HCloudException as exception:
+                    self.fail_json_hcloud(exception)
             self._mark_as_changed()
             self._get_resource()
             self._get_rdns()
@@ -306,8 +306,8 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
             if not self.module.check_mode:
                 try:
                     self.hcloud_resource.change_dns_ptr(ip=self.hcloud_rdns["ip_address"], dns_ptr=None)
-                except HCloudException as e:
-                    self.fail_json_hcloud(e)
+                except HCloudException as exception:
+                    self.fail_json_hcloud(exception)
             self._mark_as_changed()
         self.hcloud_rdns = None
 
