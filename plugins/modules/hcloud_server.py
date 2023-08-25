@@ -411,16 +411,16 @@ class AnsibleHCloudServer(AnsibleHCloud):
         }
 
         if self.module.params.get("ipv4") is not None:
-            p = self.client.primary_ips.get_by_name(self.module.params.get("ipv4"))
-            if not p:
-                p = self.client.primary_ips.get_by_id(self.module.params.get("ipv4"))
-            params["public_net"].ipv4 = p
+            primary_ip = self.client.primary_ips.get_by_name(self.module.params.get("ipv4"))
+            if not primary_ip:
+                primary_ip = self.client.primary_ips.get_by_id(self.module.params.get("ipv4"))
+            params["public_net"].ipv4 = primary_ip
 
         if self.module.params.get("ipv6") is not None:
-            p = self.client.primary_ips.get_by_name(self.module.params.get("ipv6"))
-            if not p:
-                p = self.client.primary_ips.get_by_id(self.module.params.get("ipv6"))
-            params["public_net"].ipv6 = p
+            primary_ip = self.client.primary_ips.get_by_name(self.module.params.get("ipv6"))
+            if not primary_ip:
+                primary_ip = self.client.primary_ips.get_by_id(self.module.params.get("ipv6"))
+            params["public_net"].ipv6 = primary_ip
 
         if self.module.params.get("private_networks") is not None:
             _networks = []
