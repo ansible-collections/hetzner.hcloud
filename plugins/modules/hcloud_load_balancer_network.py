@@ -129,9 +129,9 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
             self.fail_json_hcloud(exception)
 
     def _get_load_balancer_network(self):
-        for privateNet in self.hcloud_load_balancer.private_net:
-            if privateNet.network.id == self.hcloud_network.id:
-                self.hcloud_load_balancer_network = privateNet
+        for private_net in self.hcloud_load_balancer.private_net:
+            if private_net.network.id == self.hcloud_network.id:
+                self.hcloud_load_balancer_network = private_net
 
     def _create_load_balancer_network(self):
         params = {"network": self.hcloud_network}

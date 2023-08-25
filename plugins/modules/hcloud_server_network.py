@@ -143,9 +143,9 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
             self.fail_json_hcloud(exception)
 
     def _get_server_network(self):
-        for privateNet in self.hcloud_server.private_net:
-            if privateNet.network.id == self.hcloud_network.id:
-                self.hcloud_server_network = privateNet
+        for private_net in self.hcloud_server.private_net:
+            if private_net.network.id == self.hcloud_network.id:
+                self.hcloud_server_network = private_net
 
     def _create_server_network(self):
         params = {
