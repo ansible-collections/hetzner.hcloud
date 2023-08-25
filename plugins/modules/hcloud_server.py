@@ -438,13 +438,13 @@ class AnsibleHCloudServer(AnsibleHCloud):
             params["volumes"] = [Volume(id=volume_id) for volume_id in self.module.params.get("volumes")]
         if self.module.params.get("firewalls") is not None:
             params["firewalls"] = []
-            for fw in self.module.params.get("firewalls"):
-                f = self.client.firewalls.get_by_name(fw)
-                if f is not None:
+            for firewall_param in self.module.params.get("firewalls"):
+                firewall = self.client.firewalls.get_by_name(firewall_param)
+                if firewall is not None:
                     # When firewall name is not available look for id instead
-                    params["firewalls"].append(f)
+                    params["firewalls"].append(firewall)
                 else:
-                    params["firewalls"].append(self.client.firewalls.get_by_id(fw))
+                    params["firewalls"].append(self.client.firewalls.get_by_id(firewall_param))
 
         if self.module.params.get("location") is None and self.module.params.get("datacenter") is None:
             # When not given, the API will choose the location.
@@ -626,30 +626,35 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 for current_firewall in self.hcloud_server.public_net.firewalls:
                     if current_firewall.firewall.name not in wanted_firewalls:
                         self._mark_as_changed()
-                        if not self.module.check_mode:
-                            r = FirewallResource(type="server", server=self.hcloud_server)
-                            actions = self.client.firewalls.remove_from_resources(current_firewall.firewall, [r])
-                            for a in actions:
-                                a.wait_until_finished()
+                        if self.module.check_mode:
+                            continue
+
+                        firewall_resource = FirewallResource(type="server", server=self.hcloud_server)
+                        actions = self.client.firewalls.remove_from_resources(
+                            current_firewall.firewall,
+                            [firewall_resource],
+                        )
+                        for action in actions:
+                            action.wait_until_finished()
 
                 # Adding wanted firewalls that doesn't exist yet
-                for fname in wanted_firewalls:
+                for firewall_name in wanted_firewalls:
                     found = False
-                    for f in self.hcloud_server.public_net.firewalls:
-                        if f.firewall.name == fname:
+                    for firewall in self.hcloud_server.public_net.firewalls:
+                        if firewall.firewall.name == firewall_name:
                             found = True
                             break
 
                     if not found:
                         self._mark_as_changed()
                         if not self.module.check_mode:
-                            fw = self.client.firewalls.get_by_name(fname)
-                            if fw is None:
-                                self.module.fail_json(msg=f"firewall {fname} was not found")
-                            r = FirewallResource(type="server", server=self.hcloud_server)
-                            actions = self.client.firewalls.apply_to_resources(fw, [r])
-                            for a in actions:
-                                a.wait_until_finished()
+                            firewall = self.client.firewalls.get_by_name(firewall_name)
+                            if firewall is None:
+                                self.module.fail_json(msg=f"firewall {firewall_name} was not found")
+                            firewall_resource = FirewallResource(type="server", server=self.hcloud_server)
+                            actions = self.client.firewalls.apply_to_resources(firewall, [firewall_resource])
+                            for action in actions:
+                                action.wait_until_finished()
 
             if "placement_group" in self.module.params:
                 if self.module.params["placement_group"] is None and self.hcloud_server.placement_group is not None:
