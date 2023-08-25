@@ -15,6 +15,9 @@ variables:
 default:
   image: python:$PYTHON_VERSION
 
+pre-commit:
+  extends: [.pre-commit]
+
 sanity:
   stage: sanity
   allow_failure: true
