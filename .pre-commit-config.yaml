@@ -49,6 +49,17 @@ repos:
       - id: antsibull-changelog-lint
       - id: antsibull-changelog-lint-changelog-yaml
 
+  - repo: local
+    hooks:
+      - id: antsibull-docs-lint-collection
+        name: antsibull-docs lint-collection
+        description: Lint the collection docs
+        language: python
+        entry: antsibull-docs lint-collection-docs --plugin-docs .
+        pass_filenames: false
+        additional_dependencies:
+          - antsibull-docs==2.3.1
+
   - repo: https://github.com/ansible/ansible-lint
     rev: v6.18.0
     hooks:
