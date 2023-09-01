@@ -98,11 +98,3 @@ repos:
         entry: scripts/integration-test-files.sh
         pass_filenames: false
         files: ^(scripts/integration-test-files.sh$|tests/integration)
-
-      - id: check-version-variables
-        name: check version variables
-        description: Ensure the version variables are in sync
-        language: system
-        entry: scripts/version-sync.sh
-        pass_filenames: false
-        files: ^(scripts/version-sync.sh$|galaxy.yml|plugins/module_utils/version.py)
