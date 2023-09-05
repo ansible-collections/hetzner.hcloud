@@ -51,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: pip install antsibull-changelog
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.release-please.outputs.branch }}
 
