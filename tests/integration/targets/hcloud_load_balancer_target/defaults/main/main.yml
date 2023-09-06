@@ -3,4 +3,5 @@
 ---
 hcloud_server_name: "{{ hcloud_ns }}"
 hcloud_load_balancer_name: "{{ hcloud_ns }}"
-hcloud_testing_ip: "176.9.59.39"
+
+hetzner_server_ip: 142.132.203.104
