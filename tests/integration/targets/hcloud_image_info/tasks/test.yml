@@ -30,7 +30,7 @@
 
 - name: Gather hcloud_image_info with correct id
   hetzner.hcloud.hcloud_image_info:
-    id: "{{ hcloud_snapshot_id }}"
+    id: "{{ test_snapshot_id }}"
     type: snapshot
   register: result
 - name: Verify hcloud_image_info with correct id
@@ -40,7 +40,7 @@
 
 - name: Gather hcloud_image_info with wrong id
   hetzner.hcloud.hcloud_image_info:
-    id: "{{ hcloud_snapshot_id }}4321"
+    id: "{{ test_snapshot_id }}4321"
     type: snapshot
   ignore_errors: true
   register: result
