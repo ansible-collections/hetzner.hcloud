@@ -17,7 +17,6 @@
       "{{ test_server.hcloud_server.id }}"
       | awk '{print $2}'
   register: test_snapshot
-  delegate_to: localhost
 
 - name: Set test_snapshot_id
   ansible.builtin.set_fact:
