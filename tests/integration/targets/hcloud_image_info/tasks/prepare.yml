@@ -1,0 +1,23 @@
+---
+- name: Create test_server
+  hetzner.hcloud.hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cx11
+    image: ubuntu-22.04
+    state: stopped
+  register: test_server
+
+- name: Create test_snapshot
+  ansible.builtin.script:
+    cmd: >
+      {{ hcloud_cli_path }} server create-image
+      --type snapshot
+      --description "{{ hcloud_snapshot_name }}"
+      --label key=value
+      "{{ test_server.hcloud_server.id }}"
+      | awk '{print $2}'
+  register: test_snapshot
+
+- name: Set test_snapshot_id
+  ansible.builtin.set_fact:
+    test_snapshot_id: "{{ test_snapshot.stdout_lines[0] }}"
