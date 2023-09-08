@@ -1,6 +1,36 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
+
+- name: Cleanup test_server
+  hetzner.hcloud.hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
+
+
+- name: Create test_server
+  hetzner.hcloud.hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cx11
+    image: ubuntu-22.04
+    state: stopped
+  register: test_server
+
+- name: Create test_snapshot
+  ansible.builtin.script:
+    cmd: >
+      {{ hcloud_cli_path }} server create-image
+      --type snapshot
+      --description "{{ hcloud_snapshot_name }}"
+      --label key=value
+      "{{ test_server.hcloud_server.id }}"
+      | awk '{print $2}'
+  register: test_snapshot
+
+- name: Set test_snapshot_id
+  ansible.builtin.set_fact:
+    test_snapshot_id: "{{ test_snapshot.stdout_lines[0] }}"
+
 - name: test gather hcloud image infos with type system
   hcloud_image_info:
   register: hcloud_images
@@ -27,7 +57,7 @@
 - name: verify test gather hcloud image with correct label selector
   assert:
     that:
-      - hcloud_images.hcloud_image_info|selectattr('description','equalto','{{ hcloud_test_image_name }}') | list | count == 1
+      - hcloud_images.hcloud_image_info|selectattr('description','equalto','{{ hcloud_snapshot_name }}') | list | count == 1
 
 - name: test gather hcloud image infos with wrong label selector
   hcloud_image_info:
@@ -41,17 +71,17 @@
 
 - name: test gather hcloud image infos with correct id
   hcloud_image_info:
-    id: "{{hcloud_test_image_id}}"
+    id: "{{test_snapshot_id}}"
     type: snapshot
   register: hcloud_images
 - name: verify test gather hcloud image with correct id
   assert:
     that:
-      - hcloud_images.hcloud_image_info|selectattr('description','equalto','{{ hcloud_test_image_name }}') | list | count == 1
+      - hcloud_images.hcloud_image_info|selectattr('description','equalto','{{ hcloud_snapshot_name }}') | list | count == 1
 
 - name: test gather hcloud image infos with wrong id
   hcloud_image_info:
-    id: "{{hcloud_test_image_id}}1"
+    id: "{{test_snapshot_id}}1"
     type: snapshot
   ignore_errors: true
   register: result
@@ -90,3 +120,9 @@
     that:
       - hcloud_images.hcloud_image_info | selectattr('architecture','equalto','x86') | list | count == 0
       - hcloud_images.hcloud_image_info | selectattr('architecture','equalto','arm') | list | count  > 2
+
+---
+- name: Cleanup test_server
+  hetzner.hcloud.hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    state: absent

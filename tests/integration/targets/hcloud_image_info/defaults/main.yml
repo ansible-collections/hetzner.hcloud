@@ -2,6 +2,6 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 hcloud_prefix: "tests"
-hcloud_test_image_name: "always-there-snapshot"
-hcloud_test_image_id: 10164049
+hcloud_server_name: "{{ hcloud_prefix }}"
+hcloud_snapshot_name: "{{ hcloud_prefix }}"
 hcloud_test_image_name_os: "ubuntu-22.04"

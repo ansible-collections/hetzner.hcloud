@@ -123,7 +123,7 @@
   hcloud_load_balancer_target:
     type: "ip"
     load_balancer: "{{hcloud_load_balancer_name}}"
-    ip: "{{hcloud_testing_ip}}"
+    ip: "{{hetzner_server_ip}}"
     state: present
   register: load_balancer_target
 - name: verify create ip target
@@ -131,7 +131,7 @@
     that:
       - load_balancer_target is changed
       - load_balancer_target.hcloud_load_balancer_target.type == "ip"
-      - load_balancer_target.hcloud_load_balancer_target.ip == hcloud_testing_ip
+      - load_balancer_target.hcloud_load_balancer_target.ip == hetzner_server_ip
       - load_balancer_target.hcloud_load_balancer_target.load_balancer == hcloud_load_balancer_name
 
 - name: cleanup load_balancer

@@ -3,4 +3,4 @@
 ---
 hcloud_prefix: "tests"
 hcloud_network_name: "{{hcloud_prefix}}-s"
-hetzner_vswitch_id: 15311
+hetzner_vswitch_id: 43065
