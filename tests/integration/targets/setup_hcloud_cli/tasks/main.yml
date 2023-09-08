@@ -1,0 +1,16 @@
+---
+- name: Create temporary file for hcloud_cli_path
+  ansible.builtin.tempfile:
+    state: directory
+  register: _tmp_hcloud_cli
+
+- name: Download hcloud cli from Github releases
+  ansible.builtin.unarchive:
+    src: https://github.com/hetznercloud/cli/releases/download/v1.37.0/hcloud-linux-amd64.tar.gz
+    dest: "{{ _tmp_hcloud_cli.path }}"
+    remote_src: true
+    extra_opts: [hcloud]
+
+- name: Set hcloud_cli_path
+  ansible.builtin.set_fact:
+    hcloud_cli_path: "{{ _tmp_hcloud_cli.path }}/hcloud"

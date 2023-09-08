@@ -4,4 +4,4 @@
 hcloud_prefix: "tests"
 hcloud_server_name: "{{ hcloud_prefix | truncate(45, True, '', 0) }}-lb-t"
 hcloud_load_balancer_name: "{{hcloud_prefix}}-lb-target"
-hcloud_testing_ip: "176.9.59.39"
+hetzner_server_ip: "142.132.203.104"
