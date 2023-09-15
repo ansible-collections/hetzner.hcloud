@@ -4,3 +4,24 @@ line-length = 120
 [tool.isort]
 profile = "black"
 combine_as_imports = true
+
+[tool.pylint.main]
+py-version = "3.8"
+recursive = true
+jobs = 0
+
+max-line-length = 120
+ignore-paths = [
+  "plugins/module_utils/vendor",
+]
+
+[tool.pylint.reports]
+output-format = "colorized"
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "ex", "_", "ip", "id"]
+
+[tool.pylint.messages_control]
+disable = [
+  "wrong-import-position",
+]

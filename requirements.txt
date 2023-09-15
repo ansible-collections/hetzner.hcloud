@@ -1,0 +1,11 @@
+ansible-core>=2.13
+
+# Collections requirements
+netaddr
+cryptography
+
+python-dateutil
+requests
+
+# Development requirements
+pylint
