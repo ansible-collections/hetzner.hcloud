@@ -46,6 +46,15 @@ stages:
             - name: Sanity
               test: "devel/sanity/1"
 
+  - stage: Ansible_2_16
+    displayName: Sanity 2.16
+    dependsOn: []
+    jobs:
+      - template: templates/matrix.yml
+        parameters:
+          targets:
+            - name: Sanity
+              test: "2.16/sanity/1"
   - stage: Ansible_2_15
     displayName: Sanity 2.15
     dependsOn: []
@@ -88,6 +97,20 @@ stages:
           targets:
             - name: hcloud
               test: "devel/hcloud/3.9"
+
+  - stage: Hetzner_2_16
+    displayName: Hetzner 2.16
+    dependsOn: []
+    jobs:
+      - template: templates/matrix.yml
+        parameters:
+          groups:
+            - 1
+            - 2
+            - 3
+          targets:
+            - name: hcloud
+              test: "2.16/hcloud/3.9"
 
   - stage: Hetzner_2_15
     displayName: Hetzner 2.15
@@ -136,10 +159,12 @@ stages:
     condition: succeededOrFailed()
     dependsOn:
       - Ansible_devel
+      - Ansible_2_16
       - Ansible_2_15
       - Ansible_2_14
       - Ansible_2_13
       - Hetzner_devel
+      - Hetzner_2_16
       - Hetzner_2_15
       - Hetzner_2_14
       - Hetzner_2_13
