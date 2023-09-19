@@ -96,7 +96,7 @@ stages:
             - 3
           targets:
             - name: hcloud
-              test: "devel/hcloud/3.9"
+              test: "devel/hcloud/3.10"
 
   - stage: Hetzner_2_16
     displayName: Hetzner 2.16
@@ -110,7 +110,7 @@ stages:
             - 3
           targets:
             - name: hcloud
-              test: "2.16/hcloud/3.9"
+              test: "2.16/hcloud/3.10"
 
   - stage: Hetzner_2_15
     displayName: Hetzner 2.15
