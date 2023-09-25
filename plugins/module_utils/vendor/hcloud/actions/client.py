@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from .._client import Client
 
 
-class BoundAction(BoundModelBase):
+class BoundAction(BoundModelBase, Action):
     _client: ActionsClient
 
     model = Action
@@ -27,6 +27,7 @@ class BoundAction(BoundModelBase):
         while self.status == Action.STATUS_RUNNING:
             if max_retries > 0:
                 self.reload()
+                # pylint: disable=protected-access
                 time.sleep(self._client._client.poll_interval)
                 max_retries = max_retries - 1
             else:

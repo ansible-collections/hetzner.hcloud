@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from ..servers import BoundServer, Server
 
 
-class BoundVolume(BoundModelBase):
+class BoundVolume(BoundModelBase, Volume):
     _client: VolumesClient
 
     model = Volume
@@ -23,6 +23,7 @@ class BoundVolume(BoundModelBase):
         if location is not None:
             data["location"] = BoundLocation(client._client.locations, location)
 
+        # pylint: disable=import-outside-toplevel
         from ..servers import BoundServer
 
         server = data.get("server")
@@ -254,7 +255,7 @@ class VolumesClient(ClientEntityBase):
         if size <= 0:
             raise ValueError("size must be greater than 0")
 
-        if not (bool(location) ^ bool(server)):
+        if not bool(location) ^ bool(server):
             raise ValueError("only one of server or location must be provided")
 
         data: dict[str, Any] = {"name": name, "size": size}

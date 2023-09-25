@@ -74,6 +74,7 @@ class Image(BaseDomain, DomainIdentityMixin):
         "deprecated",
     )
 
+    # pylint: disable=too-many-locals
     def __init__(
         self,
         id: int | None = None,

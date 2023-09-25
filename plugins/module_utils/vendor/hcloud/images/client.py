@@ -10,12 +10,13 @@ if TYPE_CHECKING:
     from .._client import Client
 
 
-class BoundImage(BoundModelBase):
+class BoundImage(BoundModelBase, Image):
     _client: ImagesClient
 
     model = Image
 
     def __init__(self, client: ImagesClient, data: dict):
+        # pylint: disable=import-outside-toplevel
         from ..servers import BoundServer
 
         created_from = data.get("created_from")

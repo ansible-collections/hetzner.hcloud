@@ -11,12 +11,13 @@ if TYPE_CHECKING:
     from ..datacenters import BoundDatacenter, Datacenter
 
 
-class BoundPrimaryIP(BoundModelBase):
+class BoundPrimaryIP(BoundModelBase, PrimaryIP):
     _client: PrimaryIPsClient
 
     model = PrimaryIP
 
     def __init__(self, client: PrimaryIPsClient, data: dict, complete: bool = True):
+        # pylint: disable=import-outside-toplevel
         from ..datacenters import BoundDatacenter
 
         datacenter = data.get("datacenter", {})
