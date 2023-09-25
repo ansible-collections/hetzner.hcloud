@@ -96,16 +96,19 @@ hcloud_iso_info:
             sample: "2024-12-01T00:00:00+00:00"
 """
 
+from typing import List, Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
+from ..module_utils.vendor.hcloud.isos import BoundIso
 
 
 class AnsibleHCloudIsoInfo(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_iso_info")
-        self.hcloud_iso_info = None
+    represent = "hcloud_iso_info"
+
+    hcloud_iso_info: Optional[List[BoundIso]] = None
 
     def _prepare_result(self):
         tmp = []

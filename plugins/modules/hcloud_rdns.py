@@ -134,6 +134,8 @@ hcloud_rdns:
             sample: example.com
 """
 
+from typing import Any, Dict, Optional, Union
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
@@ -142,13 +144,17 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.floating_ips import BoundFloatingIP
+from ..module_utils.vendor.hcloud.load_balancers import BoundLoadBalancer
+from ..module_utils.vendor.hcloud.primary_ips import BoundPrimaryIP
+from ..module_utils.vendor.hcloud.servers import BoundServer
 
 
 class AnsibleHCloudReverseDNS(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_rdns")
-        self.hcloud_resource = None
-        self.hcloud_rdns = None
+    represent = "hcloud_rdns"
+
+    hcloud_resource: Optional[Union[BoundServer, BoundFloatingIP, BoundLoadBalancer, BoundPrimaryIP]] = None
+    hcloud_rdns: Optional[Dict[str, Any]] = None
 
     def _prepare_result(self):
         result = {

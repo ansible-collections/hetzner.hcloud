@@ -91,19 +91,23 @@ hcloud_load_balancer_network:
             sample: 10.0.0.8
 """
 
+from typing import Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.load_balancers import BoundLoadBalancer, PrivateNet
+from ..module_utils.vendor.hcloud.networks import BoundNetwork
 
 
 class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_load_balancer_network")
-        self.hcloud_network = None
-        self.hcloud_load_balancer = None
-        self.hcloud_load_balancer_network = None
+    represent = "hcloud_load_balancer_network"
+
+    hcloud_network: Optional[BoundNetwork] = None
+    hcloud_load_balancer: Optional[BoundLoadBalancer] = None
+    hcloud_load_balancer_network: Optional[PrivateNet] = None
 
     def _prepare_result(self):
         return {

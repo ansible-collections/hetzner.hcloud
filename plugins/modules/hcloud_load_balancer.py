@@ -141,17 +141,20 @@ hcloud_load_balancer:
             sample: false
 """
 
+from typing import Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.load_balancers import BoundLoadBalancer
 
 
 class AnsibleHCloudLoadBalancer(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_load_balancer")
-        self.hcloud_load_balancer = None
+    represent = "hcloud_load_balancer"
+
+    hcloud_load_balancer: Optional[BoundLoadBalancer] = None
 
     def _prepare_result(self):
         private_ipv4_address = (

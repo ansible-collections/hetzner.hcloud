@@ -161,17 +161,20 @@ hcloud_floating_ip:
                 mylabel: 123
 """
 
+from typing import Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.floating_ips import BoundFloatingIP
 
 
 class AnsibleHCloudFloatingIP(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_floating_ip")
-        self.hcloud_floating_ip = None
+    represent = "hcloud_floating_ip"
+
+    hcloud_floating_ip: Optional[BoundFloatingIP] = None
 
     def _prepare_result(self):
         server = None

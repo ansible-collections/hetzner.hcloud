@@ -97,17 +97,20 @@ hcloud_floating_ip_info:
             type: dict
 """
 
+from typing import List, Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.floating_ips import BoundFloatingIP
 
 
 class AnsibleHCloudFloatingIPInfo(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_floating_ip_info")
-        self.hcloud_floating_ip_info = None
+    represent = "hcloud_floating_ip_info"
+
+    hcloud_floating_ip_info: Optional[List[BoundFloatingIP]] = None
 
     def _prepare_result(self):
         tmp = []

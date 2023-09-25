@@ -329,25 +329,27 @@ hcloud_server:
 """
 
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.firewalls.domain import FirewallResource
-from ..module_utils.vendor.hcloud.servers.domain import (
+from ..module_utils.vendor.hcloud.firewalls import FirewallResource
+from ..module_utils.vendor.hcloud.servers import (
+    BoundServer,
     Server,
     ServerCreatePublicNetwork,
 )
-from ..module_utils.vendor.hcloud.ssh_keys.domain import SSHKey
-from ..module_utils.vendor.hcloud.volumes.domain import Volume
+from ..module_utils.vendor.hcloud.ssh_keys import SSHKey
+from ..module_utils.vendor.hcloud.volumes import Volume
 
 
 class AnsibleHCloudServer(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_server")
-        self.hcloud_server = None
+    represent = "hcloud_server"
+
+    hcloud_server: Optional[BoundServer] = None
 
     def _prepare_result(self):
         image = None if self.hcloud_server.image is None else to_native(self.hcloud_server.image.name)
