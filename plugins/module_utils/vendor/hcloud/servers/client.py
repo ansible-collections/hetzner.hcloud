@@ -42,11 +42,12 @@ if TYPE_CHECKING:
     from .domain import ServerCreatePublicNetwork
 
 
-class BoundServer(BoundModelBase):
+class BoundServer(BoundModelBase, Server):
     _client: ServersClient
 
     model = Server
 
+    # pylint: disable=too-many-locals
     def __init__(self, client: ServersClient, data: dict, complete: bool = True):
         datacenter = data.get("datacenter")
         if datacenter is not None:
@@ -540,6 +541,7 @@ class ServersClient(ClientEntityBase):
         """
         return self._get_first_by(name=name)
 
+    # pylint: disable=too-many-branches,too-many-locals
     def create(
         self,
         name: str,

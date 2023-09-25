@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from .._client import Client
 
 
-class BoundNetwork(BoundModelBase):
+class BoundNetwork(BoundModelBase, Network):
     _client: NetworksClient
 
     model = Network
@@ -26,6 +26,7 @@ class BoundNetwork(BoundModelBase):
             routes = [NetworkRoute.from_dict(route) for route in routes]
             data["routes"] = routes
 
+        # pylint: disable=import-outside-toplevel
         from ..servers import BoundServer
 
         servers = data.get("servers", [])

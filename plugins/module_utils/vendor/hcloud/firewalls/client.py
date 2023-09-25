@@ -8,6 +8,7 @@ from .domain import (
     CreateFirewallResponse,
     Firewall,
     FirewallResource,
+    FirewallResourceAppliedToResources,
     FirewallResourceLabelSelector,
     FirewallRule,
 )
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
     from .._client import Client
 
 
-class BoundFirewall(BoundModelBase):
+class BoundFirewall(BoundModelBase, Firewall):
     _client: FirewallsClient
 
     model = Firewall
@@ -39,29 +40,53 @@ class BoundFirewall(BoundModelBase):
 
         applied_to = data.get("applied_to", [])
         if applied_to:
+            # pylint: disable=import-outside-toplevel
             from ..servers import BoundServer
 
-            ats = []
-            for a in applied_to:
-                if a["type"] == FirewallResource.TYPE_SERVER:
-                    ats.append(
+            data_applied_to = []
+            for firewall_resource in applied_to:
+                applied_to_resources = None
+                if firewall_resource.get("applied_to_resources"):
+                    applied_to_resources = [
+                        FirewallResourceAppliedToResources(
+                            type=resource["type"],
+                            server=(
+                                BoundServer(
+                                    client._client.servers,
+                                    resource.get("server"),
+                                    complete=False,
+                                )
+                                if resource.get("server") is not None
+                                else None
+                            ),
+                        )
+                        for resource in firewall_resource.get("applied_to_resources")
+                    ]
+
+                if firewall_resource["type"] == FirewallResource.TYPE_SERVER:
+                    data_applied_to.append(
                         FirewallResource(
-                            type=a["type"],
+                            type=firewall_resource["type"],
                             server=BoundServer(
-                                client._client.servers, a["server"], complete=False
+                                client._client.servers,
+                                firewall_resource["server"],
+                                complete=False,
                             ),
+                            applied_to_resources=applied_to_resources,
                         )
                     )
-                elif a["type"] == FirewallResource.TYPE_LABEL_SELECTOR:
-                    ats.append(
+                elif firewall_resource["type"] == FirewallResource.TYPE_LABEL_SELECTOR:
+                    data_applied_to.append(
                         FirewallResource(
-                            type=a["type"],
+                            type=firewall_resource["type"],
                             label_selector=FirewallResourceLabelSelector(
-                                selector=a["label_selector"]["selector"]
+                                selector=firewall_resource["label_selector"]["selector"]
                             ),
+                            applied_to_resources=applied_to_resources,
                         )
                     )
-            data["applied_to"] = ats
+
+            data["applied_to"] = data_applied_to
 
         super().__init__(client, data, complete)
 
