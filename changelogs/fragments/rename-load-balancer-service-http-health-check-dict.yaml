@@ -1,4 +1,4 @@
 bugfixes:
   - >
-    hcloud_load_balancer_service - In the returned data, rename the invalid
-    `health_check.http.certificates` field to `health_check.http.status_codes`.
+    hcloud_load_balancer_service - In the returned data, the invalid
+    `health_check.http.certificates` field was renamed to `health_check.http.status_codes`.
