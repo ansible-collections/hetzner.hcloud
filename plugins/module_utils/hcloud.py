@@ -42,7 +42,8 @@ class AnsibleHCloud:
     module: AnsibleModule
 
     def __init__(self, module: AnsibleModule):
-        assert self.represent, f"represent property is not defined for {self.__class__.__name__}"
+        if not self.represent:
+            raise NotImplementedError(f"represent property is not defined for {self.__class__.__name__}")
 
         self.module = module
         self.result = {"changed": False, self.represent: None}
