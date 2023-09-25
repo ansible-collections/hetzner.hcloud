@@ -102,6 +102,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
+from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.isos import BoundIso
 
 
@@ -142,8 +143,8 @@ class AnsibleHCloudIsoInfo(AnsibleHCloud):
                     include_wildcard_architecture=self.module.params.get("include_wildcard_architecture"),
                 )
 
-        except Exception as exception:
-            self.module.fail_json(msg=exception.message)
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
     @classmethod
     def define_module(cls):
