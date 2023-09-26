@@ -20,8 +20,8 @@ def test_hcloud_fail_json_hcloud():
         "api_token": "fake_token",
         "endpoint": "https://api.hetzner.cloud/v1",
     }
-
-    hcloud = AnsibleHCloud(module, "hcloud_test")
+    AnsibleHCloud.represent = "hcloud_test"
+    hcloud = AnsibleHCloud(module)
 
     try:
         raise APIException(
