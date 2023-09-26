@@ -36,7 +36,7 @@ pool: Standard
 
 stages:
   ### Sanity
-  - stage: Ansible_devel
+  - stage: Sanity_devel
     displayName: Sanity devel
     dependsOn: []
     jobs:
@@ -44,9 +44,9 @@ stages:
         parameters:
           targets:
             - name: Sanity
-              test: "devel/sanity/1"
+              test: devel/sanity/1
 
-  - stage: Ansible_2_16
+  - stage: Sanity_2_16
     displayName: Sanity 2.16
     dependsOn: []
     jobs:
@@ -54,8 +54,9 @@ stages:
         parameters:
           targets:
             - name: Sanity
-              test: "2.16/sanity/1"
-  - stage: Ansible_2_15
+              test: 2.16/sanity/1
+
+  - stage: Sanity_2_15
     displayName: Sanity 2.15
     dependsOn: []
     jobs:
@@ -63,8 +64,9 @@ stages:
         parameters:
           targets:
             - name: Sanity
-              test: "2.15/sanity/1"
-  - stage: Ansible_2_14
+              test: 2.15/sanity/1
+
+  - stage: Sanity_2_14
     displayName: Sanity 2.14
     dependsOn: []
     jobs:
@@ -72,8 +74,9 @@ stages:
         parameters:
           targets:
             - name: Sanity
-              test: "2.14/sanity/1"
-  - stage: Ansible_2_13
+              test: 2.14/sanity/1
+
+  - stage: Sanity_2_13
     displayName: Sanity 2.13
     dependsOn: []
     jobs:
@@ -81,92 +84,133 @@ stages:
         parameters:
           targets:
             - name: Sanity
-              test: "2.13/sanity/1"
+              test: 2.13/sanity/1
 
-  ## Integration tests (remote)
-  - stage: Hetzner_devel
-    displayName: Hetzner devel
+  ### Units
+  - stage: Units_devel
+    displayName: Units devel
     dependsOn: []
     jobs:
       - template: templates/matrix.yml
         parameters:
-          groups:
-            - 1
-            - 2
-            - 3
           targets:
-            - name: hcloud
-              test: "devel/hcloud/3.10"
+            - name: (py3.10)
+              test: devel/units/3.10
 
-  - stage: Hetzner_2_16
-    displayName: Hetzner 2.16
+  - stage: Units_2_16
+    displayName: Units 2.16
     dependsOn: []
     jobs:
       - template: templates/matrix.yml
         parameters:
-          groups:
-            - 1
-            - 2
-            - 3
           targets:
-            - name: hcloud
-              test: "2.16/hcloud/3.10"
+            - name: (py3.10)
+              test: 2.16/units/3.10
 
-  - stage: Hetzner_2_15
-    displayName: Hetzner 2.15
+  - stage: Units_2_15
+    displayName: Units 2.15
     dependsOn: []
     jobs:
       - template: templates/matrix.yml
         parameters:
-          groups:
-            - 1
-            - 2
-            - 3
           targets:
-            - name: hcloud
-              test: "2.15/hcloud/3.9"
+            - name: (py3.9)
+              test: 2.15/units/3.9
 
-  - stage: Hetzner_2_14
-    displayName: Hetzner 2.14
+  - stage: Units_2_14
+    displayName: Units 2.14
     dependsOn: []
     jobs:
       - template: templates/matrix.yml
         parameters:
-          groups:
-            - 1
-            - 2
-            - 3
           targets:
-            - name: hcloud
-              test: "2.14/hcloud/3.9"
+            - name: (py3.9)
+              test: 2.14/units/3.9
 
-  - stage: Hetzner_2_13
-    displayName: Hetzner 2.13
+  - stage: Units_2_13
+    displayName: Units 2.13
     dependsOn: []
     jobs:
       - template: templates/matrix.yml
         parameters:
-          groups:
-            - 1
-            - 2
-            - 3
           targets:
-            - name: hcloud
-              test: "2.13/hcloud/3.9"
+            - name: (py3.8)
+              test: 2.13/units/3.8
+
+  ## Integration
+  - stage: Integration_devel
+    displayName: Integration devel
+    dependsOn: []
+    jobs:
+      - template: templates/matrix.yml
+        parameters:
+          groups: [1, 2, 3]
+          targets:
+            - name: (py3.10)
+              test: devel/integration/3.10
+
+  - stage: Integration_2_16
+    displayName: Integration 2.16
+    dependsOn: []
+    jobs:
+      - template: templates/matrix.yml
+        parameters:
+          groups: [1, 2, 3]
+          targets:
+            - name: (py3.10)
+              test: 2.16/integration/3.10
+
+  - stage: Integration_2_15
+    displayName: Integration 2.15
+    dependsOn: []
+    jobs:
+      - template: templates/matrix.yml
+        parameters:
+          groups: [1, 2, 3]
+          targets:
+            - name: (py3.9)
+              test: 2.15/integration/3.9
+
+  - stage: Integration_2_14
+    displayName: Integration 2.14
+    dependsOn: []
+    jobs:
+      - template: templates/matrix.yml
+        parameters:
+          groups: [1, 2, 3]
+          targets:
+            - name: (py3.9)
+              test: 2.14/integration/3.9
+
+  - stage: Integration_2_13
+    displayName: Integration 2.13
+    dependsOn: []
+    jobs:
+      - template: templates/matrix.yml
+        parameters:
+          groups: [1, 2, 3]
+          targets:
+            - name: (py3.8)
+              test: 2.13/integration/3.8
 
   ### Finally
   - stage: Summary
     condition: succeededOrFailed()
     dependsOn:
-      - Ansible_devel
-      - Ansible_2_16
-      - Ansible_2_15
-      - Ansible_2_14
-      - Ansible_2_13
-      - Hetzner_devel
-      - Hetzner_2_16
-      - Hetzner_2_15
-      - Hetzner_2_14
-      - Hetzner_2_13
+      - Sanity_devel
+      - Sanity_2_16
+      - Sanity_2_15
+      - Sanity_2_14
+      - Sanity_2_13
+      - Units_devel
+      - Units_2_16
+      - Units_2_15
+      - Units_2_14
+      - Units_2_13
+      - Integration_devel
+      - Integration_2_16
+      - Integration_2_15
+      - Integration_2_14
+      - Integration_2_13
     jobs:
       - template: templates/coverage.yml

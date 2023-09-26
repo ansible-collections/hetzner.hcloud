@@ -74,7 +74,7 @@ else
 fi
 
 # STAR: HACK install dependencies
-retry pip install -r tests/integration/requirements.txt -c tests/integration/constraints.txt
+retry pip install -r tests/integration/requirements.txt -c tests/constraints.txt
 retry ansible-galaxy -vvv collection install -r tests/requirements.yml
 
 retry pip install rstcheck
