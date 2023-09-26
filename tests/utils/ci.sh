@@ -132,7 +132,7 @@ case "$test_name" in
       --changed-all-target none \
       --changed-all-mode include \
       $unstable_args \
-      "shippable/hcloud/group$test_group/"
+      "azp/group$test_group/"
     ;;
 
   *)
