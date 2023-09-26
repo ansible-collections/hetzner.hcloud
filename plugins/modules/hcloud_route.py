@@ -87,19 +87,21 @@ hcloud_route:
             sample: 10.0.0.1
 """
 
+from typing import Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.networks.domain import NetworkRoute
+from ..module_utils.vendor.hcloud.networks import BoundNetwork, NetworkRoute
 
 
 class AnsibleHCloudRoute(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_route")
-        self.hcloud_network = None
-        self.hcloud_route = None
+    represent = "hcloud_route"
+
+    hcloud_network: Optional[BoundNetwork] = None
+    hcloud_route: Optional[NetworkRoute] = None
 
     def _prepare_result(self):
         return {

@@ -135,24 +135,28 @@ hcloud_load_balancer_target:
             returned: always
 """
 
+from typing import Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import APIException, HCloudException
-from ..module_utils.vendor.hcloud.load_balancers.domain import (
+from ..module_utils.vendor.hcloud.load_balancers import (
+    BoundLoadBalancer,
     LoadBalancerTarget,
     LoadBalancerTargetIP,
     LoadBalancerTargetLabelSelector,
 )
+from ..module_utils.vendor.hcloud.servers import BoundServer
 
 
 class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_load_balancer_target")
-        self.hcloud_load_balancer = None
-        self.hcloud_load_balancer_target = None
-        self.hcloud_server = None
+    represent = "hcloud_load_balancer_target"
+
+    hcloud_load_balancer: Optional[BoundLoadBalancer] = None
+    hcloud_load_balancer_target: Optional[LoadBalancerTarget] = None
+    hcloud_server: Optional[BoundServer] = None
 
     def _prepare_result(self):
         result = {

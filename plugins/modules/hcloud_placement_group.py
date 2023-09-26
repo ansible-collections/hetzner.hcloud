@@ -107,17 +107,20 @@ hcloud_placement_group:
                 - 4712
 """
 
+from typing import Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.placement_groups import BoundPlacementGroup
 
 
 class AnsibleHCloudPlacementGroup(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_placement_group")
-        self.hcloud_placement_group = None
+    represent = "hcloud_placement_group"
+
+    hcloud_placement_group: Optional[BoundPlacementGroup] = None
 
     def _prepare_result(self):
         return {

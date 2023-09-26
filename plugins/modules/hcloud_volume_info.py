@@ -92,17 +92,20 @@ hcloud_volume_info:
             type: dict
 """
 
+from typing import List, Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.volumes import BoundVolume
 
 
 class AnsibleHCloudVolumeInfo(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_volume_info")
-        self.hcloud_volume_info = None
+    represent = "hcloud_volume_info"
+
+    hcloud_volume_info: Optional[List[BoundVolume]] = None
 
     def _prepare_result(self):
         tmp = []

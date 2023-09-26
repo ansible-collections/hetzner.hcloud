@@ -6,7 +6,7 @@ from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import Ansib
 from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
     APIException,
 )
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.actions.domain import (
+from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.actions import (
     Action,
     ActionException,
     ActionFailedException,

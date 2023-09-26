@@ -116,17 +116,20 @@ hcloud_network:
                 mylabel: 123
 """
 
+from typing import Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.networks import BoundNetwork
 
 
 class AnsibleHCloudNetwork(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_network")
-        self.hcloud_network = None
+    represent = "hcloud_network"
+
+    hcloud_network: Optional[BoundNetwork] = None
 
     def _prepare_result(self):
         return {

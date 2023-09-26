@@ -74,17 +74,20 @@ hcloud_datacenter_info:
             sample: fsn1
 """
 
+from typing import List, Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.datacenters import BoundDatacenter
 
 
 class AnsibleHCloudDatacenterInfo(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_datacenter_info")
-        self.hcloud_datacenter_info = None
+    represent = "hcloud_datacenter_info"
+
+    hcloud_datacenter_info: Optional[List[BoundDatacenter]] = None
 
     def _prepare_result(self):
         tmp = []

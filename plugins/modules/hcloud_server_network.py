@@ -112,19 +112,23 @@ hcloud_server_network:
             sample: [10.1.0.1, ...]
 """
 
+from typing import Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import APIException, HCloudException
+from ..module_utils.vendor.hcloud.networks import BoundNetwork
+from ..module_utils.vendor.hcloud.servers import BoundServer, PrivateNet
 
 
 class AnsibleHCloudServerNetwork(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_server_network")
-        self.hcloud_network = None
-        self.hcloud_server = None
-        self.hcloud_server_network = None
+    represent = "hcloud_server_network"
+
+    hcloud_network: Optional[BoundNetwork] = None
+    hcloud_server: Optional[BoundServer] = None
+    hcloud_server_network: Optional[PrivateNet] = None
 
     def _prepare_result(self):
         return {

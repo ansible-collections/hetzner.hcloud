@@ -4,11 +4,17 @@
 
 
 import traceback
+from typing import Any, Dict, Optional
 
-from ansible.module_utils.basic import env_fallback, missing_required_lib
+from ansible.module_utils.basic import (
+    AnsibleModule as AnsibleModuleBase,
+    env_fallback,
+    missing_required_lib,
+)
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.vendor import hcloud
+from ..module_utils.vendor.hcloud import APIException, Client, HCloudException
+from ..module_utils.vendor.hcloud.actions import ActionException
 from .version import version
 
 HAS_REQUESTS = True
@@ -25,10 +31,21 @@ except ImportError:
     HAS_DATEUTIL = False
 
 
+# Provide typing definitions to the AnsibleModule class
+class AnsibleModule(AnsibleModuleBase):
+    params: dict
+
+
 class AnsibleHCloud:
-    def __init__(self, module, represent):
+    represent: str
+
+    module: AnsibleModule
+
+    def __init__(self, module: AnsibleModule):
+        if not self.represent:
+            raise NotImplementedError(f"represent property is not defined for {self.__class__.__name__}")
+
         self.module = module
-        self.represent = represent
         self.result = {"changed": False, self.represent: None}
         if not HAS_REQUESTS:
             module.fail_json(msg=missing_required_lib("requests"))
@@ -36,7 +53,13 @@ class AnsibleHCloud:
             module.fail_json(msg=missing_required_lib("python-dateutil"))
         self._build_client()
 
-    def fail_json_hcloud(self, exception, msg=None, params=None, **kwargs):
+    def fail_json_hcloud(
+        self,
+        exception: HCloudException,
+        msg: Optional[str] = None,
+        params: Any = None,
+        **kwargs,
+    ) -> None:
         last_traceback = traceback.format_exc()
 
         failure = {}
@@ -44,12 +67,12 @@ class AnsibleHCloud:
         if params is not None:
             failure["params"] = params
 
-        if isinstance(exception, hcloud.APIException):
+        if isinstance(exception, APIException):
             failure["message"] = exception.message
             failure["code"] = exception.code
             failure["details"] = exception.details
 
-        elif isinstance(exception, hcloud.actions.domain.ActionException):
+        elif isinstance(exception, ActionException):
             failure["action"] = {k: getattr(exception.action, k) for k in exception.action.__slots__}
 
         exception_message = to_native(exception)
@@ -60,15 +83,15 @@ class AnsibleHCloud:
 
         self.module.fail_json(msg=msg, exception=last_traceback, failure=failure, **kwargs)
 
-    def _build_client(self):
-        self.client = hcloud.Client(
+    def _build_client(self) -> None:
+        self.client = Client(
             token=self.module.params["api_token"],
             api_endpoint=self.module.params["endpoint"],
             application_name="ansible-module",
             application_version=version,
         )
 
-    def _mark_as_changed(self):
+    def _mark_as_changed(self) -> None:
         self.result["changed"] = True
 
     @classmethod
@@ -80,17 +103,17 @@ class AnsibleHCloud:
                 "fallback": (env_fallback, ["HCLOUD_TOKEN"]),
                 "no_log": True,
             },
-            "endpoint": {"type": "str", "default": "https://api.hetzner.cloud/v1"},
+            "endpoint": {
+                "type": "str",
+                "default": "https://api.hetzner.cloud/v1",
+            },
         }
 
-    def _prepare_result(self):
-        """Prepare the result for every module
-
-        :return: dict
-        """
+    def _prepare_result(self) -> Dict[str, Any]:
+        """Prepare the result for every module"""
         return {}
 
-    def get_result(self):
+    def get_result(self) -> Dict[str, Any]:
         if getattr(self, self.represent) is not None:
             self.result[self.represent] = self._prepare_result()
         return self.result

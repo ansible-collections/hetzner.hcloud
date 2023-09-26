@@ -83,17 +83,20 @@ hcloud_certificate_info:
             returned: always
             type: dict
 """
+from typing import List, Optional
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.certificates import BoundCertificate
 
 
 class AnsibleHCloudCertificateInfo(AnsibleHCloud):
-    def __init__(self, module):
-        super().__init__(module, "hcloud_certificate_info")
-        self.hcloud_certificate_info = None
+    represent = "hcloud_certificate_info"
+
+    hcloud_certificate_info: Optional[List[BoundCertificate]] = None
 
     def _prepare_result(self):
         certificates = []
