@@ -23,7 +23,7 @@ variables:
   - name: pipelinesCoverage
     value: coverage
   - name: entryPoint
-    value: tests/utils/shippable/shippable.sh
+    value: tests/utils/ci.sh
   - name: fetchDepth
     value: 0
 
@@ -44,7 +44,7 @@ stages:
         parameters:
           targets:
             - name: Sanity
-              test: devel/sanity/1
+              test: devel/sanity
 
   - stage: Sanity_2_16
     displayName: Sanity 2.16
@@ -54,7 +54,7 @@ stages:
         parameters:
           targets:
             - name: Sanity
-              test: 2.16/sanity/1
+              test: 2.16/sanity
 
   - stage: Sanity_2_15
     displayName: Sanity 2.15
@@ -64,7 +64,7 @@ stages:
         parameters:
           targets:
             - name: Sanity
-              test: 2.15/sanity/1
+              test: 2.15/sanity
 
   - stage: Sanity_2_14
     displayName: Sanity 2.14
@@ -74,7 +74,7 @@ stages:
         parameters:
           targets:
             - name: Sanity
-              test: 2.14/sanity/1
+              test: 2.14/sanity
 
   - stage: Sanity_2_13
     displayName: Sanity 2.13
@@ -84,7 +84,7 @@ stages:
         parameters:
           targets:
             - name: Sanity
-              test: 2.13/sanity/1
+              test: 2.13/sanity
 
   ### Units
   - stage: Units_devel
