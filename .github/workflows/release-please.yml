@@ -24,11 +24,6 @@ jobs:
           release-type: simple
           package-name: hetzner.hcloud
 
-          # Skip Azure pipeline for release-please commits
-          pull-request-title-pattern: |-
-            chore${scope}: release${component} ${version}
-            [skip azp]
-
           # We use antsibull-changelog for the actual user-facing changelog.
           changelog-path: changelogs/dev-changelog.md
 
@@ -77,8 +72,6 @@ jobs:
           git config user.email "45457231+hcloud-bot@users.noreply.github.com"
 
           git add changelogs/ CHANGELOG.rst
-          git commit \
-            -m "chore(main): changelog for version ${{ needs.release-please.outputs.version }}" \
-            -m "[skip azp]"
+          git commit -m "chore(main): changelog for version ${{ needs.release-please.outputs.version }}"
 
           git push origin ${{ needs.release-please.outputs.branch }}
