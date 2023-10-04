@@ -61,7 +61,7 @@ repos:
           - antsibull-docs==2.3.1
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v6.20.0
+    rev: v6.20.3
     hooks:
       - id: ansible-lint
         name: ansible-lint
