@@ -314,6 +314,10 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
                         description={"type": "str"},
                     ),
                     required_together=[["direction", "protocol"]],
+                    required_if=[
+                        ["protocol", "udp", ["port"]],
+                        ["protocol", "tcp", ["port"]],
+                    ],
                 ),
                 labels={"type": "dict"},
                 state={

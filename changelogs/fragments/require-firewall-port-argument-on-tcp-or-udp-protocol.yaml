@@ -1,0 +1,2 @@
+bugfixes:
+  - hcloud_firewall - The port argument is required when the firewall rule protocol is `udp` or `tcp`.
