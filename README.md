@@ -1,4 +1,4 @@
-[![Galaxy version](https://img.shields.io/badge/dynamic/json?label=galaxy&prefix=v&url=https://galaxy.ansible.com/api/v2/collections/hetzner/hcloud/&query=latest_version.version)](https://galaxy.ansible.com/hetzner/hcloud)
+[![Galaxy version](https://img.shields.io/badge/dynamic/json?label=galaxy&prefix=v&url=https://old-galaxy.ansible.com/api/v2/collections/hetzner/hcloud/&query=latest_version.version)](https://galaxy.ansible.com/ui/repo/published/hetzner/hcloud)
 [![GitHub version](https://img.shields.io/github/v/release/ansible-collections/hetzner.hcloud)](https://github.com/ansible-collections/hetzner.hcloud/releases)
 [![Build Status](https://dev.azure.com/ansible/hetzner.hcloud/_apis/build/status/ci?branchName=main)](https://dev.azure.com/ansible/hetzner.hcloud/_build?definitionId=35)
 [![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/hetzner.hcloud)](https://codecov.io/gh/ansible-collections/hetzner.hcloud)
