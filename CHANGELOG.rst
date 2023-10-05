@@ -5,6 +5,15 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v2.1.2
+======
+
+Bugfixes
+--------
+
+- hcloud_firewall - The port argument is required when the firewall rule protocol is `udp` or `tcp`.
+- hcloud_load_balancer_service - In the returned data, the invalid `health_check.http.certificates` field was renamed to `health_check.http.status_codes`.
+
 v2.1.1
 ======
 

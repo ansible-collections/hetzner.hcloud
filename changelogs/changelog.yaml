@@ -408,3 +408,16 @@ releases:
     fragments:
     - fix-string-formatting-error-on-deprecated-server-type-warning.yml
     release_date: '2023-08-23'
+  2.1.2:
+    changes:
+      bugfixes:
+      - hcloud_firewall - The port argument is required when the firewall rule protocol
+        is `udp` or `tcp`.
+      - 'hcloud_load_balancer_service - In the returned data, the invalid `health_check.http.certificates`
+        field was renamed to `health_check.http.status_codes`.
+
+        '
+    fragments:
+    - rename-load-balancer-service-http-health-check-dict.yaml
+    - require-firewall-port-argument-on-tcp-or-udp-protocol.yaml
+    release_date: '2023-10-05'
