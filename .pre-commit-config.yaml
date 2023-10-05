@@ -65,6 +65,7 @@ repos:
     hooks:
       - id: ansible-lint
         name: ansible-lint
+        args: [--offline]
 
   - repo: local
     hooks:
