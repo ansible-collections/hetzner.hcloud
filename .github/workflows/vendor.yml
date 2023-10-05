@@ -1,0 +1,26 @@
+name: Vendor
+
+on:
+  push:
+    branches: [main, stable-1]
+    paths:
+      - plugins/module_utils/vendor/**
+      - scripts/vendor.py
+  pull_request:
+    paths:
+      - plugins/module_utils/vendor/**
+      - scripts/vendor.py
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Ensure vendors are not diverging
+        run: make vendor-check

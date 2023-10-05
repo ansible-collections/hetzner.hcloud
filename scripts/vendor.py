@@ -10,6 +10,7 @@ move the modified files at the vendor location `HCLOUD_VENDOR_PATH`.
 
 import logging
 import re
+from argparse import ArgumentParser
 from pathlib import Path
 from shutil import move, rmtree
 from subprocess import check_call
@@ -80,7 +81,7 @@ def apply_code_modifications(source_path: Path):
         file.write_text(content)
 
 
-def main() -> int:
+def main(check: bool = False) -> int:
     with TemporaryDirectory() as tmp_dir:
         tmp_dir_path = Path(tmp_dir)
         logger.info("Created temporary directory %s", tmp_dir_path)
@@ -95,9 +96,17 @@ def main() -> int:
         move(tmp_dir_path / "hcloud", HCLOUD_VENDOR_PATH)
         logger.info("Bundled the modified sources files in the collection")
 
+    if check:
+        check_call(["git", "diff", "--exit-code", "--", HCLOUD_VENDOR_PATH])
+
     return 0
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(levelname)-8s: %(message)s")
-    raise SystemExit(main())
+
+    parser = ArgumentParser()
+    parser.add_argument("--check", action="store_true", default=False)
+    args = parser.parse_args()
+
+    raise SystemExit(main(check=args.check))

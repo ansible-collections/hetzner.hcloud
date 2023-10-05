@@ -83,14 +83,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: check-hcloud-vendor
-        name: check hcloud vendor
-        description: Ensure the hcloud vendored files are in sync
-        language: python
-        entry: python3 scripts/vendor.py
-        pass_filenames: false
-        files: ^scripts/vendor.py$
-
       - id: check-integration-test-files
         name: check integration test files
         description: Ensure the integration test files are in sync
