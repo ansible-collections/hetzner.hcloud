@@ -14,6 +14,9 @@ venv:
 lint: venv
 	venv/bin/pylint plugins
 
+docs-lint:
+	venv/bin/antsibull-docs lint-collection-docs --plugin-docs .
+
 clean:
 	git clean -xdf \
 		-e tests/integration/cloud-config-hcloud.ini
