@@ -14,7 +14,7 @@ venv:
 lint: venv
 	venv/bin/pylint plugins
 
-lint-docs:
+lint-docs: venv
 	venv/bin/antsibull-docs lint-collection-docs --plugin-docs .
 
 clean:
