@@ -23,6 +23,7 @@ jobs:
           token: ${{ secrets.HCLOUD_BOT_TOKEN }}
           release-type: simple
           package-name: hetzner.hcloud
+          include-v-in-tag: false
 
           # We use antsibull-changelog for the actual user-facing changelog.
           changelog-path: changelogs/dev-changelog.md
