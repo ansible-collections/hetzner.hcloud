@@ -25,7 +25,6 @@ repos:
     hooks:
       - id: prettier
         files: \.(md|ya?ml)$
-        exclude: ^changelogs/changelog.yaml$
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.14.0
@@ -49,22 +48,12 @@ repos:
       - id: antsibull-changelog-lint
       - id: antsibull-changelog-lint-changelog-yaml
 
-  - repo: local
-    hooks:
-      - id: antsibull-docs-lint-collection
-        name: antsibull-docs lint-collection
-        description: Lint the collection docs
-        language: python
-        entry: antsibull-docs lint-collection-docs --plugin-docs .
-        pass_filenames: false
-        additional_dependencies:
-          - antsibull-docs==2.3.1
-
   - repo: https://github.com/ansible/ansible-lint
     rev: v6.20.3
     hooks:
       - id: ansible-lint
         name: ansible-lint
+        args: [--offline]
 
   - repo: local
     hooks:
@@ -83,14 +72,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: check-hcloud-vendor
-        name: check hcloud vendor
-        description: Ensure the hcloud vendored files are in sync
-        language: python
-        entry: python3 scripts/vendor.py
-        pass_filenames: false
-        files: ^scripts/vendor.py$
-
       - id: check-integration-test-files
         name: check integration test files
         description: Ensure the integration test files are in sync

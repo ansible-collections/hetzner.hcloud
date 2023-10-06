@@ -9,3 +9,4 @@ requests
 
 # Development requirements
 pylint
+antsibull-docs>=2.5.0,<2.6
