@@ -2,11 +2,10 @@
 
 ## [2.1.2](https://github.com/ansible-collections/hetzner.hcloud/compare/2.1.1...v2.1.2) (2023-10-05)
 
-
 ### Bug Fixes
 
-* firewall port argument is required with udp or tcp ([#345](https://github.com/ansible-collections/hetzner.hcloud/issues/345)) ([76c1abf](https://github.com/ansible-collections/hetzner.hcloud/commit/76c1abf44764778aa6e11bae57df5ee5f69a947b))
-* invalid field in load_balancer_service health_check.http return data ([#333](https://github.com/ansible-collections/hetzner.hcloud/issues/333)) ([fb35516](https://github.com/ansible-collections/hetzner.hcloud/commit/fb35516e7609fad4dd3fa75138dbc603f83d9aa0))
+- firewall port argument is required with udp or tcp ([#345](https://github.com/ansible-collections/hetzner.hcloud/issues/345)) ([76c1abf](https://github.com/ansible-collections/hetzner.hcloud/commit/76c1abf44764778aa6e11bae57df5ee5f69a947b))
+- invalid field in load_balancer_service health_check.http return data ([#333](https://github.com/ansible-collections/hetzner.hcloud/issues/333)) ([fb35516](https://github.com/ansible-collections/hetzner.hcloud/commit/fb35516e7609fad4dd3fa75138dbc603f83d9aa0))
 
 ## Dev Changelog
 
