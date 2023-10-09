@@ -14,8 +14,12 @@ venv:
 lint: venv
 	venv/bin/pylint plugins
 
-lint-docs:
-	venv/bin/antsibull-docs lint-collection-docs --plugin-docs .
+lint-docs: venv
+	venv/bin/antsibull-docs lint-collection-docs \
+		--plugin-docs \
+		--validate-collection-refs self \
+		--skip-rstcheck \
+		.
 
 clean:
 	git clean -xdf \
