@@ -1,12 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    ":enablePreCommit",
-
-    ":semanticCommitTypeAll(deps)",
-    ":semanticCommitScopeDisabled"
-  ],
+  "extends": ["github>hetznercloud/.github//renovate/default"],
   "regexManagers": [
     {
       "fileMatch": ["^scripts/vendor.py$"],
