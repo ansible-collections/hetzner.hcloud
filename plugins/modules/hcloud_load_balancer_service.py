@@ -20,7 +20,7 @@ version_added: 0.1.0
 options:
     load_balancer:
         description:
-            - The Name of the Hetzner Cloud Load Balancer the service belongs to
+            - Name or ID of the Hetzner Cloud Load Balancer the service belongs to
         type: str
         required: true
     listen_port:
@@ -343,11 +343,10 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
 
     def _get_load_balancer(self):
         try:
-            load_balancer_name = self.module.params.get("load_balancer")
-            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(load_balancer_name)
-            if not self.hcloud_load_balancer:
-                self.module.fail_json(msg=f"Load balancer does not exist: {load_balancer_name}")
-
+            self.hcloud_load_balancer = self._client_get_by_name_or_id(
+                "load_balancers",
+                self.module.params.get("load_balancer"),
+            )
             self._get_load_balancer_service()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)

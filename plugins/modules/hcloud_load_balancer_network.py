@@ -20,12 +20,12 @@ version_added: 0.1.0
 options:
     network:
         description:
-            - The name of the Hetzner Cloud Networks.
+            - Name or ID of the Hetzner Cloud Networks.
         type: str
         required: true
     load_balancer:
         description:
-            - The name of the Hetzner Cloud Load Balancer.
+            - Name or ID of the Hetzner Cloud Load Balancer.
         type: str
         required: true
     ip:
@@ -118,15 +118,14 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
 
     def _get_load_balancer_and_network(self):
         try:
-            network = self.module.params.get("network")
-            self.hcloud_network = self.client.networks.get_by_name(network)
-            if not self.hcloud_network:
-                self.module.fail_json(msg=f"Network does not exist: {network}")
-
-            load_balancer_name = self.module.params.get("load_balancer")
-            self.hcloud_load_balancer = self.client.load_balancers.get_by_name(load_balancer_name)
-            if not self.hcloud_load_balancer:
-                self.module.fail_json(msg=f"Load balancer does not exist: {load_balancer_name}")
+            self.hcloud_network = self._client_get_by_name_or_id(
+                "networks",
+                self.module.params.get("network"),
+            )
+            self.hcloud_load_balancer = self._client_get_by_name_or_id(
+                "load_balancers",
+                self.module.params.get("load_balancer"),
+            )
 
             self.hcloud_load_balancer_network = None
         except HCloudException as exception:

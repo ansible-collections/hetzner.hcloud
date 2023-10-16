@@ -4,7 +4,7 @@
 
 
 import traceback
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from ansible.module_utils.basic import (
     AnsibleModule as AnsibleModuleBase,
@@ -90,6 +90,27 @@ class AnsibleHCloud:
             application_name="ansible-module",
             application_version=version,
         )
+
+    def _client_get_by_name_or_id(self, resource: str, param: Union[str, int]):
+        """
+        Get a resource by name, and if not found by its ID.
+
+        :param resource: Name of the resource client that implements both `get_by_name` and `get_by_id` methods
+        :param param: Name or ID of the resource to query
+        """
+        resource_client = getattr(self.client, resource)
+
+        result = resource_client.get_by_name(param)
+        if result is not None:
+            return result
+
+        # If the param is not a valid ID, prevent an unnecessary call to the API.
+        try:
+            int(param)
+        except ValueError:
+            self.module.fail_json(msg=f"resource ({resource.rstrip('s')}) does not exist: {param}")
+
+        return resource_client.get_by_id(param)
 
     def _mark_as_changed(self) -> None:
         self.result["changed"] = True
