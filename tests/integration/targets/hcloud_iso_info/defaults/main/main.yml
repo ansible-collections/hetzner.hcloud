@@ -5,8 +5,3 @@ hcloud_iso_id: 551
 hcloud_iso_name: systemrescuecd-x86-5.2.2.iso
 hcloud_iso_type: public
 hcloud_iso_architecture: x86
-
-hcloud_iso_deprecated_id: 10433
-hcloud_iso_deprecated_name: vyos-1.4-rolling-202111150317-amd64.iso
-hcloud_iso_deprecated_announced: "2023-10-05T08:27:01+00:00"
-hcloud_iso_deprecated_unavailable_after: "2023-11-05T08:27:01+00:00"

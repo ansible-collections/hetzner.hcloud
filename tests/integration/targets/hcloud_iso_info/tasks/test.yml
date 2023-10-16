@@ -30,6 +30,8 @@
       - result.hcloud_iso_info[0].name == "{{ hcloud_iso_name }}"
       - result.hcloud_iso_info[0].architecture == "{{ hcloud_iso_architecture }}"
       - result.hcloud_iso_info[0].type == "{{ hcloud_iso_type }}"
+      - result.hcloud_iso_info[0].deprecated is none
+      - result.hcloud_iso_info[0].deprecation is none
 
 - name: Gather hcloud_iso_info with wrong id
   hetzner.hcloud.hcloud_iso_info:
@@ -69,16 +71,3 @@
       - result.hcloud_iso_info | list | count > 2
       - result.hcloud_iso_info | selectattr('architecture', 'equalto', 'x86') | list | count == 0
       - result.hcloud_iso_info | selectattr('architecture', 'equalto', 'arm') | list | count  > 2
-
-- name: Gather hcloud_iso_info with deprecation
-  hetzner.hcloud.hcloud_iso_info:
-    id: "{{ hcloud_iso_deprecated_id }}"
-  register: result
-- name: Verify hcloud_iso_info with correct id
-  ansible.builtin.assert:
-    that:
-      - result.hcloud_iso_info | list | count == 1
-      - result.hcloud_iso_info[0].id == "{{ hcloud_iso_deprecated_id }}"
-      - result.hcloud_iso_info[0].name == "{{ hcloud_iso_deprecated_name }}"
-      - result.hcloud_iso_info[0].deprecation.announced == "{{ hcloud_iso_deprecated_announced }}"
-      - result.hcloud_iso_info[0].deprecation.unavailable_after == "{{ hcloud_iso_deprecated_unavailable_after }}"
