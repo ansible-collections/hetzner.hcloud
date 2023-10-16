@@ -36,7 +36,7 @@ test_group="${entry_point_args[3]:-}"
 export PYTHONIOENCODING="utf-8"
 export PIP_DISABLE_PIP_VERSION_CHECK=true
 export PIP_NO_WARN_SCRIPT_LOCATION=false # Negative options are a bit weird: https://pip.pypa.io/en/stable/topics/configuration/#boolean-options
-export ANSIBLE_COLLECTIONS_PATHS="$PWD/../.."
+export ANSIBLE_COLLECTIONS_PATH="$PWD/../.."
 
 command -v python
 python -V
@@ -82,7 +82,7 @@ fi
 pip install rstcheck
 
 # Ensure we can write other collections to this dir
-sudo chown "$(whoami)" "$ANSIBLE_COLLECTIONS_PATHS"
+sudo chown "$(whoami)" "$ANSIBLE_COLLECTIONS_PATH"
 
 pip install -r tests/integration/requirements.txt -c tests/constraints.txt
 ansible-galaxy -vvv collection install -r tests/requirements.yml
