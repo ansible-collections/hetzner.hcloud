@@ -90,10 +90,33 @@ hcloud_iso_info:
             description: >
                 ISO 8601 timestamp of deprecation, None if ISO is still available.
                 After the deprecation time it will no longer be possible to attach the
-                ISO to servers.
+                ISO to servers. This field is deprecated. Use `deprecation` instead.
             returned: always
             type: str
             sample: "2024-12-01T00:00:00+00:00"
+        deprecation:
+            description: >
+                Describes if, when & how the resources was deprecated. If this field is
+                set to None the resource is not deprecated. If it has a value, it is
+                considered deprecated.
+            returned: if the resource is deprecated
+            type: dict
+            contains:
+                announced:
+                    description: Date of when the deprecation was announced.
+                    returned: always
+                    type: str
+                    sample: "2021-11-01T00:00:00+00:00"
+                unavailable_after:
+                    description: >
+                      After the time in this field, the resource will not be available
+                      from the general listing endpoint of the resource type, and it can
+                      not be used in new resources. For example, if this is an image,
+                      you can not create new servers with this image after the mentioned
+                      date.
+                    returned: always
+                    type: str
+                    sample: "2021-12-01T00:00:00+00:00"
 """
 
 from typing import List, Optional
@@ -126,6 +149,12 @@ class AnsibleHCloudIsoInfo(AnsibleHCloud):
                     "type": iso_info.type,
                     "architecture": iso_info.architecture,
                     "deprecated": iso_info.deprecated,
+                    "deprecation": {
+                        "announced": iso_info.deprecation.announced.isoformat(),
+                        "unavailable_after": iso_info.deprecation.unavailable_after.isoformat(),
+                    }
+                    if iso_info.deprecation is not None
+                    else None,
                 }
             )
 

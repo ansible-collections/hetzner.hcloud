@@ -30,6 +30,8 @@
       - result.hcloud_iso_info[0].name == "{{ hcloud_iso_name }}"
       - result.hcloud_iso_info[0].architecture == "{{ hcloud_iso_architecture }}"
       - result.hcloud_iso_info[0].type == "{{ hcloud_iso_type }}"
+      - result.hcloud_iso_info[0].deprecated is none
+      - result.hcloud_iso_info[0].deprecation is none
 
 - name: Gather hcloud_iso_info with wrong id
   hetzner.hcloud.hcloud_iso_info:
