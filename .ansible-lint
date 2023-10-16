@@ -20,7 +20,6 @@ exclude_paths:
   - tests/integration/targets/hcloud_server
   - tests/integration/targets/hcloud_server_network
   - tests/integration/targets/hcloud_ssh_key
-  - tests/integration/targets/hcloud_subnetwork
   - tests/integration/targets/hcloud_volume
   - tests/integration/targets/setup_selfsigned_certificate
   - tests/integration/targets/setup_ssh_keypair

@@ -1,0 +1,11 @@
+---
+- name: Create test_network
+  hetzner.hcloud.hcloud_network:
+    name: "{{ hcloud_network_name }}"
+    ip_range: "10.0.0.0/16"
+    state: present
+  register: test_network
+
+- name: Select hetzner vswitch id from pool
+  ansible.builtin.set_fact:
+    test_vswitch_id: "{{ hetzner_vswitch_ids | random }}"
