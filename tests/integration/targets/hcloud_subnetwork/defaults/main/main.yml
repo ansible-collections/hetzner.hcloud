@@ -2,4 +2,22 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 hcloud_network_name: "{{ hcloud_ns }}"
-hetzner_vswitch_id: 43065
+# Pool of external Hetzner vSwitch ID, this prevents using the same vSwitch id twice in
+# different jobs.
+hetzner_vswitch_ids:
+  - 43065
+  - 44166
+  - 44167
+  - 44168
+  - 44170
+  - 44171
+  - 44172
+  - 44173
+  - 44174
+  - 44175
+  - 44176
+  - 44177
+  - 44178
+  - 44179
+  - 44180
+  - 44181

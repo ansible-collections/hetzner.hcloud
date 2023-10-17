@@ -44,10 +44,10 @@ if [ "${ansible_version}" == "devel" ]; then
 else
   retry pip install "https://github.com/ansible/ansible/archive/stable-${ansible_version}.tar.gz" --disable-pip-version-check
 fi
-export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"
+export ANSIBLE_COLLECTIONS_PATH="${HOME}/.ansible"
 # shellcheck disable=SC2034
 SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
-TEST_DIR="${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/hetzner/hcloud"
+TEST_DIR="${ANSIBLE_COLLECTIONS_PATH}/ansible_collections/hetzner/hcloud"
 rm -rf  "${TEST_DIR}"
 mkdir -p "${TEST_DIR}"
 cp -r "." "${TEST_DIR}"
