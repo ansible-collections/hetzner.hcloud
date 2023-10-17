@@ -24,6 +24,7 @@ jobs:
           release-type: simple
           package-name: hetzner.hcloud
           include-v-in-tag: false
+          draft-pull-request: true
 
           # We use antsibull-changelog for the actual user-facing changelog.
           changelog-path: changelogs/dev-changelog.md

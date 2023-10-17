@@ -5,6 +5,7 @@ trigger:
 
 pr:
   autoCancel: true
+  drafts: false
   branches:
     include: [main, stable-1]
 
