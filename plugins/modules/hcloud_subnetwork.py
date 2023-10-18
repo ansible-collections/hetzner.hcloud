@@ -20,7 +20,7 @@ author:
 options:
     network:
         description:
-            - The ID or Name  of the Hetzner Cloud Networks.
+            - The name or ID of the Hetzner Cloud Networks.
         type: str
         required: true
     ip_range:
@@ -152,7 +152,10 @@ class AnsibleHCloudSubnetwork(AnsibleHCloud):
 
     def _get_network(self):
         try:
-            self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("network"))
+            self.hcloud_network = self._client_get_by_name_or_id(
+                "networks",
+                self.module.params.get("network"),
+            )
             self.hcloud_subnetwork = None
         except HCloudException as exception:
             self.fail_json_hcloud(exception)

@@ -25,7 +25,7 @@
   assert:
     that:
       - result is failed
-      - "result.msg == 'Load balancer does not exist: does-not-exist'"
+      - "result.msg == 'resource (load_balancer) does not exist: does-not-exist'"
 
 - name: test create load_balancer service with checkmode
   hetzner.hcloud.hcloud_load_balancer_service:

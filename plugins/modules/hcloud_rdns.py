@@ -20,19 +20,19 @@ author:
 options:
     server:
         description:
-            - The name of the Hetzner Cloud server you want to add the reverse DNS entry to.
+            - Name or ID of the Hetzner Cloud server you want to add the reverse DNS entry to.
         type: str
     floating_ip:
         description:
-            - The name of the Hetzner Cloud Floating IP you want to add the reverse DNS entry to.
+            - Name or ID of the Hetzner Cloud Floating IP you want to add the reverse DNS entry to.
         type: str
     primary_ip:
         description:
-            - The name of the Hetzner Cloud Primary IP you want to add the reverse DNS entry to.
+            - Name or ID of the Hetzner Cloud Primary IP you want to add the reverse DNS entry to.
         type: str
     load_balancer:
         description:
-            - The name of the Hetzner Cloud Load Balancer you want to add the reverse DNS entry to.
+            - Name or ID of the Hetzner Cloud Load Balancer you want to add the reverse DNS entry to.
         type: str
     ip_address:
         description:
@@ -178,21 +178,25 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
     def _get_resource(self):
         try:
             if self.module.params.get("server"):
-                self.hcloud_resource = self.client.servers.get_by_name(self.module.params.get("server"))
-                if self.hcloud_resource is None:
-                    self.module.fail_json(msg="The selected server does not exist")
+                self.hcloud_resource = self._client_get_by_name_or_id(
+                    "servers",
+                    self.module.params.get("server"),
+                )
             elif self.module.params.get("floating_ip"):
-                self.hcloud_resource = self.client.floating_ips.get_by_name(self.module.params.get("floating_ip"))
-                if self.hcloud_resource is None:
-                    self.module.fail_json(msg="The selected Floating IP does not exist")
+                self.hcloud_resource = self._client_get_by_name_or_id(
+                    "floating_ips",
+                    self.module.params.get("floating_ip"),
+                )
             elif self.module.params.get("primary_ip"):
-                self.hcloud_resource = self.client.primary_ips.get_by_name(self.module.params.get("primary_ip"))
-                if self.hcloud_resource is None:
-                    self.module.fail_json(msg="The selected Floating IP does not exist")
+                self.hcloud_resource = self._client_get_by_name_or_id(
+                    "primary_ips",
+                    self.module.params.get("primary_ip"),
+                )
             elif self.module.params.get("load_balancer"):
-                self.hcloud_resource = self.client.load_balancers.get_by_name(self.module.params.get("load_balancer"))
-                if self.hcloud_resource is None:
-                    self.module.fail_json(msg="The selected Load Balancer does not exist")
+                self.hcloud_resource = self._client_get_by_name_or_id(
+                    "load_balancers",
+                    self.module.params.get("load_balancer"),
+                )
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
 

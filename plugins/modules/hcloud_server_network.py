@@ -20,12 +20,12 @@ author:
 options:
     network:
         description:
-            - The name of the Hetzner Cloud Networks.
+            - Name or ID of the Hetzner Cloud Networks.
         type: str
         required: true
     server:
         description:
-            - The name of the Hetzner Cloud server.
+            - Name or ID of the Hetzner Cloud server.
         type: str
         required: true
     ip:
@@ -140,8 +140,14 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
 
     def _get_server_and_network(self):
         try:
-            self.hcloud_network = self.client.networks.get_by_name(self.module.params.get("network"))
-            self.hcloud_server = self.client.servers.get_by_name(self.module.params.get("server"))
+            self.hcloud_network = self._client_get_by_name_or_id(
+                "networks",
+                self.module.params.get("network"),
+            )
+            self.hcloud_server = self._client_get_by_name_or_id(
+                "servers",
+                self.module.params.get("server"),
+            )
             self.hcloud_server_network = None
         except HCloudException as exception:
             self.fail_json_hcloud(exception)

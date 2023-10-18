@@ -70,7 +70,7 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "The selected server does not exist"'
+      - 'result.msg == "resource (server) does not exist: not-existing"'
 - name: test create rdns
   hetzner.hcloud.hcloud_rdns:
     server: "{{ hcloud_server_name }}"

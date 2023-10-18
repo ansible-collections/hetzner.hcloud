@@ -59,7 +59,7 @@
   assert:
     that:
       - result is failed
-      - "result.msg == 'Load balancer does not exist: does-not-exist'"
+      - "result.msg == 'resource (load_balancer) does not exist: does-not-exist'"
 
 - name: test fail network does not exist
   hetzner.hcloud.hcloud_load_balancer_network:
@@ -72,7 +72,7 @@
   assert:
     that:
       - result is failed
-      - "result.msg == 'Network does not exist: does-not-exist'"
+      - "result.msg == 'resource (network) does not exist: does-not-exist'"
 
 - name: test create load_balancer network with checkmode
   hetzner.hcloud.hcloud_load_balancer_network:
