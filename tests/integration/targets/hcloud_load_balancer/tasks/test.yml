@@ -42,6 +42,7 @@
       - result is changed
       - result.hcloud_load_balancer.name == "{{ hcloud_load_balancer_name }}"
       - result.hcloud_load_balancer.load_balancer_type == "lb11"
+      - result.hcloud_load_balancer.algorithm == "round_robin"
       - result.hcloud_load_balancer.labels.key == "value"
       - result.hcloud_load_balancer.labels.label == "value123"
       - result.hcloud_load_balancer.delete_protection == false
@@ -57,6 +58,18 @@
   ansible.builtin.assert:
     that:
       - result is not changed
+
+- name: Test update algorithm
+  hetzner.hcloud.hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    algorithm: least_connections
+    state: present
+  register: result
+- name: Verify update algorithm
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_load_balancer.algorithm == "least_connections"
 
 - name: Test update load_balancer_type
   hetzner.hcloud.hcloud_load_balancer:

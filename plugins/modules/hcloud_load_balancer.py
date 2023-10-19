@@ -10,7 +10,6 @@ module: hcloud_load_balancer
 
 short_description: Create and manage cloud Load Balancers on the Hetzner Cloud.
 
-
 description:
     - Create, update and manage cloud Load Balancers on the Hetzner Cloud.
 
@@ -33,6 +32,12 @@ options:
             - The Load Balancer Type of the Hetzner Cloud Load Balancer to manage.
             - Required if Load Balancer does not exist.
         type: str
+    algorithm:
+        description:
+            - Algorithm of the Load Balancer.
+        type: str
+        default: round_robin
+        choices: [round_robin, least_connections]
     location:
         description:
             - Location of Load Balancer.
@@ -74,6 +79,7 @@ EXAMPLES = """
   hetzner.hcloud.hcloud_load_balancer:
     name: my-Load Balancer
     load_balancer_type: lb11
+    algorithm: round_robin
     location: fsn1
     state: present
 
@@ -109,6 +115,12 @@ hcloud_load_balancer:
             returned: always
             type: str
             sample: cx11
+        algorithm:
+            description: Algorithm of the Load Balancer.
+            returned: always
+            type: str
+            choices: [round_robin, least_connections]
+            sample: round_robin
         ipv4_address:
             description: Public IPv4 address of the Load Balancer
             returned: always
@@ -147,7 +159,10 @@ from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.load_balancers import BoundLoadBalancer
+from ..module_utils.vendor.hcloud.load_balancers import (
+    BoundLoadBalancer,
+    LoadBalancerAlgorithm,
+)
 
 
 class AnsibleHCloudLoadBalancer(AnsibleHCloud):
@@ -168,6 +183,7 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
             "ipv6_address": to_native(self.hcloud_load_balancer.public_net.ipv6.ip),
             "private_ipv4_address": private_ipv4_address,
             "load_balancer_type": to_native(self.hcloud_load_balancer.load_balancer_type.name),
+            "algorithm": to_native(self.hcloud_load_balancer.algorithm.type),
             "location": to_native(self.hcloud_load_balancer.location.name),
             "labels": self.hcloud_load_balancer.labels,
             "delete_protection": self.hcloud_load_balancer.protection["delete"],
@@ -188,6 +204,7 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
         try:
             params = {
                 "name": self.module.params.get("name"),
+                "algorithm": LoadBalancerAlgorithm(type=self.module.params.get("algorithm", "round_robin")),
                 "load_balancer_type": self.client.load_balancer_types.get_by_name(
                     self.module.params.get("load_balancer_type")
                 ),
@@ -254,6 +271,14 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
                     ).wait_until_finished(max_retries=1000)
 
                 self._mark_as_changed()
+
+            algorithm = self.module.params.get("algorithm")
+            if algorithm is not None and self.hcloud_load_balancer.algorithm.type != algorithm:
+                self.hcloud_load_balancer.change_algorithm(
+                    algorithm=LoadBalancerAlgorithm(type=algorithm)
+                ).wait_until_finished()
+                self._mark_as_changed()
+
             self._get_load_balancer()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
@@ -283,6 +308,7 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
                 id={"type": "int"},
                 name={"type": "str"},
                 load_balancer_type={"type": "str"},
+                algorithm={"choices": ["round_robin", "least_connections"], "default": "round_robin"},
                 location={"type": "str"},
                 network_zone={"type": "str"},
                 labels={"type": "dict"},
