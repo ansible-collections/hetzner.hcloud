@@ -44,7 +44,6 @@
       - result.hcloud_load_balancer.load_balancer_type == "lb11"
       - result.hcloud_load_balancer.labels.key == "value"
       - result.hcloud_load_balancer.labels.label == "value123"
-      - result.hcloud_load_balancer.labels.label == "value123"
       - result.hcloud_load_balancer.delete_protection == false
 
 - name: Test create idempotency
