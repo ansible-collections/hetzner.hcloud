@@ -84,16 +84,7 @@ DOCUMENTATION = r"""
 """
 
 EXAMPLES = r"""
-# Minimal example. `HCLOUD_TOKEN` is exposed in environment.
 plugin: hcloud
-
-# Example with templated token, e.g. provided through extra vars.
-plugin: hcloud
-token: "{{ hetzner_apitoken }}"
-
-# Example with locations, types, status and token
-plugin: hcloud
-token: foobar
 locations:
   - nbg1
 types:
@@ -104,7 +95,6 @@ status:
 # Group by a location with prefix e.g. "hcloud_location_nbg1"
 # and image_os_flavor without prefix and separator e.g. "ubuntu"
 # and status with prefix e.g. "server_status_running"
-plugin: hcloud
 keyed_groups:
   - key: location
     prefix: hcloud_location
