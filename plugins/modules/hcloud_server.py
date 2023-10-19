@@ -216,13 +216,13 @@ EXAMPLES = """
   hetzner.hcloud.hcloud_server:
     name: my-server
     placement_group: my-placement-group
-    force: True
+    force: true
     state: present
 
 - name: Remove server from placement group
   hetzner.hcloud.hcloud_server:
     name: my-server
-    placement_group: null
+    placement_group:
     state: present
 
 - name: Add server with private network only

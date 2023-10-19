@@ -72,8 +72,8 @@ EXAMPLES = """
     server: my-server
     ip: 10.0.0.1
     alias_ips:
-       - 10.1.0.1
-       - 10.2.0.1
+      - 10.1.0.1
+      - 10.2.0.1
     state: present
 
 - name: Ensure the server network is absent (remove if needed)

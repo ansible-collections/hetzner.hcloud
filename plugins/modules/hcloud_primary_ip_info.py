@@ -59,7 +59,6 @@ EXAMPLES = """
 - name: Print the gathered infos
   debug:
     var: output
-
 """
 
 RETURN = """

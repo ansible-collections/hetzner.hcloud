@@ -62,8 +62,8 @@ EXAMPLES = """
     name: my-placement-group
     type: spread
     labels:
-        key: value
-        mylabel: 123
+      key: value
+      mylabel: 123
     state: present
 
 - name: Ensure the placement group is absent (remove if needed)
