@@ -57,16 +57,16 @@ EXAMPLES = """
 - name: Create a basic ssh_key
   hetzner.hcloud.hcloud_ssh_key:
     name: my-ssh_key
-    public_key: "ssh-rsa AAAjjk76kgf...Xt"
+    public_key: ssh-rsa AAAjjk76kgf...Xt
     state: present
 
 - name: Create a ssh_key with labels
   hetzner.hcloud.hcloud_ssh_key:
     name: my-ssh_key
-    public_key: "ssh-rsa AAAjjk76kgf...Xt"
+    public_key: ssh-rsa AAAjjk76kgf...Xt
     labels:
-        key: value
-        mylabel: 123
+      key: value
+      mylabel: 123
     state: present
 
 - name: Ensure the ssh_key is absent (remove if needed)

@@ -88,20 +88,20 @@ EXAMPLES = """
   hetzner.hcloud.hcloud_firewall:
     name: my-firewall
     rules:
-       - direction: in
-         protocol: icmp
-         source_ips:
-           - 0.0.0.0/0
-           - ::/0
-         description: allow icmp in
+      - direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+        description: allow icmp in
     state: present
 
 - name: Create a firewall with labels
   hetzner.hcloud.hcloud_firewall:
     name: my-firewall
     labels:
-        key: value
-        mylabel: 123
+      key: value
+      mylabel: 123
     state: present
 
 - name: Ensure the firewall is absent (remove if needed)

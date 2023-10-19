@@ -70,18 +70,18 @@ EXAMPLES = """
 - name: Create a basic certificate
   hetzner.hcloud.hcloud_certificate:
     name: my-certificate
-    certificate: "ssh-rsa AAAjjk76kgf...Xt"
-    private_key: "ssh-rsa AAAjjk76kgf...Xt"
+    certificate: ssh-rsa AAAjjk76kgf...Xt
+    private_key: ssh-rsa AAAjjk76kgf...Xt
     state: present
 
 - name: Create a certificate with labels
   hetzner.hcloud.hcloud_certificate:
     name: my-certificate
-    certificate: "ssh-rsa AAAjjk76kgf...Xt"
-    private_key: "ssh-rsa AAAjjk76kgf...Xt"
+    certificate: ssh-rsa AAAjjk76kgf...Xt
+    private_key: ssh-rsa AAAjjk76kgf...Xt
     labels:
-        key: value
-        mylabel: 123
+      key: value
+      mylabel: 123
     state: present
 
 - name: Ensure the certificate is absent (remove if needed)

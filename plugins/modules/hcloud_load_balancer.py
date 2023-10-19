@@ -81,7 +81,6 @@ EXAMPLES = """
   hetzner.hcloud.hcloud_load_balancer:
     name: my-Load Balancer
     state: absent
-
 """
 
 RETURN = """
