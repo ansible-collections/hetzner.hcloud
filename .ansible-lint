@@ -8,7 +8,6 @@ exclude_paths:
   - tests/integration/targets/hcloud_certificate
   - tests/integration/targets/hcloud_firewall
   - tests/integration/targets/hcloud_floating_ip
-  - tests/integration/targets/hcloud_load_balancer
   - tests/integration/targets/hcloud_load_balancer_network
   - tests/integration/targets/hcloud_load_balancer_service
   - tests/integration/targets/hcloud_load_balancer_target
