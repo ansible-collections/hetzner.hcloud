@@ -5,6 +5,10 @@ on:
 
 name: release-please
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   release-please:
     # The secret HCLOUD_BOT_TOKEN is only available on the main repo, not in forks.
@@ -76,4 +80,4 @@ jobs:
           git add changelogs/ CHANGELOG.rst
           git commit -m "chore(main): changelog for version ${{ needs.release-please.outputs.version }}"
 
-          git push origin ${{ needs.release-please.outputs.branch }}
+          git push --force origin ${{ needs.release-please.outputs.branch }}
