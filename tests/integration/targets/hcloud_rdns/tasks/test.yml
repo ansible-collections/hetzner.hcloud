@@ -1,224 +1,148 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: setup
-  hetzner.hcloud.hcloud_server:
-    name: "{{ hcloud_server_name }}"
-    server_type: cx11
-    image: "ubuntu-22.04"
-    ssh_keys:
-      - "{{ hcloud_ssh_key_name }}"
-    state: present
-  register: setup
-- name: verify setup
-  assert:
-    that:
-      - setup is success
-
-- name: setup Floating IP
-  hetzner.hcloud.hcloud_floating_ip:
-    name: "{{ hcloud_floating_ip_name }}"
-    type: ipv4
-    home_location: "fsn1"
-  register: floatingIP
-- name: verify setup Floating IP
-  assert:
-    that:
-      - floatingIP is success
-
-- name: setup Load Balancer
-  hetzner.hcloud.hcloud_load_balancer:
-    name: "{{ hcloud_load_balancer_name}}"
-    load_balancer_type: lb11
-    network_zone: eu-central
-    state: present
-  register: load_balancer
-- name: verify setup
-  assert:
-    that:
-      - load_balancer is success
-
-- name: setup Primary IP
-  hetzner.hcloud.hcloud_primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    datacenter: "fsn1-dc14"
-  register: primaryIP
-- name: verify setup Primary IP
-  assert:
-    that:
-      - primaryIP is success
-
-- name: test missing required parameter
+- name: Test missing required parameters
   hetzner.hcloud.hcloud_rdns:
     state: present
-  register: result
   ignore_errors: true
-- name: verify fail test missing required parameters
-  assert:
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
     that:
       - result is failed
       - 'result.msg == "missing required arguments: ip_address"'
-- name: test fail on not existing resource
-  hetzner.hcloud.hcloud_rdns:
-    server: "not-existing"
-    ip_address: "127.0.0.1"
-    state: present
-  register: result
-  ignore_errors: true
-- name: verify fail on not existing resou
-  assert:
-    that:
-      - result is failed
-      - 'result.msg == "resource (server) does not exist: not-existing"'
-- name: test create rdns
-  hetzner.hcloud.hcloud_rdns:
-    server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
-    dns_ptr: "example.com"
-    state: present
-  register: rdns
-- name: verify create rdns
-  assert:
-    that:
-      - rdns is changed
-      - rdns.hcloud_rdns.server == "{{ hcloud_server_name }}"
-      - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
-      - rdns.hcloud_rdns.dns_ptr == "example.com"
 
-- name: test create rdns idempotency
+- name: Test create with checkmode
   hetzner.hcloud.hcloud_rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
-    dns_ptr: "example.com"
+    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    dns_ptr: example.com
     state: present
+  check_mode: true
   register: result
-- name: verify create rdns idempotency
-  assert:
-    that:
-      - result is not changed
-
-- name: test absent rdns
-  hetzner.hcloud.hcloud_rdns:
-    server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
-    state: absent
-  register: result
-- name: verify test absent rdns
-  assert:
+- name: Verify create with checkmode
+  ansible.builtin.assert:
     that:
       - result is changed
 
-- name: test update rdns
+- name: Test create
   hetzner.hcloud.hcloud_rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv4_address }}"
-    dns_ptr: "example.com"
+    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    dns_ptr: example.com
     state: present
-  register: rdns
-- name: verify update rdns
-  assert:
+  register: result
+- name: Verify create
+  ansible.builtin.assert:
     that:
-      - rdns is changed
-      - rdns.hcloud_rdns.server == "{{ hcloud_server_name }}"
-      - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv4_address }}"
-      - rdns.hcloud_rdns.dns_ptr == "example.com"
+      - result is changed
+      - result.hcloud_rdns.server == "{{ hcloud_server_name }}"
+      - result.hcloud_rdns.ip_address == "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+      - result.hcloud_rdns.dns_ptr == "example.com"
 
-- name: test reset rdns
+- name: Test create idempotency
   hetzner.hcloud.hcloud_rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ setup.hcloud_server.ipv4_address }}"
+    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    dns_ptr: example.com
     state: present
-  register: rdns
-- name: verify reset rdns
-  assert:
+  register: result
+- name: Verify create idempotency
+  ansible.builtin.assert:
     that:
-      - rdns is changed
-      - rdns.hcloud_rdns.server == "{{ hcloud_server_name }}"
-      - rdns.hcloud_rdns.ip_address == "{{ setup.hcloud_server.ipv4_address }}"
-      - rdns.hcloud_rdns.dns_ptr != "example.com"
+      - result is not changed
 
-- name: test create rdns with floating IP
+- name: Test create with not existing server
   hetzner.hcloud.hcloud_rdns:
-    floating_ip: "{{ hcloud_floating_ip_name }}"
-    ip_address: "{{ floatingIP.hcloud_floating_ip.ip}}"
-    dns_ptr: "example.com"
+    server: not-existing
+    ip_address: "127.0.0.1"
+    dns_ptr: example.com
     state: present
-  register: rdns
-- name: verify create rdns
-  assert:
+  ignore_errors: true
+  register: result
+- name: Verify create with not existing server
+  ansible.builtin.assert:
     that:
-      - rdns is changed
-      - rdns.hcloud_rdns.floating_ip == "{{ hcloud_floating_ip_name }}"
-      - rdns.hcloud_rdns.ip_address == "{{ floatingIP.hcloud_floating_ip.ip}}"
-      - rdns.hcloud_rdns.dns_ptr == "example.com"
+      - result is failed
+      - 'result.msg == "resource (server) does not exist: not-existing"'
 
-- name: test create rdns with primary IP
+- name: Test update
+  hetzner.hcloud.hcloud_rdns:
+    server: "{{ hcloud_server_name }}"
+    ip_address: "{{ test_server.hcloud_server.ipv4_address }}"
+    dns_ptr: example.com
+    state: present
+  register: result
+- name: Verify update
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_rdns.ip_address == "{{ test_server.hcloud_server.ipv4_address }}"
+
+- name: Test update reset
+  hetzner.hcloud.hcloud_rdns:
+    server: "{{ hcloud_server_name }}"
+    ip_address: "{{ test_server.hcloud_server.ipv4_address }}"
+    state: present
+  register: result
+- name: Verify update reset
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_rdns.dns_ptr != "example.com"
+
+- name: Test delete
+  hetzner.hcloud.hcloud_rdns:
+    server: "{{ hcloud_server_name }}"
+    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    state: absent
+  register: result
+- name: Verify delete
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test create with primary ip
   hetzner.hcloud.hcloud_rdns:
     primary_ip: "{{ hcloud_primary_ip_name }}"
-    ip_address: "{{ primaryIP.hcloud_primary_ip.ip}}"
-    dns_ptr: "example.com"
+    ip_address: "{{ test_primary_ip.hcloud_primary_ip.ip }}"
+    dns_ptr: example.com
     state: present
-  register: rdns
-- name: verify create rdns
-  assert:
+  register: result
+- name: Verify create with primary ip
+  ansible.builtin.assert:
     that:
-      - rdns is changed
-      - rdns.hcloud_rdns.primary_ip == "{{ hcloud_primary_ip_name }}"
-      - rdns.hcloud_rdns.ip_address == "{{ primaryIP.hcloud_primary_ip.ip}}"
-      - rdns.hcloud_rdns.dns_ptr == "example.com"
+      - result is changed
+      - result.hcloud_rdns.primary_ip == "{{ hcloud_primary_ip_name }}"
+      - result.hcloud_rdns.ip_address == "{{ test_primary_ip.hcloud_primary_ip.ip }}"
+      - result.hcloud_rdns.dns_ptr == "example.com"
 
-- name: test create rdns with load balancer
+- name: Test create with floating ip
+  hetzner.hcloud.hcloud_rdns:
+    floating_ip: "{{ hcloud_floating_ip_name }}"
+    ip_address: "{{ test_floating_ip.hcloud_floating_ip.ip }}"
+    dns_ptr: example.com
+    state: present
+  register: result
+- name: Verify create with floating ip
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_rdns.floating_ip == "{{ hcloud_floating_ip_name }}"
+      - result.hcloud_rdns.ip_address == "{{ test_floating_ip.hcloud_floating_ip.ip }}"
+      - result.hcloud_rdns.dns_ptr == "example.com"
+
+- name: Test create with load balancer
   hetzner.hcloud.hcloud_rdns:
     load_balancer: "{{ hcloud_load_balancer_name }}"
-    ip_address: "{{ load_balancer.hcloud_load_balancer.ipv4_address }}"
-    dns_ptr: "example.com"
+    ip_address: "{{ test_load_balancer.hcloud_load_balancer.ipv4_address }}"
+    dns_ptr: example.com
     state: present
-  register: rdns
-- name: verify create rdns with load balancer
-  assert:
-    that:
-      - rdns is changed
-      - rdns.hcloud_rdns.load_balancer == "{{ hcloud_load_balancer_name }}"
-      - rdns.hcloud_rdns.ip_address == "{{ load_balancer.hcloud_load_balancer.ipv4_address }}"
-      - rdns.hcloud_rdns.dns_ptr == "example.com"
-
-- name: cleanup
-  hetzner.hcloud.hcloud_server:
-    name: "{{ hcloud_server_name }}"
-    state: absent
   register: result
-- name: verify cleanup
-  assert:
+- name: Verify create with load balancer
+  ansible.builtin.assert:
     that:
-      - result is success
-
-- name: cleanup
-  hetzner.hcloud.hcloud_floating_ip:
-    name: "{{ hcloud_floating_ip_name }}"
-    state: absent
-  register: result
-- name: verify cleanup
-  assert:
-    that:
-      - result is success
-
-- name: cleanup
-  hetzner.hcloud.hcloud_primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    state: absent
-  register: result
-- name: verify cleanup
-  assert:
-    that:
-      - result is success
-
-- name: cleanup
-  hetzner.hcloud.hcloud_load_balancer:
-    name: "{{ hcloud_load_balancer_name }}"
-    state: absent
-  register: result
-- name: verify cleanup
-  assert:
-    that:
-      - result is success
+      - result is changed
+      - result.hcloud_rdns.load_balancer == "{{ hcloud_load_balancer_name }}"
+      - result.hcloud_rdns.ip_address == "{{ test_load_balancer.hcloud_load_balancer.ipv4_address }}"
+      - result.hcloud_rdns.dns_ptr == "example.com"
