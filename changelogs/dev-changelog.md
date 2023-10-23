@@ -2,12 +2,11 @@
 
 ## [2.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/2.1.2...2.2.0) (2023-10-23)
 
-
 ### Features
 
-* add deprecation field to hcloud_iso_info ([#357](https://github.com/ansible-collections/hetzner.hcloud/issues/357)) ([76ef636](https://github.com/ansible-collections/hetzner.hcloud/commit/76ef636f07feb91daa91ecaa17619d10fea7d6e4))
-* add load_balancer algorithm option ([#368](https://github.com/ansible-collections/hetzner.hcloud/issues/368)) ([a93dbaa](https://github.com/ansible-collections/hetzner.hcloud/commit/a93dbaa428a128555d71a9ef36a1a6c211e09952))
-* allow selecting a resource using its ID ([#361](https://github.com/ansible-collections/hetzner.hcloud/issues/361)) ([5e425c5](https://github.com/ansible-collections/hetzner.hcloud/commit/5e425c56c2643f7c0c68b7c6feb8d3e098d4bcdb))
+- add deprecation field to hcloud_iso_info ([#357](https://github.com/ansible-collections/hetzner.hcloud/issues/357)) ([76ef636](https://github.com/ansible-collections/hetzner.hcloud/commit/76ef636f07feb91daa91ecaa17619d10fea7d6e4))
+- add load_balancer algorithm option ([#368](https://github.com/ansible-collections/hetzner.hcloud/issues/368)) ([a93dbaa](https://github.com/ansible-collections/hetzner.hcloud/commit/a93dbaa428a128555d71a9ef36a1a6c211e09952))
+- allow selecting a resource using its ID ([#361](https://github.com/ansible-collections/hetzner.hcloud/issues/361)) ([5e425c5](https://github.com/ansible-collections/hetzner.hcloud/commit/5e425c56c2643f7c0c68b7c6feb8d3e098d4bcdb))
 
 ## [2.1.2](https://github.com/ansible-collections/hetzner.hcloud/compare/2.1.1...v2.1.2) (2023-10-05)
 
