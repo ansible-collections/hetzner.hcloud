@@ -148,7 +148,9 @@ class AnsibleHCloudIsoInfo(AnsibleHCloud):
                     "description": to_native(iso_info.description),
                     "type": iso_info.type,
                     "architecture": iso_info.architecture,
-                    "deprecated": iso_info.deprecated,
+                    "deprecated": (
+                        iso_info.deprecation.unavailable_after if iso_info.deprecation is not None else None
+                    ),
                     "deprecation": {
                         "announced": iso_info.deprecation.announced.isoformat(),
                         "unavailable_after": iso_info.deprecation.unavailable_after.isoformat(),
