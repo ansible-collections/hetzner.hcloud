@@ -146,14 +146,15 @@ releases:
     changes:
       minor_changes:
         - Bundle hcloud python dependency inside the collection.
-        - "python-dateutil >= 2.7.5 is now required by the collection. If you already
-          have the hcloud package installed, this dependency should also be installed."
-        - "requests >= 2.20 is now required by the collection. If you already have the
-          hcloud package installed, this dependency should also be installed."
+        - python-dateutil >= 2.7.5 is now required by the collection. If you already
+          have the hcloud package installed, this dependency should also be installed.
+        - requests >= 2.20 is now required by the collection. If you already have the
+          hcloud package installed, this dependency should also be installed.
       release_summary:
-        "This release bundles the hcloud dependency in the collection,
-        this allows us to ship new features or bug fixes without having to release new major versions and
-        require the users to upgrade their version of the hcloud dependency."
+        This release bundles the hcloud dependency in the collection,
+        this allows us to ship new features or bug fixes without having to release
+        new major versions and require the users to upgrade their version of the hcloud
+        dependency.
     fragments:
       - vendor-hcloud-python-dependency.yml
     release_date: "2023-07-13"
@@ -338,18 +339,19 @@ releases:
       breaking_changes:
         - Drop support for ansible-core 2.12
         - Drop support for python 3.7
-        - "inventory plugin - Don't set the server image variables (`image_id`, `image_os_flavor`
-          and `image_name`) when the server image is not defined."
+        - inventory plugin - Don't set the server image variables (`image_id`, `image_os_flavor`
+          and `image_name`) when the server image is not defined.
       minor_changes:
         - Bundle hcloud python dependency inside the collection.
-        - "python-dateutil >= 2.7.5 is now required by the collection. If you already
-          have the hcloud package installed, this dependency should also be installed."
-        - "requests >= 2.20 is now required by the collection. If you already have the
-          hcloud package installed, this dependency should also be installed."
+        - python-dateutil >= 2.7.5 is now required by the collection. If you already
+          have the hcloud package installed, this dependency should also be installed.
+        - requests >= 2.20 is now required by the collection. If you already have the
+          hcloud package installed, this dependency should also be installed.
       release_summary:
-        "This release bundles the hcloud dependency in the collection,
-        this allows us to ship new features or bug fixes without having to release new major versions and
-        require the users to upgrade their version of the hcloud dependency."
+        This release bundles the hcloud dependency in the collection,
+        this allows us to ship new features or bug fixes without having to release
+        new major versions and require the users to upgrade their version of the hcloud
+        dependency.
       removed_features:
         - hcloud_datacenter_facts Removed deprecated facts module
         - hcloud_floating_ip_facts Removed deprecated facts module
@@ -395,9 +397,29 @@ releases:
       bugfixes:
         - hcloud_firewall - The port argument is required when the firewall rule protocol
           is `udp` or `tcp`.
-        - "hcloud_load_balancer_service - In the returned data, the invalid `health_check.http.certificates`
-          field was renamed to `health_check.http.status_codes`."
+        - hcloud_load_balancer_service - In the returned data, the invalid `health_check.http.certificates`
+          field was renamed to `health_check.http.status_codes`.
     fragments:
       - rename-load-balancer-service-http-health-check-dict.yaml
       - require-firewall-port-argument-on-tcp-or-udp-protocol.yaml
     release_date: "2023-10-05"
+  2.2.0:
+    changes:
+      minor_changes:
+        - hcloud_iso_info - Add deprecation field
+        - hcloud_load_balancer_network - Allow selecting a `load_balancer` or `network`
+          using its ID.
+        - hcloud_load_balancer_service - Allow selecting a `load_balancer` using its
+          ID.
+        - hcloud_load_balancer_target - Allow selecting a `load_balancer` or `server`
+          using its ID.
+        - hcloud_rdns - Allow selecting a `server`, `floating_ip`, `primary_ip` or `load_balancer`
+          using its ID.
+        - hcloud_route - Allow selecting a `network` using its ID.
+        - hcloud_server_network - Allow selecting a `network` or `server` using its
+          ID.
+        - hcloud_subnetwork - Allow selecting to a `network` using its ID.
+    fragments:
+      - add-deprecation-field-to-iso-info.yaml
+      - allow-selecting-a-resource-using-its-id.yaml
+    release_date: "2023-10-23"

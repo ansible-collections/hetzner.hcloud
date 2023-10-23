@@ -5,6 +5,21 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v2.2.0
+======
+
+Minor Changes
+-------------
+
+- hcloud_iso_info - Add deprecation field
+- hcloud_load_balancer_network - Allow selecting a `load_balancer` or `network` using its ID.
+- hcloud_load_balancer_service - Allow selecting a `load_balancer` using its ID.
+- hcloud_load_balancer_target - Allow selecting a `load_balancer` or `server` using its ID.
+- hcloud_rdns - Allow selecting a `server`, `floating_ip`, `primary_ip` or `load_balancer` using its ID.
+- hcloud_route - Allow selecting a `network` using its ID.
+- hcloud_server_network - Allow selecting a `network` or `server` using its ID.
+- hcloud_subnetwork - Allow selecting to a `network` using its ID.
+
 v2.1.2
 ======
 
@@ -44,10 +59,7 @@ v2.0.0
 Release Summary
 ---------------
 
-This release bundles the hcloud dependency in the collection, this allows us to ship
-new features or bug fixes without having to release new major versions and require the
-users to upgrade their version of the hcloud dependency.
-
+This release bundles the hcloud dependency in the collection, this allows us to ship new features or bug fixes without having to release new major versions and require the users to upgrade their version of the hcloud dependency.
 
 Minor Changes
 -------------
@@ -81,10 +93,7 @@ v1.16.0
 Release Summary
 ---------------
 
-This release bundles the hcloud dependency in the collection, this allows us to ship
-new features or bug fixes without having to release new major versions and require the
-users to upgrade their version of the hcloud dependency.
-
+This release bundles the hcloud dependency in the collection, this allows us to ship new features or bug fixes without having to release new major versions and require the users to upgrade their version of the hcloud dependency.
 
 Minor Changes
 -------------
