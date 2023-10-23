@@ -14,7 +14,6 @@ exclude_paths:
   - tests/integration/targets/hcloud_network
   - tests/integration/targets/hcloud_placement_group
   - tests/integration/targets/hcloud_primary_ip
-  - tests/integration/targets/hcloud_rdns
   - tests/integration/targets/hcloud_route
   - tests/integration/targets/hcloud_server
   - tests/integration/targets/hcloud_server_network

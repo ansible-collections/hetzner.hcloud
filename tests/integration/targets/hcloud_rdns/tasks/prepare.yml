@@ -1,6 +1,32 @@
 ---
-- name: Create test_ssh_key
-  hetzner.hcloud.hcloud_ssh_key:
-    name: "{{ hcloud_ssh_key_name }}"
-    public_key: "{{ test_ssh_keypair.public_key }}"
-  register: test_ssh_key
+- name: Create test_server
+  hetzner.hcloud.hcloud_server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cx11
+    image: ubuntu-22.04
+    state: present
+  register: test_server
+
+- name: Create test_primary_ip
+  hetzner.hcloud.hcloud_primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    type: ipv4
+    datacenter: fsn1-dc14
+    state: present
+  register: test_primary_ip
+
+- name: Create test_floating_ip
+  hetzner.hcloud.hcloud_floating_ip:
+    name: "{{ hcloud_floating_ip_name }}"
+    type: ipv4
+    home_location: fsn1
+    state: present
+  register: test_floating_ip
+
+- name: Create test_load_balancer
+  hetzner.hcloud.hcloud_load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    load_balancer_type: lb11
+    network_zone: eu-central
+    state: present
+  register: test_load_balancer
