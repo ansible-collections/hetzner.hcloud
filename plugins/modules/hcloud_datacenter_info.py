@@ -35,9 +35,27 @@ EXAMPLES = """
 - name: Gather hcloud datacenter info
   hetzner.hcloud.hcloud_datacenter_info:
   register: output
+
 - name: Print the gathered info
   debug:
     var: output
+
+- name: List available server_types in a datacenter
+  block:
+    - name: Gather a hcloud datacenter
+      hetzner.hcloud.hcloud_datacenter_info:
+        name: fsn1-dc14
+      register: output
+
+    - name: Gather a hcloud datacenter available server_types
+      hetzner.hcloud.hcloud_server_type_info:
+        id: "{{ item }}"
+      loop: "{{ output.hcloud_datacenter_info[0].server_types.available }}"
+      register: available_server_types
+
+    - name: Print a hcloud datacenter available server_types
+      ansible.builtin.debug:
+        var: available_server_types.results | map(attribute='hcloud_server_type_info')
 """
 
 RETURN = """
