@@ -72,6 +72,29 @@ hcloud_datacenter_info:
             returned: always
             type: str
             sample: fsn1
+        server_types:
+            description: The Server types the Datacenter can handle
+            returned: always
+            type: dict
+            contains:
+                available:
+                    description: IDs of Server types that are supported and for which the Datacenter has enough resources left
+                    returned: always
+                    type: list
+                    elements: int
+                    sample: [1, 2, 3]
+                available_for_migration:
+                    description: IDs of Server types that are supported and for which the Datacenter has enough resources left
+                    returned: always
+                    type: list
+                    elements: int
+                    sample: [1, 2, 3]
+                supported:
+                    description: IDs of Server types that are supported in the Datacenter
+                    returned: always
+                    type: list
+                    elements: int
+                    sample: [1, 2, 3]
 """
 
 from typing import List, Optional
@@ -93,15 +116,22 @@ class AnsibleHCloudDatacenterInfo(AnsibleHCloud):
         tmp = []
 
         for datacenter in self.hcloud_datacenter_info:
-            if datacenter is not None:
-                tmp.append(
-                    {
-                        "id": to_native(datacenter.id),
-                        "name": to_native(datacenter.name),
-                        "description": to_native(datacenter.description),
-                        "location": to_native(datacenter.location.name),
-                    }
-                )
+            if datacenter is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": to_native(datacenter.id),
+                    "name": to_native(datacenter.name),
+                    "description": to_native(datacenter.description),
+                    "location": to_native(datacenter.location.name),
+                    "server_types": {
+                        "available": [o.id for o in datacenter.server_types.available],
+                        "available_for_migration": [o.id for o in datacenter.server_types.available_for_migration],
+                        "supported": [o.id for o in datacenter.server_types.supported],
+                    },
+                }
+            )
 
         return tmp
 
