@@ -35,17 +35,17 @@ options:
     certificate:
         description:
             - Certificate and chain in PEM format, in order so that each record directly certifies the one preceding.
-            - Required if certificate does not exist.
+            - Required if certificate does not exist and I(type=uploaded).
         type: str
     private_key:
         description:
             - Certificate key in PEM format.
-            - Required if certificate does not exist.
+            - Required if certificate does not exist and I(type=uploaded).
         type: str
     domain_names:
         description:
-            - Certificate key in PEM format.
-            - Required if certificate does not exist.
+            - Domains and subdomains that should be contained in the Certificate issued by Let's Encrypt.
+            - Required if I(type=managed).
         type: list
         default: [ ]
         elements: str
@@ -70,18 +70,27 @@ EXAMPLES = """
 - name: Create a basic certificate
   hetzner.hcloud.hcloud_certificate:
     name: my-certificate
-    certificate: ssh-rsa AAAjjk76kgf...Xt
-    private_key: ssh-rsa AAAjjk76kgf...Xt
+    certificate: -----BEGIN CERTIFICATE-----...
+    private_key: -----BEGIN PRIVATE KEY-----...
     state: present
 
 - name: Create a certificate with labels
   hetzner.hcloud.hcloud_certificate:
     name: my-certificate
-    certificate: ssh-rsa AAAjjk76kgf...Xt
-    private_key: ssh-rsa AAAjjk76kgf...Xt
+    certificate: -----BEGIN CERTIFICATE-----...
+    private_key: -----BEGIN PRIVATE KEY-----...
     labels:
       key: value
       mylabel: 123
+    state: present
+
+- name: Create a managed certificate
+  hetzner.hcloud.hcloud_certificate:
+    name: my-certificate
+    type: managed
+    domain_names:
+      - example.com
+      - www.example.com
     state: present
 
 - name: Ensure the certificate is absent (remove if needed)
