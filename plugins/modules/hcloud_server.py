@@ -252,6 +252,11 @@ hcloud_server:
             returned: always
             type: str
             sample: my-server
+        created:
+            description: Point in time when the Server was created (in ISO-8601 format)
+            returned: always
+            type: str
+            sample: "2023-11-06T13:36:56+00:00"
         status:
             description: Status of the server
             returned: always
@@ -366,6 +371,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
         return {
             "id": to_native(self.hcloud_server.id),
             "name": to_native(self.hcloud_server.name),
+            "created": to_native(self.hcloud_server.created.isoformat()),
             "ipv4_address": ipv4_address,
             "ipv6": ipv6,
             "private_networks": [to_native(net.network.name) for net in self.hcloud_server.private_net],
