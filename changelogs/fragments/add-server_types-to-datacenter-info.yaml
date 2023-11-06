@@ -1,0 +1,2 @@
+minor_changes:
+  - hcloud_datacenter_info - Add `server_types` field
