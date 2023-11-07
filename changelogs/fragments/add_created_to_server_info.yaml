@@ -1,3 +1,0 @@
-minor_changes:
-  - hcloud_server_info - Add `created` field
-  - hcloud_server - Add `created` field

@@ -423,3 +423,13 @@ releases:
       - add-deprecation-field-to-iso-info.yaml
       - allow-selecting-a-resource-using-its-id.yaml
     release_date: "2023-10-23"
+  2.3.0:
+    changes:
+      minor_changes:
+        - hcloud_datacenter_info - Add `server_types` field
+        - hcloud_server - Add `created` field
+        - hcloud_server_info - Add `created` field
+    fragments:
+      - add-server_types-to-datacenter-info.yaml
+      - add_created_to_server_info.yaml
+    release_date: "2023-11-07"
