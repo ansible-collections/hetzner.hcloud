@@ -5,6 +5,16 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v2.3.0
+======
+
+Minor Changes
+-------------
+
+- hcloud_datacenter_info - Add `server_types` field
+- hcloud_server - Add `created` field
+- hcloud_server_info - Add `created` field
+
 v2.2.0
 ======
 
