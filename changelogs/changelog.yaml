@@ -2,430 +2,434 @@ ancestor: null
 releases:
   0.1.0:
     modules:
-    - description: Create and manage cloud Floating IPs on the Hetzner Cloud.
-      name: hcloud_floating_ip
-      namespace: ''
-    - description: Create and manage cloud Load Balancers on the Hetzner Cloud.
-      name: hcloud_load_balancer
-      namespace: ''
-    - description: Manage the relationship between Hetzner Cloud Networks and Load
-        Balancers
-      name: hcloud_load_balancer_network
-      namespace: ''
-    - description: Create and manage the services of cloud Load Balancers on the Hetzner
-        Cloud.
-      name: hcloud_load_balancer_service
-      namespace: ''
-    - description: Manage Hetzner Cloud Load Balancer targets
-      name: hcloud_load_balancer_target
-      namespace: ''
-    - description: Gather infos about the Hetzner Cloud Load Balancer types.
-      name: hcloud_load_balancer_type_info
-      namespace: ''
-    release_date: '2020-06-29'
+      - description: Create and manage cloud Floating IPs on the Hetzner Cloud.
+        name: hcloud_floating_ip
+        namespace: ""
+      - description: Create and manage cloud Load Balancers on the Hetzner Cloud.
+        name: hcloud_load_balancer
+        namespace: ""
+      - description:
+          Manage the relationship between Hetzner Cloud Networks and Load
+          Balancers
+        name: hcloud_load_balancer_network
+        namespace: ""
+      - description:
+          Create and manage the services of cloud Load Balancers on the Hetzner
+          Cloud.
+        name: hcloud_load_balancer_service
+        namespace: ""
+      - description: Manage Hetzner Cloud Load Balancer targets
+        name: hcloud_load_balancer_target
+        namespace: ""
+      - description: Gather infos about the Hetzner Cloud Load Balancer types.
+        name: hcloud_load_balancer_type_info
+        namespace: ""
+    release_date: "2020-06-29"
   0.2.0:
     changes:
       bugfixes:
-      - hcloud inventory plugin - Allow usage of hcloud.yml and hcloud.yaml - this
-        was removed by error within the migration from build-in ansible to our collection
+        - hcloud inventory plugin - Allow usage of hcloud.yml and hcloud.yaml - this
+          was removed by error within the migration from build-in ansible to our collection
     fragments:
-    - inventory-allow-usage-of-pre-migration-configuration-fuiles.yml
-    release_date: '2020-06-30'
+      - inventory-allow-usage-of-pre-migration-configuration-fuiles.yml
+    release_date: "2020-06-30"
   1.0.0:
     changes:
       minor_changes:
-      - hcloud_load_balancer Allow changing the type of a Load Balancer
-      - hcloud_server Allow the creation of servers with enabled backups
+        - hcloud_load_balancer Allow changing the type of a Load Balancer
+        - hcloud_server Allow the creation of servers with enabled backups
     fragments:
-    - gh7-allow-enabling-of-backups-on-server-creation.yml
-    - lb-allow-change-type.yml
-    release_date: '2020-08-11'
+      - gh7-allow-enabling-of-backups-on-server-creation.yml
+      - lb-allow-change-type.yml
+    release_date: "2020-08-11"
   1.1.0:
     changes:
       bugfixes:
-      - hcloud_floating_ip Fix idempotency when floating ip is assigned to server
+        - hcloud_floating_ip Fix idempotency when floating ip is assigned to server
       minor_changes:
-      - hcloud_floating_ip Allow creating Floating IP with protection
-      - hcloud_load_balancer Allow creating Load Balancer with protection
-      - hcloud_network Allow creating Network with protection
-      - hcloud_server Allow creating server with protection
-      - hcloud_volume Allow creating Volumes with protection
+        - hcloud_floating_ip Allow creating Floating IP with protection
+        - hcloud_load_balancer Allow creating Load Balancer with protection
+        - hcloud_network Allow creating Network with protection
+        - hcloud_server Allow creating server with protection
+        - hcloud_volume Allow creating Volumes with protection
     fragments:
-    - fix-idempotency-floating-ip.yml
-    - gh-28-allow-setting-of-protection-on-creation.yml
-    release_date: '2020-10-05'
+      - fix-idempotency-floating-ip.yml
+      - gh-28-allow-setting-of-protection-on-creation.yml
+    release_date: "2020-10-05"
   1.10.0:
     changes:
       breaking_changes:
-      - inventory plugin - Python v3.5+ is now required.
+        - inventory plugin - Python v3.5+ is now required.
       minor_changes:
-      - hcloud_server - add private_networks_info containing name and private ip in
-        responses
-      - hcloud_server_info - add private_networks_info containing name and private
-        ip in responses
-      - inventory plugin - Add list of all private networks to server variables.
-      - inventory plugin - Add new connect_with setting public_ipv6 to connect to
-        discovered servers via public IPv6 address.
-      - inventory plugin - Add public IPv6 address to server variables.
-      - inventory plugin - Log warning instead of crashing when some servers do not
-        work with global connect_with setting.
+        - hcloud_server - add private_networks_info containing name and private ip in
+          responses
+        - hcloud_server_info - add private_networks_info containing name and private
+          ip in responses
+        - inventory plugin - Add list of all private networks to server variables.
+        - inventory plugin - Add new connect_with setting public_ipv6 to connect to
+          discovered servers via public IPv6 address.
+        - inventory plugin - Add public IPv6 address to server variables.
+        - inventory plugin - Log warning instead of crashing when some servers do not
+          work with global connect_with setting.
     fragments:
-    - inventory-connect-via-ipv6.yml
-    - inventory-handle-invalid-connect-with.yml
-    - inventory-ipv6-adress-variable.yml
-    - inventory-private-network-info.yml
-    - server-private-networks-info.yml
-    release_date: '2023-02-01'
+      - inventory-connect-via-ipv6.yml
+      - inventory-handle-invalid-connect-with.yml
+      - inventory-ipv6-adress-variable.yml
+      - inventory-private-network-info.yml
+      - server-private-networks-info.yml
+    release_date: "2023-02-01"
   1.10.1:
     changes:
       bugfixes:
-      - hcloud_server - Prevent backups from being disabled when undefined
-      - hcloud_server - Server locked after attaching to placement group
+        - hcloud_server - Prevent backups from being disabled when undefined
+        - hcloud_server - Server locked after attaching to placement group
     fragments:
-    - server-fix-backups.yml
-    - server-race-condition-pg-attach.yml
-    release_date: '2023-04-03'
+      - server-fix-backups.yml
+      - server-race-condition-pg-attach.yml
+    release_date: "2023-04-03"
   1.11.0:
     changes:
       minor_changes:
-      - hcloud_image_info - Add cpu architecture field to return value.
-      - hcloud_image_info - Allow filtering images by cpu architecture.
-      - hcloud_server - Select matching image for the cpu architecture of the server
-        type on create & rebuild.
-      - hcloud_server_type_info - Add cpu architecture field to return value.
-      - inventory plugin - Add cpu architecture to server variables.
+        - hcloud_image_info - Add cpu architecture field to return value.
+        - hcloud_image_info - Allow filtering images by cpu architecture.
+        - hcloud_server - Select matching image for the cpu architecture of the server
+          type on create & rebuild.
+        - hcloud_server_type_info - Add cpu architecture field to return value.
+        - inventory plugin - Add cpu architecture to server variables.
     fragments:
-    - arm-features.yaml
-    release_date: '2023-04-11'
+      - arm-features.yaml
+    release_date: "2023-04-11"
   1.12.0:
     changes:
       breaking_changes:
-      - hcloud-python 1.20.0 is now required for full compatibility
+        - hcloud-python 1.20.0 is now required for full compatibility
       minor_changes:
-      - hcloud_server_type_info - Add field included_traffic to returned server types
+        - hcloud_server_type_info - Add field included_traffic to returned server types
     fragments:
-    - server-type-included-traffic.yml
-    release_date: '2023-05-16'
+      - server-type-included-traffic.yml
+    release_date: "2023-05-16"
   1.13.0:
     changes:
       bugfixes:
-      - hcloud_server - TypeError when trying to use deprecated image with allow_deprecated_image
+        - hcloud_server - TypeError when trying to use deprecated image with allow_deprecated_image
       minor_changes:
-      - hcloud_primary_ip_info Create hcloud_primary_ip_info module
-      - hcloud_server Show warning if used server_type is deprecated.
-      - hcloud_server_type_info Return deprecation info for server types.
+        - hcloud_primary_ip_info Create hcloud_primary_ip_info module
+        - hcloud_server Show warning if used server_type is deprecated.
+        - hcloud_server_type_info Return deprecation info for server types.
     fragments:
-    - create_primary_ip_info.yml
-    - server-type-deprecation.yml
-    - server_error_deprecated_image.yml
-    release_date: '2023-06-20'
+      - create_primary_ip_info.yml
+      - server-type-deprecation.yml
+      - server_error_deprecated_image.yml
+    release_date: "2023-06-20"
   1.14.0:
     changes:
       minor_changes:
-      - hcloud_network Add expose_routes_to_vswitch field.
-      - hcloud_network_info Return expose_routes_to_vswitch for network.
+        - hcloud_network Add expose_routes_to_vswitch field.
+        - hcloud_network_info Return expose_routes_to_vswitch for network.
     fragments:
-    - add-field-expose_routes_to_vswitch.yml
-    release_date: '2023-06-22'
+      - add-field-expose_routes_to_vswitch.yml
+    release_date: "2023-06-22"
   1.15.0:
     changes:
       bugfixes:
-      - hcloud_image_info Fix facts modules deprecated result key
-      - hcloud_location_info Fix facts modules deprecation warnings
-      - hcloud_server_type_info Fix facts modules deprecated result dict
-      - hcloud_server_type_info Fix facts modules deprecation warnings
+        - hcloud_image_info Fix facts modules deprecated result key
+        - hcloud_location_info Fix facts modules deprecation warnings
+        - hcloud_server_type_info Fix facts modules deprecated result dict
+        - hcloud_server_type_info Fix facts modules deprecation warnings
       minor_changes:
-      - hcloud_iso_info Create hcloud_iso_info module
+        - hcloud_iso_info Create hcloud_iso_info module
     fragments:
-    - add-hcloud_iso_info-module.yml
-    - fix-facts-modules-deprecation.yml
-    release_date: '2023-07-04'
+      - add-hcloud_iso_info-module.yml
+      - fix-facts-modules-deprecation.yml
+    release_date: "2023-07-04"
   1.16.0:
     changes:
       minor_changes:
-      - Bundle hcloud python dependency inside the collection.
-      - python-dateutil >= 2.7.5 is now required by the collection. If you already
-        have the hcloud package installed, this dependency should also be installed.
-      - requests >= 2.20 is now required by the collection. If you already have the
-        hcloud package installed, this dependency should also be installed.
-      release_summary: This release bundles the hcloud dependency in the collection,
+        - Bundle hcloud python dependency inside the collection.
+        - python-dateutil >= 2.7.5 is now required by the collection. If you already
+          have the hcloud package installed, this dependency should also be installed.
+        - requests >= 2.20 is now required by the collection. If you already have the
+          hcloud package installed, this dependency should also be installed.
+      release_summary:
+        This release bundles the hcloud dependency in the collection,
         this allows us to ship new features or bug fixes without having to release
         new major versions and require the users to upgrade their version of the hcloud
         dependency.
     fragments:
-    - vendor-hcloud-python-dependency.yml
-    release_date: '2023-07-13'
+      - vendor-hcloud-python-dependency.yml
+    release_date: "2023-07-13"
   1.2.0:
     changes:
       minor_changes:
-      - Dynamic Inventory Add option to specifiy the token_env variable which is used
-        for identification if now token is set
-      - Improve imports of API Exception
-      - hcloud_server_network Allow updating alias ips
-      - hcloud_subnetwork Allow creating vswitch subnetworks
+        - Dynamic Inventory Add option to specifiy the token_env variable which is used
+          for identification if now token is set
+        - Improve imports of API Exception
+        - hcloud_server_network Allow updating alias ips
+        - hcloud_subnetwork Allow creating vswitch subnetworks
     modules:
-    - description: Gather infos about your Hetzner Cloud load_balancers.
-      name: hcloud_load_balancer_info
-      namespace: ''
-    release_date: '2020-12-01'
+      - description: Gather infos about your Hetzner Cloud load_balancers.
+        name: hcloud_load_balancer_info
+        namespace: ""
+    release_date: "2020-12-01"
   1.2.1:
     changes:
       bugfixes:
-      - Inventory Restore Python 2.7 compatibility
-    release_date: '2020-12-16'
+        - Inventory Restore Python 2.7 compatibility
+    release_date: "2020-12-16"
   1.3.0:
     changes:
       minor_changes:
-      - Add firewalls to hcloud_server module
+        - Add firewalls to hcloud_server module
     modules:
-    - description: Manage Hetzner Cloud Firewalls
-      name: hcloud_firewall
-      namespace: ''
-    release_date: '2021-03-11'
+      - description: Manage Hetzner Cloud Firewalls
+        name: hcloud_firewall
+        namespace: ""
+    release_date: "2021-03-11"
   1.3.1:
     changes:
       bugfixes:
-      - hcloud_server - fix a crash related to check mode if ``state=started`` or
-        ``state=stopped`` (https://github.com/ansible-collections/hetzner.hcloud/issues/54).
+        - hcloud_server - fix a crash related to check mode if ``state=started`` or
+          ``state=stopped`` (https://github.com/ansible-collections/hetzner.hcloud/issues/54).
     fragments:
-    - 64-hcloud_server_fix_checkmode_state_started.yml
-    release_date: '2021-03-18'
+      - 64-hcloud_server_fix_checkmode_state_started.yml
+    release_date: "2021-03-18"
   1.4.0:
     changes:
       bugfixes:
-      - hcloud_firewall - fix idempotence related to rules comparison (https://github.com/ansible-collections/hetzner.hcloud/pull/71).
-      - hcloud_load_balancer_service - fix imported wrong HealthCheck from hcloud-python
-        (https://github.com/ansible-collections/hetzner.hcloud/pull/73).
-      - hcloud_server - fix idempotence related to firewall handling (https://github.com/ansible-collections/hetzner.hcloud/pull/71).
+        - hcloud_firewall - fix idempotence related to rules comparison (https://github.com/ansible-collections/hetzner.hcloud/pull/71).
+        - hcloud_load_balancer_service - fix imported wrong HealthCheck from hcloud-python
+          (https://github.com/ansible-collections/hetzner.hcloud/pull/73).
+        - hcloud_server - fix idempotence related to firewall handling (https://github.com/ansible-collections/hetzner.hcloud/pull/71).
       security_fixes:
-      - hcloud_certificate - mark the ``private_key`` parameter as ``no_log`` to prevent
-        potential leaking of secret values (https://github.com/ansible-collections/hetzner.hcloud/pull/70).
+        - hcloud_certificate - mark the ``private_key`` parameter as ``no_log`` to prevent
+          potential leaking of secret values (https://github.com/ansible-collections/hetzner.hcloud/pull/70).
     fragments:
-    - 70-no_log_security_fixes.yml
-    - 71-hcloud_firewall_fix_idempotence.yml
-    - 73-hcloud_load_balancer_service_fix_wrong_import.yml
-    release_date: '2021-04-06'
+      - 70-no_log_security_fixes.yml
+      - 71-hcloud_firewall_fix_idempotence.yml
+      - 73-hcloud_load_balancer_service_fix_wrong_import.yml
+    release_date: "2021-04-06"
   1.4.1:
     changes:
       minor_changes:
-      - hcloud_server - improve the handling of deprecated images
-      - hcloud_server - improve the validation and error response for not existing
-        images
-      - inventory - support jinjia templating within `token`
+        - hcloud_server - improve the handling of deprecated images
+        - hcloud_server - improve the validation and error response for not existing
+          images
+        - inventory - support jinjia templating within `token`
     fragments:
-    - 74-hcloud_server-improve-error-message-images.yml
-    release_date: '2021-04-07'
+      - 74-hcloud_server-improve-error-message-images.yml
+    release_date: "2021-04-07"
   1.4.2:
     changes:
       bugfixes:
-      - inventory fix image name was set as server type instead of the correct server
-        type
+        - inventory fix image name was set as server type instead of the correct server
+          type
     fragments:
-    - inventory-fix-server-type-wrong-value.yml
-    release_date: '2021-04-14'
+      - inventory-fix-server-type-wrong-value.yml
+    release_date: "2021-04-14"
   1.4.3:
     changes:
       bugfixes:
-      - hcloud_server Fix incompatbility with python < 3.6
-      - hcloud_server Improve error handling when using not existing server types
+        - hcloud_server Fix incompatbility with python < 3.6
+        - hcloud_server Improve error handling when using not existing server types
     fragments:
-    - hcloud-server-py36.yaml
-    - hcloud-server-server-type.yaml
-    release_date: '2021-04-22'
+      - hcloud-server-py36.yaml
+      - hcloud-server-server-type.yaml
+    release_date: "2021-04-22"
   1.4.4:
     changes:
       bugfixes:
-      - hcloud_server Improve Error Message when attaching a not existing firewall
-        to a server
-      - hcloud_volume Force detaching of volumes on servers before deletion
+        - hcloud_server Improve Error Message when attaching a not existing firewall
+          to a server
+        - hcloud_volume Force detaching of volumes on servers before deletion
     fragments:
-    - hcloud_server-improve-error-message-on-not-existing-firewall.yml
-    - hcloud_volume-force-detach-before-deletion.yml
-    release_date: '2021-07-19'
+      - hcloud_server-improve-error-message-on-not-existing-firewall.yml
+      - hcloud_volume-force-detach-before-deletion.yml
+    release_date: "2021-07-19"
   1.5.0:
     changes:
       bugfixes:
-      - hcloud_rdns improve error message on not existing server/Floating IP
-      - hcloud_server backups property defaults to None now instead of False
+        - hcloud_rdns improve error message on not existing server/Floating IP
+        - hcloud_server backups property defaults to None now instead of False
       major_changes:
-      - Introduction of placement groups
+        - Introduction of placement groups
       minor_changes:
-      - hcloud_firewall Add description field to firewall rules
+        - hcloud_firewall Add description field to firewall rules
     fragments:
-    - hcloud_firewall-add-description-field-to-rules.yml
-    - hcloud_placement_group.yml
-    - hcloud_rdns-improve-validation-of-input.yml
-    - hcloud_server_default-backups-to-none.yml
-    release_date: '2021-08-16'
+      - hcloud_firewall-add-description-field-to-rules.yml
+      - hcloud_placement_group.yml
+      - hcloud_rdns-improve-validation-of-input.yml
+      - hcloud_server_default-backups-to-none.yml
+    release_date: "2021-08-16"
   1.6.0:
     changes:
       minor_changes:
-      - hcloud_rdns Add support for load balancer
+        - hcloud_rdns Add support for load balancer
     fragments:
-    - hcloud_rdns-add-support-for-load-balancers.yml
-    release_date: '2021-08-17'
+      - hcloud_rdns-add-support-for-load-balancers.yml
+    release_date: "2021-08-17"
   1.7.0:
     changes:
       minor_changes:
-      - inventory - support jinjia templating within `network`
+        - inventory - support jinjia templating within `network`
     fragments:
-    - inventory-network-templating.yml
-    release_date: '2022-06-09'
+      - inventory-network-templating.yml
+    release_date: "2022-06-09"
   1.7.1:
     changes:
       bugfixes:
-      - hcloud_server_network - fixes changed alias_ips by using sorted
+        - hcloud_server_network - fixes changed alias_ips by using sorted
       minor_changes:
-      - inventory - allow filtering by server status
+        - inventory - allow filtering by server status
     fragments:
-    - hcloud_server_network-alias-ips.yaml
-    - inventory-filter-by-status.yaml
-    release_date: '2022-06-13'
+      - hcloud_server_network-alias-ips.yaml
+      - inventory-filter-by-status.yaml
+    release_date: "2022-06-13"
   1.8.0:
     modules:
-    - description: Create and manage cloud Primary IPs on the Hetzner Cloud.
-      name: hcloud_primary_ip
-      namespace: hetzner.hcloud
-    release_date: '2022-06-29'
+      - description: Create and manage cloud Primary IPs on the Hetzner Cloud.
+        name: hcloud_primary_ip
+        namespace: hetzner.hcloud
+    release_date: "2022-06-29"
   1.8.1:
-    release_date: '2022-06-29'
+    release_date: "2022-06-29"
   1.8.2:
     changes:
       bugfixes:
-      - dynamic inventory - fix crash when having servers without IPs (flexible networks)
-      - hcloud_server - When state stopped and server is created, do not start the
-        server
-      - hcloud_server_info - fix crash when having servers without IPs (flexible networks)
+        - dynamic inventory - fix crash when having servers without IPs (flexible networks)
+        - hcloud_server - When state stopped and server is created, do not start the
+          server
+        - hcloud_server_info - fix crash when having servers without IPs (flexible networks)
     fragments:
-    - flexible-networks-hcloud-server-info.yml
-    - inventory.yml
-    release_date: '2022-09-14'
+      - flexible-networks-hcloud-server-info.yml
+      - inventory.yml
+    release_date: "2022-09-14"
   1.9.0:
     changes:
       bugfixes:
-      - hcloud_firewall - the deletion could fail if the firewall was referenced right
-        before
-      - hcloud_server - fix backup window was given out as "None" instead of null
-      - hcloud_server_info - fix backup window was given out as "None" instead of
-        null
-      - hcloud_volume - fix server name was given out as "None" instead of null if
-        no server was attached
-      - hcloud_volume_info - fix server name was given out as "None" instead of null
-        if no server was attached
+        - hcloud_firewall - the deletion could fail if the firewall was referenced right
+          before
+        - hcloud_server - fix backup window was given out as "None" instead of null
+        - hcloud_server_info - fix backup window was given out as "None" instead of
+          null
+        - hcloud_volume - fix server name was given out as "None" instead of null if
+          no server was attached
+        - hcloud_volume_info - fix server name was given out as "None" instead of null
+          if no server was attached
       minor_changes:
-      - dynamic inventory - add support changing the name of the top level group all
-        servers are added to
-      - hcloud_firewall - add support for esp and gre protocols
+        - dynamic inventory - add support changing the name of the top level group all
+          servers are added to
+        - hcloud_firewall - add support for esp and gre protocols
     fragments:
-    - hcloud_firewall-deletion.yml
-    - hcloud_firewall-esp-gre.yml
-    - hcloud_inventory.yml
-    - hcloud_server_backup_window.yml
-    - hcloud_volume_server_none.yml
-    release_date: '2022-11-10'
+      - hcloud_firewall-deletion.yml
+      - hcloud_firewall-esp-gre.yml
+      - hcloud_inventory.yml
+      - hcloud_server_backup_window.yml
+      - hcloud_volume_server_none.yml
+    release_date: "2022-11-10"
   1.9.1:
     changes:
       bugfixes:
-      - hcloud_server - externally attached networks (using hcloud_server_network)
-        were removed when not specified in the hcloud_server resource
+        - hcloud_server - externally attached networks (using hcloud_server_network)
+          were removed when not specified in the hcloud_server resource
     fragments:
-    - hcloud_server-removed-networks.yml
-    release_date: '2022-12-20'
+      - hcloud_server-removed-networks.yml
+    release_date: "2022-12-20"
   2.0.0:
     changes:
       breaking_changes:
-      - Drop support for ansible-core 2.12
-      - Drop support for python 3.7
-      - inventory plugin - Don't set the server image variables (`image_id`, `image_os_flavor`
-        and `image_name`) when the server image is not defined.
+        - Drop support for ansible-core 2.12
+        - Drop support for python 3.7
+        - inventory plugin - Don't set the server image variables (`image_id`, `image_os_flavor`
+          and `image_name`) when the server image is not defined.
       minor_changes:
-      - Bundle hcloud python dependency inside the collection.
-      - python-dateutil >= 2.7.5 is now required by the collection. If you already
-        have the hcloud package installed, this dependency should also be installed.
-      - requests >= 2.20 is now required by the collection. If you already have the
-        hcloud package installed, this dependency should also be installed.
-      release_summary: This release bundles the hcloud dependency in the collection,
+        - Bundle hcloud python dependency inside the collection.
+        - python-dateutil >= 2.7.5 is now required by the collection. If you already
+          have the hcloud package installed, this dependency should also be installed.
+        - requests >= 2.20 is now required by the collection. If you already have the
+          hcloud package installed, this dependency should also be installed.
+      release_summary:
+        This release bundles the hcloud dependency in the collection,
         this allows us to ship new features or bug fixes without having to release
         new major versions and require the users to upgrade their version of the hcloud
         dependency.
       removed_features:
-      - hcloud_datacenter_facts Removed deprecated facts module
-      - hcloud_floating_ip_facts Removed deprecated facts module
-      - hcloud_image_facts Removed deprecated facts module
-      - hcloud_location_facts Removed deprecated facts module
-      - hcloud_server_facts Removed deprecated facts module
-      - hcloud_server_type_facts Removed deprecated facts module
-      - hcloud_ssh_key_facts Removed deprecated facts module
-      - hcloud_volume_facts Removed deprecated facts module
+        - hcloud_datacenter_facts Removed deprecated facts module
+        - hcloud_floating_ip_facts Removed deprecated facts module
+        - hcloud_image_facts Removed deprecated facts module
+        - hcloud_location_facts Removed deprecated facts module
+        - hcloud_server_facts Removed deprecated facts module
+        - hcloud_server_type_facts Removed deprecated facts module
+        - hcloud_ssh_key_facts Removed deprecated facts module
+        - hcloud_volume_facts Removed deprecated facts module
     fragments:
-    - do-not-set-inventory-server-image-variables-when-undefined.yml
-    - drop-support-for-ansible-core-2.12.yml
-    - drop-support-for-python-3.7.yml
-    - remove-deprecated-facts-modules.yml
-    - vendor-hcloud-python-dependency.yml
-    release_date: '2023-07-24'
+      - do-not-set-inventory-server-image-variables-when-undefined.yml
+      - drop-support-for-ansible-core-2.12.yml
+      - drop-support-for-python-3.7.yml
+      - remove-deprecated-facts-modules.yml
+      - vendor-hcloud-python-dependency.yml
+    release_date: "2023-07-24"
   2.1.0:
     changes:
       bugfixes:
-      - '`*_info` - Consistently fail on invalid ID in `*_info` modules.'
+        - "`*_info` - Consistently fail on invalid ID in `*_info` modules."
       minor_changes:
-      - Use the collection version in the hcloud user-agent instead of the ansible-core
-        version.
-      - hcloud_floating_ip_info - Allow querying floating ip by name.
-      - hcloud_load_balancer_info - Add targets health status field.
-      - inventory - Allow caching the hcloud inventory.
+        - Use the collection version in the hcloud user-agent instead of the ansible-core
+          version.
+        - hcloud_floating_ip_info - Allow querying floating ip by name.
+        - hcloud_load_balancer_info - Add targets health status field.
+        - inventory - Allow caching the hcloud inventory.
     fragments:
-    - add-target-health-status-in-hcloud_load_balancer_info.yml
-    - allow-caching-hcloud-inventory.yml
-    - consistently-fail-on-invalid-id.yml
-    - query-hcloud_floating_ip_info-by-name.yml
-    - use-collection-version-in-user-agent.yml
-    release_date: '2023-08-17'
+      - add-target-health-status-in-hcloud_load_balancer_info.yml
+      - allow-caching-hcloud-inventory.yml
+      - consistently-fail-on-invalid-id.yml
+      - query-hcloud_floating_ip_info-by-name.yml
+      - use-collection-version-in-user-agent.yml
+    release_date: "2023-08-17"
   2.1.1:
     changes:
       bugfixes:
-      - hcloud_server - Fix string formatting error on deprecated server type warning
+        - hcloud_server - Fix string formatting error on deprecated server type warning
     fragments:
-    - fix-string-formatting-error-on-deprecated-server-type-warning.yml
-    release_date: '2023-08-23'
+      - fix-string-formatting-error-on-deprecated-server-type-warning.yml
+    release_date: "2023-08-23"
   2.1.2:
     changes:
       bugfixes:
-      - hcloud_firewall - The port argument is required when the firewall rule protocol
-        is `udp` or `tcp`.
-      - hcloud_load_balancer_service - In the returned data, the invalid `health_check.http.certificates`
-        field was renamed to `health_check.http.status_codes`.
+        - hcloud_firewall - The port argument is required when the firewall rule protocol
+          is `udp` or `tcp`.
+        - hcloud_load_balancer_service - In the returned data, the invalid `health_check.http.certificates`
+          field was renamed to `health_check.http.status_codes`.
     fragments:
-    - rename-load-balancer-service-http-health-check-dict.yaml
-    - require-firewall-port-argument-on-tcp-or-udp-protocol.yaml
-    release_date: '2023-10-05'
+      - rename-load-balancer-service-http-health-check-dict.yaml
+      - require-firewall-port-argument-on-tcp-or-udp-protocol.yaml
+    release_date: "2023-10-05"
   2.2.0:
     changes:
       minor_changes:
-      - hcloud_iso_info - Add deprecation field
-      - hcloud_load_balancer_network - Allow selecting a `load_balancer` or `network`
-        using its ID.
-      - hcloud_load_balancer_service - Allow selecting a `load_balancer` using its
-        ID.
-      - hcloud_load_balancer_target - Allow selecting a `load_balancer` or `server`
-        using its ID.
-      - hcloud_rdns - Allow selecting a `server`, `floating_ip`, `primary_ip` or `load_balancer`
-        using its ID.
-      - hcloud_route - Allow selecting a `network` using its ID.
-      - hcloud_server_network - Allow selecting a `network` or `server` using its
-        ID.
-      - hcloud_subnetwork - Allow selecting to a `network` using its ID.
+        - hcloud_iso_info - Add deprecation field
+        - hcloud_load_balancer_network - Allow selecting a `load_balancer` or `network`
+          using its ID.
+        - hcloud_load_balancer_service - Allow selecting a `load_balancer` using its
+          ID.
+        - hcloud_load_balancer_target - Allow selecting a `load_balancer` or `server`
+          using its ID.
+        - hcloud_rdns - Allow selecting a `server`, `floating_ip`, `primary_ip` or `load_balancer`
+          using its ID.
+        - hcloud_route - Allow selecting a `network` using its ID.
+        - hcloud_server_network - Allow selecting a `network` or `server` using its
+          ID.
+        - hcloud_subnetwork - Allow selecting to a `network` using its ID.
     fragments:
-    - add-deprecation-field-to-iso-info.yaml
-    - allow-selecting-a-resource-using-its-id.yaml
-    release_date: '2023-10-23'
+      - add-deprecation-field-to-iso-info.yaml
+      - allow-selecting-a-resource-using-its-id.yaml
+    release_date: "2023-10-23"
   2.3.0:
     changes:
       minor_changes:
-      - hcloud_datacenter_info - Add `server_types` field
-      - hcloud_server - Add `created` field
-      - hcloud_server_info - Add `created` field
+        - hcloud_datacenter_info - Add `server_types` field
+        - hcloud_server - Add `created` field
+        - hcloud_server_info - Add `created` field
     fragments:
-    - add-server_types-to-datacenter-info.yaml
-    - add_created_to_server_info.yaml
-    release_date: '2023-11-07'
+      - add-server_types-to-datacenter-info.yaml
+      - add_created_to_server_info.yaml
+    release_date: "2023-11-07"
