@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.0](https://github.com/ansible-collections/hetzner.hcloud/compare/2.2.0...2.3.0) (2023-11-07)
+
+
+### Features
+
+* add `created` field to server and server_info modules ([#381](https://github.com/ansible-collections/hetzner.hcloud/issues/381)) ([c3e4c0e](https://github.com/ansible-collections/hetzner.hcloud/commit/c3e4c0ea0a77bec26b83476af99d35078ed9cf6d))
+* add server_types to datacenter info module ([#379](https://github.com/ansible-collections/hetzner.hcloud/issues/379)) ([084e04d](https://github.com/ansible-collections/hetzner.hcloud/commit/084e04d576798e7b49c5c3101803e7b8d2e80181))
+
 ## [2.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/2.1.2...2.2.0) (2023-10-23)
 
 ### Features
