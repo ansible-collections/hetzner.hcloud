@@ -59,12 +59,8 @@ options:
         choices: [ absent, present ]
         type: str
 
-requirements:
-  - hcloud-python >= 1.9.0
-
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
-
 """
 
 EXAMPLES = """

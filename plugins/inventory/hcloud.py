@@ -7,8 +7,8 @@ DOCUMENTATION = r"""
       - Lukas Kaemmerling (@lkaemmerling)
     short_description: Ansible dynamic inventory plugin for the Hetzner Cloud.
     requirements:
-        - python >= 3.5
-        - hcloud-python >= 1.0.0
+      - python-dateutil >= 2.7.5
+      - requests >=2.20
     description:
         - Reads inventories from the Hetzner Cloud API.
         - Uses a YAML configuration file that ends with hcloud.(yml|yaml).
