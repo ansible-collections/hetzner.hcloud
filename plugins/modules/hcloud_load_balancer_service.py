@@ -133,9 +133,6 @@ options:
         type: str
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
-
-requirements:
-  - hcloud-python >= 1.8.1
 """
 
 EXAMPLES = """
