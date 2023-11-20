@@ -2,85 +2,90 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 DOCUMENTATION = r"""
-    name: hcloud
-    author:
-      - Lukas Kaemmerling (@lkaemmerling)
-    short_description: Ansible dynamic inventory plugin for the Hetzner Cloud.
-    requirements:
-      - python-dateutil >= 2.7.5
-      - requests >=2.20
-    description:
-        - Reads inventories from the Hetzner Cloud API.
-        - Uses a YAML configuration file that ends with hcloud.(yml|yaml).
-    extends_documentation_fragment:
-        - constructed
-        - inventory_cache
-    options:
-        plugin:
-            description: marks this as an instance of the "hcloud" plugin
-            required: true
-            choices: ["hcloud", "hetzner.hcloud.hcloud"]
-        token:
-            description: The Hetzner Cloud API Token.
-            required: false
-        group:
-            description: The group all servers are automatically added to.
-            default: hcloud
-            type: str
-            required: false
-        token_env:
-            description: Environment variable to load the Hetzner Cloud API Token from.
-            default: HCLOUD_TOKEN
-            type: str
-            required: false
-        connect_with:
-            description: |
-              Connect to the server using the value from this field. This sets the `ansible_host`
-              variable to the value indicated, if that value is available. If you need further
-              customization, like falling back to private ipv4 if the server has no public ipv4,
-              you can use `compose` top-level key.
-            default: public_ipv4
-            type: str
-            choices:
-                - public_ipv4
-                - public_ipv6
-                - hostname
-                - ipv4_dns_ptr
-                - private_ipv4
-        locations:
-          description: Populate inventory with instances in this location.
-          default: []
-          type: list
-          elements: str
-          required: false
-        types:
-          description: Populate inventory with instances with this type.
-          default: []
-          type: list
-          elements: str
-          required: false
-        images:
-          description: Populate inventory with instances with this image name, only available for system images.
-          default: []
-          type: list
-          elements: str
-          required: false
-        label_selector:
-          description: Populate inventory with instances with this label.
-          default: ""
-          type: str
-          required: false
-        network:
-          description: Populate inventory with instances which are attached to this network name or ID.
-          default: ""
-          type: str
-          required: false
-        status:
-          description: Populate inventory with instances with this status.
-          default: []
-          type: list
-          elements: str
-          required: false
+name: hcloud
+short_description: Ansible dynamic inventory plugin for the Hetzner Cloud.
+
+description:
+  - Reads inventories from the Hetzner Cloud API.
+  - Uses a YAML configuration file that ends with hcloud.(yml|yaml).
+
+author:
+  - Lukas Kaemmerling (@lkaemmerling)
+
+requirements:
+  - python-dateutil >= 2.7.5
+  - requests >=2.20
+
+extends_documentation_fragment:
+  - constructed
+  - inventory_cache
+
+options:
+  plugin:
+    description: marks this as an instance of the "hcloud" plugin
+    required: true
+    choices: ["hcloud", "hetzner.hcloud.hcloud"]
+  token:
+    description: The Hetzner Cloud API Token.
+    required: false
+  group:
+    description: The group all servers are automatically added to.
+    default: hcloud
+    type: str
+    required: false
+  token_env:
+    description: Environment variable to load the Hetzner Cloud API Token from.
+    default: HCLOUD_TOKEN
+    type: str
+    required: false
+  connect_with:
+    description: |
+      Connect to the server using the value from this field. This sets the `ansible_host`
+      variable to the value indicated, if that value is available. If you need further
+      customization, like falling back to private ipv4 if the server has no public ipv4,
+      you can use `compose` top-level key.
+    default: public_ipv4
+    type: str
+    choices:
+      - public_ipv4
+      - public_ipv6
+      - hostname
+      - ipv4_dns_ptr
+      - private_ipv4
+  locations:
+    description: Populate inventory with instances in this location.
+    default: []
+    type: list
+    elements: str
+    required: false
+  types:
+    description: Populate inventory with instances with this type.
+    default: []
+    type: list
+    elements: str
+    required: false
+  images:
+    description: Populate inventory with instances with this image name, only available for system images.
+    default: []
+    type: list
+    elements: str
+    required: false
+  label_selector:
+    description: Populate inventory with instances with this label.
+    default: ""
+    type: str
+    required: false
+  network:
+    description: Populate inventory with instances which are attached to this network name or ID.
+    default: ""
+    type: str
+    required: false
+  status:
+    description: Populate inventory with instances with this status.
+    default: []
+    type: list
+    elements: str
+    required: false
 """
 
 EXAMPLES = r"""
