@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_load_balancer_service
+module: load_balancer_service
 
 short_description: Create and manage the services of cloud Load Balancers on the Hetzner Cloud.
 

@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_volume_info
+module: volume_info
 
 short_description: Gather infos about your Hetzner Cloud Volumes.
 

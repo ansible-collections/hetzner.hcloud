@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_floating_ip_info
+module: floating_ip_info
 
 short_description: Gather infos about the Hetzner Cloud Floating IPs.
 

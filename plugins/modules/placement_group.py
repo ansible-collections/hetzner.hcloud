@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_placement_group
+module: placement_group
 
 short_description: Create and manage placement groups on the Hetzner Cloud.
 

@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_floating_ip
+module: floating_ip
 
 short_description: Create and manage cloud Floating IPs on the Hetzner Cloud.
 

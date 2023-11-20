@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_primary_ip_info
+module: primary_ip_info
 
 short_description: Gather infos about the Hetzner Cloud Primary IPs.
 

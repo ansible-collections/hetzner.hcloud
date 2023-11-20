@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_server
+module: server
 
 short_description: Create and manage cloud servers on the Hetzner Cloud.
 

@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_ssh_key
+module: ssh_key
 
 short_description: Create and manage ssh keys on the Hetzner Cloud.
 

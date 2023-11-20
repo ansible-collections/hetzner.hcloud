@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_primary_ip
+module: primary_ip
 
 short_description: Create and manage cloud Primary IPs on the Hetzner Cloud.
 

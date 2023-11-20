@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_subnetwork
+module: subnetwork
 
 short_description: Manage cloud subnetworks on the Hetzner Cloud.
 

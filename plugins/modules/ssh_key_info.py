@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_ssh_key_info
+module: ssh_key_info
 short_description: Gather infos about your Hetzner Cloud ssh_keys.
 description:
     - Gather facts about your Hetzner Cloud ssh_keys.

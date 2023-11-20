@@ -7,7 +7,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_iso_info
+module: iso_info
 
 short_description: Gather infos about the Hetzner Cloud ISO list.
 

@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_rdns
+module: rdns
 
 short_description: Create and manage reverse DNS entries on the Hetzner Cloud.
 

@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_certificate_info
+module: certificate_info
 short_description: Gather infos about your Hetzner Cloud certificates.
 description:
     - Gather facts about your Hetzner Cloud certificates.

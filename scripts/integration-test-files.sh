@@ -2,7 +2,7 @@
 
 # Sync the integration test files from the template to all the integrations targets.
 
-integration_targets="tests/integration/targets/hcloud_"
+integration_targets="tests/integration/targets/"
 integration_common="tests/integration/common"
 
 # banner
@@ -20,6 +20,9 @@ copy_file() {
 }
 
 for target in "$integration_targets"*; do
+  if [[ "$(basename "$target")" = setup_* ]]; then
+    continue
+  fi
   copy_file "$integration_common"/defaults/main/common.yml "$target"/defaults/main/common.yml
   copy_file "$integration_common"/tasks/main.yml "$target"/tasks/main.yml
 done

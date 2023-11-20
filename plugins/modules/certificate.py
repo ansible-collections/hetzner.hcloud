@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_certificate
+module: certificate
 
 short_description: Create and manage certificates on the Hetzner Cloud.
 
