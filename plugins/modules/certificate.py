@@ -68,14 +68,14 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic certificate
-  hetzner.hcloud.hcloud_certificate:
+  hetzner.hcloud.certificate:
     name: my-certificate
     certificate: -----BEGIN CERTIFICATE-----...
     private_key: -----BEGIN PRIVATE KEY-----...
     state: present
 
 - name: Create a certificate with labels
-  hetzner.hcloud.hcloud_certificate:
+  hetzner.hcloud.certificate:
     name: my-certificate
     certificate: -----BEGIN CERTIFICATE-----...
     private_key: -----BEGIN PRIVATE KEY-----...
@@ -85,7 +85,7 @@ EXAMPLES = """
     state: present
 
 - name: Create a managed certificate
-  hetzner.hcloud.hcloud_certificate:
+  hetzner.hcloud.certificate:
     name: my-certificate
     type: managed
     domain_names:
@@ -94,7 +94,7 @@ EXAMPLES = """
     state: present
 
 - name: Ensure the certificate is absent (remove if needed)
-  hetzner.hcloud.hcloud_certificate:
+  hetzner.hcloud.certificate:
     name: my-certificate
     state: absent
 """

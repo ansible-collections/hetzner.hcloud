@@ -73,7 +73,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic Load Balancer
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: my-Load Balancer
     load_balancer_type: lb11
     algorithm: round_robin
@@ -81,7 +81,7 @@ EXAMPLES = """
     state: present
 
 - name: Ensure the Load Balancer is absent (remove if needed)
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: my-Load Balancer
     state: absent
 """

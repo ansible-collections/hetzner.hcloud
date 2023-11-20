@@ -34,7 +34,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud location infos
-  hetzner.hcloud.hcloud_location_info:
+  hetzner.hcloud.location_info:
   register: output
 
 - name: Print the gathered infos

@@ -47,7 +47,7 @@ options:
     use_private_ip:
         description:
             - Route the traffic over the private IP of the Load Balancer through a Hetzner Cloud Network.
-            - Load Balancer needs to be attached to a network. See M(hetzner.hcloud.hcloud_load_balancer_network)
+            - Load Balancer needs to be attached to a network. See M(hetzner.hcloud.load_balancer_network)
         type: bool
         default: False
     state:
@@ -63,28 +63,28 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a server Load Balancer target
-  hetzner.hcloud.hcloud_load_balancer_target:
+  hetzner.hcloud.load_balancer_target:
     type: server
     load_balancer: my-LoadBalancer
     server: my-server
     state: present
 
 - name: Create a label_selector Load Balancer target
-  hetzner.hcloud.hcloud_load_balancer_target:
+  hetzner.hcloud.load_balancer_target:
     type: label_selector
     load_balancer: my-LoadBalancer
     label_selector: application=backend
     state: present
 
 - name: Create an IP Load Balancer target
-  hetzner.hcloud.hcloud_load_balancer_target:
+  hetzner.hcloud.load_balancer_target:
     type: ip
     load_balancer: my-LoadBalancer
     ip: 127.0.0.1
     state: present
 
 - name: Ensure the Load Balancer target is absent (remove if needed)
-  hetzner.hcloud.hcloud_load_balancer_target:
+  hetzner.hcloud.load_balancer_target:
     type: server
     load_balancer: my-LoadBalancer
     server: my-server
@@ -125,7 +125,7 @@ hcloud_load_balancer_target:
         use_private_ip:
             description:
                 - Route the traffic over the private IP of the Load Balancer through a Hetzner Cloud Network.
-                - Load Balancer needs to be attached to a network. See M(hetzner.hcloud.hcloud_load_balancer_network)
+                - Load Balancer needs to be attached to a network. See M(hetzner.hcloud.load_balancer_network)
             type: bool
             sample: true
             returned: always

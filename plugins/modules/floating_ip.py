@@ -73,30 +73,30 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic IPv4 Floating IP
-  hetzner.hcloud.hcloud_floating_ip:
+  hetzner.hcloud.floating_ip:
     name: my-floating-ip
     home_location: fsn1
     type: ipv4
     state: present
 - name: Create a basic IPv6 Floating IP
-  hetzner.hcloud.hcloud_floating_ip:
+  hetzner.hcloud.floating_ip:
     name: my-floating-ip
     home_location: fsn1
     type: ipv6
     state: present
 - name: Assign a Floating IP to a server
-  hetzner.hcloud.hcloud_floating_ip:
+  hetzner.hcloud.floating_ip:
     name: my-floating-ip
     server: 1234
     state: present
 - name: Assign a Floating IP to another server
-  hetzner.hcloud.hcloud_floating_ip:
+  hetzner.hcloud.floating_ip:
     name: my-floating-ip
     server: 1234
     force: true
     state: present
 - name: Floating IP should be absent
-  hetzner.hcloud.hcloud_floating_ip:
+  hetzner.hcloud.floating_ip:
     name: my-floating-ip
     state: absent
 """

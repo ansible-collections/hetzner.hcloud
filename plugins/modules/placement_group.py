@@ -49,13 +49,13 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic placement group
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
     name: my-placement-group
     state: present
     type: spread
 
 - name: Create a placement group with labels
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
     name: my-placement-group
     type: spread
     labels:
@@ -64,7 +64,7 @@ EXAMPLES = """
     state: present
 
 - name: Ensure the placement group is absent (remove if needed)
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
     name: my-placement-group
     state: absent
 """

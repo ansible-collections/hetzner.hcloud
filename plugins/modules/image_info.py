@@ -49,7 +49,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud image infos
-  hetzner.hcloud.hcloud_image_info:
+  hetzner.hcloud.image_info:
   register: output
 
 - name: Print the gathered infos

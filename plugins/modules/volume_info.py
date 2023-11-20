@@ -37,7 +37,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud Volume infos
-  hetzner.hcloud.hcloud_volume_info:
+  hetzner.hcloud.volume_info:
   register: output
 - name: Print the gathered infos
   debug:

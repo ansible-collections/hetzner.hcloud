@@ -34,7 +34,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud server type infos
-  hetzner.hcloud.hcloud_server_type_info:
+  hetzner.hcloud.server_type_info:
   register: output
 
 - name: Print the gathered infos

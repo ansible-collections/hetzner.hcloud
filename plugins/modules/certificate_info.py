@@ -33,7 +33,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud certificate infos
-  hetzner.hcloud.hcloud_certificate_info:
+  hetzner.hcloud.certificate_info:
   register: output
 - name: Print the gathered infos
   debug:

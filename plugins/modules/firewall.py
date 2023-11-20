@@ -80,12 +80,12 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic firewall
-  hetzner.hcloud.hcloud_firewall:
+  hetzner.hcloud.firewall:
     name: my-firewall
     state: present
 
 - name: Create a firewall with rules
-  hetzner.hcloud.hcloud_firewall:
+  hetzner.hcloud.firewall:
     name: my-firewall
     rules:
       - direction: in
@@ -97,7 +97,7 @@ EXAMPLES = """
     state: present
 
 - name: Create a firewall with labels
-  hetzner.hcloud.hcloud_firewall:
+  hetzner.hcloud.firewall:
     name: my-firewall
     labels:
       key: value
@@ -105,7 +105,7 @@ EXAMPLES = """
     state: present
 
 - name: Ensure the firewall is absent (remove if needed)
-  hetzner.hcloud.hcloud_firewall:
+  hetzner.hcloud.firewall:
     name: my-firewall
     state: absent
 """
