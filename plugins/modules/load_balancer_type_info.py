@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_load_balancer_type_info
+module: load_balancer_type_info
 
 short_description: Gather infos about the Hetzner Cloud Load Balancer types.
 

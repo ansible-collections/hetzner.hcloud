@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_network
+module: network
 
 short_description: Create and manage cloud Networks on the Hetzner Cloud.
 

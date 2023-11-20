@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_datacenter_info
+module: datacenter_info
 
 short_description: Gather info about the Hetzner Cloud datacenters.
 

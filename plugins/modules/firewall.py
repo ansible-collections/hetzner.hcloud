@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_firewall
+module: firewall
 
 short_description: Create and manage firewalls on the Hetzner Cloud.
 

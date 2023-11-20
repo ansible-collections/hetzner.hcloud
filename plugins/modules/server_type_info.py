@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_server_type_info
+module: server_type_info
 
 short_description: Gather infos about the Hetzner Cloud server types.
 

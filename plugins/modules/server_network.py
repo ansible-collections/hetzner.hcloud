@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_server_network
+module: server_network
 
 short_description: Manage the relationship between Hetzner Cloud Networks and servers
 

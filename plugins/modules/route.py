@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_route
+module: route
 
 short_description: Create and delete cloud routes on the Hetzner Cloud.
 

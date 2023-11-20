@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_location_info
+module: location_info
 
 short_description: Gather infos about your Hetzner Cloud locations.
 

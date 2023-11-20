@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_network_info
+module: network_info
 
 short_description: Gather info about your Hetzner Cloud networks.
 

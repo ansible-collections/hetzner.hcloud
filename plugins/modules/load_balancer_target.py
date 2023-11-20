@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_load_balancer_target
+module: load_balancer_target
 
 short_description: Manage Hetzner Cloud Load Balancer targets
 

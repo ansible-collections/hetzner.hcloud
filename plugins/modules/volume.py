@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_volume
+module: volume
 
 short_description: Create and manage block Volume on the Hetzner Cloud.
 

@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_load_balancer_network
+module: load_balancer_network
 
 short_description: Manage the relationship between Hetzner Cloud Networks and Load Balancers
 

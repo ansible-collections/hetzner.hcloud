@@ -6,7 +6,7 @@
 
 DOCUMENTATION = """
 ---
-module: hcloud_image_info
+module: image_info
 
 short_description: Gather infos about your Hetzner Cloud images.
 
