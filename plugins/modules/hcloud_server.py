@@ -63,7 +63,7 @@ options:
     datacenter:
         description:
             - Datacenter of Server.
-            - Required of no I(location) is given and server does not exist.
+            - Required if no I(location) is given and server does not exist.
         type: str
     backups:
         description:
