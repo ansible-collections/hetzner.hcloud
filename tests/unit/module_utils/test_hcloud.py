@@ -18,7 +18,7 @@ def test_hcloud_fail_json_hcloud():
     module = MagicMock()
     module.params = {
         "api_token": "fake_token",
-        "endpoint": "https://api.hetzner.cloud/v1",
+        "api_endpoint": "https://api.hetzner.cloud/v1",
     }
     AnsibleHCloud.represent = "hcloud_test"
     hcloud = AnsibleHCloud(module)

@@ -1,0 +1,3 @@
+minor_changes:
+  - Renamed the `endpoint` module argument to `api_endpoint`, backward compatibility is maintained using an alias.
+  - Allow to set the `api_endpoint` module argument using the `HCLOUD_ENDPOINT` environment variable.
