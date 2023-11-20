@@ -1,6 +1,6 @@
 ---
 - name: Create test_network
-  hetzner.hcloud.hcloud_network:
+  hetzner.hcloud.network:
     name: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/16"
     state: present

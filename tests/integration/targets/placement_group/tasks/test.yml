@@ -2,17 +2,17 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup placement group to be absent
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
     name: "{{ hcloud_placement_group_name }}"
     state: absent
 
 - name: setup server to be absent
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: absent
 
 - name: test missing required parameters on create placement group
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
   register: result
   ignore_errors: true
 - name: verify fail test missing required parameters on create placement group
@@ -22,7 +22,7 @@
       - 'result.msg == "one of the following is required: id, name"'
 
 - name: test create placement group with check mode
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
     name: "{{ hcloud_placement_group_name }}"
     type: spread
   register: result
@@ -33,7 +33,7 @@
       - result is changed
 
 - name: test create placement group
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
     name: "{{ hcloud_placement_group_name }}"
     type: spread
     labels:
@@ -49,7 +49,7 @@
       - placement_group.hcloud_placement_group.servers | list | count == 0
 
 - name: test create placement group idempotence
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
     name: "{{ hcloud_placement_group_name }}"
     type: spread
     labels:
@@ -62,7 +62,7 @@
       - result is not changed
 
 - name: test create server with placement group
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     placement_group: "{{ hcloud_placement_group_name }}"
@@ -78,7 +78,7 @@
       - server.hcloud_server.placement_group == "{{ hcloud_placement_group_name }}"
 
 - name: test remove server from placement group
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     placement_group: null
     state: present
@@ -90,7 +90,7 @@
       - result.hcloud_server.placement_group == None
 
 - name: test add server to placement group
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     placement_group: "{{ hcloud_placement_group_name }}"
     force: True
@@ -104,7 +104,7 @@
       - result.hcloud_server.status == "running"
 
 - name: test add server to placement group idempotence
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     placement_group: "{{ hcloud_placement_group_name }}"
     force: True
@@ -118,7 +118,7 @@
       - result.hcloud_server.status == "running"
 
 - name: test update placement group with check mode
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
     id: "{{ placement_group.hcloud_placement_group.id }}"
     name: "changed-{{ hcloud_placement_group_name }}"
   register: result
@@ -129,7 +129,7 @@
       - result is changed
 
 - name: test update placement group
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
     id: "{{ placement_group.hcloud_placement_group.id }}"
     name: "changed-{{ hcloud_placement_group_name }}"
     labels:
@@ -142,7 +142,7 @@
       - result.hcloud_placement_group.name == "changed-{{ hcloud_placement_group_name }}"
 
 - name: test update placement group idempotence
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
     id: "{{ placement_group.hcloud_placement_group.id }}"
     name: "changed-{{ hcloud_placement_group_name }}"
     labels:
@@ -154,12 +154,12 @@
       - result is not changed
 
 - name: absent server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     id: "{{ server.hcloud_server.id }}"
     state: absent
 
 - name: absent placement group
-  hetzner.hcloud.hcloud_placement_group:
+  hetzner.hcloud.placement_group:
     id: "{{ placement_group.hcloud_placement_group.id }}"
     state: absent
   register: result

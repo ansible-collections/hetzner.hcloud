@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: Gather hcloud_datacenter_info
-  hetzner.hcloud.hcloud_datacenter_info:
+  hetzner.hcloud.datacenter_info:
   register: result
 - name: Verify hcloud_datacenter_info
   ansible.builtin.assert:
@@ -10,7 +10,7 @@
       - result.hcloud_datacenter_info | list | count >= 5
 
 - name: Gather hcloud_datacenter_info in check mode
-  hetzner.hcloud.hcloud_datacenter_info:
+  hetzner.hcloud.datacenter_info:
   check_mode: true
   register: result
 - name: Verify hcloud_datacenter_info in check mode
@@ -19,7 +19,7 @@
       - result.hcloud_datacenter_info | list | count >= 5
 
 - name: Gather hcloud_datacenter_info with correct id
-  hetzner.hcloud.hcloud_datacenter_info:
+  hetzner.hcloud.datacenter_info:
     id: "{{ hcloud_datacenter_id }}"
   register: result
 - name: Verify hcloud_datacenter_info with correct id
@@ -30,7 +30,7 @@
       - result.hcloud_datacenter_info[0].location == hcloud_location_name
 
 - name: Gather hcloud_datacenter_info with wrong id
-  hetzner.hcloud.hcloud_datacenter_info:
+  hetzner.hcloud.datacenter_info:
     id: "{{ hcloud_datacenter_id }}4321"
   ignore_errors: true
   register: result
@@ -40,7 +40,7 @@
       - result is failed
 
 - name: Gather hcloud_datacenter_info with correct name
-  hetzner.hcloud.hcloud_datacenter_info:
+  hetzner.hcloud.datacenter_info:
     name: "{{ hcloud_datacenter_name }}"
   register: result
 - name: Verify hcloud_datacenter_info with correct name
@@ -49,7 +49,7 @@
       - result.hcloud_datacenter_info | list | count == 1
 
 - name: Gather hcloud_datacenter_info with wrong name
-  hetzner.hcloud.hcloud_datacenter_info:
+  hetzner.hcloud.datacenter_info:
     name: "{{ hcloud_datacenter_name }}-invalid"
   register: result
 - name: Verify hcloud_datacenter_info with wrong name

@@ -1,6 +1,6 @@
 ---
 - name: Create test_volume
-  hetzner.hcloud.hcloud_volume:
+  hetzner.hcloud.volume:
     name: "{{ hcloud_volume_name }}"
     size: 10
     location: fsn1

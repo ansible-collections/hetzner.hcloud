@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup network
-  hetzner.hcloud.hcloud_network:
+  hetzner.hcloud.network:
     name: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/8"
     state: present
@@ -13,7 +13,7 @@
       - network is success
 
 - name: setup subnetwork
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/16"
     type: "server"
@@ -26,7 +26,7 @@
       - subnetwork is success
 
 - name: setup server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{hcloud_server_name}}"
     server_type: cx11
     image: ubuntu-22.04
@@ -39,7 +39,7 @@
       - server is success
 
 - name: test missing required parameters on create server network
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     state: present
   register: result
   ignore_errors: true
@@ -50,7 +50,7 @@
       - 'result.msg == "missing required arguments: network, server"'
 
 - name: test create server network with checkmode
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
     server: "{{hcloud_server_name}}"
     state: present
@@ -62,7 +62,7 @@
       - result is changed
 
 - name: test create server network
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
     server: "{{hcloud_server_name}}"
     state: present
@@ -75,7 +75,7 @@
       - serverNetwork.hcloud_server_network.server == hcloud_server_name
 
 - name: test create server network idempotency
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
     server: "{{hcloud_server_name}}"
     state: present
@@ -86,7 +86,7 @@
       - serverNetwork is not changed
 
 - name: test absent server network
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
     server: "{{hcloud_server_name}}"
     state: absent
@@ -97,7 +97,7 @@
       - result is changed
 
 - name: test create server network with specified ip
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
     server: "{{hcloud_server_name}}"
     ip: "10.0.0.2"
@@ -112,7 +112,7 @@
       - serverNetwork.hcloud_server_network.ip == "10.0.0.2"
 
 - name: cleanup create server network with specified ip
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
     server: "{{hcloud_server_name}}"
     state: absent
@@ -123,7 +123,7 @@
       - result is changed
 
 - name: test create server network with alias ips
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
     server: "{{hcloud_server_name}}"
     ip: "10.0.0.2"
@@ -143,7 +143,7 @@
       - 'serverNetwork.hcloud_server_network.alias_ips[1] == "10.0.1.2"'
 
 - name: test update server network with alias ips
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
     server: "{{hcloud_server_name}}"
     ip: "10.0.0.2"
@@ -163,7 +163,7 @@
       - 'serverNetwork.hcloud_server_network.alias_ips[1] == "10.0.3.1"'
 
 - name: test update server network with alias ips idempotency
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
     server: "{{hcloud_server_name}}"
     ip: "10.0.0.2"
@@ -178,7 +178,7 @@
       - serverNetwork is not changed
 
 - name: cleanup create server network with alias ips
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
     server: "{{hcloud_server_name}}"
     state: absent
@@ -189,7 +189,7 @@
       - result is changed
 
 - name: cleanup server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result
@@ -199,7 +199,7 @@
       - result is success
 
 - name: cleanup subnetwork
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/16"
     type: "server"
@@ -212,7 +212,7 @@
       - result is changed
 
 - name: cleanup
-  hetzner.hcloud.hcloud_network:
+  hetzner.hcloud.network:
     name: "{{hcloud_network_name}}"
     state: absent
   register: result

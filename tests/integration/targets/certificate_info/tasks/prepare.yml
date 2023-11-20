@@ -1,6 +1,6 @@
 ---
 - name: Create test_certificate
-  hetzner.hcloud.hcloud_certificate:
+  hetzner.hcloud.certificate:
     name: "{{ hcloud_certificate_name }}"
     certificate: "{{ test_certificate_content }}"
     private_key: "{{ test_certificate_privatekey_content }}"

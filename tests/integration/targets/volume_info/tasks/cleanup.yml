@@ -1,5 +1,5 @@
 ---
 - name: Cleanup test_volume
-  hetzner.hcloud.hcloud_volume:
+  hetzner.hcloud.volume:
     name: "{{ hcloud_volume_name }}"
     state: absent

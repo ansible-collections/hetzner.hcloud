@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: setup load_balancer
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{hcloud_load_balancer_name}}"
     load_balancer_type: lb11
     state: present
@@ -14,7 +14,7 @@
       - load_balancer is success
 
 - name: test fail load balancer does not exist
-  hetzner.hcloud.hcloud_load_balancer_service:
+  hetzner.hcloud.load_balancer_service:
     load_balancer: does-not-exist
     protocol: http
     listen_port: 80
@@ -28,7 +28,7 @@
       - "result.msg == 'resource (load_balancer) does not exist: does-not-exist'"
 
 - name: test create load_balancer service with checkmode
-  hetzner.hcloud.hcloud_load_balancer_service:
+  hetzner.hcloud.load_balancer_service:
     load_balancer: "{{hcloud_load_balancer_name}}"
     protocol: "http"
     listen_port: 80
@@ -41,7 +41,7 @@
       - result is changed
 
 - name: test create load_balancer service
-  hetzner.hcloud.hcloud_load_balancer_service:
+  hetzner.hcloud.load_balancer_service:
     load_balancer: "{{hcloud_load_balancer_name}}"
     protocol: "http"
     listen_port: 80
@@ -57,7 +57,7 @@
       - load_balancer_service.hcloud_load_balancer_service.proxyprotocol is sameas false
 
 - name: test create load_balancer service idempotency
-  hetzner.hcloud.hcloud_load_balancer_service:
+  hetzner.hcloud.load_balancer_service:
     load_balancer: "{{hcloud_load_balancer_name}}"
     protocol: "http"
     listen_port: 80
@@ -69,7 +69,7 @@
       - load_balancer_service is not changed
 
 - name: test update load_balancer service
-  hetzner.hcloud.hcloud_load_balancer_service:
+  hetzner.hcloud.load_balancer_service:
     load_balancer: "{{hcloud_load_balancer_name}}"
     protocol: "tcp"
     listen_port: 80
@@ -85,7 +85,7 @@
       - load_balancer_service.hcloud_load_balancer_service.proxyprotocol is sameas false
 
 - name: test absent load_balancer service
-  hetzner.hcloud.hcloud_load_balancer_service:
+  hetzner.hcloud.load_balancer_service:
     load_balancer: "{{hcloud_load_balancer_name}}"
     protocol: "http"
     listen_port: 80
@@ -97,7 +97,7 @@
       - result is changed
 
 - name: test create load_balancer service with http
-  hetzner.hcloud.hcloud_load_balancer_service:
+  hetzner.hcloud.load_balancer_service:
     load_balancer: "{{hcloud_load_balancer_name}}"
     protocol: "http"
     listen_port: 80
@@ -116,7 +116,7 @@
       - load_balancer_service.hcloud_load_balancer_service.proxyprotocol is sameas false
 
 - name: cleanup load_balancer
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result
