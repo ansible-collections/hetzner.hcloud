@@ -1,0 +1,10 @@
+---
+edit_on_github:
+  repository: ansible-collections/hetzner.hcloud
+  branch: main
+
+extra_links:
+  - description: Hetzner Cloud API Reference
+    url: https://docs.hetzner.cloud
+  - description: Hetzner Cloud API Changelog
+    url: https://docs.hetzner.cloud/changelog
