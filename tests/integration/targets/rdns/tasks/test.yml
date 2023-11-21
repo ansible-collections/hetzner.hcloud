@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: Test missing required parameters
-  hetzner.hcloud.hcloud_rdns:
+  hetzner.hcloud.rdns:
     state: present
   ignore_errors: true
   register: result
@@ -13,7 +13,7 @@
       - 'result.msg == "missing required arguments: ip_address"'
 
 - name: Test create with checkmode
-  hetzner.hcloud.hcloud_rdns:
+  hetzner.hcloud.rdns:
     server: "{{ hcloud_server_name }}"
     ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
     dns_ptr: example.com
@@ -26,7 +26,7 @@
       - result is changed
 
 - name: Test create
-  hetzner.hcloud.hcloud_rdns:
+  hetzner.hcloud.rdns:
     server: "{{ hcloud_server_name }}"
     ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
     dns_ptr: example.com
@@ -41,7 +41,7 @@
       - result.hcloud_rdns.dns_ptr == "example.com"
 
 - name: Test create idempotency
-  hetzner.hcloud.hcloud_rdns:
+  hetzner.hcloud.rdns:
     server: "{{ hcloud_server_name }}"
     ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
     dns_ptr: example.com
@@ -53,7 +53,7 @@
       - result is not changed
 
 - name: Test create with not existing server
-  hetzner.hcloud.hcloud_rdns:
+  hetzner.hcloud.rdns:
     server: not-existing
     ip_address: "127.0.0.1"
     dns_ptr: example.com
@@ -67,7 +67,7 @@
       - 'result.msg == "resource (server) does not exist: not-existing"'
 
 - name: Test update
-  hetzner.hcloud.hcloud_rdns:
+  hetzner.hcloud.rdns:
     server: "{{ hcloud_server_name }}"
     ip_address: "{{ test_server.hcloud_server.ipv4_address }}"
     dns_ptr: example.com
@@ -80,7 +80,7 @@
       - result.hcloud_rdns.ip_address == "{{ test_server.hcloud_server.ipv4_address }}"
 
 - name: Test update reset
-  hetzner.hcloud.hcloud_rdns:
+  hetzner.hcloud.rdns:
     server: "{{ hcloud_server_name }}"
     ip_address: "{{ test_server.hcloud_server.ipv4_address }}"
     state: present
@@ -92,7 +92,7 @@
       - result.hcloud_rdns.dns_ptr != "example.com"
 
 - name: Test delete
-  hetzner.hcloud.hcloud_rdns:
+  hetzner.hcloud.rdns:
     server: "{{ hcloud_server_name }}"
     ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
     state: absent
@@ -103,7 +103,7 @@
       - result is changed
 
 - name: Test create with primary ip
-  hetzner.hcloud.hcloud_rdns:
+  hetzner.hcloud.rdns:
     primary_ip: "{{ hcloud_primary_ip_name }}"
     ip_address: "{{ test_primary_ip.hcloud_primary_ip.ip }}"
     dns_ptr: example.com
@@ -118,7 +118,7 @@
       - result.hcloud_rdns.dns_ptr == "example.com"
 
 - name: Test create with floating ip
-  hetzner.hcloud.hcloud_rdns:
+  hetzner.hcloud.rdns:
     floating_ip: "{{ hcloud_floating_ip_name }}"
     ip_address: "{{ test_floating_ip.hcloud_floating_ip.ip }}"
     dns_ptr: example.com
@@ -133,7 +133,7 @@
       - result.hcloud_rdns.dns_ptr == "example.com"
 
 - name: Test create with load balancer
-  hetzner.hcloud.hcloud_rdns:
+  hetzner.hcloud.rdns:
     load_balancer: "{{ hcloud_load_balancer_name }}"
     ip_address: "{{ test_load_balancer.hcloud_load_balancer.ipv4_address }}"
     dns_ptr: example.com

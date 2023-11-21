@@ -55,13 +55,13 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic ssh_key
-  hetzner.hcloud.hcloud_ssh_key:
+  hetzner.hcloud.ssh_key:
     name: my-ssh_key
     public_key: ssh-rsa AAAjjk76kgf...Xt
     state: present
 
 - name: Create a ssh_key with labels
-  hetzner.hcloud.hcloud_ssh_key:
+  hetzner.hcloud.ssh_key:
     name: my-ssh_key
     public_key: ssh-rsa AAAjjk76kgf...Xt
     labels:
@@ -70,7 +70,7 @@ EXAMPLES = """
     state: present
 
 - name: Ensure the ssh_key is absent (remove if needed)
-  hetzner.hcloud.hcloud_ssh_key:
+  hetzner.hcloud.ssh_key:
     name: my-ssh_key
     state: absent
 """

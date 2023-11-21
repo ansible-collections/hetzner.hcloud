@@ -1,10 +1,10 @@
 ---
 - name: Cleanup test_server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: absent
 
 - name: Cleanup test_server2
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}2"
     state: absent

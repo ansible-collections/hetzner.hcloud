@@ -45,7 +45,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud ISO type infos
-  hetzner.hcloud.hcloud_iso_info:
+  hetzner.hcloud.iso_info:
   register: output
 
 - name: Print the gathered infos

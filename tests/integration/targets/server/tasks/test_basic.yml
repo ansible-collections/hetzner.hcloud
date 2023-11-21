@@ -1,5 +1,5 @@
 - name: test create server with check mode
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: cx11
     image: ubuntu-22.04
@@ -12,7 +12,7 @@
       - result is changed
 
 - name: test create server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
     image: ubuntu-22.04
@@ -29,7 +29,7 @@
       - main_server.root_password != ""
 
 - name: test create server idempotence
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: started
   register: result
@@ -39,7 +39,7 @@
       - result is not changed
 
 - name: test stop server with check mode
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: stopped
   register: result
@@ -51,7 +51,7 @@
       - result.hcloud_server.status == "running"
 
 - name: test stop server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: stopped
   register: result
@@ -62,7 +62,7 @@
       - result.hcloud_server.status == "off"
 
 - name: test start server with check mode
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: started
   register: result
@@ -73,7 +73,7 @@
       - result is changed
 
 - name: test start server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: started
   register: result
@@ -84,7 +84,7 @@
       - result.hcloud_server.status == "running"
 
 - name: test start server idempotence
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: started
   register: result
@@ -95,7 +95,7 @@
       - result.hcloud_server.status == "running"
 
 - name: test stop server by its id
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     id: "{{ main_server.hcloud_server.id }}"
     state: stopped
   register: result
@@ -106,7 +106,7 @@
       - result.hcloud_server.status == "off"
 
 - name: test resize server running without force
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: "cx21"
     state: present
@@ -119,7 +119,7 @@
       - result.hcloud_server.server_type == "cx11"
 
 - name: test resize server with check mode
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: "cx21"
     state: stopped
@@ -131,7 +131,7 @@
       - result is changed
 
 - name: test resize server without disk
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: "cx21"
     state: stopped
@@ -143,7 +143,7 @@
       - result.hcloud_server.server_type == "cx21"
 
 - name: test resize server idempotence
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: "cx21"
     state: stopped
@@ -154,7 +154,7 @@
       - result is not changed
 
 - name: test resize server to smaller plan
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: "cx11"
     state: stopped
@@ -166,7 +166,7 @@
       - result.hcloud_server.server_type == "cx11"
 
 - name: test resize server with disk
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: "cx21"
     upgrade_disk: true
@@ -179,7 +179,7 @@
       - result.hcloud_server.server_type == "cx21"
 
 - name: test enable backups with check mode
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     backups: true
     state: stopped
@@ -191,7 +191,7 @@
       - result is changed
 
 - name: test enable backups
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     backups: true
     state: stopped
@@ -203,7 +203,7 @@
       - result.hcloud_server.backup_window != ""
 
 - name: test enable backups idempotence
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     backups: true
     state: stopped
@@ -215,7 +215,7 @@
       - result.hcloud_server.backup_window != ""
 
 - name: test backups are not accidentally disabled
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     # Make sure that backups are not disabled because a partial server object without "backups" was supplied somewhere
     # to update some unrelated properties.
@@ -230,7 +230,7 @@
       - result.hcloud_server.backup_window != ""
 
 - name: test rebuild server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     image: ubuntu-22.04
     state: rebuild
@@ -242,7 +242,7 @@
       - result.hcloud_server.id == result_after_test.hcloud_server.id
 
 - name: test rebuild server with check mode
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     image: ubuntu-22.04
     state: rebuild
@@ -254,7 +254,7 @@
       - result_after_test is changed
 
 - name: test update server protection booth protection arguments are required
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     delete_protection: true
     state: present
@@ -267,7 +267,7 @@
       - 'result_after_test.msg == "parameters are required together: delete_protection, rebuild_protection"'
 
 - name: test update server protection fails if they are not the same
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     delete_protection: true
     rebuild_protection: false
@@ -280,7 +280,7 @@
       - result_after_test is failed
 
 - name: test update server protection
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     delete_protection: true
     rebuild_protection: true
@@ -295,7 +295,7 @@
       - result_after_test.hcloud_server.rebuild_protection is sameas true
 
 - name: test server without protection set to be idempotent
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{hcloud_server_name}}"
   register: result_after_test
 - name: verify test server without protection set to be idempotent
@@ -306,7 +306,7 @@
       - result_after_test.hcloud_server.rebuild_protection is sameas true
 
 - name: test delete server fails if it is protected
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{hcloud_server_name}}"
     state: absent
   ignore_errors: true
@@ -318,7 +318,7 @@
       - 'result.msg == "server deletion is protected"'
 
 - name: test rebuild server fails if it is protected
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{hcloud_server_name}}"
     image: ubuntu-22.04
     state: rebuild
@@ -331,7 +331,7 @@
       - 'result.msg == "server rebuild is protected"'
 
 - name: test remove server protection
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     delete_protection: false
     rebuild_protection: false
@@ -346,7 +346,7 @@
       - result_after_test.hcloud_server.rebuild_protection is sameas false
 
 - name: absent server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result
@@ -356,7 +356,7 @@
       - result is success
 
 - name: test create server with ssh key
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
     image: "ubuntu-22.04"
@@ -374,7 +374,7 @@
       - main_server.root_password != ""
 
 - name: test activate rescue mode with check_mode
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     rescue_mode: "linux64"
     ssh_keys:
@@ -388,7 +388,7 @@
       - main_server is changed
 
 - name: test activate rescue mode
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     rescue_mode: "linux64"
     ssh_keys:
@@ -402,7 +402,7 @@
       - main_server.hcloud_server.rescue_enabled is sameas true
 
 - name: test disable rescue mode
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
@@ -415,7 +415,7 @@
       - main_server.hcloud_server.rescue_enabled is sameas false
 
 - name: test activate rescue mode without ssh keys
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     rescue_mode: "linux64"
     state: present
@@ -427,7 +427,7 @@
       - main_server.hcloud_server.rescue_enabled is sameas true
 
 - name: absent server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result
@@ -437,7 +437,7 @@
       - result is success
 
 - name: test create server with rescue_mode
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
     image: "ubuntu-22.04"
@@ -457,7 +457,7 @@
       - main_server.hcloud_server.rescue_enabled is sameas true
 
 - name: absent server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result
@@ -466,7 +466,7 @@
     that:
       - result is success
 - name: test create server with labels
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
     image: "ubuntu-22.04"
@@ -485,7 +485,7 @@
       - main_server.hcloud_server.labels.mylabel == "val123"
 
 - name: test update server with labels
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
     image: "ubuntu-22.04"
@@ -504,7 +504,7 @@
       - main_server.hcloud_server.labels.mylabel == "val123"
 
 - name: test update server with labels in other order
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
     server_type: cx11
     image: "ubuntu-22.04"
@@ -521,7 +521,7 @@
       - main_server is not changed
 
 - name: cleanup with labels
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result
@@ -531,7 +531,7 @@
       - result is success
 
 - name: test create server with enabled backups
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     backups: true
@@ -547,7 +547,7 @@
       - result.hcloud_server.backup_window != ""
 
 - name: cleanup test create server with enabled backups
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result
@@ -557,7 +557,7 @@
       - result is success
 
 - name: test create server with protection
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     delete_protection: true
     rebuild_protection: true
@@ -576,7 +576,7 @@
       - result_after_test.hcloud_server.rebuild_protection is sameas true
 
 - name: test delete server fails if it is protected
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{hcloud_server_name}}"
     state: absent
   ignore_errors: true
@@ -588,7 +588,7 @@
       - 'result.msg == "server deletion is protected"'
 
 - name: remove protection from server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     delete_protection: false
     rebuild_protection: false
@@ -603,7 +603,7 @@
       - result_after_test.hcloud_server.rebuild_protection is sameas false
 
 - name: cleanup
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: absent
   register: result

@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: Gather hcloud_load_balancer_info
-  hetzner.hcloud.hcloud_load_balancer_info:
+  hetzner.hcloud.load_balancer_info:
   register: result
 - name: Verify hcloud_load_balancer_info
   ansible.builtin.assert:
@@ -10,7 +10,7 @@
       - result.hcloud_load_balancer_info | list | count >= 1
 
 - name: Gather hcloud_load_balancer_info in check mode
-  hetzner.hcloud.hcloud_load_balancer_info:
+  hetzner.hcloud.load_balancer_info:
   check_mode: true
   register: result
 - name: Verify hcloud_load_balancer_info in check mode
@@ -19,7 +19,7 @@
       - result.hcloud_load_balancer_info | list | count >= 1
 
 - name: Gather hcloud_load_balancer_info with correct id
-  hetzner.hcloud.hcloud_load_balancer_info:
+  hetzner.hcloud.load_balancer_info:
     id: "{{ test_load_balancer.hcloud_load_balancer.id }}"
   register: result
 - name: Verify hcloud_load_balancer_info with correct id
@@ -37,7 +37,7 @@
       - result.hcloud_load_balancer_info[0].services | selectattr('destination_port', 'equalto', 80) | list | count == 1
 
 - name: Gather hcloud_load_balancer_info with wrong id
-  hetzner.hcloud.hcloud_load_balancer_info:
+  hetzner.hcloud.load_balancer_info:
     id: "{{ test_load_balancer.hcloud_load_balancer.id }}4321"
   ignore_errors: true
   register: result
@@ -47,7 +47,7 @@
       - result is failed
 
 - name: Gather hcloud_load_balancer_info with correct name
-  hetzner.hcloud.hcloud_load_balancer_info:
+  hetzner.hcloud.load_balancer_info:
     name: "{{ hcloud_load_balancer_name }}"
   register: result
 - name: Verify hcloud_load_balancer_info with correct name
@@ -56,7 +56,7 @@
       - result.hcloud_load_balancer_info | list | count == 1
 
 - name: Gather hcloud_load_balancer_info with wrong name
-  hetzner.hcloud.hcloud_load_balancer_info:
+  hetzner.hcloud.load_balancer_info:
     name: "{{ hcloud_load_balancer_name }}-invalid"
   register: result
 - name: Verify hcloud_load_balancer_info with wrong name
@@ -65,7 +65,7 @@
       - result.hcloud_load_balancer_info | list | count == 0
 
 - name: Gather hcloud_load_balancer_info with correct label selector
-  hetzner.hcloud.hcloud_load_balancer_info:
+  hetzner.hcloud.load_balancer_info:
     label_selector: "key=value"
   register: result
 - name: Verify hcloud_load_balancer_info with correct label selector
@@ -77,7 +77,7 @@
         | list | count == 1
 
 - name: Gather hcloud_load_balancer_info with wrong label selector
-  hetzner.hcloud.hcloud_load_balancer_info:
+  hetzner.hcloud.load_balancer_info:
     label_selector: "key!=value"
   register: result
 - name: Verify hcloud_load_balancer_info with wrong label selector

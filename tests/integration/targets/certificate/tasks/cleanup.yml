@@ -1,5 +1,5 @@
 ---
 - name: cleanup test certificate
-  hetzner.hcloud.hcloud_certificate:
+  hetzner.hcloud.certificate:
     name: "{{ hcloud_certificate_name }}"
     state: absent

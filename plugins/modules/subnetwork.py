@@ -57,7 +57,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic subnetwork
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: my-network
     ip_range: 10.0.0.0/16
     network_zone: eu-central
@@ -65,7 +65,7 @@ EXAMPLES = """
     state: present
 
 - name: Create a basic subnetwork
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: my-vswitch-network
     ip_range: 10.0.0.0/24
     network_zone: eu-central
@@ -74,7 +74,7 @@ EXAMPLES = """
     state: present
 
 - name: Ensure the subnetwork is absent (remove if needed)
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: my-network
     ip_range: 10.0.0.0/8
     network_zone: eu-central

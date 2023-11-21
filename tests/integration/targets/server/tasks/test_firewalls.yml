@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: test add not existing firewall should fail
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     firewalls:
       - not-existing
@@ -15,7 +15,7 @@
       - result is failed
       - 'result.msg == "firewall not-existing was not found"'
 - name: setup create firewalls
-  hetzner.hcloud.hcloud_firewall:
+  hetzner.hcloud.firewall:
     name: "{{ item }}"
     rules:
       - direction: in
@@ -28,7 +28,7 @@
     - "{{ hcloud_firewall_name }}2"
 
 - name: test create server with firewalls
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     firewalls:
@@ -44,7 +44,7 @@
       - result is changed
 
 - name: test create server with firewalls idempotence
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     firewalls:
@@ -60,7 +60,7 @@
       - result is not changed
 
 - name: test update server with firewalls
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     firewalls:
@@ -76,7 +76,7 @@
       - result is changed
 
 - name: test update server with firewalls idempotence
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: cpx11
     firewalls:
@@ -92,12 +92,12 @@
       - result is not changed
 
 - name: cleanup server with firewalls
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: absent
 
 - name: cleanup test create firewall
-  hetzner.hcloud.hcloud_firewall:
+  hetzner.hcloud.firewall:
     name: "{{ item }}"
     state: absent
   with_items:

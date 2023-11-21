@@ -38,7 +38,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud load_balancer infos
-  hetzner.hcloud.hcloud_load_balancer_info:
+  hetzner.hcloud.load_balancer_info:
   register: output
 
 - name: Print the gathered infos
@@ -134,7 +134,7 @@ hcloud_load_balancer_info:
                 use_private_ip:
                     description:
                         - Route the traffic over the private IP of the Load Balancer through a Hetzner Cloud Network.
-                        - Load Balancer needs to be attached to a network. See M(hetzner.hcloud.hcloud_load_balancer_network)
+                        - Load Balancer needs to be attached to a network. See M(hetzner.hcloud.load_balancer_network)
                     type: bool
                     sample: true
                     returned: always

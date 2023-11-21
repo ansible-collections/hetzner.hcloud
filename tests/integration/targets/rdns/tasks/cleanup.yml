@@ -1,20 +1,20 @@
 ---
 - name: Cleanup test_server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     state: absent
 
 - name: Cleanup test_primary_ip
-  hetzner.hcloud.hcloud_primary_ip:
+  hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     state: absent
 
 - name: Cleanup test_floating_ip
-  hetzner.hcloud.hcloud_floating_ip:
+  hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     state: absent
 
 - name: Cleanup test_load_balancer
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: absent

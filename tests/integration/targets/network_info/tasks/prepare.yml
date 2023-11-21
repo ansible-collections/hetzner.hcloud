@@ -1,6 +1,6 @@
 ---
 - name: Create test_network
-  hetzner.hcloud.hcloud_network:
+  hetzner.hcloud.network:
     name: "{{ hcloud_network_name }}"
     ip_range: 10.0.0.0/16
     labels:
@@ -8,7 +8,7 @@
   register: test_network
 
 - name: Create test_subnetwork
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     type: server
     network_zone: eu-central
@@ -16,7 +16,7 @@
   register: test_subnetwork
 
 - name: Create test_route
-  hetzner.hcloud.hcloud_route:
+  hetzner.hcloud.route:
     network: "{{ hcloud_network_name }}"
     destination: 10.0.3.0/24
     gateway: 10.0.2.1

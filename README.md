@@ -23,7 +23,7 @@ The `main` branch is used for the development of the latest versions of the coll
 
 The documentation for all modules are available through `ansible-doc`.
 
-Sample: `ansible-doc hetzner.hcloud.hcloud_server` shows the documentation for the `hcloud_server` module.
+Sample: `ansible-doc hetzner.hcloud.server` shows the documentation for the `server` module.
 
 For all modules that were part of Ansible directly (before Ansible 2.11) we also have the documentation published in the
 Ansible documentation: https://docs.ansible.com/ansible/latest/collections/hetzner/hcloud/
@@ -56,7 +56,7 @@ After this you should be able to use `ansible-test integration` to perform the i
 Sample:
 
 ```
-ansible-test integration --color --local  -vvv hcloud_server // Executed all integration tests for hcloud_server module
+ansible-test integration --color --local  -vvv hetzner.hcloud.server // Executed all integration tests for server module
 ```
 
 ## Releasing a new version

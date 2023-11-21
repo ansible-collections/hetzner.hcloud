@@ -157,14 +157,14 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     server_type: cx11
     image: ubuntu-22.04
     state: present
 
 - name: Create a basic server with ssh key
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     server_type: cx11
     image: ubuntu-22.04
@@ -174,59 +174,59 @@ EXAMPLES = """
     state: present
 
 - name: Resize an existing server
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     server_type: cx21
     upgrade_disk: true
     state: present
 
 - name: Ensure the server is absent (remove if needed)
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     state: absent
 
 - name: Ensure the server is started
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     state: started
 
 - name: Ensure the server is stopped
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     state: stopped
 
 - name: Ensure the server is restarted
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     state: restarted
 
 - name: Ensure the server is will be booted in rescue mode and therefore restarted
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     rescue_mode: linux64
     state: restarted
 
 - name: Ensure the server is rebuild
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     image: ubuntu-22.04
     state: rebuild
 
 - name: Add server to placement group
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     placement_group: my-placement-group
     force: true
     state: present
 
 - name: Remove server from placement group
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     placement_group:
     state: present
 
 - name: Add server with private network only
-  hetzner.hcloud.hcloud_server:
+  hetzner.hcloud.server:
     name: my-server
     enable_ipv4: false
     enable_ipv6: false
@@ -553,7 +553,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 "no longer be ordered. Existing servers of that plan will continue to "
                 "work as before and no action is required on your part. "
                 "It is possible to migrate this server to another server plan by setting "
-                "the server_type parameter on the hetzner.hcloud.hcloud_server module."
+                "the server_type parameter on the hetzner.hcloud.server module."
             )
         else:
             server_type_unavailable_date = server_type.deprecation.unavailable_after.strftime("%Y-%m-%d")
@@ -563,7 +563,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 "Existing servers of that plan will continue to work as before and no "
                 "action is required on your part. "
                 "It is possible to migrate this server to another server plan by setting "
-                "the server_type parameter on the hetzner.hcloud.hcloud_server module."
+                "the server_type parameter on the hetzner.hcloud.server module."
             )
 
     def _get_placement_group(self):

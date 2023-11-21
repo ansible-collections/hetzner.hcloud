@@ -33,7 +33,7 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather hcloud datacenter info
-  hetzner.hcloud.hcloud_datacenter_info:
+  hetzner.hcloud.datacenter_info:
   register: output
 
 - name: Print the gathered info
@@ -43,12 +43,12 @@ EXAMPLES = """
 - name: List available server_types in a datacenter
   block:
     - name: Gather a hcloud datacenter
-      hetzner.hcloud.hcloud_datacenter_info:
+      hetzner.hcloud.datacenter_info:
         name: fsn1-dc14
       register: output
 
     - name: Gather a hcloud datacenter available server_types
-      hetzner.hcloud.hcloud_server_type_info:
+      hetzner.hcloud.server_type_info:
         id: "{{ item }}"
       loop: "{{ output.hcloud_datacenter_info[0].server_types.available }}"
       register: available_server_types

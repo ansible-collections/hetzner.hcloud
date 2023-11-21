@@ -50,20 +50,20 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Create a basic server network
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: my-network
     server: my-server
     state: present
 
 - name: Create a server network and specify the ip address
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: my-network
     server: my-server
     ip: 10.0.0.1
     state: present
 
 - name: Create a server network and add alias ips
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: my-network
     server: my-server
     ip: 10.0.0.1
@@ -73,7 +73,7 @@ EXAMPLES = """
     state: present
 
 - name: Ensure the server network is absent (remove if needed)
-  hetzner.hcloud.hcloud_server_network:
+  hetzner.hcloud.server_network:
     network: my-network
     server: my-server
     state: absent

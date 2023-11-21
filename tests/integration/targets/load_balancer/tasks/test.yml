@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: Test missing required parameters
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: present
   ignore_errors: true
@@ -14,7 +14,7 @@
       - 'result.msg == "missing required arguments: load_balancer_type"'
 
 - name: Test create with check mode
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb11
     network_zone: eu-central
@@ -27,7 +27,7 @@
       - result is changed
 
 - name: Test create
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb11
     network_zone: eu-central
@@ -48,7 +48,7 @@
       - result.hcloud_load_balancer.delete_protection == false
 
 - name: Test create idempotency
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb11
     network_zone: eu-central
@@ -60,7 +60,7 @@
       - result is not changed
 
 - name: Test update algorithm
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     algorithm: least_connections
     state: present
@@ -72,7 +72,7 @@
       - result.hcloud_load_balancer.algorithm == "least_connections"
 
 - name: Test update load_balancer_type
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb21
     state: present
@@ -84,7 +84,7 @@
       - result.hcloud_load_balancer.load_balancer_type == "lb21"
 
 - name: Test update labels
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     labels:
       key: changed
@@ -99,7 +99,7 @@
       - result.hcloud_load_balancer.labels.label == "changed123"
 
 - name: Test update delete_protection
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     delete_protection: true
     state: present
@@ -111,7 +111,7 @@
       - result.hcloud_load_balancer.delete_protection == true
 
 - name: Test delete with protection
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result
@@ -123,7 +123,7 @@
       - 'result.msg == "load balancer deletion is protected"'
 
 - name: Test update delete_protection
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     delete_protection: false
     state: present
@@ -135,7 +135,7 @@
       - result.hcloud_load_balancer.delete_protection == false
 
 - name: Test delete
-  hetzner.hcloud.hcloud_load_balancer:
+  hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
   register: result

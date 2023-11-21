@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: Test missing required parameters
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     state: present
   ignore_errors: true
@@ -14,7 +14,7 @@
       - 'result.msg == "missing required arguments: ip_range, network_zone, type"'
 
 - name: Test create with checkmode
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     network_zone: eu-central
     type: cloud
@@ -28,7 +28,7 @@
       - result is changed
 
 - name: Test create
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     network_zone: eu-central
     type: cloud
@@ -45,7 +45,7 @@
       - result.hcloud_subnetwork.ip_range == "10.0.0.0/24"
 
 - name: Test create idempotency
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     network_zone: eu-central
     type: cloud
@@ -58,7 +58,7 @@
       - result is not changed
 
 - name: Test delete
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     network_zone: eu-central
     type: cloud
@@ -71,7 +71,7 @@
       - result is changed
 
 - name: Test create with vswitch
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     network_zone: eu-central
     type: vswitch
@@ -90,7 +90,7 @@
       - result.hcloud_subnetwork.vswitch_id | string == test_vswitch_id
 
 - name: Test delete with vswitch
-  hetzner.hcloud.hcloud_subnetwork:
+  hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     network_zone: eu-central
     type: vswitch
