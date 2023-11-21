@@ -121,6 +121,7 @@ from ansible.errors import AnsibleError
 from ansible.inventory.manager import InventoryData
 from ansible.module_utils.common.text.converters import to_native
 from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, Constructable
+from ansible.utils.display import Display
 
 from ..module_utils.hcloud import HAS_DATEUTIL, HAS_REQUESTS
 from ..module_utils.vendor import hcloud
@@ -178,6 +179,9 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
     NAME = "hetzner.hcloud.hcloud"
 
     inventory: InventoryData
+    display: Display
+
+    client: hcloud.Client
 
     def _configure_hcloud_client(self):
         self.token_env = self.get_option("token_env")
