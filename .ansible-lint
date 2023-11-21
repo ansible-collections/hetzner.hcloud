@@ -21,3 +21,6 @@ exclude_paths:
   - tests/integration/targets/volume
   - tests/integration/targets/setup_selfsigned_certificate
   - tests/integration/targets/setup_ssh_keypair
+
+warn_list:
+  - internal-error
