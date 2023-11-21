@@ -47,6 +47,14 @@ options:
       collection_name: hetzner.hcloud
       version: 3.0.0
       alternatives: Use the ``{{ lookup('ansible.builtin.env', 'YOUR_ENV_VAR') }}`` lookup instead.
+  api_endpoint:
+    description:
+      - The API Endpoint for the Hetzner Cloud.
+      - You can also set this option by using the C(HCLOUD_ENDPOINT) environment variable.
+    type: str
+    default: https://api.hetzner.cloud/v1
+    env:
+      - name: HCLOUD_ENDPOINT
 
   group:
     description: The group all servers are automatically added to.
@@ -211,7 +219,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 self.set_option("api_token", os.environ.get(api_token_env))
 
         api_token = self.get_option("api_token")
-        self.endpoint = os.getenv("HCLOUD_ENDPOINT") or "https://api.hetzner.cloud/v1"
+        api_endpoint = self.get_option("api_endpoint")
 
         if api_token is None:  # TODO: Remove once I(api_token_env) is removed.
             raise AnsibleError(
@@ -226,7 +234,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         self.client = hcloud.Client(
             token=api_token,
-            api_endpoint=self.endpoint,
+            api_endpoint=api_endpoint,
             application_name="ansible-inventory",
             application_version=version,
         )
