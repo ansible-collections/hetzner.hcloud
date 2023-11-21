@@ -1,0 +1,2 @@
+minor_changes:
+  - Add the `hetzner.hcloud.all` group to configure all the modules using `module_defaults`.
