@@ -204,13 +204,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             application_version=version,
         )
 
-    def _test_hcloud_token(self):
         try:
-            # We test the API Token against the location API, because this is the API with the smallest result
-            # and not controllable from the customer.
-            self.client.locations.get_all()
-        except hcloud.APIException:
-            raise AnsibleError("Invalid Hetzner Cloud API Token.")
+            # Ensure the api token is valid
+            self.client.locations.get_list()
+        except hcloud.APIException as exception:
+            raise AnsibleError("Invalid Hetzner Cloud API Token.") from exception
 
     def _get_servers(self):
         if len(self.get_option("label_selector")) > 0:
@@ -400,7 +398,6 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         self._read_config_data(path)
         self._configure_hcloud_client()
-        self._test_hcloud_token()
 
         self.servers, cached = self._get_cached_result(path, cache)
         if not cached:
