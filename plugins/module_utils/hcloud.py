@@ -86,7 +86,7 @@ class AnsibleHCloud:
     def _build_client(self) -> None:
         self.client = Client(
             token=self.module.params["api_token"],
-            api_endpoint=self.module.params["endpoint"],
+            api_endpoint=self.module.params["api_endpoint"],
             application_name="ansible-module",
             application_version=version,
         )
@@ -124,9 +124,11 @@ class AnsibleHCloud:
                 "fallback": (env_fallback, ["HCLOUD_TOKEN"]),
                 "no_log": True,
             },
-            "endpoint": {
+            "api_endpoint": {
                 "type": "str",
+                "fallback": (env_fallback, ["HCLOUD_ENDPOINT"]),
                 "default": "https://api.hetzner.cloud/v1",
+                "aliases": ["endpoint"],
             },
         }
 
