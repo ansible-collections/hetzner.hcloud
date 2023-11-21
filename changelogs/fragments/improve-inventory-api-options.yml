@@ -1,0 +1,7 @@
+minor_changes:
+  - hcloud inventory - Rename the `token` option to `api_token`, use aliases for backward compatibility.
+  - hcloud inventory - Rename the `token_env` option to `api_token_env`, use aliases for backward compatibility.
+  - hcloud inventory - Add the `api_endpoint` option.
+  - hcloud inventory - Deprecate the `api_token_env` option, suggest using a lookup
+    plugin (`{{ lookup('ansible.builtin.env', 'YOUR_ENV_VAR') }}`) or use the
+    well-known `HCLOUD_TOKEN` environment variable name.
