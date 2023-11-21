@@ -7,7 +7,7 @@ short_description: Ansible dynamic inventory plugin for the Hetzner Cloud.
 
 description:
   - Reads inventories from the Hetzner Cloud API.
-  - Uses a YAML configuration file that ends with hcloud.(yml|yaml).
+  - Uses a YAML configuration file that ends with C(hcloud.yml) or C(hcloud.yaml).
 
 author:
   - Lukas Kaemmerling (@lkaemmerling)
@@ -22,9 +22,10 @@ extends_documentation_fragment:
 
 options:
   plugin:
-    description: marks this as an instance of the "hcloud" plugin
+    description: Mark this as an C(hetzner.hcloud.hcloud) inventory instance.
     required: true
-    choices: ["hcloud", "hetzner.hcloud.hcloud"]
+    choices: [hcloud, hetzner.hcloud.hcloud]
+
   token:
     description: The Hetzner Cloud API Token.
     required: false
@@ -52,6 +53,7 @@ options:
       - hostname
       - ipv4_dns_ptr
       - private_ipv4
+
   locations:
     description: Populate inventory with instances in this location.
     default: []
