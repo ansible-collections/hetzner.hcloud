@@ -26,14 +26,27 @@ options:
     required: true
     choices: [hcloud, hetzner.hcloud.hcloud]
 
-  token:
-    description: The Hetzner Cloud API Token.
-    required: false
-  token_env:
-    description: Environment variable to load the Hetzner Cloud API Token from.
-    default: HCLOUD_TOKEN
+  api_token:
+    description:
+      - The API Token for the Hetzner Cloud.
+      - You can also set this option by using the C(HCLOUD_TOKEN) environment variable.
     type: str
-    required: false
+    required: false # TODO: Mark as required once I(api_token_env) is removed.
+    aliases: [token]
+    env:
+      - name: HCLOUD_TOKEN
+      - name: I(api_token_env) # TODO: Remove once I(api_token_env) is removed.
+  api_token_env:
+    description:
+      - Environment variable name to load the Hetzner Cloud API Token from.
+    type: str
+    default: HCLOUD_TOKEN
+    aliases: [token_env]
+    deprecated:
+      why: The option is adding too much complexity, while the alternatives are preferred.
+      collection_name: hetzner.hcloud
+      version: 3.0.0
+      alternatives: Use the ``{{ lookup('ansible.builtin.env', 'YOUR_ENV_VAR') }}`` lookup instead.
 
   group:
     description: The group all servers are automatically added to.
@@ -184,21 +197,35 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
     client: hcloud.Client
 
     def _configure_hcloud_client(self):
-        self.token_env = self.get_option("token_env")
-        self.templar.available_variables = self._vars
-        self.api_token = self.templar.template(self.get_option("token"), fail_on_undefined=False) or os.getenv(
-            self.token_env
-        )
-        if self.api_token is None:
-            raise AnsibleError(
-                "Please specify a token, via the option token, via environment variable HCLOUD_TOKEN "
-                "or via custom environment variable set by token_env option."
+        # If api_token_env is not the default, print a deprecation warning and load the
+        # environment variable.
+        api_token_env = self.get_option("api_token_env")
+        if api_token_env != "HCLOUD_TOKEN":
+            self.display.deprecated(
+                "The 'api_token_env' option is deprecated, please use the `HCLOUD_TOKEN` "
+                "environment variable or use the 'ansible.builtin.env' lookup instead.",
+                version="3.0.0",
+                collection_name="hetzner.hcloud",
             )
+            if api_token_env in os.environ:
+                self.set_option("api_token", os.environ.get(api_token_env))
 
+        api_token = self.get_option("api_token")
         self.endpoint = os.getenv("HCLOUD_ENDPOINT") or "https://api.hetzner.cloud/v1"
 
+        if api_token is None:  # TODO: Remove once I(api_token_env) is removed.
+            raise AnsibleError(
+                "No setting was provided for required configuration setting: "
+                "plugin_type: inventory "
+                "plugin: hetzner.hcloud.hcloud "
+                "setting: api_token"
+            )
+
+        # Resolve template string
+        api_token = self.templar.template(api_token)
+
         self.client = hcloud.Client(
-            token=self.api_token,
+            token=api_token,
             api_endpoint=self.endpoint,
             application_name="ansible-inventory",
             application_version=version,
