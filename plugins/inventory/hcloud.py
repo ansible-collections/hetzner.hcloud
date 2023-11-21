@@ -29,14 +29,15 @@ options:
   token:
     description: The Hetzner Cloud API Token.
     required: false
-  group:
-    description: The group all servers are automatically added to.
-    default: hcloud
-    type: str
-    required: false
   token_env:
     description: Environment variable to load the Hetzner Cloud API Token from.
     default: HCLOUD_TOKEN
+    type: str
+    required: false
+
+  group:
+    description: The group all servers are automatically added to.
+    default: hcloud
     type: str
     required: false
   connect_with:
