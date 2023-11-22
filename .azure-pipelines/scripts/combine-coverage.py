@@ -8,6 +8,8 @@ It is up to pipeline authors to avoid name collisions when deviating from the re
 """
 
 
+from __future__ import annotations
+
 import os
 import re
 import shutil
