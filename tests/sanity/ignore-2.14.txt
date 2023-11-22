@@ -1,5 +1,4 @@
 plugins/inventory/hcloud.py validate-modules:illegal-future-imports
-plugins/inventory/hcloud.py validate-modules:import-before-documentation
 plugins/modules/certificate_info.py validate-modules:illegal-future-imports
 plugins/modules/certificate_info.py validate-modules:import-before-documentation
 plugins/modules/certificate.py validate-modules:illegal-future-imports
