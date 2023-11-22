@@ -106,8 +106,6 @@ hcloud_placement_group:
                 - 4712
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -119,7 +117,7 @@ from ..module_utils.vendor.hcloud.placement_groups import BoundPlacementGroup
 class AnsibleHCloudPlacementGroup(AnsibleHCloud):
     represent = "hcloud_placement_group"
 
-    hcloud_placement_group: Optional[BoundPlacementGroup] = None
+    hcloud_placement_group: BoundPlacementGroup | None = None
 
     def _prepare_result(self):
         return {

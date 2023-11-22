@@ -89,8 +89,6 @@ hcloud_load_balancer_network:
             sample: 10.0.0.8
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -103,9 +101,9 @@ from ..module_utils.vendor.hcloud.networks import BoundNetwork
 class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
     represent = "hcloud_load_balancer_network"
 
-    hcloud_network: Optional[BoundNetwork] = None
-    hcloud_load_balancer: Optional[BoundLoadBalancer] = None
-    hcloud_load_balancer_network: Optional[PrivateNet] = None
+    hcloud_network: BoundNetwork | None = None
+    hcloud_load_balancer: BoundLoadBalancer | None = None
+    hcloud_load_balancer_network: PrivateNet | None = None
 
     def _prepare_result(self):
         return {

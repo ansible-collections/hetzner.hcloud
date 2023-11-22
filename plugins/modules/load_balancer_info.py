@@ -276,8 +276,6 @@ hcloud_load_balancer_info:
                                     sample: false
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -289,7 +287,7 @@ from ..module_utils.vendor.hcloud.load_balancers import BoundLoadBalancer
 class AnsibleHCloudLoadBalancerInfo(AnsibleHCloud):
     represent = "hcloud_load_balancer_info"
 
-    hcloud_load_balancer_info: Optional[List[BoundLoadBalancer]] = None
+    hcloud_load_balancer_info: list[BoundLoadBalancer] | None = None
 
     def _prepare_result(self):
         tmp = []

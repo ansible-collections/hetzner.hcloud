@@ -278,8 +278,6 @@ hcloud_load_balancer_service:
                             sample: false
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -297,8 +295,8 @@ from ..module_utils.vendor.hcloud.load_balancers import (
 class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
     represent = "hcloud_load_balancer_service"
 
-    hcloud_load_balancer: Optional[BoundLoadBalancer] = None
-    hcloud_load_balancer_service: Optional[LoadBalancerService] = None
+    hcloud_load_balancer: BoundLoadBalancer | None = None
+    hcloud_load_balancer_service: LoadBalancerService | None = None
 
     def _prepare_result(self):
         http = None

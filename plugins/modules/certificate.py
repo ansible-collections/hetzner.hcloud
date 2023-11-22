@@ -145,8 +145,6 @@ hcloud_certificate:
             type: dict
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -158,7 +156,7 @@ from ..module_utils.vendor.hcloud.certificates import BoundCertificate
 class AnsibleHCloudCertificate(AnsibleHCloud):
     represent = "hcloud_certificate"
 
-    hcloud_certificate: Optional[BoundCertificate] = None
+    hcloud_certificate: BoundCertificate | None = None
 
     def _prepare_result(self):
         return {

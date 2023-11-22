@@ -77,8 +77,6 @@ hcloud_location_info:
             sample: Falkenstein
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -90,7 +88,7 @@ from ..module_utils.vendor.hcloud.locations import BoundLocation
 class AnsibleHCloudLocationInfo(AnsibleHCloud):
     represent = "hcloud_location_info"
 
-    hcloud_location_info: Optional[List[BoundLocation]] = None
+    hcloud_location_info: list[BoundLocation] | None = None
 
     def _prepare_result(self):
         tmp = []

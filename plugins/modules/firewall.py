@@ -169,7 +169,6 @@ hcloud_firewall:
 """
 
 import time
-from typing import Optional
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
@@ -182,7 +181,7 @@ from ..module_utils.vendor.hcloud.firewalls import BoundFirewall, FirewallRule
 class AnsibleHCloudFirewall(AnsibleHCloud):
     represent = "hcloud_firewall"
 
-    hcloud_firewall: Optional[BoundFirewall] = None
+    hcloud_firewall: BoundFirewall | None = None
 
     def _prepare_result(self):
         return {

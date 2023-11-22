@@ -122,8 +122,6 @@ hcloud_subnetwork:
             sample: 10.0.0.1
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -135,8 +133,8 @@ from ..module_utils.vendor.hcloud.networks import BoundNetwork, NetworkSubnet
 class AnsibleHCloudSubnetwork(AnsibleHCloud):
     represent = "hcloud_subnetwork"
 
-    hcloud_network: Optional[BoundNetwork] = None
-    hcloud_subnetwork: Optional[NetworkSubnet] = None
+    hcloud_network: BoundNetwork | None = None
+    hcloud_subnetwork: NetworkSubnet | None = None
 
     def _prepare_result(self):
         return {

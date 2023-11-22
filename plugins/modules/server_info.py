@@ -145,8 +145,6 @@ hcloud_server_info:
             version_added: "0.1.0"
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -158,7 +156,7 @@ from ..module_utils.vendor.hcloud.servers import BoundServer
 class AnsibleHCloudServerInfo(AnsibleHCloud):
     represent = "hcloud_server_info"
 
-    hcloud_server_info: Optional[List[BoundServer]] = None
+    hcloud_server_info: list[BoundServer] | None = None
 
     def _prepare_result(self):
         tmp = []

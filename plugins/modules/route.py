@@ -85,8 +85,6 @@ hcloud_route:
             sample: 10.0.0.1
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -98,8 +96,8 @@ from ..module_utils.vendor.hcloud.networks import BoundNetwork, NetworkRoute
 class AnsibleHCloudRoute(AnsibleHCloud):
     represent = "hcloud_route"
 
-    hcloud_network: Optional[BoundNetwork] = None
-    hcloud_route: Optional[NetworkRoute] = None
+    hcloud_network: BoundNetwork | None = None
+    hcloud_route: NetworkRoute | None = None
 
     def _prepare_result(self):
         return {

@@ -184,8 +184,6 @@ hcloud_network_info:
             type: dict
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -197,7 +195,7 @@ from ..module_utils.vendor.hcloud.networks import BoundNetwork
 class AnsibleHCloudNetworkInfo(AnsibleHCloud):
     represent = "hcloud_network_info"
 
-    hcloud_network_info: Optional[List[BoundNetwork]] = None
+    hcloud_network_info: list[BoundNetwork] | None = None
 
     def _prepare_result(self):
         tmp = []

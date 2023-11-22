@@ -111,8 +111,6 @@ hcloud_image_info:
             type: dict
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -124,7 +122,7 @@ from ..module_utils.vendor.hcloud.images import BoundImage
 class AnsibleHCloudImageInfo(AnsibleHCloud):
     represent = "hcloud_image_info"
 
-    hcloud_image_info: Optional[List[BoundImage]] = None
+    hcloud_image_info: list[BoundImage] | None = None
 
     def _prepare_result(self):
         tmp = []

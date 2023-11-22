@@ -77,7 +77,6 @@ hcloud_ssh_key_info:
             returned: always
             type: dict
 """
-from typing import List, Optional
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
@@ -90,7 +89,7 @@ from ..module_utils.vendor.hcloud.ssh_keys import BoundSSHKey
 class AnsibleHCloudSSHKeyInfo(AnsibleHCloud):
     represent = "hcloud_ssh_key_info"
 
-    hcloud_ssh_key_info: Optional[List[BoundSSHKey]] = None
+    hcloud_ssh_key_info: list[BoundSSHKey] | None = None
 
     def _prepare_result(self):
         ssh_keys = []

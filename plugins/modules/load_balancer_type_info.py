@@ -87,8 +87,6 @@ hcloud_load_balancer_type_info:
             sample: 5
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -100,7 +98,7 @@ from ..module_utils.vendor.hcloud.load_balancer_types import BoundLoadBalancerTy
 class AnsibleHCloudLoadBalancerTypeInfo(AnsibleHCloud):
     represent = "hcloud_load_balancer_type_info"
 
-    hcloud_load_balancer_type_info: Optional[List[BoundLoadBalancerType]] = None
+    hcloud_load_balancer_type_info: list[BoundLoadBalancerType] | None = None
 
     def _prepare_result(self):
         tmp = []

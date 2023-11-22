@@ -112,8 +112,6 @@ hcloud_ssh_key:
                 mylabel: 123
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -125,7 +123,7 @@ from ..module_utils.vendor.hcloud.ssh_keys import BoundSSHKey
 class AnsibleHCloudSSHKey(AnsibleHCloud):
     represent = "hcloud_ssh_key"
 
-    hcloud_ssh_key: Optional[BoundSSHKey] = None
+    hcloud_ssh_key: BoundSSHKey | None = None
 
     def _prepare_result(self):
         return {

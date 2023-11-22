@@ -117,8 +117,6 @@ hcloud_datacenter_info:
                     sample: [1, 2, 3]
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -130,7 +128,7 @@ from ..module_utils.vendor.hcloud.datacenters import BoundDatacenter
 class AnsibleHCloudDatacenterInfo(AnsibleHCloud):
     represent = "hcloud_datacenter_info"
 
-    hcloud_datacenter_info: Optional[List[BoundDatacenter]] = None
+    hcloud_datacenter_info: list[BoundDatacenter] | None = None
 
     def _prepare_result(self):
         tmp = []

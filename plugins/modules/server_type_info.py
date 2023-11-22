@@ -123,8 +123,6 @@ hcloud_server_type_info:
 
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -136,7 +134,7 @@ from ..module_utils.vendor.hcloud.server_types import BoundServerType
 class AnsibleHCloudServerTypeInfo(AnsibleHCloud):
     represent = "hcloud_server_type_info"
 
-    hcloud_server_type_info: Optional[List[BoundServerType]] = None
+    hcloud_server_type_info: list[BoundServerType] | None = None
 
     def _prepare_result(self):
         tmp = []

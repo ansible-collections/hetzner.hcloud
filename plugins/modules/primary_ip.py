@@ -129,8 +129,6 @@ hcloud_primary_ip:
                 mylabel: 123
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -142,7 +140,7 @@ from ..module_utils.vendor.hcloud.primary_ips import BoundPrimaryIP
 class AnsibleHCloudPrimaryIP(AnsibleHCloud):
     represent = "hcloud_primary_ip"
 
-    hcloud_primary_ip: Optional[BoundPrimaryIP] = None
+    hcloud_primary_ip: BoundPrimaryIP | None = None
 
     def _prepare_result(self):
         return {
