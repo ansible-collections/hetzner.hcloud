@@ -5,6 +5,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: iso_info
@@ -119,8 +121,6 @@ hcloud_iso_info:
                     sample: "2021-12-01T00:00:00+00:00"
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -132,7 +132,7 @@ from ..module_utils.vendor.hcloud.isos import BoundIso
 class AnsibleHCloudIsoInfo(AnsibleHCloud):
     represent = "hcloud_iso_info"
 
-    hcloud_iso_info: Optional[List[BoundIso]] = None
+    hcloud_iso_info: list[BoundIso] | None = None
 
     def _prepare_result(self):
         tmp = []

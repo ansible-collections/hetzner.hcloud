@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: datacenter_info
@@ -115,8 +117,6 @@ hcloud_datacenter_info:
                     sample: [1, 2, 3]
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -128,7 +128,7 @@ from ..module_utils.vendor.hcloud.datacenters import BoundDatacenter
 class AnsibleHCloudDatacenterInfo(AnsibleHCloud):
     represent = "hcloud_datacenter_info"
 
-    hcloud_datacenter_info: Optional[List[BoundDatacenter]] = None
+    hcloud_datacenter_info: list[BoundDatacenter] | None = None
 
     def _prepare_result(self):
         tmp = []

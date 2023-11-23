@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: network_info
@@ -182,8 +184,6 @@ hcloud_network_info:
             type: dict
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -195,7 +195,7 @@ from ..module_utils.vendor.hcloud.networks import BoundNetwork
 class AnsibleHCloudNetworkInfo(AnsibleHCloud):
     represent = "hcloud_network_info"
 
-    hcloud_network_info: Optional[List[BoundNetwork]] = None
+    hcloud_network_info: list[BoundNetwork] | None = None
 
     def _prepare_result(self):
         tmp = []
@@ -275,7 +275,7 @@ class AnsibleHCloudNetworkInfo(AnsibleHCloud):
                 id={"type": "int"},
                 name={"type": "str"},
                 label_selector={"type": "str"},
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )

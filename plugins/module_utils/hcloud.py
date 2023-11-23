@@ -3,8 +3,10 @@
 # Simplified BSD License (see licenses/simplified_bsd.txt or https://opensource.org/licenses/BSD-2-Clause)
 
 
+from __future__ import annotations
+
 import traceback
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 from ansible.module_utils.basic import (
     AnsibleModule as AnsibleModuleBase,
@@ -56,7 +58,7 @@ class AnsibleHCloud:
     def fail_json_hcloud(
         self,
         exception: HCloudException,
-        msg: Optional[str] = None,
+        msg: str | None = None,
         params: Any = None,
         **kwargs,
     ) -> None:
@@ -91,7 +93,7 @@ class AnsibleHCloud:
             application_version=version,
         )
 
-    def _client_get_by_name_or_id(self, resource: str, param: Union[str, int]):
+    def _client_get_by_name_or_id(self, resource: str, param: str | int):
         """
         Get a resource by name, and if not found by its ID.
 
@@ -132,11 +134,11 @@ class AnsibleHCloud:
             },
         }
 
-    def _prepare_result(self) -> Dict[str, Any]:
+    def _prepare_result(self) -> dict[str, Any]:
         """Prepare the result for every module"""
         return {}
 
-    def get_result(self) -> Dict[str, Any]:
+    def get_result(self) -> dict[str, Any]:
         if getattr(self, self.represent) is not None:
             self.result[self.represent] = self._prepare_result()
         return self.result

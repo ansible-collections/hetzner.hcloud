@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: ssh_key
@@ -110,8 +112,6 @@ hcloud_ssh_key:
                 mylabel: 123
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -123,7 +123,7 @@ from ..module_utils.vendor.hcloud.ssh_keys import BoundSSHKey
 class AnsibleHCloudSSHKey(AnsibleHCloud):
     represent = "hcloud_ssh_key"
 
-    hcloud_ssh_key: Optional[BoundSSHKey] = None
+    hcloud_ssh_key: BoundSSHKey | None = None
 
     def _prepare_result(self):
         return {
@@ -209,7 +209,7 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             required_one_of=[["id", "name", "fingerprint"]],
             required_if=[["state", "present", ["name"]]],

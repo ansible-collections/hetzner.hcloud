@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: subnetwork
@@ -120,8 +122,6 @@ hcloud_subnetwork:
             sample: 10.0.0.1
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -133,8 +133,8 @@ from ..module_utils.vendor.hcloud.networks import BoundNetwork, NetworkSubnet
 class AnsibleHCloudSubnetwork(AnsibleHCloud):
     represent = "hcloud_subnetwork"
 
-    hcloud_network: Optional[BoundNetwork] = None
-    hcloud_subnetwork: Optional[NetworkSubnet] = None
+    hcloud_network: BoundNetwork | None = None
+    hcloud_subnetwork: NetworkSubnet | None = None
 
     def _prepare_result(self):
         return {
@@ -213,7 +213,7 @@ class AnsibleHCloudSubnetwork(AnsibleHCloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )

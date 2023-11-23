@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: rdns
@@ -130,7 +132,7 @@ hcloud_rdns:
             sample: example.com
 """
 
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
@@ -149,8 +151,8 @@ from ..module_utils.vendor.hcloud.servers import BoundServer
 class AnsibleHCloudReverseDNS(AnsibleHCloud):
     represent = "hcloud_rdns"
 
-    hcloud_resource: Optional[Union[BoundServer, BoundFloatingIP, BoundLoadBalancer, BoundPrimaryIP]] = None
-    hcloud_rdns: Optional[Dict[str, Any]] = None
+    hcloud_resource: BoundServer | BoundFloatingIP | BoundLoadBalancer | BoundPrimaryIP | None = None
+    hcloud_rdns: dict[str, Any] | None = None
 
     def _prepare_result(self):
         result = {
@@ -331,7 +333,7 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             required_one_of=[["server", "floating_ip", "load_balancer", "primary_ip"]],
             mutually_exclusive=[["server", "floating_ip", "load_balancer", "primary_ip"]],

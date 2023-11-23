@@ -1,6 +1,8 @@
 # Copyright (c) 2019 Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+from __future__ import annotations
+
 DOCUMENTATION = r"""
 name: hcloud
 short_description: Ansible dynamic inventory plugin for the Hetzner Cloud.
@@ -135,7 +137,6 @@ keyed_groups:
 import os
 import sys
 from ipaddress import IPv6Network
-from typing import List, Optional, Tuple
 
 from ansible.errors import AnsibleError
 from ansible.inventory.manager import InventoryData
@@ -391,7 +392,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         """Return the possibly of a file being consumable by this plugin."""
         return super().verify_file(path) and path.endswith(("hcloud.yaml", "hcloud.yml"))
 
-    def _get_cached_result(self, path, cache) -> Tuple[List[Optional[InventoryServer]], bool]:
+    def _get_cached_result(self, path, cache) -> tuple[list[InventoryServer | None], bool]:
         # false when refresh_cache or --flush-cache is used
         if not cache:
             return None, False
@@ -409,7 +410,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         return cached_result, True
 
-    def _update_cached_result(self, path, cache, result: List[InventoryServer]):
+    def _update_cached_result(self, path, cache, result: list[InventoryServer]):
         if not self.get_option("cache"):
             return
 

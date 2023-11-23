@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: image_info
@@ -109,8 +111,6 @@ hcloud_image_info:
             type: dict
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -122,7 +122,7 @@ from ..module_utils.vendor.hcloud.images import BoundImage
 class AnsibleHCloudImageInfo(AnsibleHCloud):
     represent = "hcloud_image_info"
 
-    hcloud_image_info: Optional[List[BoundImage]] = None
+    hcloud_image_info: list[BoundImage] | None = None
 
     def _prepare_result(self):
         tmp = []
@@ -188,7 +188,7 @@ class AnsibleHCloudImageInfo(AnsibleHCloud):
                 label_selector={"type": "str"},
                 type={"choices": ["system", "snapshot", "backup"], "default": "system", "type": "str"},
                 architecture={"choices": ["x86", "arm"], "type": "str"},
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )

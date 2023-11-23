@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: server_network
@@ -108,8 +110,6 @@ hcloud_server_network:
             sample: [10.1.0.1, ...]
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -122,9 +122,9 @@ from ..module_utils.vendor.hcloud.servers import BoundServer, PrivateNet
 class AnsibleHCloudServerNetwork(AnsibleHCloud):
     represent = "hcloud_server_network"
 
-    hcloud_network: Optional[BoundNetwork] = None
-    hcloud_server: Optional[BoundServer] = None
-    hcloud_server_network: Optional[PrivateNet] = None
+    hcloud_network: BoundNetwork | None = None
+    hcloud_server: BoundServer | None = None
+    hcloud_server_network: PrivateNet | None = None
 
     def _prepare_result(self):
         return {
@@ -223,7 +223,7 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )

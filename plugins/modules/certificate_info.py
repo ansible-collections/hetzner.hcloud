@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: certificate_info
@@ -83,7 +85,6 @@ hcloud_certificate_info:
             returned: always
             type: dict
 """
-from typing import List, Optional
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
@@ -96,7 +97,7 @@ from ..module_utils.vendor.hcloud.certificates import BoundCertificate
 class AnsibleHCloudCertificateInfo(AnsibleHCloud):
     represent = "hcloud_certificate_info"
 
-    hcloud_certificate_info: Optional[List[BoundCertificate]] = None
+    hcloud_certificate_info: list[BoundCertificate] | None = None
 
     def _prepare_result(self):
         certificates = []
@@ -140,7 +141,7 @@ class AnsibleHCloudCertificateInfo(AnsibleHCloud):
                 id={"type": "int"},
                 name={"type": "str"},
                 label_selector={"type": "str"},
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )

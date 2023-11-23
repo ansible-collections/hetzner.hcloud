@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Prepends a relative timestamp to each input line from stdin and writes it to stdout."""
 
+from __future__ import annotations
 
 import sys
 import time

@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: volume
@@ -157,8 +159,6 @@ hcloud_volume:
             version_added: "0.1.0"
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -170,7 +170,7 @@ from ..module_utils.vendor.hcloud.volumes import BoundVolume
 class AnsibleHCloudVolume(AnsibleHCloud):
     represent = "hcloud_volume"
 
-    hcloud_volume: Optional[BoundVolume] = None
+    hcloud_volume: BoundVolume | None = None
 
     def _prepare_result(self):
         server_name = None
@@ -305,7 +305,7 @@ class AnsibleHCloudVolume(AnsibleHCloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             required_one_of=[["id", "name"]],
             mutually_exclusive=[["location", "server"]],

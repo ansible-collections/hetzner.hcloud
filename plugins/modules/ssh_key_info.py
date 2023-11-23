@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: ssh_key_info
@@ -75,7 +77,6 @@ hcloud_ssh_key_info:
             returned: always
             type: dict
 """
-from typing import List, Optional
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
@@ -88,7 +89,7 @@ from ..module_utils.vendor.hcloud.ssh_keys import BoundSSHKey
 class AnsibleHCloudSSHKeyInfo(AnsibleHCloud):
     represent = "hcloud_ssh_key_info"
 
-    hcloud_ssh_key_info: Optional[List[BoundSSHKey]] = None
+    hcloud_ssh_key_info: list[BoundSSHKey] | None = None
 
     def _prepare_result(self):
         ssh_keys = []
@@ -134,7 +135,7 @@ class AnsibleHCloudSSHKeyInfo(AnsibleHCloud):
                 name={"type": "str"},
                 fingerprint={"type": "str"},
                 label_selector={"type": "str"},
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             supports_check_mode=True,
         )

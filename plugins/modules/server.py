@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: server
@@ -334,7 +336,6 @@ hcloud_server:
 """
 
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
@@ -354,7 +355,7 @@ from ..module_utils.vendor.hcloud.volumes import Volume
 class AnsibleHCloudServer(AnsibleHCloud):
     represent = "hcloud_server"
 
-    hcloud_server: Optional[BoundServer] = None
+    hcloud_server: BoundServer | None = None
 
     def _prepare_result(self):
         image = None if self.hcloud_server.image is None else to_native(self.hcloud_server.image.name)

@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: load_balancer_type_info
@@ -85,8 +87,6 @@ hcloud_load_balancer_type_info:
             sample: 5
 """
 
-from typing import List, Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -98,7 +98,7 @@ from ..module_utils.vendor.hcloud.load_balancer_types import BoundLoadBalancerTy
 class AnsibleHCloudLoadBalancerTypeInfo(AnsibleHCloud):
     represent = "hcloud_load_balancer_type_info"
 
-    hcloud_load_balancer_type_info: Optional[List[BoundLoadBalancerType]] = None
+    hcloud_load_balancer_type_info: list[BoundLoadBalancerType] | None = None
 
     def _prepare_result(self):
         tmp = []

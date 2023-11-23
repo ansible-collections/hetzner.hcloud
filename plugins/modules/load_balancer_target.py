@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: load_balancer_target
@@ -131,8 +133,6 @@ hcloud_load_balancer_target:
             returned: always
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -150,9 +150,9 @@ from ..module_utils.vendor.hcloud.servers import BoundServer
 class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
     represent = "hcloud_load_balancer_target"
 
-    hcloud_load_balancer: Optional[BoundLoadBalancer] = None
-    hcloud_load_balancer_target: Optional[LoadBalancerTarget] = None
-    hcloud_server: Optional[BoundServer] = None
+    hcloud_load_balancer: BoundLoadBalancer | None = None
+    hcloud_load_balancer_target: LoadBalancerTarget | None = None
+    hcloud_server: BoundServer | None = None
 
     def _prepare_result(self):
         result = {

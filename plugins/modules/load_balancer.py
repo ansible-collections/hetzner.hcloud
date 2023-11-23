@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from __future__ import annotations
+
 DOCUMENTATION = """
 ---
 module: load_balancer
@@ -149,8 +151,6 @@ hcloud_load_balancer:
             sample: false
 """
 
-from typing import Optional
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
@@ -165,7 +165,7 @@ from ..module_utils.vendor.hcloud.load_balancers import (
 class AnsibleHCloudLoadBalancer(AnsibleHCloud):
     represent = "hcloud_load_balancer"
 
-    hcloud_load_balancer: Optional[BoundLoadBalancer] = None
+    hcloud_load_balancer: BoundLoadBalancer | None = None
 
     def _prepare_result(self):
         private_ipv4_address = (
@@ -315,7 +315,7 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
                     "choices": ["absent", "present"],
                     "default": "present",
                 },
-                **super().base_module_arguments()
+                **super().base_module_arguments(),
             ),
             required_one_of=[["id", "name"]],
             mutually_exclusive=[["location", "network_zone"]],
