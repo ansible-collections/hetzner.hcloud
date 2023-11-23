@@ -33,6 +33,36 @@ except ImportError:
     HAS_DATEUTIL = False
 
 
+def client_check_required_lib():
+    if not HAS_REQUESTS:
+        raise RuntimeError(missing_required_lib("requests"))
+    if not HAS_DATEUTIL:
+        raise RuntimeError(missing_required_lib("python-dateutil"))
+
+
+def client_get_by_name_or_id(client: Client, resource: str, param: str | int):
+    """
+    Get a resource by name, and if not found by its ID.
+
+    :param client: Client to use to make the call
+    :param resource: Name of the resource client that implements both `get_by_name` and `get_by_id` methods
+    :param param: Name or ID of the resource to query
+    """
+    resource_client = getattr(client, resource)
+
+    result = resource_client.get_by_name(param)
+    if result is not None:
+        return result
+
+    # If the param is not a valid ID, prevent an unnecessary call to the API.
+    try:
+        int(param)
+    except ValueError as exception:
+        raise ValueError(f"resource ({resource.rstrip('s')}) does not exist: {param}") from exception
+
+    return resource_client.get_by_id(param)
+
+
 # Provide typing definitions to the AnsibleModule class
 class AnsibleModule(AnsibleModuleBase):
     params: dict
@@ -49,10 +79,12 @@ class AnsibleHCloud:
 
         self.module = module
         self.result = {"changed": False, self.represent: None}
-        if not HAS_REQUESTS:
-            module.fail_json(msg=missing_required_lib("requests"))
-        if not HAS_DATEUTIL:
-            module.fail_json(msg=missing_required_lib("python-dateutil"))
+
+        try:
+            client_check_required_lib()
+        except RuntimeError as exception:
+            module.fail_json(msg=to_native(exception))
+
         self._build_client()
 
     def fail_json_hcloud(
@@ -100,19 +132,10 @@ class AnsibleHCloud:
         :param resource: Name of the resource client that implements both `get_by_name` and `get_by_id` methods
         :param param: Name or ID of the resource to query
         """
-        resource_client = getattr(self.client, resource)
-
-        result = resource_client.get_by_name(param)
-        if result is not None:
-            return result
-
-        # If the param is not a valid ID, prevent an unnecessary call to the API.
         try:
-            int(param)
-        except ValueError:
-            self.module.fail_json(msg=f"resource ({resource.rstrip('s')}) does not exist: {param}")
-
-        return resource_client.get_by_id(param)
+            return client_get_by_name_or_id(self.client, resource, param)
+        except ValueError as exception:
+            self.module.fail_json(msg=to_native(exception))
 
     def _mark_as_changed(self) -> None:
         self.result["changed"] = True
