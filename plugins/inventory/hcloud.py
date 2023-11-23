@@ -2,85 +2,113 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 DOCUMENTATION = r"""
-    name: hcloud
-    author:
-      - Lukas Kaemmerling (@lkaemmerling)
-    short_description: Ansible dynamic inventory plugin for the Hetzner Cloud.
-    requirements:
-      - python-dateutil >= 2.7.5
-      - requests >=2.20
+name: hcloud
+short_description: Ansible dynamic inventory plugin for the Hetzner Cloud.
+
+description:
+  - Reads inventories from the Hetzner Cloud API.
+  - Uses a YAML configuration file that ends with C(hcloud.yml) or C(hcloud.yaml).
+
+author:
+  - Lukas Kaemmerling (@lkaemmerling)
+
+requirements:
+  - python-dateutil >= 2.7.5
+  - requests >=2.20
+
+extends_documentation_fragment:
+  - constructed
+  - inventory_cache
+
+options:
+  plugin:
+    description: Mark this as an C(hetzner.hcloud.hcloud) inventory instance.
+    required: true
+    choices: [hcloud, hetzner.hcloud.hcloud]
+
+  api_token:
     description:
-        - Reads inventories from the Hetzner Cloud API.
-        - Uses a YAML configuration file that ends with hcloud.(yml|yaml).
-    extends_documentation_fragment:
-        - constructed
-        - inventory_cache
-    options:
-        plugin:
-            description: marks this as an instance of the "hcloud" plugin
-            required: true
-            choices: ["hcloud", "hetzner.hcloud.hcloud"]
-        token:
-            description: The Hetzner Cloud API Token.
-            required: false
-        group:
-            description: The group all servers are automatically added to.
-            default: hcloud
-            type: str
-            required: false
-        token_env:
-            description: Environment variable to load the Hetzner Cloud API Token from.
-            default: HCLOUD_TOKEN
-            type: str
-            required: false
-        connect_with:
-            description: |
-              Connect to the server using the value from this field. This sets the `ansible_host`
-              variable to the value indicated, if that value is available. If you need further
-              customization, like falling back to private ipv4 if the server has no public ipv4,
-              you can use `compose` top-level key.
-            default: public_ipv4
-            type: str
-            choices:
-                - public_ipv4
-                - public_ipv6
-                - hostname
-                - ipv4_dns_ptr
-                - private_ipv4
-        locations:
-          description: Populate inventory with instances in this location.
-          default: []
-          type: list
-          elements: str
-          required: false
-        types:
-          description: Populate inventory with instances with this type.
-          default: []
-          type: list
-          elements: str
-          required: false
-        images:
-          description: Populate inventory with instances with this image name, only available for system images.
-          default: []
-          type: list
-          elements: str
-          required: false
-        label_selector:
-          description: Populate inventory with instances with this label.
-          default: ""
-          type: str
-          required: false
-        network:
-          description: Populate inventory with instances which are attached to this network name or ID.
-          default: ""
-          type: str
-          required: false
-        status:
-          description: Populate inventory with instances with this status.
-          default: []
-          type: list
-          elements: str
-          required: false
+      - The API Token for the Hetzner Cloud.
+      - You can also set this option by using the C(HCLOUD_TOKEN) environment variable.
+    type: str
+    required: false # TODO: Mark as required once I(api_token_env) is removed.
+    aliases: [token]
+    env:
+      - name: HCLOUD_TOKEN
+  api_token_env:
+    description:
+      - Environment variable name to load the Hetzner Cloud API Token from.
+    type: str
+    default: HCLOUD_TOKEN
+    aliases: [token_env]
+    deprecated:
+      why: The option is adding too much complexity, while the alternatives are preferred.
+      collection_name: hetzner.hcloud
+      version: 3.0.0
+      alternatives: Use the ``{{ lookup('ansible.builtin.env', 'YOUR_ENV_VAR') }}`` lookup instead.
+  api_endpoint:
+    description:
+      - The API Endpoint for the Hetzner Cloud.
+      - You can also set this option by using the C(HCLOUD_ENDPOINT) environment variable.
+    type: str
+    default: https://api.hetzner.cloud/v1
+    env:
+      - name: HCLOUD_ENDPOINT
+
+  group:
+    description: The group all servers are automatically added to.
+    default: hcloud
+    type: str
+    required: false
+  connect_with:
+    description: |
+      Connect to the server using the value from this field. This sets the `ansible_host`
+      variable to the value indicated, if that value is available. If you need further
+      customization, like falling back to private ipv4 if the server has no public ipv4,
+      you can use `compose` top-level key.
+    default: public_ipv4
+    type: str
+    choices:
+      - public_ipv4
+      - public_ipv6
+      - hostname
+      - ipv4_dns_ptr
+      - private_ipv4
+
+  locations:
+    description: Populate inventory with instances in this location.
+    default: []
+    type: list
+    elements: str
+    required: false
+  types:
+    description: Populate inventory with instances with this type.
+    default: []
+    type: list
+    elements: str
+    required: false
+  images:
+    description: Populate inventory with instances with this image name, only available for system images.
+    default: []
+    type: list
+    elements: str
+    required: false
+  label_selector:
+    description: Populate inventory with instances with this label.
+    default: ""
+    type: str
+    required: false
+  network:
+    description: Populate inventory with instances which are attached to this network name or ID.
+    default: ""
+    type: str
+    required: false
+  status:
+    description: Populate inventory with instances with this status.
+    default: []
+    type: list
+    elements: str
+    required: false
 """
 
 EXAMPLES = r"""
@@ -113,6 +141,7 @@ from ansible.errors import AnsibleError
 from ansible.inventory.manager import InventoryData
 from ansible.module_utils.common.text.converters import to_native
 from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, Constructable
+from ansible.utils.display import Display
 
 from ..module_utils.hcloud import HAS_DATEUTIL, HAS_REQUESTS
 from ..module_utils.vendor import hcloud
@@ -170,35 +199,50 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
     NAME = "hetzner.hcloud.hcloud"
 
     inventory: InventoryData
+    display: Display
+
+    client: hcloud.Client
 
     def _configure_hcloud_client(self):
-        self.token_env = self.get_option("token_env")
-        self.templar.available_variables = self._vars
-        self.api_token = self.templar.template(self.get_option("token"), fail_on_undefined=False) or os.getenv(
-            self.token_env
-        )
-        if self.api_token is None:
+        # If api_token_env is not the default, print a deprecation warning and load the
+        # environment variable.
+        api_token_env = self.get_option("api_token_env")
+        if api_token_env != "HCLOUD_TOKEN":
+            self.display.deprecated(
+                "The 'api_token_env' option is deprecated, please use the `HCLOUD_TOKEN` "
+                "environment variable or use the 'ansible.builtin.env' lookup instead.",
+                version="3.0.0",
+                collection_name="hetzner.hcloud",
+            )
+            if api_token_env in os.environ:
+                self.set_option("api_token", os.environ.get(api_token_env))
+
+        api_token = self.get_option("api_token")
+        api_endpoint = self.get_option("api_endpoint")
+
+        if api_token is None:  # TODO: Remove once I(api_token_env) is removed.
             raise AnsibleError(
-                "Please specify a token, via the option token, via environment variable HCLOUD_TOKEN "
-                "or via custom environment variable set by token_env option."
+                "No setting was provided for required configuration setting: "
+                "plugin_type: inventory "
+                "plugin: hetzner.hcloud.hcloud "
+                "setting: api_token"
             )
 
-        self.endpoint = os.getenv("HCLOUD_ENDPOINT") or "https://api.hetzner.cloud/v1"
+        # Resolve template string
+        api_token = self.templar.template(api_token)
 
         self.client = hcloud.Client(
-            token=self.api_token,
-            api_endpoint=self.endpoint,
+            token=api_token,
+            api_endpoint=api_endpoint,
             application_name="ansible-inventory",
             application_version=version,
         )
 
-    def _test_hcloud_token(self):
         try:
-            # We test the API Token against the location API, because this is the API with the smallest result
-            # and not controllable from the customer.
-            self.client.locations.get_all()
-        except hcloud.APIException:
-            raise AnsibleError("Invalid Hetzner Cloud API Token.")
+            # Ensure the api token is valid
+            self.client.locations.get_list()
+        except hcloud.APIException as exception:
+            raise AnsibleError("Invalid Hetzner Cloud API Token.") from exception
 
     def _get_servers(self):
         if len(self.get_option("label_selector")) > 0:
@@ -388,7 +432,6 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         self._read_config_data(path)
         self._configure_hcloud_client()
-        self._test_hcloud_token()
 
         self.servers, cached = self._get_cached_result(path, cache)
         if not cached:
