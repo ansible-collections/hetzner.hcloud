@@ -24,3 +24,25 @@ Alternatively, you may provide the API token directly as module argument:
         server_type: cx11
         image: debian-12
         state: present
+
+To reduce the duplication of the above solution, you may configure the
+``hetzner.hcloud.*`` modules using the ``hetzner.hcloud.all`` action group, for
+example if you want to store your API token in a vault:
+
+.. code-block:: yaml
+
+    - name: Demonstrate the usage of the 'hetzner.hcloud.all' module_defaults group
+      hosts: localhost
+      connection: local
+
+      module_defaults:
+        group/hetzner.hcloud.all:
+          api_token: "{{ _vault_hcloud_api_token }}"
+
+      tasks:
+        - name: Create server
+          hetzner.hcloud.server:
+            name: my-server
+            server_type: cx11
+            image: debian-12
+            state: present

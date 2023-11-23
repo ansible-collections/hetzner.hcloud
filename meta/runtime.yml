@@ -1,5 +1,39 @@
 requires_ansible: ">=2.13.0"
 
+action_groups:
+  all:
+    - certificate
+    - certificate_info
+    - datacenter_info
+    - firewall
+    - floating_ip
+    - floating_ip_info
+    - image_info
+    - iso_info
+    - load_balancer
+    - load_balancer_info
+    - load_balancer_network
+    - load_balancer_service
+    - load_balancer_target
+    - load_balancer_type_info
+    - location_info
+    - network
+    - network_info
+    - placement_group
+    - primary_ip
+    - primary_ip_info
+    - rdns
+    - route
+    - server
+    - server_info
+    - server_network
+    - server_type_info
+    - ssh_key
+    - ssh_key_info
+    - subnetwork
+    - volume
+    - volume_info
+
 plugin_routing:
   modules:
     hcloud_certificate_info:
