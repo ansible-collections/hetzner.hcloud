@@ -33,11 +33,15 @@ except ImportError:
     HAS_DATEUTIL = False
 
 
+class ClientException(Exception):
+    """An error related to the client occurred."""
+
+
 def client_check_required_lib():
     if not HAS_REQUESTS:
-        raise RuntimeError(missing_required_lib("requests"))
+        raise ClientException(missing_required_lib("requests"))
     if not HAS_DATEUTIL:
-        raise RuntimeError(missing_required_lib("python-dateutil"))
+        raise ClientException(missing_required_lib("python-dateutil"))
 
 
 def client_get_by_name_or_id(client: Client, resource: str, param: str | int):
@@ -58,7 +62,7 @@ def client_get_by_name_or_id(client: Client, resource: str, param: str | int):
     try:
         int(param)
     except ValueError as exception:
-        raise ValueError(f"resource ({resource.rstrip('s')}) does not exist: {param}") from exception
+        raise ClientException(f"resource ({resource.rstrip('s')}) does not exist: {param}") from exception
 
     return resource_client.get_by_id(param)
 
@@ -82,7 +86,7 @@ class AnsibleHCloud:
 
         try:
             client_check_required_lib()
-        except RuntimeError as exception:
+        except ClientException as exception:
             module.fail_json(msg=to_native(exception))
 
         self._build_client()
@@ -134,7 +138,7 @@ class AnsibleHCloud:
         """
         try:
             return client_get_by_name_or_id(self.client, resource, param)
-        except ValueError as exception:
+        except ClientException as exception:
             self.module.fail_json(msg=to_native(exception))
 
     def _mark_as_changed(self) -> None:
