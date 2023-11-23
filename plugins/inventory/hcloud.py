@@ -144,7 +144,7 @@ from ansible.module_utils.common.text.converters import to_native
 from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, Constructable
 from ansible.utils.display import Display
 
-from ..module_utils.hcloud import HAS_DATEUTIL, HAS_REQUESTS
+from ..module_utils.client import HAS_DATEUTIL, HAS_REQUESTS
 from ..module_utils.vendor import hcloud
 from ..module_utils.vendor.hcloud.servers import Server
 from ..module_utils.version import version
