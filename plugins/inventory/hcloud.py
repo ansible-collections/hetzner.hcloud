@@ -35,7 +35,6 @@ options:
     aliases: [token]
     env:
       - name: HCLOUD_TOKEN
-      - name: I(api_token_env) # TODO: Remove once I(api_token_env) is removed.
   api_token_env:
     description:
       - Environment variable name to load the Hetzner Cloud API Token from.
