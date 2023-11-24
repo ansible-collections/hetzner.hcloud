@@ -1,3 +1,0 @@
-minor_changes:
-  - Removed the `hcloud_` prefix from all modules names, e.g. `hetzner.hcloud.hcloud_firewall`
-    was renamed to `hetzner.hcloud.firewall`. Old module names will continue working.

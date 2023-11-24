@@ -5,6 +5,21 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v2.4.0
+======
+
+Minor Changes
+-------------
+
+- Add the `hetzner.hcloud.all` group to configure all the modules using `module_defaults`.
+- Allow to set the `api_endpoint` module argument using the `HCLOUD_ENDPOINT` environment variable.
+- Removed the `hcloud_` prefix from all modules names, e.g. `hetzner.hcloud.hcloud_firewall` was renamed to `hetzner.hcloud.firewall`. Old module names will continue working.
+- Renamed the `endpoint` module argument to `api_endpoint`, backward compatibility is maintained using an alias.
+- hcloud inventory - Add the `api_endpoint` option.
+- hcloud inventory - Deprecate the `api_token_env` option, suggest using a lookup plugin (`{{ lookup('ansible.builtin.env', 'YOUR_ENV_VAR') }}`) or use the well-known `HCLOUD_TOKEN` environment variable name.
+- hcloud inventory - Rename the `token_env` option to `api_token_env`, use aliases for backward compatibility.
+- hcloud inventory - Rename the `token` option to `api_token`, use aliases for backward compatibility.
+
 v2.3.0
 ======
 
