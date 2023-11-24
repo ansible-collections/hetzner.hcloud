@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
+
 from ansible.module_utils.basic import missing_required_lib
 
-from .vendor.hcloud import APIException, Client
+from .vendor.hcloud import APIException, Client as ClientBase
 
 HAS_REQUESTS = True
 HAS_DATEUTIL = True
@@ -61,3 +63,40 @@ def client_get_by_name_or_id(client: Client, resource: str, param: str | int):
         if exception.code == "not_found":
             raise _client_resource_not_found(resource, param) from exception
         raise exception
+
+
+if HAS_REQUESTS:
+
+    class CachedSession(requests.Session):
+        cache: dict[str, requests.Response] = {}
+
+        def send(self, request: requests.PreparedRequest, **kwargs) -> requests.Response:  # type: ignore[no-untyped-def]
+            """
+            Send a given PreparedRequest.
+            """
+            if request.method != "GET" or request.url is None:
+                return super().send(request, **kwargs)
+
+            if request.url in self.cache:
+                return self.cache[request.url]
+
+            response = super().send(request, **kwargs)
+            if response.ok:
+                self.cache[request.url] = response
+
+            return response
+
+
+class Client(ClientBase):
+    @contextmanager
+    def cached_session(self) -> None:
+        """
+        Swap the client session during the scope of the context. The session will cache
+        all GET requests.
+
+        Cached response will not expire, therefore the cached client must not be used
+        for long living scopes.
+        """
+        self._requests_session = CachedSession()
+        yield
+        self._requests_session = requests.Session()
