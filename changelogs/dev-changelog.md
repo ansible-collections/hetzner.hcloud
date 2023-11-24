@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.4.0](https://github.com/ansible-collections/hetzner.hcloud/compare/2.3.0...2.4.0) (2023-11-24)
+
+
+### Features
+
+* add `hetzner.hcloud.all` action group ([#396](https://github.com/ansible-collections/hetzner.hcloud/issues/396)) ([6581ed5](https://github.com/ansible-collections/hetzner.hcloud/commit/6581ed50db8fd7a3e7525cb364acd63fec256c3a))
+* **inventory:** improve api options ([#397](https://github.com/ansible-collections/hetzner.hcloud/issues/397)) ([9905bd0](https://github.com/ansible-collections/hetzner.hcloud/commit/9905bd0e01ca5a21bb2db94f29a4c5276ffc638b))
+* remove `hcloud_` prefix from all modules names ([#390](https://github.com/ansible-collections/hetzner.hcloud/issues/390)) ([933a162](https://github.com/ansible-collections/hetzner.hcloud/commit/933a16249bc224ee135fcf28a2ebb9ad34978d85))
+* rename api_endpoint module argument ([#395](https://github.com/ansible-collections/hetzner.hcloud/issues/395)) ([7c9fbf8](https://github.com/ansible-collections/hetzner.hcloud/commit/7c9fbf85a734bc7884ff967680beb1fe422dc0ff))
+
+
+### Bug Fixes
+
+* **inventory:** improve performance ([#402](https://github.com/ansible-collections/hetzner.hcloud/issues/402)) ([f85d8f4](https://github.com/ansible-collections/hetzner.hcloud/commit/f85d8f4492f5c400dfcc4601f8212b6310f5c691))
+
 ## [2.3.0](https://github.com/ansible-collections/hetzner.hcloud/compare/2.2.0...2.3.0) (2023-11-07)
 
 ### Features
