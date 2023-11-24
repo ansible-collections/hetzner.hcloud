@@ -68,7 +68,11 @@ def client_get_by_name_or_id(client: Client, resource: str, param: str | int):
 if HAS_REQUESTS:
 
     class CachedSession(requests.Session):
-        cache: dict[str, requests.Response] = {}
+        cache: dict[str, requests.Response]
+
+        def __init__(self) -> None:
+            super().__init__()
+            self.cache = {}
 
         def send(self, request: requests.PreparedRequest, **kwargs) -> requests.Response:  # type: ignore[no-untyped-def]
             """
@@ -89,7 +93,7 @@ if HAS_REQUESTS:
 
 class Client(ClientBase):
     @contextmanager
-    def cached_session(self) -> None:
+    def cached_session(self):
         """
         Swap the client session during the scope of the context. The session will cache
         all GET requests.
@@ -98,5 +102,7 @@ class Client(ClientBase):
         for long living scopes.
         """
         self._requests_session = CachedSession()
-        yield
-        self._requests_session = requests.Session()
+        try:
+            yield
+        finally:
+            self._requests_session = requests.Session()
