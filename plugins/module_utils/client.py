@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from ansible.module_utils.basic import missing_required_lib
 
-from .vendor.hcloud import Client
+from .vendor.hcloud import APIException, Client
 
 HAS_REQUESTS = True
 HAS_DATEUTIL = True
@@ -31,6 +31,10 @@ def client_check_required_lib():
         raise ClientException(missing_required_lib("python-dateutil"))
 
 
+def _client_resource_not_found(resource: str, param: str | int):
+    return ClientException(f"resource ({resource.rstrip('s')}) does not exist: {param}")
+
+
 def client_get_by_name_or_id(client: Client, resource: str, param: str | int):
     """
     Get a resource by name, and if not found by its ID.
@@ -49,6 +53,11 @@ def client_get_by_name_or_id(client: Client, resource: str, param: str | int):
     try:
         int(param)
     except ValueError as exception:
-        raise ClientException(f"resource ({resource.rstrip('s')}) does not exist: {param}") from exception
+        raise _client_resource_not_found(resource, param) from exception
 
-    return resource_client.get_by_id(param)
+    try:
+        return resource_client.get_by_id(param)
+    except APIException as exception:
+        if exception.code == "not_found":
+            raise _client_resource_not_found(resource, param) from exception
+        raise exception
