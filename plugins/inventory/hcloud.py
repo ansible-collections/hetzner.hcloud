@@ -429,6 +429,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         except ClientException as exception:
             raise AnsibleError(to_native(exception)) from exception
 
+        # Allow using extra variables arguments as template variables (e.g.
+        # '--extra-vars my_var=my_value')
+        self.templar.available_variables = self._vars
+
         self._read_config_data(path)
         self._configure_hcloud_client()
 
