@@ -1,0 +1,4 @@
+plugin: hetzner.hcloud.hcloud
+
+network: my-network
+status: [running]
