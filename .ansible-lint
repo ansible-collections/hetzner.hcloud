@@ -5,6 +5,7 @@ exclude_paths:
   - .git/
   - .github/
   - changelogs/
+  - examples/
   - tests/integration/targets/certificate
   - tests/integration/targets/firewall
   - tests/integration/targets/floating_ip
