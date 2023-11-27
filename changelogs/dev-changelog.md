@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.1](https://github.com/ansible-collections/hetzner.hcloud/compare/2.4.0...2.4.1) (2023-11-27)
+
+
+### Bug Fixes
+
+* **inventory:** always use fresh cache on new cached session ([#404](https://github.com/ansible-collections/hetzner.hcloud/issues/404)) ([df7fa04](https://github.com/ansible-collections/hetzner.hcloud/commit/df7fa041494eb3609fcdbe65517a58a6396e0a84))
+
 ## [2.4.0](https://github.com/ansible-collections/hetzner.hcloud/compare/2.3.0...2.4.0) (2023-11-24)
 
 
