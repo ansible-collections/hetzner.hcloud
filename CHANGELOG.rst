@@ -5,6 +5,14 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v2.4.1
+======
+
+Bugfixes
+--------
+
+- hcloud inventory - Ensure the API client use a new cache for every *cached session*.
+
 v2.4.0
 ======
 

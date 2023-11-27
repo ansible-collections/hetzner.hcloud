@@ -453,3 +453,11 @@ releases:
     - improve-modules-api-arguments.yml
     - remove-hcloud-prefix-from-modules-names.yml
     release_date: '2023-11-24'
+  2.4.1:
+    changes:
+      bugfixes:
+      - hcloud inventory - Ensure the API client use a new cache for every *cached
+        session*.
+    fragments:
+    - fix-inventory-fresh-cache.yaml
+    release_date: '2023-11-27'

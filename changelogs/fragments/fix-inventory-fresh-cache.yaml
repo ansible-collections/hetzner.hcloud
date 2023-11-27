@@ -1,2 +1,0 @@
-bugfixes:
-  - hcloud inventory - Ensure the API client use a new cache for every *cached session*.
