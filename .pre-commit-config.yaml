@@ -50,7 +50,7 @@ repos:
       - id: antsibull-changelog-lint-changelog-yaml
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v6.22.0
+    rev: v6.22.1
     hooks:
       - id: ansible-lint
         name: ansible-lint
