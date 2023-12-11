@@ -37,7 +37,7 @@
     that:
       - result is changed
       - result.hcloud_rdns.server == "{{ hcloud_server_name }}"
-      - result.hcloud_rdns.ip_address == "{{ test_server.hcloud_server.ipv6 | ansible.utils.ipaddr('next_usable') }}"
+      - result.hcloud_rdns.ip_address == test_server.hcloud_server.ipv6 | ansible.utils.ipaddr('next_usable')
       - result.hcloud_rdns.dns_ptr == "example.com"
 
 - name: Test create idempotency
@@ -77,7 +77,7 @@
   ansible.builtin.assert:
     that:
       - result is changed
-      - result.hcloud_rdns.ip_address == "{{ test_server.hcloud_server.ipv4_address }}"
+      - result.hcloud_rdns.ip_address == test_server.hcloud_server.ipv4_address
 
 - name: Test update reset
   hetzner.hcloud.rdns:
@@ -113,8 +113,8 @@
   ansible.builtin.assert:
     that:
       - result is changed
-      - result.hcloud_rdns.primary_ip == "{{ hcloud_primary_ip_name }}"
-      - result.hcloud_rdns.ip_address == "{{ test_primary_ip.hcloud_primary_ip.ip }}"
+      - result.hcloud_rdns.primary_ip == hcloud_primary_ip_name
+      - result.hcloud_rdns.ip_address == test_primary_ip.hcloud_primary_ip.ip
       - result.hcloud_rdns.dns_ptr == "example.com"
 
 - name: Test create with floating ip
@@ -128,8 +128,8 @@
   ansible.builtin.assert:
     that:
       - result is changed
-      - result.hcloud_rdns.floating_ip == "{{ hcloud_floating_ip_name }}"
-      - result.hcloud_rdns.ip_address == "{{ test_floating_ip.hcloud_floating_ip.ip }}"
+      - result.hcloud_rdns.floating_ip == hcloud_floating_ip_name
+      - result.hcloud_rdns.ip_address == test_floating_ip.hcloud_floating_ip.ip
       - result.hcloud_rdns.dns_ptr == "example.com"
 
 - name: Test create with load balancer
@@ -143,6 +143,6 @@
   ansible.builtin.assert:
     that:
       - result is changed
-      - result.hcloud_rdns.load_balancer == "{{ hcloud_load_balancer_name }}"
-      - result.hcloud_rdns.ip_address == "{{ test_load_balancer.hcloud_load_balancer.ipv4_address }}"
+      - result.hcloud_rdns.load_balancer == hcloud_load_balancer_name
+      - result.hcloud_rdns.ip_address == test_load_balancer.hcloud_load_balancer.ipv4_address
       - result.hcloud_rdns.dns_ptr == "example.com"
