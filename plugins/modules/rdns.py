@@ -132,13 +132,11 @@ hcloud_rdns:
             sample: example.com
 """
 
+import ipaddress
 from typing import Any
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
-    utils,
-)
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -200,7 +198,13 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
 
     def _get_rdns(self):
         ip_address = self.module.params.get("ip_address")
-        if utils.validate_ip_address(ip_address):
+
+        try:
+            ip_address_obj = ipaddress.ip_address(ip_address)
+        except ValueError:
+            self.module.fail_json(msg=f"The given IP address is not valid: {ip_address}")
+
+        if ip_address_obj.version == 4:
             if self.module.params.get("server"):
                 if self.hcloud_resource.public_net.ipv4.ip == ip_address:
                     self.hcloud_rdns = {
@@ -234,7 +238,7 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
                 else:
                     self.module.fail_json(msg="The selected Load Balancer does not have this IP address")
 
-        elif utils.validate_ip_v6_address(ip_address):
+        elif ip_address_obj.version == 6:
             if self.module.params.get("server"):
                 for ipv6_address_dns_ptr in self.hcloud_resource.public_net.ipv6.dns_ptr:
                     if ipv6_address_dns_ptr["ip"] == ip_address:
@@ -263,8 +267,6 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
                             "ip_address": ipv6_address_dns_ptr["ip"],
                             "dns_ptr": ipv6_address_dns_ptr["dns_ptr"],
                         }
-        else:
-            self.module.fail_json(msg="The given IP address is not valid")
 
     def _create_rdns(self):
         self.module.fail_on_missing_params(required_params=["dns_ptr"])

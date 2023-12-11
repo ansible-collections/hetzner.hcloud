@@ -15,7 +15,7 @@
 - name: Test create with checkmode
   hetzner.hcloud.rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.utils.ipaddr('next_usable') }}"
     dns_ptr: example.com
     state: present
   check_mode: true
@@ -28,7 +28,7 @@
 - name: Test create
   hetzner.hcloud.rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.utils.ipaddr('next_usable') }}"
     dns_ptr: example.com
     state: present
   register: result
@@ -37,13 +37,13 @@
     that:
       - result is changed
       - result.hcloud_rdns.server == "{{ hcloud_server_name }}"
-      - result.hcloud_rdns.ip_address == "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+      - result.hcloud_rdns.ip_address == "{{ test_server.hcloud_server.ipv6 | ansible.utils.ipaddr('next_usable') }}"
       - result.hcloud_rdns.dns_ptr == "example.com"
 
 - name: Test create idempotency
   hetzner.hcloud.rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.utils.ipaddr('next_usable') }}"
     dns_ptr: example.com
     state: present
   register: result
@@ -94,7 +94,7 @@
 - name: Test delete
   hetzner.hcloud.rdns:
     server: "{{ hcloud_server_name }}"
-    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.netcommon.ipaddr('next_usable') }}"
+    ip_address: "{{ test_server.hcloud_server.ipv6 | ansible.utils.ipaddr('next_usable') }}"
     state: absent
   register: result
 - name: Verify delete

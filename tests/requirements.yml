@@ -1,5 +1,5 @@
 ---
 collections:
-  - ansible.netcommon
+  - ansible.utils
   - community.crypto
   - community.general
