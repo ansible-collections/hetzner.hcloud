@@ -28,7 +28,7 @@
       - result.hcloud_load_balancer_info | list | count == 1
       - result.hcloud_load_balancer_info[0].targets | list | count == 1
       - result.hcloud_load_balancer_info[0].targets | selectattr('type', 'equalto', 'server') | list | count == 1
-      - result.hcloud_load_balancer_info[0].targets | selectattr('server', 'equalto', '{{ hcloud_server_name }}') | list | count == 1
+      - result.hcloud_load_balancer_info[0].targets | selectattr('server', 'equalto', hcloud_server_name) | list | count == 1
       - result.hcloud_load_balancer_info[0].targets[0].health_status[0].listen_port == 80
       - result.hcloud_load_balancer_info[0].targets[0].health_status[0].status in ['healthy', 'unhealthy', 'unknown']
       - result.hcloud_load_balancer_info[0].services | list | count == 1
@@ -73,7 +73,7 @@
     that:
       - >
         result.hcloud_load_balancer_info
-        | selectattr('name', 'equalto', '{{ hcloud_load_balancer_name }}')
+        | selectattr('name', 'equalto', hcloud_load_balancer_name)
         | list | count == 1
 
 - name: Gather hcloud_load_balancer_info with wrong label selector

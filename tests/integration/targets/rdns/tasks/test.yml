@@ -36,7 +36,7 @@
   ansible.builtin.assert:
     that:
       - result is changed
-      - result.hcloud_rdns.server == "{{ hcloud_server_name }}"
+      - result.hcloud_rdns.server == hcloud_server_name
       - result.hcloud_rdns.ip_address == test_server.hcloud_server.ipv6 | ansible.utils.ipaddr('next_usable')
       - result.hcloud_rdns.dns_ptr == "example.com"
 

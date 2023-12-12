@@ -66,7 +66,7 @@
     that:
       - >
         result.hcloud_network_info
-        | selectattr('name', 'equalto', '{{ hcloud_network_name }}')
+        | selectattr('name', 'equalto', hcloud_network_name)
         | list | count == 1
 
 - name: Gather hcloud_network_info with wrong label selector

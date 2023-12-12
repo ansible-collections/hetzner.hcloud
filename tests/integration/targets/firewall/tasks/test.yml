@@ -44,7 +44,7 @@
   assert:
     that:
       - firewall is changed
-      - firewall.hcloud_firewall.name == "{{ hcloud_firewall_name }}"
+      - firewall.hcloud_firewall.name == hcloud_firewall_name
       - firewall.hcloud_firewall.rules | list | count == 1
       - firewall.hcloud_firewall.rules | selectattr('direction','equalto','in') | list | count == 1
       - firewall.hcloud_firewall.rules | selectattr('protocol','equalto','icmp') | list | count == 1
@@ -99,7 +99,7 @@
   assert:
     that:
       - firewall is changed
-      - firewall.hcloud_firewall.name == "{{ hcloud_firewall_name }}"
+      - firewall.hcloud_firewall.name == hcloud_firewall_name
       - firewall.hcloud_firewall.rules | list | count == 3
       - firewall.hcloud_firewall.rules | selectattr('direction','equalto','in') | list | count == 2
       - firewall.hcloud_firewall.rules | selectattr('direction','equalto','out') | list | count == 1
@@ -197,7 +197,7 @@
   assert:
     that:
       - result is changed
-      - result.hcloud_firewall.name == "{{ hcloud_firewall_name }}"
+      - result.hcloud_firewall.name == hcloud_firewall_name
 
 - name: absent firewall
   hetzner.hcloud.firewall:

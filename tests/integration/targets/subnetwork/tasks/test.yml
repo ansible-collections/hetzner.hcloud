@@ -39,7 +39,7 @@
   ansible.builtin.assert:
     that:
       - result is changed
-      - result.hcloud_subnetwork.network == "{{ hcloud_network_name }}"
+      - result.hcloud_subnetwork.network == hcloud_network_name
       - result.hcloud_subnetwork.network_zone == "eu-central"
       - result.hcloud_subnetwork.type == "cloud"
       - result.hcloud_subnetwork.ip_range == "10.0.0.0/24"
@@ -83,7 +83,7 @@
   ansible.builtin.assert:
     that:
       - result is changed
-      - result.hcloud_subnetwork.network == "{{ hcloud_network_name }}"
+      - result.hcloud_subnetwork.network == hcloud_network_name
       - result.hcloud_subnetwork.network_zone == "eu-central"
       - result.hcloud_subnetwork.type == "vswitch"
       - result.hcloud_subnetwork.ip_range == "10.0.1.0/24"

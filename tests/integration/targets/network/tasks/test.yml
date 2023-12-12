@@ -40,7 +40,7 @@
   assert:
     that:
       - network is changed
-      - network.hcloud_network.name == "{{hcloud_network_name}}"
+      - network.hcloud_network.name == hcloud_network_name
       - network.hcloud_network.ip_range == "10.0.0.0/16"
 
 - name: test create Network idempotence
@@ -63,7 +63,7 @@
   assert:
     that:
       - network is changed
-      - network.hcloud_network.name == "{{hcloud_network_name_with_vswitch}}"
+      - network.hcloud_network.name == hcloud_network_name_with_vswitch
       - network.hcloud_network.ip_range == "10.0.0.0/16"
       - network.hcloud_network.expose_routes_to_vswitch is true
 

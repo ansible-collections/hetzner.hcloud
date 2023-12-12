@@ -23,7 +23,7 @@
   assert:
     that:
       - main_server is changed
-      - main_server.hcloud_server.name == "{{ hcloud_server_name }}"
+      - main_server.hcloud_server.name == hcloud_server_name
       - main_server.hcloud_server.server_type == "cx11"
       - main_server.hcloud_server.status == "running"
       - main_server.root_password != ""
@@ -368,7 +368,7 @@
   assert:
     that:
       - main_server is changed
-      - main_server.hcloud_server.name == "{{ hcloud_server_name }}"
+      - main_server.hcloud_server.name == hcloud_server_name
       - main_server.hcloud_server.server_type == "cx11"
       - main_server.hcloud_server.status == "running"
       - main_server.root_password != ""
@@ -450,7 +450,7 @@
   assert:
     that:
       - main_server is changed
-      - main_server.hcloud_server.name == "{{ hcloud_server_name }}"
+      - main_server.hcloud_server.name == hcloud_server_name
       - main_server.hcloud_server.server_type == "cx11"
       - main_server.hcloud_server.status == "running"
       - main_server.root_password != ""

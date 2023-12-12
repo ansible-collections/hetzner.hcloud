@@ -44,7 +44,7 @@
   assert:
     that:
       - placement_group is changed
-      - placement_group.hcloud_placement_group.name == "{{ hcloud_placement_group_name }}"
+      - placement_group.hcloud_placement_group.name == hcloud_placement_group_name
       - placement_group.hcloud_placement_group.type == "spread"
       - placement_group.hcloud_placement_group.servers | list | count == 0
 
@@ -75,7 +75,7 @@
   assert:
     that:
       - server is changed
-      - server.hcloud_server.placement_group == "{{ hcloud_placement_group_name }}"
+      - server.hcloud_server.placement_group == hcloud_placement_group_name
 
 - name: test remove server from placement group
   hetzner.hcloud.server:
@@ -100,7 +100,7 @@
   assert:
     that:
       - result is changed
-      - result.hcloud_server.placement_group == "{{ hcloud_placement_group_name }}"
+      - result.hcloud_server.placement_group == hcloud_placement_group_name
       - result.hcloud_server.status == "running"
 
 - name: test add server to placement group idempotence
@@ -114,7 +114,7 @@
   assert:
     that:
       - result is not changed
-      - result.hcloud_server.placement_group == "{{ hcloud_placement_group_name }}"
+      - result.hcloud_server.placement_group == hcloud_placement_group_name
       - result.hcloud_server.status == "running"
 
 - name: test update placement group with check mode

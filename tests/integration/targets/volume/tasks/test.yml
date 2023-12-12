@@ -48,10 +48,10 @@
   assert:
     that:
       - volume is changed
-      - volume.hcloud_volume.name == "{{hcloud_volume_name}}"
+      - volume.hcloud_volume.name == hcloud_volume_name
       - volume.hcloud_volume.location == "fsn1"
       - volume.hcloud_volume.size == 10
-      - volume.hcloud_volume.server != "{{hcloud_server_name}}"
+      - volume.hcloud_volume.server != hcloud_server_name
       - volume.hcloud_volume.linux_device is defined
 
 - name: test create Volume idempotence
@@ -75,7 +75,7 @@
   assert:
     that:
       - volume is changed
-      - volume.hcloud_volume.server != "{{hcloud_server_name}}"
+      - volume.hcloud_volume.server != hcloud_server_name
 
 - name: test attach Volume
   hetzner.hcloud.volume:
@@ -86,7 +86,7 @@
   assert:
     that:
       - volume is changed
-      - volume.hcloud_volume.server == "{{hcloud_server_name}}"
+      - volume.hcloud_volume.server == hcloud_server_name
 
 - name: test attach Volume idempotence
   hetzner.hcloud.volume:
@@ -97,7 +97,7 @@
   assert:
     that:
       - volume is not changed
-      - volume.hcloud_volume.server == "{{hcloud_server_name}}"
+      - volume.hcloud_volume.server == hcloud_server_name
 
 - name: test detach Volume with checkmode
   hetzner.hcloud.volume:
@@ -108,7 +108,7 @@
   assert:
     that:
       - volume is changed
-      - volume.hcloud_volume.server == "{{hcloud_server_name}}"
+      - volume.hcloud_volume.server == hcloud_server_name
 
 - name: test detach Volume
   hetzner.hcloud.volume:
@@ -119,7 +119,7 @@
     that:
       - volume is changed
       - volume.hcloud_volume.location == "fsn1"
-      - volume.hcloud_volume.server != "{{hcloud_server_name}}"
+      - volume.hcloud_volume.server != hcloud_server_name
 
 - name: test update Volume label
   hetzner.hcloud.volume:

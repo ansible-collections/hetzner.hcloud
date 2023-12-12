@@ -35,8 +35,8 @@
   assert:
     that:
       - ssh_key is changed
-      - ssh_key.hcloud_ssh_key.name == "{{ hcloud_ssh_key_name }}"
-      - ssh_key.hcloud_ssh_key.public_key ==  "{{ test_ssh_keypair.public_key }}"
+      - ssh_key.hcloud_ssh_key.name == hcloud_ssh_key_name
+      - ssh_key.hcloud_ssh_key.public_key == test_ssh_keypair.public_key
       - ssh_key.hcloud_ssh_key.labels.key == "value"
 
 - name: test create ssh key idempotence
@@ -107,7 +107,7 @@
   assert:
     that:
       - result is changed
-      - result.hcloud_ssh_key.name == "{{ hcloud_ssh_key_name }}"
+      - result.hcloud_ssh_key.name == hcloud_ssh_key_name
 
 - name: test create server with ssh key
   hetzner.hcloud.server:

@@ -40,7 +40,7 @@
   ansible.builtin.assert:
     that:
       - result is changed
-      - result.hcloud_load_balancer.name == "{{ hcloud_load_balancer_name }}"
+      - result.hcloud_load_balancer.name == hcloud_load_balancer_name
       - result.hcloud_load_balancer.load_balancer_type == "lb11"
       - result.hcloud_load_balancer.algorithm == "round_robin"
       - result.hcloud_load_balancer.labels.key == "value"

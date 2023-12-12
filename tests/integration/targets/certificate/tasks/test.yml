@@ -37,7 +37,7 @@
   assert:
     that:
       - certificate is changed
-      - certificate.hcloud_certificate.name == "{{ hcloud_certificate_name }}"
+      - certificate.hcloud_certificate.name == hcloud_certificate_name
       - certificate.hcloud_certificate.domain_names[0] ==  "www.example.com"
       - certificate.hcloud_certificate.labels.key == "value"
 
@@ -110,7 +110,7 @@
   assert:
     that:
       - result is changed
-      - result.hcloud_certificate.name == "{{ hcloud_certificate_name }}"
+      - result.hcloud_certificate.name == hcloud_certificate_name
 
 - name: absent certificate
   hetzner.hcloud.certificate:
@@ -141,8 +141,8 @@
   assert:
     that:
       - result is changed
-      - result.hcloud_certificate.name == "{{ hcloud_certificate_name }}"
-      - result.hcloud_certificate.domain_names[0] == "{{ hcloud_dns_test_domain }}"
+      - result.hcloud_certificate.name == hcloud_certificate_name
+      - result.hcloud_certificate.domain_names[0] == hcloud_dns_test_domain
 
 - name: test delete certificate
   hetzner.hcloud.certificate:

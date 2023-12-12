@@ -64,7 +64,7 @@
     that:
       - >
         result.hcloud_primary_ip_info
-        | selectattr('name', 'equalto', '{{ hcloud_primary_ip_name }}')
+        | selectattr('name', 'equalto', hcloud_primary_ip_name)
         | list | count == 1
 
 - name: Gather hcloud_primary_ip_info with wrong label selector

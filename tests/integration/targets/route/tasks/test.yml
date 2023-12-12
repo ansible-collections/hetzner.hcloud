@@ -47,7 +47,7 @@
   assert:
     that:
       - route is changed
-      - route.hcloud_route.network == "{{ hcloud_network_name }}"
+      - route.hcloud_route.network == hcloud_network_name
       - route.hcloud_route.destination == "10.100.1.0/24"
       - route.hcloud_route.gateway == "10.0.1.1"
 

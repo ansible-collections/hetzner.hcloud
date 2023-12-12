@@ -239,7 +239,7 @@
   assert:
     that:
       - floatingIP is changed
-      - floatingIP.hcloud_floating_ip.server != "{{ main_server.hcloud_server.name }}"
+      - floatingIP.hcloud_floating_ip.server != main_server.hcloud_server.name
 
 - name: test assign Floating IP
   hetzner.hcloud.floating_ip:
@@ -252,7 +252,7 @@
   assert:
     that:
       - floatingIP is changed
-      - floatingIP.hcloud_floating_ip.server == "{{ main_server.hcloud_server.name }}"
+      - floatingIP.hcloud_floating_ip.server == main_server.hcloud_server.name
 
 - name: test assign Floating IP idempotency
   hetzner.hcloud.floating_ip:
@@ -276,7 +276,7 @@
   assert:
     that:
       - floatingIP is changed
-      - floatingIP.hcloud_floating_ip.server != "{{ main_server.hcloud_server.name }}"
+      - floatingIP.hcloud_floating_ip.server != main_server.hcloud_server.name
 
 - name: test unassign Floating IP idempotency
   hetzner.hcloud.floating_ip:
@@ -299,7 +299,7 @@
   assert:
     that:
       - floatingIP is changed
-      - floatingIP.hcloud_floating_ip.server == "{{ main_server.hcloud_server.name }}"
+      - floatingIP.hcloud_floating_ip.server == main_server.hcloud_server.name
 
 - name: test already assigned Floating IP assign without force
   hetzner.hcloud.floating_ip:
@@ -311,7 +311,7 @@
   assert:
     that:
       - floatingIP is changed
-      - floatingIP.hcloud_floating_ip.server == "{{ main_server.hcloud_server.name }}"
+      - floatingIP.hcloud_floating_ip.server == main_server.hcloud_server.name
 
 - name: test already assigned Floating IP assign with force
   hetzner.hcloud.floating_ip:
@@ -324,7 +324,7 @@
   assert:
     that:
       - floatingIP is changed
-      - floatingIP.hcloud_floating_ip.server == "{{ main_server2.hcloud_server.name }}"
+      - floatingIP.hcloud_floating_ip.server == main_server2.hcloud_server.name
 
 - name: test update Floating IP delete protection
   hetzner.hcloud.floating_ip:

@@ -26,7 +26,7 @@
   ansible.builtin.assert:
     that:
       - result.hcloud_volume_info | list | count == 1
-      - result.hcloud_volume_info[0].name == '{{ hcloud_volume_name }}'
+      - result.hcloud_volume_info[0].name == hcloud_volume_name
       - result.hcloud_volume_info[0].location == 'fsn1'
       - result.hcloud_volume_info[0].size == 10
       - result.hcloud_volume_info[0].linux_device is defined
@@ -68,7 +68,7 @@
     that:
       - >
         result.hcloud_volume_info
-        | selectattr('name', 'equalto', '{{ hcloud_volume_name }}')
+        | selectattr('name', 'equalto', hcloud_volume_name)
         | list | count == 1
 
 - name: Gather hcloud_volume_info with wrong label selector
