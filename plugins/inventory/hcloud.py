@@ -461,10 +461,12 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         for server in servers:
             self.inventory.add_host(server["name"], group=self.get_option("group"))
             for key, value in server.items():
-                if hostvars_prefix:
-                    key = hostvars_prefix + key
-                if hostvars_suffix:
-                    key = key + hostvars_suffix
+                # Add hostvars prefix and suffix for variables coming from the Hetzner Cloud.
+                if hostvars_prefix or hostvars_suffix and key not in ("ansible_host",):
+                    if hostvars_prefix:
+                        key = hostvars_prefix + key
+                    if hostvars_suffix:
+                        key = key + hostvars_suffix
 
                 self.inventory.set_variable(server["name"], key, value)
 
