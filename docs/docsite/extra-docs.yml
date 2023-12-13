@@ -1,5 +1,5 @@
 ---
 sections:
-  - title: Authentication
+  - title: Guides
     toctree:
-      - authentication
+      - guides
