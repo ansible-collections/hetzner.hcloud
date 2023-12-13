@@ -26,7 +26,7 @@
   ansible.builtin.assert:
     that:
       - result.hcloud_iso_info | list | count == 1
-      - result.hcloud_iso_info[0].id == hcloud_iso_id
+      - result.hcloud_iso_info[0].id == hcloud_iso_id | string
       - result.hcloud_iso_info[0].name == hcloud_iso_name
       - result.hcloud_iso_info[0].architecture == hcloud_iso_architecture
       - result.hcloud_iso_info[0].type == hcloud_iso_type
