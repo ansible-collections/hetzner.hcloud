@@ -1,3 +1,5 @@
+.. _ansible_collections.hetzner.hcloud.docsite.authentication:
+
 Authentication
 ==============
 
