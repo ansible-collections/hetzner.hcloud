@@ -64,7 +64,7 @@
     that:
       - >
         result.hcloud_certificate_info
-        | selectattr('name', 'equalto', '{{ hcloud_certificate_name }}')
+        | selectattr('name', 'equalto', hcloud_certificate_name)
         | list | count == 1
 
 - name: Gather hcloud_certificate_info with wrong label selector

@@ -66,7 +66,7 @@
     that:
       - >
         result.hcloud_server_info
-        | selectattr('name', 'equalto', '{{ hcloud_server_name }}')
+        | selectattr('name', 'equalto', hcloud_server_name)
         | list | count == 1
 
 - name: Gather hcloud_server_info with wrong label selector
