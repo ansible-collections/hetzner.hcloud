@@ -30,6 +30,6 @@
   register: _certificate_file
 
 - name: Save certificate files content
-  set_fact:
+  ansible.builtin.set_fact:
     test_certificate_privatekey_content: "{{ _certificate_privatekey_file.privatekey }}"
     test_certificate_content: "{{ _certificate_file.certificate }}"
