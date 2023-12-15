@@ -7,7 +7,6 @@ exclude_paths:
   - changelogs/
   - examples/
   - tests/integration/targets/certificate
-  - tests/integration/targets/firewall
   - tests/integration/targets/floating_ip
   - tests/integration/targets/load_balancer_network
   - tests/integration/targets/load_balancer_service

@@ -1,210 +1,177 @@
 # Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: setup firewall to be absent
+- name: Test missing required parameters
   hetzner.hcloud.firewall:
-    name: "{{ hcloud_firewall_name }}"
-    state: absent
-
-- name: test missing required parameters on create firewall
-  hetzner.hcloud.firewall:
-  register: result
+    state: present
   ignore_errors: true
-- name: verify fail test missing required parameters on create firewall
-  assert:
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
     that:
       - result is failed
       - 'result.msg == "one of the following is required: id, name"'
 
-- name: test create firewall with check mode
+- name: Test create with check mode
   hetzner.hcloud.firewall:
     name: "{{ hcloud_firewall_name }}"
-  register: result
+    rules:
+      - description: allow icmp in
+        direction: in
+        protocol: icmp
+        source_ips: ["0.0.0.0/0", "::/0"]
+    labels:
+      key: value
   check_mode: true
-- name: test create firewall with check mode
-  assert:
+  register: result
+- name: Verify create with check mode
+  ansible.builtin.assert:
     that:
       - result is changed
 
-- name: test create firewall
+- name: Test create
   hetzner.hcloud.firewall:
     name: "{{ hcloud_firewall_name }}"
     rules:
-      - direction: in
+      - description: allow icmp in
+        direction: in
         protocol: icmp
-        source_ips:
-          - 0.0.0.0/0
-          - ::/0
-        description: "allow icmp in"
+        source_ips: ["0.0.0.0/0", "::/0"]
     labels:
       key: value
-      my-label: label
-  register: firewall
-- name: verify create firewall
-  assert:
-    that:
-      - firewall is changed
-      - firewall.hcloud_firewall.name == hcloud_firewall_name
-      - firewall.hcloud_firewall.rules | list | count == 1
-      - firewall.hcloud_firewall.rules | selectattr('direction','equalto','in') | list | count == 1
-      - firewall.hcloud_firewall.rules | selectattr('protocol','equalto','icmp') | list | count == 1
-      - firewall.hcloud_firewall.rules | selectattr('description', 'equalto', 'allow icmp in') | list | count == 1
-
-- name: test create firewall idempotence
-  hetzner.hcloud.firewall:
-    name: "{{ hcloud_firewall_name }}"
-    rules:
-      - direction: in
-        protocol: icmp
-        source_ips:
-          - 0.0.0.0/0
-          - ::/0
-        description: "allow icmp in"
-    labels:
-      key: value
-      my-label: label
   register: result
-- name: verify create firewall idempotence
-  assert:
-    that:
-      - result is not changed
-
-- name: test update firewall rules
-  hetzner.hcloud.firewall:
-    name: "{{ hcloud_firewall_name }}"
-    rules:
-      - direction: in
-        protocol: icmp
-        source_ips:
-          - 0.0.0.0/0
-          - ::/0
-      - direction: in
-        protocol: tcp
-        port: 80
-        source_ips:
-          - 0.0.0.0/0
-          - ::/0
-      - direction: out
-        protocol: tcp
-        port: 80
-        destination_ips:
-          - 0.0.0.0/0
-          - ::/0
-        description: allow tcp out
-    labels:
-      key: value
-      my-label: label
-  register: firewall
-- name: verify update firewall rules
-  assert:
-    that:
-      - firewall is changed
-      - firewall.hcloud_firewall.name == hcloud_firewall_name
-      - firewall.hcloud_firewall.rules | list | count == 3
-      - firewall.hcloud_firewall.rules | selectattr('direction','equalto','in') | list | count == 2
-      - firewall.hcloud_firewall.rules | selectattr('direction','equalto','out') | list | count == 1
-      - firewall.hcloud_firewall.rules | selectattr('protocol','equalto','icmp') | list | count == 1
-      - firewall.hcloud_firewall.rules | selectattr('protocol','equalto','tcp') | list | count == 2
-      - firewall.hcloud_firewall.rules | selectattr('port','equalto','80') | list | count == 2
-      - firewall.hcloud_firewall.rules | selectattr('description', 'equalto', 'allow tcp out') | list | count == 1
-
-- name: test update firewall rules idempotence
-  hetzner.hcloud.firewall:
-    name: "{{ hcloud_firewall_name }}"
-    rules:
-      - direction: in
-        protocol: icmp
-        source_ips:
-          - 0.0.0.0/0
-          - ::/0
-      - direction: in
-        protocol: tcp
-        port: 80
-        source_ips:
-          - 0.0.0.0/0
-          - ::/0
-      - direction: out
-        protocol: tcp
-        port: 80
-        destination_ips:
-          - 0.0.0.0/0
-          - ::/0
-        description: allow tcp out
-    labels:
-      key: value
-      my-label: label
-  register: result
-- name: verify update firewall rules idempotence
-  assert:
-    that:
-      - result is not changed
-
-- name: test update firewall with check mode
-  hetzner.hcloud.firewall:
-    id: "{{ firewall.hcloud_firewall.id }}"
-    name: "changed-{{ hcloud_firewall_name }}"
-  register: result
-  check_mode: true
-- name: test create firewall with check mode
-  assert:
+- name: Verify create
+  ansible.builtin.assert:
     that:
       - result is changed
+      - result.hcloud_firewall.name == hcloud_firewall_name
+      - result.hcloud_firewall.rules | list | count == 1
+      - result.hcloud_firewall.rules[0].description == "allow icmp in"
+      - result.hcloud_firewall.rules[0].direction == "in"
+      - result.hcloud_firewall.rules[0].protocol == "icmp"
+      - result.hcloud_firewall.rules[0].source_ips == ["0.0.0.0/0", "::/0"]
+      - result.hcloud_firewall.labels.key == "value"
 
-- name: test update firewall
+- name: Test create idempotency
   hetzner.hcloud.firewall:
-    id: "{{ firewall.hcloud_firewall.id }}"
-    name: "changed-{{ hcloud_firewall_name }}"
+    name: "{{ hcloud_firewall_name }}"
+    rules:
+      - description: allow icmp in
+        direction: in
+        protocol: icmp
+        source_ips: ["0.0.0.0/0", "::/0"]
     labels:
       key: value
   register: result
-- name: test update firewall
-  assert:
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update
+  hetzner.hcloud.firewall:
+    name: "{{ hcloud_firewall_name }}"
+    rules:
+      - description: allow icmp in
+        direction: in
+        protocol: icmp
+        source_ips: ["0.0.0.0/0", "::/0"]
+      - description: allow http in
+        direction: in
+        protocol: tcp
+        port: 80
+        source_ips: ["0.0.0.0/0", "::/0"]
+      - description: allow http out
+        direction: out
+        protocol: tcp
+        port: 80
+        destination_ips: ["0.0.0.0/0", "::/0"]
+    labels:
+      key: value
+      label: label
+  register: result
+- name: Verify update
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_firewall.name == hcloud_firewall_name
+      - result.hcloud_firewall.rules | list | count == 3
+      - result.hcloud_firewall.rules[0].description == "allow icmp in"
+      - result.hcloud_firewall.rules[0].direction == "in"
+      - result.hcloud_firewall.rules[0].protocol == "icmp"
+      - result.hcloud_firewall.rules[0].source_ips == ["0.0.0.0/0", "::/0"]
+      - result.hcloud_firewall.rules[1].description == "allow http in"
+      - result.hcloud_firewall.rules[1].direction == "in"
+      - result.hcloud_firewall.rules[1].protocol == "tcp"
+      - result.hcloud_firewall.rules[1].port == "80"
+      - result.hcloud_firewall.rules[1].source_ips == ["0.0.0.0/0", "::/0"]
+      - result.hcloud_firewall.rules[2].description == "allow http out"
+      - result.hcloud_firewall.rules[2].direction == "out"
+      - result.hcloud_firewall.rules[2].protocol == "tcp"
+      - result.hcloud_firewall.rules[2].port == "80"
+      - result.hcloud_firewall.rules[2].destination_ips == ["0.0.0.0/0", "::/0"]
+      - result.hcloud_firewall.labels.key == "value"
+      - result.hcloud_firewall.labels.label == "label"
+
+- name: Test update idempotency
+  hetzner.hcloud.firewall:
+    name: "{{ hcloud_firewall_name }}"
+    rules:
+      - description: allow icmp in
+        direction: in
+        protocol: icmp
+        source_ips: ["0.0.0.0/0", "::/0"]
+      - description: allow http in
+        direction: in
+        protocol: tcp
+        port: 80
+        source_ips: ["0.0.0.0/0", "::/0"]
+      - description: allow http out
+        direction: out
+        protocol: tcp
+        port: 80
+        destination_ips: ["0.0.0.0/0", "::/0"]
+    labels:
+      key: value
+      label: label
+  register: result
+- name: Verify update idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update name
+  hetzner.hcloud.firewall:
+    id: "{{ result.hcloud_firewall.id }}"
+    name: "changed-{{ hcloud_firewall_name }}"
+  register: result
+- name: Verify update name
+  ansible.builtin.assert:
     that:
       - result is changed
       - result.hcloud_firewall.name == "changed-{{ hcloud_firewall_name }}"
 
-- name: test update firewall with same labels
+- name: Test update name and labels
   hetzner.hcloud.firewall:
-    id: "{{ firewall.hcloud_firewall.id }}"
-    name: "changed-{{ hcloud_firewall_name }}"
-    labels:
-      key: value
-  register: result
-- name: test update firewall with same labels
-  assert:
-    that:
-      - result is not changed
-
-- name: test update firewall with other labels
-  hetzner.hcloud.firewall:
-    id: "{{ firewall.hcloud_firewall.id }}"
-    name: "changed-{{ hcloud_firewall_name }}"
-    labels:
-      key: value
-      test: "val123"
-  register: result
-- name: test update firewall  with other labels
-  assert:
-    that:
-      - result is changed
-
-- name: test rename firewall
-  hetzner.hcloud.firewall:
-    id: "{{ firewall.hcloud_firewall.id }}"
+    id: "{{ result.hcloud_firewall.id }}"
     name: "{{ hcloud_firewall_name }}"
+    labels:
+      key: value
   register: result
-- name: test rename firewall
-  assert:
+- name: Verify update name and labels
+  ansible.builtin.assert:
     that:
       - result is changed
       - result.hcloud_firewall.name == hcloud_firewall_name
+      - result.hcloud_firewall.labels.key == "value"
+      - result.hcloud_firewall.labels.label is not defined
 
-- name: absent firewall
+- name: Test delete
   hetzner.hcloud.firewall:
-    id: "{{ firewall.hcloud_firewall.id }}"
+    name: "{{ hcloud_firewall_name }}"
     state: absent
   register: result
-- name: verify absent server
-  assert:
+- name: Verify delete
+  ansible.builtin.assert:
     that:
-      - result is success
+      - result is changed
