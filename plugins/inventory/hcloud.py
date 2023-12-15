@@ -169,11 +169,11 @@ if sys.version_info >= (3, 11):
         id: int
         name: str
         status: str
-        architecture: str
 
         # Server Type
         type: str
         server_type: str
+        architecture: str
 
         # Datacenter
         datacenter: str
@@ -306,11 +306,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         server_dict["id"] = server.id
         server_dict["name"] = to_native(server.name)
         server_dict["status"] = to_native(server.status)
-        server_dict["architecture"] = to_native(server.server_type.architecture)
 
         # Server Type
         server_dict["type"] = to_native(server.server_type.name)
         server_dict["server_type"] = to_native(server.server_type.name)
+        server_dict["architecture"] = to_native(server.server_type.architecture)
 
         # Network
         if server.public_net.ipv4:
