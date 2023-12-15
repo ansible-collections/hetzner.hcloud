@@ -169,15 +169,15 @@ if sys.version_info >= (3, 11):
         id: int
         name: str
         status: str
-        type: str
         architecture: str
+
+        # Server Type
+        type: str
+        server_type: str
 
         # Datacenter
         datacenter: str
         location: str
-
-        # Server Type
-        server_type: NotRequired[str]
 
         # Labels
         labels: dict[str, str]
@@ -306,8 +306,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         server_dict["id"] = server.id
         server_dict["name"] = to_native(server.name)
         server_dict["status"] = to_native(server.status)
-        server_dict["type"] = to_native(server.server_type.name)
         server_dict["architecture"] = to_native(server.server_type.architecture)
+
+        # Server Type
+        server_dict["type"] = to_native(server.server_type.name)
+        server_dict["server_type"] = to_native(server.server_type.name)
 
         # Network
         if server.public_net.ipv4:
@@ -328,10 +331,6 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 if private_net.network.id == self.network.id:
                     server_dict["private_ipv4"] = to_native(private_net.ip)
                     break
-
-        # Server Type
-        if server.server_type is not None:
-            server_dict["server_type"] = to_native(server.server_type.name)
 
         # Datacenter
         server_dict["datacenter"] = to_native(server.datacenter.name)
