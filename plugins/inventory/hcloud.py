@@ -111,6 +111,17 @@ options:
     type: list
     elements: str
     required: false
+
+  hostvars_prefix:
+    description:
+      - The prefix for host variables names coming from Hetzner Cloud.
+    type: str
+    version_added: 2.5.0
+  hostvars_suffix:
+    description:
+      - The suffix for host variables names coming from Hetzner Cloud.
+    type: str
+    version_added: 2.5.0
 """
 
 EXAMPLES = r"""
@@ -443,9 +454,20 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         # Add a top group
         self.inventory.add_group(group=self.get_option("group"))
 
+        hostvars_prefix = self.get_option("hostvars_prefix")
+        hostvars_suffix = self.get_option("hostvars_suffix")
+
         for server in servers:
             self.inventory.add_host(server["name"], group=self.get_option("group"))
             for key, value in server.items():
+                # Add hostvars prefix and suffix for variables coming from the Hetzner Cloud.
+                if hostvars_prefix or hostvars_suffix:
+                    if key not in ("ansible_host",):
+                        if hostvars_prefix:
+                            key = hostvars_prefix + key
+                        if hostvars_suffix:
+                            key = key + hostvars_suffix
+
                 self.inventory.set_variable(server["name"], key, value)
 
             # Use constructed if applicable
