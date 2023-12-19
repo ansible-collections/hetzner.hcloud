@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 import traceback
-from typing import Any
+from typing import Any, NoReturn
 
 from ansible.module_utils.basic import AnsibleModule as AnsibleModuleBase, env_fallback
 from ansible.module_utils.common.text.converters import to_native
@@ -47,7 +47,7 @@ class AnsibleHCloud:
         msg: str | None = None,
         params: Any = None,
         **kwargs,
-    ) -> None:
+    ) -> NoReturn:
         last_traceback = traceback.format_exc()
 
         failure = {}
