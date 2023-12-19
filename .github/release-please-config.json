@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "359539fdd65b3a8849f7ea783cddc700c399c78c",
+  "include-component-in-tag": false,
+  "include-v-in-tag": false,
+  "draft-pull-request": true,
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "package-name": "hetzner.hcloud",
+      "changelog-path": "changelogs/dev-changelog.md",
+      "extra-files": ["galaxy.yml", "plugins/module_utils/version.py"]
+    }
+  }
+}
