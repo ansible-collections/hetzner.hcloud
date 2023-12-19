@@ -8,5 +8,15 @@
       "datasourceTemplate": "pypi",
       "depNameTemplate": "hcloud"
     }
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": ["hcloud"],
+      "postUpgradeTasks": {
+        "commands": ["python3 scripts/vendor.py"],
+        "fileFilters": ["plugins/module_utils/vendor/**"],
+        "executionMode": "branch"
+      }
+    }
   ]
 }
