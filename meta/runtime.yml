@@ -6,6 +6,7 @@ action_groups:
     - certificate_info
     - datacenter_info
     - firewall
+    - firewall_resource
     - floating_ip
     - floating_ip_info
     - image_info
@@ -44,6 +45,8 @@ plugin_routing:
       redirect: hetzner.hcloud.datacenter_info
     hcloud_firewall:
       redirect: hetzner.hcloud.firewall
+    hcloud_firewall_resource:
+      redirect: hetzner.hcloud.firewall_resource
     hcloud_floating_ip_info:
       redirect: hetzner.hcloud.floating_ip_info
     hcloud_floating_ip:
