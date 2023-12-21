@@ -1,0 +1,1 @@
+plugins/inventory/hcloud.py yamllint:unparsable-with-libyaml # bug in ansible-test - https://github.com/ansible/ansible/issues/82353

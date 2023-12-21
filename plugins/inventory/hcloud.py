@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-DOCUMENTATION = r"""
+DOCUMENTATION = """
 name: hcloud
 short_description: Ansible dynamic inventory plugin for the Hetzner Cloud.
 
@@ -24,16 +24,15 @@ extends_documentation_fragment:
 
 options:
   plugin:
-    description: Mark this as an C(hetzner.hcloud.hcloud) inventory instance.
+    description: Mark this as an P(hetzner.hcloud.hcloud#inventory) inventory instance.
     required: true
     choices: [hcloud, hetzner.hcloud.hcloud]
 
   api_token:
     description:
       - The API Token for the Hetzner Cloud.
-      - You can also set this option by using the C(HCLOUD_TOKEN) environment variable.
     type: str
-    required: false # TODO: Mark as required once I(api_token_env) is removed.
+    required: false # TODO: Mark as required once 'api_token_env' is removed.
     aliases: [token]
     env:
       - name: HCLOUD_TOKEN
@@ -47,11 +46,10 @@ options:
       why: The option is adding too much complexity, while the alternatives are preferred.
       collection_name: hetzner.hcloud
       version: 3.0.0
-      alternatives: Use the ``{{ lookup('ansible.builtin.env', 'YOUR_ENV_VAR') }}`` lookup instead.
+      alternatives: Use the P(ansible.builtin.env#lookup) lookup plugin instead.
   api_endpoint:
     description:
       - The API Endpoint for the Hetzner Cloud.
-      - You can also set this option by using the C(HCLOUD_ENDPOINT) environment variable.
     type: str
     default: https://api.hetzner.cloud/v1
     env:
@@ -64,10 +62,10 @@ options:
     required: false
   connect_with:
     description: |
-      Connect to the server using the value from this field. This sets the `ansible_host`
+      Connect to the server using the value from this field. This sets the C(ansible_host)
       variable to the value indicated, if that value is available. If you need further
       customization, like falling back to private ipv4 if the server has no public ipv4,
-      you can use `compose` top-level key.
+      you can use O(compose) top-level key.
     default: public_ipv4
     type: str
     choices:
@@ -124,8 +122,18 @@ options:
     version_added: 2.5.0
 """
 
-EXAMPLES = r"""
-plugin: hcloud
+EXAMPLES = """
+# Minimal example. 'HCLOUD_TOKEN' is exposed in environment.
+plugin: hetzner.hcloud.hcloud
+
+---
+# Example with templated token, e.g. provided through extra vars.
+plugin: hetzner.hcloud.hcloud
+api_token: "{{ _vault_hetzner_cloud_token }}"
+
+---
+# Example with locations, types, status
+plugin: hetzner.hcloud.hcloud
 locations:
   - nbg1
 types:
@@ -133,9 +141,11 @@ types:
 status:
   - running
 
+---
 # Group by a location with prefix e.g. "hcloud_location_nbg1"
 # and image_os_flavor without prefix and separator e.g. "ubuntu"
 # and status with prefix e.g. "server_status_running"
+plugin: hetzner.hcloud.hcloud
 keyed_groups:
   - key: location
     prefix: hcloud_location
@@ -238,7 +248,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         api_token_env = self.get_option("api_token_env")
         if api_token_env != "HCLOUD_TOKEN":
             self.display.deprecated(
-                "The 'api_token_env' option is deprecated, please use the `HCLOUD_TOKEN` "
+                "The 'api_token_env' option is deprecated, please use the 'HCLOUD_TOKEN' "
                 "environment variable or use the 'ansible.builtin.env' lookup instead.",
                 version="3.0.0",
                 collection_name="hetzner.hcloud",
@@ -360,7 +370,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             server_dict["ansible_host"] = self._get_server_ansible_host(server)
         except AnsibleError as exception:
             # Log warning that for this host can not be connected to, using the
-            # method specified in `connect_with`. Users might use `compose` to
+            # method specified in 'connect_with'. Users might use 'compose' to
             # override the connection method, or implement custom logic, so we
             # do not need to abort if nothing matched.
             self.display.v(f"[hcloud] {exception}", server.name)
