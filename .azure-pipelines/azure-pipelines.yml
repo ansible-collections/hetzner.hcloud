@@ -95,8 +95,8 @@ stages:
       - template: templates/matrix.yml
         parameters:
           targets:
-            - name: (py3.10)
-              test: devel/units/3.10
+            - name: (py3.12)
+              test: devel/units/3.12
 
   - stage: Units_2_16
     displayName: Units 2.16
@@ -147,8 +147,8 @@ stages:
         parameters:
           groups: [1, 2, 3]
           targets:
-            - name: (py3.10)
-              test: devel/integration/3.10
+            - name: (py3.12)
+              test: devel/integration/3.12
 
   - stage: Integration_2_16
     displayName: Integration 2.16

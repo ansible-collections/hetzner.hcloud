@@ -9,9 +9,7 @@ from __future__ import annotations
 DOCUMENTATION = """
 ---
 module: firewall
-
 short_description: Create and manage firewalls on the Hetzner Cloud.
-
 
 description:
     - Create, update and manage firewalls on the Hetzner Cloud.
@@ -22,62 +20,69 @@ author:
 options:
     id:
         description:
-            - The ID of the Hetzner Cloud firewall to manage.
-            - Only required if no firewall I(name) is given
+            - The ID of the Hetzner Cloud Firewall to manage.
+            - Only required if no firewall O(name) is given.
         type: int
     name:
         description:
-            - The Name of the Hetzner Cloud firewall to manage.
-            - Only required if no firewall I(id) is given, or a firewall does not exist.
+            - The Name of the Hetzner Cloud Firewall to manage.
+            - Only required if no firewall O(id) is given, or the firewall does not exist.
         type: str
     labels:
         description:
-            - User-defined labels (key-value pairs)
+            - User-defined labels (key-value pairs).
         type: dict
     rules:
         description:
-            - List of rules the firewall should contain.
+            - List of rules the firewall contain.
         type: list
         elements: dict
         suboptions:
-            direction:
-                description:
-                    - The direction of the firewall rule.
-                type: str
-                choices: [ in, out ]
-            port:
-                description:
-                    - The port of the firewall rule.
-                type: str
-            protocol:
-                description:
-                    - The protocol of the firewall rule.
-                type: str
-                choices: [ icmp, tcp, udp, esp, gre ]
-            source_ips:
-                description:
-                    - List of CIDRs that are allowed within this rule
-                type: list
-                elements: str
-                default: [ ]
-            destination_ips:
-                description:
-                    - List of CIDRs that are allowed within this rule
-                type: list
-                elements: str
-                default: [ ]
             description:
                 description:
                     - User defined description of this rule.
                 type: str
+            direction:
+                description:
+                    - The direction of the firewall rule.
+                type: str
+                choices: [in, out]
+            protocol:
+                description:
+                    - The protocol of the firewall rule.
+                type: str
+                choices: [icmp, tcp, udp, esp, gre]
+            port:
+                description:
+                    - The port or port range allowed by this rule.
+                    - A port range can be specified by separating two ports with a dash, e.g 1024-5000.
+                    - Only used if O(rules[].protocol=tcp) or O(rules[].protocol=udp).
+                type: str
+            source_ips:
+                description:
+                    - List of CIDRs that are allowed within this rule.
+                    - Use 0.0.0.0/0 to allow all IPv4 addresses and ::/0 to allow all IPv6 addresses.
+                    - Only used if O(rules[].direction=in).
+                type: list
+                elements: str
+                default: []
+            destination_ips:
+                description:
+                    - List of CIDRs that are allowed within this rule.
+                    - Use 0.0.0.0/0 to allow all IPv4 addresses and ::/0 to allow all IPv6 addresses.
+                    - Only used if O(rules[].direction=out).
+                type: list
+                elements: str
+                default: []
     state:
         description:
             - State of the firewall.
         default: present
-        choices: [ absent, present ]
+        choices: [absent, present]
         type: str
+
 extends_documentation_fragment:
-- hetzner.hcloud.hcloud
+    - hetzner.hcloud.hcloud
 """
 
 EXAMPLES = """
@@ -90,12 +95,12 @@ EXAMPLES = """
   hetzner.hcloud.firewall:
     name: my-firewall
     rules:
-      - direction: in
+      - description: allow icmp from everywhere
+        direction: in
         protocol: icmp
         source_ips:
           - 0.0.0.0/0
           - ::/0
-        description: allow icmp in
     state: present
 
 - name: Create a firewall with labels
@@ -114,58 +119,62 @@ EXAMPLES = """
 
 RETURN = """
 hcloud_firewall:
-    description: The firewall instance
-    returned: Always
-    type: complex
+    description: The firewall instance.
+    returned: always
+    type: dict
     contains:
         id:
-            description: Numeric identifier of the firewall
+            description: Numeric identifier of the firewall.
             returned: always
             type: int
             sample: 1937415
         name:
-            description: Name of the firewall
+            description: Name of the firewall.
             returned: always
             type: str
-            sample: my firewall
-        rules:
-            description: List of Rules within this Firewall
+            sample: my-firewall
+        labels:
+            description: User-defined labels (key-value pairs).
             returned: always
-            type: complex
+            type: dict
+        rules:
+            description: List of rules the firewall contain.
+            returned: always
+            type: list
+            elements: dict
             contains:
+                description:
+                    description: User defined description of this rule.
+                    type: str
+                    returned: always
+                    sample: allow http from anywhere
                 direction:
-                    description: Direction of the Firewall Rule
+                    description: The direction of the firewall rule.
                     type: str
                     returned: always
                     sample: in
                 protocol:
-                    description: Protocol of the Firewall Rule
+                    description: The protocol of the firewall rule.
                     type: str
                     returned: always
-                    sample: icmp
+                    sample: tcp
                 port:
-                    description: Port of the Firewall Rule, None/Null if protocol is icmp
+                    description: The port or port range allowed by this rule.
                     type: str
-                    returned: always
-                    sample: in
+                    returned: if RV(hcloud_firewall.rules[].protocol=tcp) or RV(hcloud_firewall.rules[].protocol=udp)
+                    sample: "80"
                 source_ips:
-                    description: Source IPs of the Firewall
+                    description: List of source CIDRs that are allowed within this rule.
                     type: list
                     elements: str
                     returned: always
+                    sample: ["0.0.0.0/0", "::/0"]
                 destination_ips:
-                    description: Source IPs of the Firewall
+                    description: List of destination CIDRs that are allowed within this rule.
                     type: list
                     elements: str
                     returned: always
-                description:
-                    description: User defined description of the Firewall Rule
-                    type: str
-                    returned: always
-        labels:
-            description: User-defined labels (key-value pairs)
-            returned: always
-            type: dict
+                    sample: []
 """
 
 import time
@@ -303,16 +312,17 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
             argument_spec=dict(
                 id={"type": "int"},
                 name={"type": "str"},
+                labels={"type": "dict"},
                 rules=dict(
                     type="list",
                     elements="dict",
                     options=dict(
+                        description={"type": "str"},
                         direction={"type": "str", "choices": ["in", "out"]},
                         protocol={"type": "str", "choices": ["icmp", "udp", "tcp", "esp", "gre"]},
                         port={"type": "str"},
                         source_ips={"type": "list", "elements": "str", "default": []},
                         destination_ips={"type": "list", "elements": "str", "default": []},
-                        description={"type": "str"},
                     ),
                     required_together=[["direction", "protocol"]],
                     required_if=[
@@ -320,7 +330,6 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
                         ["protocol", "tcp", ["port"]],
                     ],
                 ),
-                labels={"type": "dict"},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",

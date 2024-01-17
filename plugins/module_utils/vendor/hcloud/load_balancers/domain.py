@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 try:
     from dateutil.parser import isoparse
@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from ..certificates import BoundCertificate
     from ..load_balancer_types import BoundLoadBalancerType
     from ..locations import BoundLocation
+    from ..metrics import Metrics
     from ..networks import BoundNetwork
     from ..servers import BoundServer
     from .client import BoundLoadBalancer
@@ -511,3 +512,26 @@ class CreateLoadBalancerResponse(BaseDomain):
     ):
         self.load_balancer = load_balancer
         self.action = action
+
+
+MetricsType = Literal[
+    "open_connections",
+    "connections_per_second",
+    "requests_per_second",
+    "bandwidth",
+]
+
+
+class GetMetricsResponse(BaseDomain):
+    """Get a Load Balancer Metrics Response Domain
+
+    :param metrics: The Load Balancer metrics
+    """
+
+    __slots__ = ("metrics",)
+
+    def __init__(
+        self,
+        metrics: Metrics,
+    ):
+        self.metrics = metrics
