@@ -153,12 +153,14 @@ class AnsibleHCloudServerTypeInfo(AnsibleHCloud):
                         "cpu_type": to_native(server_type.cpu_type),
                         "architecture": to_native(server_type.architecture),
                         "included_traffic": server_type.included_traffic,
-                        "deprecation": {
-                            "announced": server_type.deprecation.announced.isoformat(),
-                            "unavailable_after": server_type.deprecation.unavailable_after.isoformat(),
-                        }
-                        if server_type.deprecation is not None
-                        else None,
+                        "deprecation": (
+                            {
+                                "announced": server_type.deprecation.announced.isoformat(),
+                                "unavailable_after": server_type.deprecation.unavailable_after.isoformat(),
+                            }
+                            if server_type.deprecation is not None
+                            else None
+                        ),
                     }
                 )
         return tmp

@@ -151,12 +151,14 @@ class AnsibleHCloudIsoInfo(AnsibleHCloud):
                     "deprecated": (
                         iso_info.deprecation.unavailable_after if iso_info.deprecation is not None else None
                     ),
-                    "deprecation": {
-                        "announced": iso_info.deprecation.announced.isoformat(),
-                        "unavailable_after": iso_info.deprecation.unavailable_after.isoformat(),
-                    }
-                    if iso_info.deprecation is not None
-                    else None,
+                    "deprecation": (
+                        {
+                            "announced": iso_info.deprecation.announced.isoformat(),
+                            "unavailable_after": iso_info.deprecation.unavailable_after.isoformat(),
+                        }
+                        if iso_info.deprecation is not None
+                        else None
+                    ),
                 }
             )
 
