@@ -23,3 +23,5 @@ exclude_paths:
 warn_list:
   - internal-error
   - sanity[cannot-ignore]
+  # TODO: remove once unsupported ansible-core version are dropped
+  - meta-runtime[unsupported-version]
