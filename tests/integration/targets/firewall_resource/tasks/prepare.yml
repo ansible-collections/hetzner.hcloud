@@ -1,0 +1,25 @@
+---
+- name: Create test_server
+  hetzner.hcloud.server:
+    name: "{{ hcloud_server_name }}"
+    server_type: cx11
+    image: ubuntu-22.04
+    labels:
+      key: value
+    state: stopped
+  register: test_server
+
+- name: Create test_firewall
+  hetzner.hcloud.firewall:
+    name: "{{ hcloud_firewall_name }}"
+    labels:
+      key: value
+    rules:
+      - description: allow icmp from anywhere
+        direction: in
+        protocol: icmp
+        source_ips:
+          - 0.0.0.0/0
+          - ::/0
+    state: present
+  register: test_firewall

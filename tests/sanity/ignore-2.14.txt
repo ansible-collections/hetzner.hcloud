@@ -6,6 +6,10 @@ plugins/modules/certificate.py validate-modules:illegal-future-imports
 plugins/modules/certificate.py validate-modules:import-before-documentation
 plugins/modules/datacenter_info.py validate-modules:illegal-future-imports
 plugins/modules/datacenter_info.py validate-modules:import-before-documentation
+plugins/modules/firewall_info.py validate-modules:illegal-future-imports
+plugins/modules/firewall_info.py validate-modules:import-before-documentation
+plugins/modules/firewall_resource.py validate-modules:illegal-future-imports
+plugins/modules/firewall_resource.py validate-modules:import-before-documentation
 plugins/modules/firewall.py validate-modules:illegal-future-imports
 plugins/modules/firewall.py validate-modules:import-before-documentation
 plugins/modules/floating_ip_info.py validate-modules:illegal-future-imports

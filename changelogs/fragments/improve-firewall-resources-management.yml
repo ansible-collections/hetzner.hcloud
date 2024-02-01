@@ -1,0 +1,4 @@
+minor_changes:
+  - firewall - Return resources the firewall is `applied_to`.
+  - firewall_info - Add new `firewall_info` module to gather firewalls info.
+  - firewall_resource - Add new `firewall_resource` module to manage firewalls resources.

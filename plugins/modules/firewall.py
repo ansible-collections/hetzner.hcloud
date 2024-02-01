@@ -175,6 +175,40 @@ hcloud_firewall:
                     elements: str
                     returned: always
                     sample: []
+        applied_to:
+            description: List of Resources the Firewall is applied to.
+            returned: always
+            type: list
+            elements: dict
+            contains:
+                type:
+                    description: Type of the resource.
+                    type: str
+                    choices: [server, label_selector]
+                    sample: label_selector
+                server:
+                    description: ID of the server.
+                    type: int
+                    sample: 12345
+                label_selector:
+                    description: Label selector value.
+                    type: str
+                    sample: env=prod
+                applied_to_resources:
+                    description: List of Resources the Firewall label selector is applied to.
+                    returned: if RV(hcloud_firewall.applied_to[].type=label_selector)
+                    type: list
+                    elements: dict
+                    contains:
+                        type:
+                            description: Type of resource referenced.
+                            type: str
+                            choices: [server]
+                            sample: server
+                        server:
+                            description: ID of the Server.
+                            type: int
+                            sample: 12345
 """
 
 import time
@@ -184,7 +218,11 @@ from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import APIException, HCloudException
-from ..module_utils.vendor.hcloud.firewalls import BoundFirewall, FirewallRule
+from ..module_utils.vendor.hcloud.firewalls import (
+    BoundFirewall,
+    FirewallResource,
+    FirewallRule,
+)
 
 
 class AnsibleHCloudFirewall(AnsibleHCloud):
@@ -198,17 +236,36 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
             "name": to_native(self.hcloud_firewall.name),
             "rules": [self._prepare_result_rule(rule) for rule in self.hcloud_firewall.rules],
             "labels": self.hcloud_firewall.labels,
+            "applied_to": [self._prepare_result_applied_to(resource) for resource in self.hcloud_firewall.applied_to],
         }
 
-    def _prepare_result_rule(self, rule):
+    def _prepare_result_rule(self, rule: FirewallRule):
         return {
-            "direction": rule.direction,
+            "direction": to_native(rule.direction),
             "protocol": to_native(rule.protocol),
             "port": to_native(rule.port) if rule.port is not None else None,
             "source_ips": [to_native(cidr) for cidr in rule.source_ips],
             "destination_ips": [to_native(cidr) for cidr in rule.destination_ips],
             "description": to_native(rule.description) if rule.description is not None else None,
         }
+
+    def _prepare_result_applied_to(self, resource: FirewallResource):
+        result = {
+            "type": to_native(resource.type),
+            "server": to_native(resource.server.id) if resource.server is not None else None,
+            "label_selector": (
+                to_native(resource.label_selector.selector) if resource.label_selector is not None else None
+            ),
+        }
+        if resource.applied_to_resources is not None:
+            result["applied_to_resources"] = [
+                {
+                    "type": to_native(item.type),
+                    "server": to_native(item.server.id) if item.server is not None else None,
+                }
+                for item in resource.applied_to_resources
+            ]
+        return result
 
     def _get_firewall(self):
         try:
@@ -239,11 +296,13 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
                 )
                 for rule in rules
             ]
+
         if not self.module.check_mode:
             try:
                 self.client.firewalls.create(**params)
             except HCloudException as exception:
                 self.fail_json_hcloud(exception, params=params)
+
         self._mark_as_changed()
         self._get_firewall()
 
@@ -277,6 +336,7 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
                 ]
                 self.hcloud_firewall.set_rules(new_rules)
             self._mark_as_changed()
+
         self._get_firewall()
 
     def present_firewall(self):

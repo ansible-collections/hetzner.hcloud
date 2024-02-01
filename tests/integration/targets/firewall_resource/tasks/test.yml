@@ -1,0 +1,95 @@
+# Copyright: (c) 2020, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Test missing required parameters
+  hetzner.hcloud.firewall_resource:
+    firewall: "{{ hcloud_firewall_name }}"
+    state: present
+  ignore_errors: true
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "one of the following is required: servers, label_selectors"'
+
+- name: Test create with check mode
+  hetzner.hcloud.firewall_resource:
+    firewall: "{{ hcloud_firewall_name }}"
+    servers: ["{{ hcloud_server_name }}"]
+  check_mode: true
+  register: result
+- name: Verify create with check mode
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test create
+  hetzner.hcloud.firewall_resource:
+    firewall: "{{ hcloud_firewall_name }}"
+    servers: ["{{ hcloud_server_name }}"]
+  register: result
+- name: Verify create
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_firewall_resource.firewall == hcloud_firewall_name
+      - result.hcloud_firewall_resource.servers | list | count == 1
+      - result.hcloud_firewall_resource.servers[0] == hcloud_server_name
+      - result.hcloud_firewall_resource.label_selectors | list | count == 0
+
+- name: Test create idempotency
+  hetzner.hcloud.firewall_resource:
+    firewall: "{{ hcloud_firewall_name }}"
+    servers: ["{{ hcloud_server_name }}"]
+  register: result
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update
+  hetzner.hcloud.firewall_resource:
+    firewall: "{{ hcloud_firewall_name }}"
+    label_selectors:
+      - key=value
+  register: result
+- name: Verify update
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_firewall_resource.label_selectors | list | count == 1
+      - result.hcloud_firewall_resource.label_selectors[0] == "key=value"
+
+- name: Test update idempotency
+  hetzner.hcloud.firewall_resource:
+    firewall: "{{ hcloud_firewall_name }}"
+    label_selectors:
+      - key=value
+  register: result
+- name: Verify update idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test delete servers
+  hetzner.hcloud.firewall_resource:
+    firewall: "{{ hcloud_firewall_name }}"
+    servers: ["{{ hcloud_server_name }}"]
+    state: absent
+  register: result
+- name: Verify delete
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test delete label_selectors
+  hetzner.hcloud.firewall_resource:
+    firewall: "{{ hcloud_firewall_name }}"
+    label_selectors: ["key=value"]
+    state: absent
+  register: result
+- name: Verify delete
+  ansible.builtin.assert:
+    that:
+      - result is changed

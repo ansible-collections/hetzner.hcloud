@@ -1,0 +1,93 @@
+# Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Gather hcloud_firewall_info
+  hetzner.hcloud.firewall_info:
+  register: result
+- name: Verify hcloud_firewall_info
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_firewall_info | list | count >= 1
+
+- name: Gather hcloud_firewall_info in check mode
+  hetzner.hcloud.firewall_info:
+  check_mode: true
+  register: result
+- name: Verify hcloud_firewall_info in check mode
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_firewall_info | list | count >= 1
+
+- name: Gather hcloud_firewall_info with correct id
+  hetzner.hcloud.firewall_info:
+    id: "{{ test_firewall.hcloud_firewall.id }}"
+  register: result
+- name: Verify hcloud_firewall_info with correct id
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_firewall_info | list | count == 1
+      - result.hcloud_firewall_info[0].name == hcloud_firewall_name
+      - result.hcloud_firewall_info[0].labels.key == "value"
+      - result.hcloud_firewall_info[0].rules | list | count == 1
+      - result.hcloud_firewall_info[0].rules[0].description == "allow icmp from anywhere"
+      - result.hcloud_firewall_info[0].rules[0].direction == "in"
+      - result.hcloud_firewall_info[0].rules[0].protocol == "icmp"
+      - result.hcloud_firewall_info[0].rules[0].source_ips == ["0.0.0.0/0", "::/0"]
+      - result.hcloud_firewall_info[0].applied_to | list | count == 2
+      - >
+        result.hcloud_firewall_info[0].applied_to
+        | selectattr('type', 'equalto', 'label_selector')
+        | list | count == 1
+      - >
+        result.hcloud_firewall_info[0].applied_to
+        | selectattr('type', 'equalto', 'server')
+        | list | count == 1
+
+- name: Gather hcloud_firewall_info with wrong id
+  hetzner.hcloud.firewall_info:
+    id: "{{ test_firewall.hcloud_firewall.id }}4321"
+  ignore_errors: true
+  register: result
+- name: Verify hcloud_firewall_info with wrong id
+  ansible.builtin.assert:
+    that:
+      - result is failed
+
+- name: Gather hcloud_firewall_info with correct name
+  hetzner.hcloud.firewall_info:
+    name: "{{ hcloud_firewall_name }}"
+  register: result
+- name: Verify hcloud_firewall_info with correct name
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_firewall_info | list | count == 1
+
+- name: Gather hcloud_firewall_info with wrong name
+  hetzner.hcloud.firewall_info:
+    name: "{{ hcloud_firewall_name }}-invalid"
+  register: result
+- name: Verify hcloud_firewall_info with wrong name
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_firewall_info | list | count == 0
+
+- name: Gather hcloud_firewall_info with correct label selector
+  hetzner.hcloud.firewall_info:
+    label_selector: "key=value"
+  register: result
+- name: Verify hcloud_firewall_info with correct label selector
+  ansible.builtin.assert:
+    that:
+      - >
+        result.hcloud_firewall_info
+        | selectattr('name', 'equalto', hcloud_firewall_name)
+        | list | count == 1
+
+- name: Gather hcloud_firewall_info with wrong label selector
+  hetzner.hcloud.firewall_info:
+    label_selector: "key!=value"
+  register: result
+- name: Verify hcloud_firewall_info with wrong label selector
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_firewall_info | list | count == 0
