@@ -351,18 +351,19 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
         if self.hcloud_firewall is not None:
             if not self.module.check_mode:
                 retry_count = 0
-                while retry_count < 10:
+                while True:
                     try:
-                        self.client.firewalls.delete(self.hcloud_firewall)
+                        self.hcloud_firewall.delete()
                         break
                     except APIException as exception:
-                        if "is still in use" in exception.message:
-                            retry_count = retry_count + 1
+                        if "is still in use" in exception.message and retry_count < 10:
+                            retry_count += 1
                             time.sleep(0.5 * retry_count)
-                        else:
-                            self.fail_json_hcloud(exception)
+                            continue
+                        self.fail_json_hcloud(exception)
                     except HCloudException as exception:
                         self.fail_json_hcloud(exception)
+
             self._mark_as_changed()
         self.hcloud_firewall = None
 

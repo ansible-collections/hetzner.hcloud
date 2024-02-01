@@ -69,6 +69,12 @@
     that:
       - result is not changed
 
+- name: Assign firewall to test_server
+  hetzner.hcloud.firewall_resource:
+    firewall: "{{ hcloud_firewall_name }}"
+    servers: ["{{ test_server.hcloud_server.name }}"]
+    state: present
+
 - name: Test update
   hetzner.hcloud.firewall:
     name: "{{ hcloud_firewall_name }}"
@@ -171,8 +177,10 @@
   hetzner.hcloud.firewall:
     name: "{{ hcloud_firewall_name }}"
     state: absent
+  ignore_errors: true
   register: result
 - name: Verify delete
   ansible.builtin.assert:
     that:
-      - result is changed
+      - result is failed
+      - '"is still in use" in result.msg'

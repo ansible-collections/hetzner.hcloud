@@ -1,0 +1,2 @@
+minor_changes:
+  - firewall - Do not silence 'firewall still in use' deletions errors.
