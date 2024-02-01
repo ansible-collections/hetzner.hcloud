@@ -184,3 +184,14 @@
     that:
       - result is failed
       - '"is still in use" in result.msg'
+
+- name: Test delete with force
+  hetzner.hcloud.firewall:
+    name: "{{ hcloud_firewall_name }}"
+    force: true
+    state: absent
+  register: result
+- name: Verify delete with force
+  ansible.builtin.assert:
+    that:
+      - result is changed
