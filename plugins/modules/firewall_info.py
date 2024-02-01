@@ -191,9 +191,9 @@ class AnsibleHCloudFirewallInfo(AnsibleHCloud):
         result = {
             "type": to_native(resource.type),
             "server": to_native(resource.server.id) if resource.server is not None else None,
-            "label_selector": to_native(resource.label_selector.selector)
-            if resource.label_selector is not None
-            else None,
+            "label_selector": (
+                to_native(resource.label_selector.selector) if resource.label_selector is not None else None
+            ),
         }
         if resource.applied_to_resources is not None:
             result["applied_to_resources"] = [
