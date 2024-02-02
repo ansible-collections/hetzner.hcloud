@@ -1,4 +1,0 @@
-minor_changes:
-  - >
-    Replace deprecated `ansible.netcommon` ip utils with python `ipaddress` module. The
-    `ansible.netcommon` collection is no longer required by the collections.
