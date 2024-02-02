@@ -11,7 +11,6 @@ exclude_paths:
   - tests/integration/targets/load_balancer_network
   - tests/integration/targets/load_balancer_service
   - tests/integration/targets/load_balancer_target
-  - tests/integration/targets/network
   - tests/integration/targets/placement_group
   - tests/integration/targets/primary_ip
   - tests/integration/targets/route
