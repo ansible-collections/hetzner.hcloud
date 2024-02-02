@@ -1,0 +1,4 @@
+breaking_changes:
+  - certificate_info - The `not_valid_before` and `not_valid_after` values are now returned as ISO-8601 formatted strings.
+  - certificate - The `not_valid_before` and `not_valid_after` values are now returned as ISO-8601 formatted strings.
+  - iso_info - The `deprecated` value is now returned as ISO-8601 formatted strings.
