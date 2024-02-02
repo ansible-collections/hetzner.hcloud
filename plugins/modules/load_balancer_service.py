@@ -303,7 +303,7 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
         if self.hcloud_load_balancer_service.protocol != "tcp":
             http = {
                 "cookie_name": to_native(self.hcloud_load_balancer_service.http.cookie_name),
-                "cookie_lifetime": self.hcloud_load_balancer_service.http.cookie_name,
+                "cookie_lifetime": self.hcloud_load_balancer_service.http.cookie_lifetime,
                 "redirect_http": self.hcloud_load_balancer_service.http.redirect_http,
                 "sticky_sessions": self.hcloud_load_balancer_service.http.sticky_sessions,
                 "certificates": [
