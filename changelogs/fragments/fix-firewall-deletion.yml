@@ -1,0 +1,3 @@
+minor_changes:
+  - firewall - Do not silence 'firewall still in use' delete failures.
+  - firewall - Allow forcing the deletion of firewalls that are still in use.

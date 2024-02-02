@@ -74,6 +74,11 @@ options:
                 type: list
                 elements: str
                 default: []
+    force:
+        description:
+            - Force the deletion of the Firewall when still in use.
+        type: bool
+        default: false
     state:
         description:
             - State of the firewall.
@@ -350,19 +355,32 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
         self._get_firewall()
         if self.hcloud_firewall is not None:
             if not self.module.check_mode:
+                if self.hcloud_firewall.applied_to:
+                    if self.module.params.get("force"):
+                        actions = self.hcloud_firewall.remove_from_resources(self.hcloud_firewall.applied_to)
+                        for action in actions:
+                            action.wait_until_finished()
+                    else:
+                        self.module.warn(
+                            f"Firewall {self.hcloud_firewall.name} is currently used by "
+                            "other resources. You need to unassign the resources before "
+                            "deleting the Firewall or use force=true."
+                        )
+
                 retry_count = 0
-                while retry_count < 10:
+                while True:
                     try:
-                        self.client.firewalls.delete(self.hcloud_firewall)
+                        self.hcloud_firewall.delete()
                         break
                     except APIException as exception:
-                        if "is still in use" in exception.message:
-                            retry_count = retry_count + 1
+                        if "is still in use" in exception.message and retry_count < 10:
+                            retry_count += 1
                             time.sleep(0.5 * retry_count)
-                        else:
-                            self.fail_json_hcloud(exception)
+                            continue
+                        self.fail_json_hcloud(exception)
                     except HCloudException as exception:
                         self.fail_json_hcloud(exception)
+
             self._mark_as_changed()
         self.hcloud_firewall = None
 
@@ -390,6 +408,7 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
                         ["protocol", "tcp", ["port"]],
                     ],
                 ),
+                force={"type": "bool", "default": False},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
