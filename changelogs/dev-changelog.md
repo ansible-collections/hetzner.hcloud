@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.5.0](https://github.com/ansible-collections/hetzner.hcloud/compare/2.4.1...2.5.0) (2024-02-02)
+
+
+### Features
+
+* add `hostvars_prefix` and `hostvars_suffix` options to inventory hostvars ([#423](https://github.com/ansible-collections/hetzner.hcloud/issues/423)) ([4e3f89a](https://github.com/ansible-collections/hetzner.hcloud/commit/4e3f89aed3be6f040e304521d69329c313616df5))
+* allow forcing the deletion of firewalls that are still in use ([#447](https://github.com/ansible-collections/hetzner.hcloud/issues/447)) ([559d315](https://github.com/ansible-collections/hetzner.hcloud/commit/559d31561ad1e0fcf8dd14523bd3eb4262a8a3c1))
+* improve firewall resources management ([#324](https://github.com/ansible-collections/hetzner.hcloud/issues/324)) ([2757fe7](https://github.com/ansible-collections/hetzner.hcloud/commit/2757fe745fcd80409290a453db72e9e6e4016f8f))
+* replace `ansible.netcommon` utils with python3 `ipaddress` module ([#416](https://github.com/ansible-collections/hetzner.hcloud/issues/416)) ([4cfdf50](https://github.com/ansible-collections/hetzner.hcloud/commit/4cfdf50b26536c468705c729cdb48d4b2d421571))
+
 ## [2.4.1](https://github.com/ansible-collections/hetzner.hcloud/compare/2.4.0...2.4.1) (2023-11-27)
 
 

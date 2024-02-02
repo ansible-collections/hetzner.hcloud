@@ -1,4 +1,0 @@
-minor_changes:
-  - >
-    inventory - Add `hostvars_prefix` and hostvars_suffix` options to customize the
-    inventory host variables keys.

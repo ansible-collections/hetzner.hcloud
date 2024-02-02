@@ -5,6 +5,25 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v2.5.0
+======
+
+Minor Changes
+-------------
+
+- Replace deprecated `ansible.netcommon` ip utils with python `ipaddress` module. The `ansible.netcommon` collection is no longer required by the collections.
+- firewall - Allow forcing the deletion of firewalls that are still in use.
+- firewall - Do not silence 'firewall still in use' delete failures.
+- firewall - Return resources the firewall is `applied_to`.
+- firewall_info - Add new `firewall_info` module to gather firewalls info.
+- firewall_resource - Add new `firewall_resource` module to manage firewalls resources.
+- inventory - Add `hostvars_prefix` and hostvars_suffix` options to customize the inventory host variables keys.
+
+New Modules
+-----------
+
+- firewall_resource - Manage Resources a Hetzner Cloud Firewall is applied to.
+
 v2.4.1
 ======
 
