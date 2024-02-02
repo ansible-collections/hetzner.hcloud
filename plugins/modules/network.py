@@ -173,6 +173,13 @@ class AnsibleHCloudNetwork(AnsibleHCloud):
 
     def _update_network(self):
         try:
+            name = self.module.params.get("name")
+            if name is not None and self.hcloud_network.name != name:
+                self.module.fail_on_missing_params(required_params=["id"])
+                if not self.module.check_mode:
+                    self.hcloud_network.update(name=name)
+                self._mark_as_changed()
+
             labels = self.module.params.get("labels")
             if labels is not None and labels != self.hcloud_network.labels:
                 if not self.module.check_mode:
