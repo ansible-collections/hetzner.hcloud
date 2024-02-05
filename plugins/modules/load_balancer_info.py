@@ -281,7 +281,11 @@ from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.load_balancers import BoundLoadBalancer
+from ..module_utils.vendor.hcloud.load_balancers import (
+    BoundLoadBalancer,
+    LoadBalancerService,
+    LoadBalancerTarget,
+)
 
 
 class AnsibleHCloudLoadBalancerInfo(AnsibleHCloud):
@@ -319,12 +323,12 @@ class AnsibleHCloudLoadBalancerInfo(AnsibleHCloud):
         return tmp
 
     @staticmethod
-    def _prepare_service_result(service):
+    def _prepare_service_result(service: LoadBalancerService):
         http = None
         if service.protocol != "tcp":
             http = {
                 "cookie_name": to_native(service.http.cookie_name),
-                "cookie_lifetime": service.http.cookie_name,
+                "cookie_lifetime": service.http.cookie_lifetime,
                 "redirect_http": service.http.redirect_http,
                 "sticky_sessions": service.http.sticky_sessions,
                 "certificates": [to_native(certificate.name) for certificate in service.http.certificates],
@@ -354,7 +358,7 @@ class AnsibleHCloudLoadBalancerInfo(AnsibleHCloud):
         }
 
     @staticmethod
-    def _prepare_target_result(target):
+    def _prepare_target_result(target: LoadBalancerTarget):
         result = {
             "type": to_native(target.type),
             "use_private_ip": target.use_private_ip,
