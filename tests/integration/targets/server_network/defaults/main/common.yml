@@ -8,5 +8,5 @@ hcloud_prefix: "tests"
 
 # Used to namespace resources created by concurrent test pipelines/targets
 hcloud_run_ns: "{{ hcloud_prefix | md5 }}"
-hcloud_role_ns: "{{ role_name | split('_') | map('first') | join() }}"
+hcloud_role_ns: "{{ role_name | split('_') | map('batch', 2) | map('first') | flatten() | join() }}"
 hcloud_ns: "ansible-{{ hcloud_run_ns }}-{{ hcloud_role_ns }}"
