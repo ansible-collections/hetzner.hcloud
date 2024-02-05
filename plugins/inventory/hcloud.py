@@ -109,6 +109,14 @@ options:
       - The suffix for host variables names coming from Hetzner Cloud.
     type: str
     version_added: 2.5.0
+
+  hostname:
+    description:
+      - A template for the instances hostname, if not provided the Hetzner Cloud server name will be used.
+      - Available variables are the Hetzner Cloud host variables.
+      - The available variables names are provide with the O(hostvars_prefix) or O(hostvars_suffix) modifications.
+    type: str
+    version_added: 3.0.0
 """
 
 EXAMPLES = """
@@ -142,6 +150,41 @@ keyed_groups:
     separator: ""
   - key: status
     prefix: server_status
+
+---
+# Use a custom hostname template.
+plugin: hetzner.hcloud.hcloud
+
+# Available variables are for example:
+## Server
+#   id: 42984895
+#   name: "my-server"
+#   labels:
+#     foo: "bar"
+#   status: "running"
+## Server Type
+#   type: "cx11"
+#   server_type: "cx11"
+#   architecture: "x86"
+## Image
+#   image_id: 114690387
+#   image_name: "debian-12"
+#   image_os_flavor: "debian"
+## Datacenter
+#   datacenter: "hel1-dc2"
+#   location: "hel1"
+## Network
+#   ipv4: "65.109.140.95" # Value is optional!
+#   ipv6: "2a01:4f9:c011:b83f::1" # Value is optional!
+#   ipv6_network: 2a01:4f9:c011:b83f::" # Value is optional!
+#   ipv6_network_mask: "64" # Value is optional!
+#   private_ipv4: "10.0.0.3" # Value is optional!
+#   private_networks:
+#     - id: 114690387
+#       name: "my-private-network"
+#       ip: "10.0.0.3"
+#
+hostname: "my-prefix-{{ datacenter }}-{{ name }}-{{ server_type }}"
 """
 
 import sys
@@ -152,6 +195,7 @@ from ansible.inventory.manager import InventoryData
 from ansible.module_utils.common.text.converters import to_native
 from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, Constructable
 from ansible.utils.display import Display
+from ansible.utils.vars import combine_vars
 
 from ..module_utils.client import (
     Client,
@@ -433,9 +477,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         hostvars_prefix = self.get_option("hostvars_prefix")
         hostvars_suffix = self.get_option("hostvars_suffix")
+        hostname_template = self.get_option("hostname")
 
         for server in servers:
-            self.inventory.add_host(server["name"], group=self.get_option("group"))
+            hostvars = {}
             for key, value in server.items():
                 # Add hostvars prefix and suffix for variables coming from the Hetzner Cloud.
                 if hostvars_prefix or hostvars_suffix:
@@ -445,7 +490,18 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                         if hostvars_suffix:
                             key = key + hostvars_suffix
 
-                self.inventory.set_variable(server["name"], key, value)
+                hostvars[key] = value
+
+            if hostname_template:
+                templar = self.templar
+                templar.available_variables = combine_vars(hostvars, self._vars)
+                hostname = templar.template(hostname_template)
+            else:
+                hostname = server["name"]
+
+            self.inventory.add_host(hostname, group=self.get_option("group"))
+            for key, value in hostvars.items():
+                self.inventory.set_variable(hostname, key, value)
 
             # Use constructed if applicable
             strict = self.get_option("strict")
@@ -453,8 +509,8 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             # Composed variables
             self._set_composite_vars(
                 self.get_option("compose"),
-                self.inventory.get_host(server["name"]).get_vars(),
-                server["name"],
+                self.inventory.get_host(hostname).get_vars(),
+                hostname,
                 strict=strict,
             )
 
@@ -462,7 +518,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             self._add_host_to_composed_groups(
                 self.get_option("groups"),
                 {},
-                server["name"],
+                hostname,
                 strict=strict,
             )
 
@@ -470,7 +526,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             self._add_host_to_keyed_groups(
                 self.get_option("keyed_groups"),
                 {},
-                server["name"],
+                hostname,
                 strict=strict,
             )
 
