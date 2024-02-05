@@ -1,2 +1,0 @@
-breaking_changes:
-  - inventory - Remove the deprecated `api_token_env` option, you may use the `ansible.builtin.env` lookup as alternative.

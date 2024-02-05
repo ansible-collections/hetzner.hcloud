@@ -1,2 +1,0 @@
-minor_changes:
-  - inventory - Add `hostname` option used to template the hostname of the instances.

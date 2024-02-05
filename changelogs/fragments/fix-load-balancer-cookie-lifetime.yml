@@ -1,3 +1,0 @@
-bugfixes:
-  - load_balancer_service - Correctly return the `cookie_lifetime` value.
-  - load_balancer_info - Correctly return the `cookie_lifetime` value.

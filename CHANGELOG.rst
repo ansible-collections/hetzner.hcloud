@@ -5,6 +5,30 @@ Hetzner Cloud Ansible Collection Release Notes
 .. contents:: Topics
 
 
+v3.0.0
+======
+
+Minor Changes
+-------------
+
+- inventory - Add `hostname` option used to template the hostname of the instances.
+- network - Allow renaming networks.
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- Drop support for ansible-core 2.13.
+- certificate - The `not_valid_before` and `not_valid_after` values are now returned as ISO-8601 formatted strings.
+- certificate_info - The `not_valid_before` and `not_valid_after` values are now returned as ISO-8601 formatted strings.
+- inventory - Remove the deprecated `api_token_env` option, you may use the `ansible.builtin.env` lookup as alternative.
+- iso_info - The `deprecated` value is now returned as ISO-8601 formatted strings.
+
+Bugfixes
+--------
+
+- load_balancer_info - Correctly return the `cookie_lifetime` value.
+- load_balancer_service - Correctly return the `cookie_lifetime` value.
+
 v2.5.0
 ======
 

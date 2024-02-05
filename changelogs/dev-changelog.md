@@ -1,5 +1,27 @@
 # Changelog
 
+## [3.0.0](https://github.com/ansible-collections/hetzner.hcloud/compare/2.5.0...3.0.0) (2024-02-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for ansible-core 2.13 ([#450](https://github.com/ansible-collections/hetzner.hcloud/issues/450))
+* always return iso-8601 formatted date time ([#453](https://github.com/ansible-collections/hetzner.hcloud/issues/453))
+* remove inventory `api_token_env` option ([#454](https://github.com/ansible-collections/hetzner.hcloud/issues/454))
+
+### Features
+
+* drop support for ansible-core 2.13 ([#450](https://github.com/ansible-collections/hetzner.hcloud/issues/450)) ([96f8009](https://github.com/ansible-collections/hetzner.hcloud/commit/96f8009214d5d57357cf165bfa5e7c3507d0d6e1)), closes [#400](https://github.com/ansible-collections/hetzner.hcloud/issues/400)
+* **inventory:** allow templating instances hostname ([#455](https://github.com/ansible-collections/hetzner.hcloud/issues/455)) ([be404ef](https://github.com/ansible-collections/hetzner.hcloud/commit/be404ef18165c933fbdd7de92773d38e3426efec))
+* remove inventory `api_token_env` option ([#454](https://github.com/ansible-collections/hetzner.hcloud/issues/454)) ([d0c82ae](https://github.com/ansible-collections/hetzner.hcloud/commit/d0c82aec86f844ccb1dcc07ec4acf9eedc87730d))
+
+
+### Bug Fixes
+
+* allow renaming networks ([#449](https://github.com/ansible-collections/hetzner.hcloud/issues/449)) ([742cfe6](https://github.com/ansible-collections/hetzner.hcloud/commit/742cfe6d7446d0b54240de5342ef8bb9679cff64))
+* always return iso-8601 formatted date time ([#453](https://github.com/ansible-collections/hetzner.hcloud/issues/453)) ([55d2616](https://github.com/ansible-collections/hetzner.hcloud/commit/55d26162b329cbb5bcff8ed63e5960bef4a897c8))
+* load balancer invalid cookie lifetime value returned ([#452](https://github.com/ansible-collections/hetzner.hcloud/issues/452)) ([86b7662](https://github.com/ansible-collections/hetzner.hcloud/commit/86b76620daf9684edffefcb0f3d3d0220bbe5f2c))
+
 ## [2.5.0](https://github.com/ansible-collections/hetzner.hcloud/compare/2.4.1...2.5.0) (2024-02-02)
 
 

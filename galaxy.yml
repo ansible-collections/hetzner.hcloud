@@ -1,6 +1,6 @@
 namespace: hetzner
 name: hcloud
-version: 2.5.0
+version: 3.0.0
 readme: README.md
 authors:
   - Hetzner Cloud (github.com/hetznercloud)
