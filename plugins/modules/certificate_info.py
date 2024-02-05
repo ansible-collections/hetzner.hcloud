@@ -110,8 +110,8 @@ class AnsibleHCloudCertificateInfo(AnsibleHCloud):
                         "name": to_native(certificate.name),
                         "fingerprint": to_native(certificate.fingerprint),
                         "certificate": to_native(certificate.certificate),
-                        "not_valid_before": to_native(certificate.not_valid_before),
-                        "not_valid_after": to_native(certificate.not_valid_after),
+                        "not_valid_before": to_native(certificate.not_valid_before.isoformat()),
+                        "not_valid_after": to_native(certificate.not_valid_after.isoformat()),
                         "domain_names": [to_native(domain) for domain in certificate.domain_names],
                         "labels": certificate.labels,
                     }
