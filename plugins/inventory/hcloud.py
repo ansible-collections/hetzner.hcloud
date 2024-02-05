@@ -32,21 +32,10 @@ options:
     description:
       - The API Token for the Hetzner Cloud.
     type: str
-    required: false # TODO: Mark as required once 'api_token_env' is removed.
+    required: true
     aliases: [token]
     env:
       - name: HCLOUD_TOKEN
-  api_token_env:
-    description:
-      - Environment variable name to load the Hetzner Cloud API Token from.
-    type: str
-    default: HCLOUD_TOKEN
-    aliases: [token_env]
-    deprecated:
-      why: The option is adding too much complexity, while the alternatives are preferred.
-      collection_name: hetzner.hcloud
-      version: 3.0.0
-      alternatives: Use the P(ansible.builtin.env#lookup) lookup plugin instead.
   api_endpoint:
     description:
       - The API Endpoint for the Hetzner Cloud.
@@ -155,7 +144,6 @@ keyed_groups:
     prefix: server_status
 """
 
-import os
 import sys
 from ipaddress import IPv6Network
 
@@ -243,29 +231,8 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
     network: Network | None
 
     def _configure_hcloud_client(self):
-        # If api_token_env is not the default, print a deprecation warning and load the
-        # environment variable.
-        api_token_env = self.get_option("api_token_env")
-        if api_token_env != "HCLOUD_TOKEN":
-            self.display.deprecated(
-                "The 'api_token_env' option is deprecated, please use the 'HCLOUD_TOKEN' "
-                "environment variable or use the 'ansible.builtin.env' lookup instead.",
-                version="3.0.0",
-                collection_name="hetzner.hcloud",
-            )
-            if api_token_env in os.environ:
-                self.set_option("api_token", os.environ.get(api_token_env))
-
         api_token = self.get_option("api_token")
         api_endpoint = self.get_option("api_endpoint")
-
-        if api_token is None:  # TODO: Remove once I(api_token_env) is removed.
-            raise AnsibleError(
-                "No setting was provided for required configuration setting: "
-                "plugin_type: inventory "
-                "plugin: hetzner.hcloud.hcloud "
-                "setting: api_token"
-            )
 
         # Resolve template string
         api_token = self.templar.template(api_token)
