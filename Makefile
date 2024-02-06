@@ -1,5 +1,8 @@
 SHELL := bash
-.PHONY: vendor clean
+.PHONY: vendor clean dev
+
+dev:
+	cat tests/integration/cloud-config-hcloud.ini.in | envsubst > tests/integration/cloud-config-hcloud.ini
 
 vendor:
 	python3 scripts/vendor.py
@@ -21,8 +24,7 @@ lint-docs: venv
 		.
 
 clean:
-	git clean -xdf \
-		-e tests/integration/cloud-config-hcloud.ini
+	git clean -xdf
 
 sanity:
 	ansible-test sanity --color --truncate 0 -v \
