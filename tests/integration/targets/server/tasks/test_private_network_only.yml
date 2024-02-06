@@ -75,7 +75,7 @@
     state: stopped
   register: result
 - name: verify test create server with primary network
-  assert:
+  ansible.builtin.assert:
     that:
       - result is changed
 
@@ -95,7 +95,7 @@
     state: stopped
   register: result
 - name: verify test update server by adding secondary network
-  assert:
+  ansible.builtin.assert:
     that:
       - result is changed
 
@@ -115,7 +115,7 @@
     state: stopped
   register: result
 - name: verify test update server idem
-  assert:
+  ansible.builtin.assert:
     that:
       - result is not changed
 

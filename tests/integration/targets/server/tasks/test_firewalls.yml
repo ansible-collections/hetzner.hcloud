@@ -10,22 +10,10 @@
   ignore_errors: true
   register: result
 - name: verify add not existing firewall should fail
-  assert:
+  ansible.builtin.assert:
     that:
       - result is failed
       - 'result.msg == "firewall not-existing was not found"'
-- name: setup create firewalls
-  hetzner.hcloud.firewall:
-    name: "{{ item }}"
-    rules:
-      - direction: in
-        protocol: icmp
-        source_ips:
-          - 0.0.0.0/0
-          - ::/0
-  with_items:
-    - "{{ hcloud_firewall_name }}"
-    - "{{ hcloud_firewall_name }}2"
 
 - name: test create server with firewalls
   hetzner.hcloud.server:
@@ -39,7 +27,7 @@
     state: present
   register: result
 - name: verify test create server with firewalls
-  assert:
+  ansible.builtin.assert:
     that:
       - result is changed
 
@@ -55,7 +43,7 @@
     state: present
   register: result
 - name: verify test create server with firewalls idempotence
-  assert:
+  ansible.builtin.assert:
     that:
       - result is not changed
 
@@ -71,7 +59,7 @@
     state: present
   register: result
 - name: verify test update server with firewalls
-  assert:
+  ansible.builtin.assert:
     that:
       - result is changed
 
@@ -87,7 +75,7 @@
     state: present
   register: result
 - name: verify test update server with firewalls idempotence
-  assert:
+  ansible.builtin.assert:
     that:
       - result is not changed
 
