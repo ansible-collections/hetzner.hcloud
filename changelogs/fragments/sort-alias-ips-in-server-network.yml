@@ -1,0 +1,2 @@
+bugfixes:
+  - server_network - The returned `alias_ips` list is now sorted.
