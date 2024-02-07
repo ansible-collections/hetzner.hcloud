@@ -15,7 +15,6 @@ exclude_paths:
   - tests/integration/targets/primary_ip
   - tests/integration/targets/route
   - tests/integration/targets/server
-  - tests/integration/targets/server_network
   - tests/integration/targets/ssh_key
   - tests/integration/targets/volume
 

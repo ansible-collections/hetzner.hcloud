@@ -1,222 +1,152 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: setup network
-  hetzner.hcloud.network:
-    name: "{{ hcloud_network_name }}"
-    ip_range: "10.0.0.0/8"
-    state: present
-  register: network
-- name: verify setup network
-  assert:
-    that:
-      - network is success
-
-- name: setup subnetwork
-  hetzner.hcloud.subnetwork:
-    network: "{{ hcloud_network_name }}"
-    ip_range: "10.0.0.0/16"
-    type: "server"
-    network_zone: "eu-central"
-    state: present
-  register: subnetwork
-- name: verify subnetwork
-  assert:
-    that:
-      - subnetwork is success
-
-- name: setup server
-  hetzner.hcloud.server:
-    name: "{{hcloud_server_name}}"
-    server_type: cx11
-    image: ubuntu-22.04
-    state: started
-    location: "fsn1"
-  register: server
-- name: verify setup server
-  assert:
-    that:
-      - server is success
-
-- name: test missing required parameters on create server network
+- name: Test missing required parameters
   hetzner.hcloud.server_network:
     state: present
-  register: result
   ignore_errors: true
-- name: verify fail test missing required parameters on create server network
-  assert:
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
     that:
       - result is failed
       - 'result.msg == "missing required arguments: network, server"'
 
-- name: test create server network with checkmode
+- name: Test create with checkmode
   hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
-    server: "{{hcloud_server_name}}"
+    server: "{{ hcloud_server_name }}"
     state: present
-  register: result
   check_mode: true
-- name: verify test create server network with checkmode
-  assert:
+  register: result
+- name: Verify create with checkmode
+  ansible.builtin.assert:
     that:
       - result is changed
 
-- name: test create server network
+- name: Test create
   hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
-    server: "{{hcloud_server_name}}"
+    server: "{{ hcloud_server_name }}"
     state: present
-  register: serverNetwork
-- name: verify create server network
-  assert:
+  register: result
+- name: Verify create
+  ansible.builtin.assert:
     that:
-      - serverNetwork is changed
-      - serverNetwork.hcloud_server_network.network == hcloud_network_name
-      - serverNetwork.hcloud_server_network.server == hcloud_server_name
+      - result is changed
+      - result.hcloud_server_network.network == hcloud_network_name
+      - result.hcloud_server_network.server == hcloud_server_name
 
-- name: test create server network idempotency
+- name: Test create idempotency
   hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
-    server: "{{hcloud_server_name}}"
+    server: "{{ hcloud_server_name }}"
     state: present
-  register: serverNetwork
-- name: verify create server network idempotency
-  assert:
+  register: result
+- name: Verify create idempotency
+  ansible.builtin.assert:
     that:
-      - serverNetwork is not changed
+      - result is not changed
 
-- name: test absent server network
+- name: Test delete
   hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
-    server: "{{hcloud_server_name}}"
+    server: "{{ hcloud_server_name }}"
     state: absent
   register: result
-- name: verify test absent server network
-  assert:
+- name: Verify delete
+  ansible.builtin.assert:
     that:
       - result is changed
 
-- name: test create server network with specified ip
+- name: Test create with ip
   hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
-    server: "{{hcloud_server_name}}"
-    ip: "10.0.0.2"
+    server: "{{ hcloud_server_name }}"
+    ip: "10.0.1.2"
     state: present
-  register: serverNetwork
-- name: verify create server network with specified ip
-  assert:
+  register: result
+- name: Verify create with ip
+  ansible.builtin.assert:
     that:
-      - serverNetwork is changed
-      - serverNetwork.hcloud_server_network.network == hcloud_network_name
-      - serverNetwork.hcloud_server_network.server == hcloud_server_name
-      - serverNetwork.hcloud_server_network.ip == "10.0.0.2"
+      - result is changed
+      - result.hcloud_server_network.network == hcloud_network_name
+      - result.hcloud_server_network.server == hcloud_server_name
+      - result.hcloud_server_network.ip == "10.0.1.2"
 
-- name: cleanup create server network with specified ip
+- name: Test delete with ip
   hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
-    server: "{{hcloud_server_name}}"
+    server: "{{ hcloud_server_name }}"
     state: absent
   register: result
-- name: verify cleanup create server network with specified ip
-  assert:
+- name: Verify delete with ip
+  ansible.builtin.assert:
     that:
       - result is changed
 
-- name: test create server network with alias ips
+- name: Test create with alias ips
   hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
-    server: "{{hcloud_server_name}}"
-    ip: "10.0.0.2"
+    server: "{{ hcloud_server_name }}"
+    ip: "10.0.1.2"
     alias_ips:
-      - "10.0.1.2"
-      - "10.0.2.3"
+      - "10.0.1.10"
+      - "10.0.1.11"
     state: present
-  register: serverNetwork
-- name: verify create server network with alias ips
-  assert:
-    that:
-      - serverNetwork is changed
-      - serverNetwork.hcloud_server_network.network == hcloud_network_name
-      - serverNetwork.hcloud_server_network.server == hcloud_server_name
-      - serverNetwork.hcloud_server_network.ip == "10.0.0.2"
-      - 'serverNetwork.hcloud_server_network.alias_ips[0] == "10.0.2.3"'
-      - 'serverNetwork.hcloud_server_network.alias_ips[1] == "10.0.1.2"'
-
-- name: test update server network with alias ips
-  hetzner.hcloud.server_network:
-    network: "{{ hcloud_network_name }}"
-    server: "{{hcloud_server_name}}"
-    ip: "10.0.0.2"
-    alias_ips:
-      - "10.0.2.3"
-      - "10.0.3.1"
-    state: present
-  register: serverNetwork
-- name: verify create server network with alias ips
-  assert:
-    that:
-      - serverNetwork is changed
-      - serverNetwork.hcloud_server_network.network == hcloud_network_name
-      - serverNetwork.hcloud_server_network.server == hcloud_server_name
-      - serverNetwork.hcloud_server_network.ip == "10.0.0.2"
-      - 'serverNetwork.hcloud_server_network.alias_ips[0] == "10.0.2.3"'
-      - 'serverNetwork.hcloud_server_network.alias_ips[1] == "10.0.3.1"'
-
-- name: test update server network with alias ips idempotency
-  hetzner.hcloud.server_network:
-    network: "{{ hcloud_network_name }}"
-    server: "{{hcloud_server_name}}"
-    ip: "10.0.0.2"
-    alias_ips:
-      - "10.0.2.3"
-      - "10.0.3.1"
-    state: present
-  register: serverNetwork
-- name: verify create server network with alias ips idempotency
-  assert:
-    that:
-      - serverNetwork is not changed
-
-- name: cleanup create server network with alias ips
-  hetzner.hcloud.server_network:
-    network: "{{ hcloud_network_name }}"
-    server: "{{hcloud_server_name}}"
-    state: absent
   register: result
-- name: verify cleanup create server network with alias ips
-  assert:
+- name: Verify create with alias ips
+  ansible.builtin.assert:
     that:
       - result is changed
+      - result.hcloud_server_network.network == hcloud_network_name
+      - result.hcloud_server_network.server == hcloud_server_name
+      - result.hcloud_server_network.ip == "10.0.1.2"
+      - result.hcloud_server_network.alias_ips[0] == "10.0.1.10"
+      - result.hcloud_server_network.alias_ips[1] == "10.0.1.11"
 
-- name: cleanup server
-  hetzner.hcloud.server:
-    name: "{{ hcloud_server_name }}"
-    state: absent
-  register: result
-- name: verify cleanup server
-  assert:
-    that:
-      - result is success
-
-- name: cleanup subnetwork
-  hetzner.hcloud.subnetwork:
+- name: Test update with alias ips
+  hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
-    ip_range: "10.0.0.0/16"
-    type: "server"
-    network_zone: "eu-central"
-    state: absent
+    server: "{{ hcloud_server_name }}"
+    ip: "10.0.1.2"
+    alias_ips:
+      - "10.0.1.10"
+      - "10.0.1.20"
+    state: present
   register: result
-- name: verify cleanup subnetwork
-  assert:
+- name: Verify update with alias ips
+  ansible.builtin.assert:
     that:
       - result is changed
+      - result.hcloud_server_network.network == hcloud_network_name
+      - result.hcloud_server_network.server == hcloud_server_name
+      - result.hcloud_server_network.ip == "10.0.1.2"
+      - result.hcloud_server_network.alias_ips[0] == "10.0.1.10"
+      - result.hcloud_server_network.alias_ips[1] == "10.0.1.20"
 
-- name: cleanup
-  hetzner.hcloud.network:
-    name: "{{hcloud_network_name}}"
+- name: Test update with alias ips idempotency
+  hetzner.hcloud.server_network:
+    network: "{{ hcloud_network_name }}"
+    server: "{{ hcloud_server_name }}"
+    ip: "10.0.1.2"
+    alias_ips:
+      - "10.0.1.10"
+      - "10.0.1.20"
+    state: present
+  register: result
+- name: Verify update with alias ips idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test delete with alias ips
+  hetzner.hcloud.server_network:
+    network: "{{ hcloud_network_name }}"
+    server: "{{ hcloud_server_name }}"
     state: absent
   register: result
-- name: verify cleanup
-  assert:
+- name: Verify delete with alias ips
+  ansible.builtin.assert:
     that:
-      - result is success
+      - result is changed
