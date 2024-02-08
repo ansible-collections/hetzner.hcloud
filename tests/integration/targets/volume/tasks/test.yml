@@ -6,7 +6,7 @@
     name: "{{hcloud_server_name}}"
     server_type: cx11
     image: ubuntu-22.04
-    state: started
+    state: stopped
     location: "fsn1"
   register: vol_server
 - name: verify setup server
