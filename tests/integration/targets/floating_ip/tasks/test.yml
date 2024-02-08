@@ -21,7 +21,7 @@
     name: "{{ hcloud_server_name }}"
     server_type: cx11
     image: ubuntu-22.04
-    state: started
+    state: stopped
     location: "fsn1"
   register: main_server
 - name: verify setup server
@@ -34,7 +34,7 @@
     name: "{{ hcloud_server_name }}2"
     server_type: cx11
     image: ubuntu-22.04
-    state: started
+    state: stopped
   register: main_server2
 - name: verify setup another server
   assert:

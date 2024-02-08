@@ -4,7 +4,7 @@
     name: "{{ hcloud_server_name }}"
     server_type: cx11
     image: ubuntu-22.04
-    state: started
+    state: stopped
   register: test_server
 
 - name: Create test_load_balancer
