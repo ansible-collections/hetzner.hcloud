@@ -117,6 +117,11 @@ hcloud_primary_ip_info:
             description: True if the Primary IP is protected for deletion
             returned: always
             type: bool
+        auto_delete:
+            description: Delete the Primary IP when the resource it is assigned to is deleted.
+            type: bool
+            returned: always
+            sample: false
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -136,26 +141,24 @@ class AnsibleHCloudPrimaryIPInfo(AnsibleHCloud):
         tmp = []
 
         for primary_ip in self.hcloud_primary_ip_info:
-            if primary_ip is not None:
-                dns_ptr = None
-                if len(primary_ip.dns_ptr) > 0:
-                    dns_ptr = primary_ip.dns_ptr[0]["dns_ptr"]
-                tmp.append(
-                    {
-                        "id": to_native(primary_ip.id),
-                        "name": to_native(primary_ip.name),
-                        "ip": to_native(primary_ip.ip),
-                        "type": to_native(primary_ip.type),
-                        "assignee_id": (
-                            to_native(primary_ip.assignee_id) if primary_ip.assignee_id is not None else None
-                        ),
-                        "assignee_type": to_native(primary_ip.assignee_type),
-                        "home_location": to_native(primary_ip.datacenter.name),
-                        "dns_ptr": to_native(dns_ptr) if dns_ptr is not None else None,
-                        "labels": primary_ip.labels,
-                        "delete_protection": primary_ip.protection["delete"],
-                    }
-                )
+            if primary_ip is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": to_native(primary_ip.id),
+                    "name": to_native(primary_ip.name),
+                    "ip": to_native(primary_ip.ip),
+                    "type": to_native(primary_ip.type),
+                    "assignee_id": (to_native(primary_ip.assignee_id) if primary_ip.assignee_id is not None else None),
+                    "assignee_type": to_native(primary_ip.assignee_type),
+                    "auto_delete": primary_ip.auto_delete,
+                    "home_location": to_native(primary_ip.datacenter.name),
+                    "dns_ptr": to_native(primary_ip.dns_ptr[0]["dns_ptr"]) if len(primary_ip.dns_ptr) > 0 else None,
+                    "labels": primary_ip.labels,
+                    "delete_protection": primary_ip.protection["delete"],
+                }
+            )
 
         return tmp
 

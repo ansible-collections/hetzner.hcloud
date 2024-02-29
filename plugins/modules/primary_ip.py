@@ -43,9 +43,9 @@ options:
         type: str
     auto_delete:
         description:
-            - Delete this Primary IP when the resource it is assigned to is deleted
+            - Delete the Primary IP when the resource it is assigned to is deleted.
         type: bool
-        default: no
+        default: false
     delete_protection:
         description:
             - Protect the Primary IP for deletion.
@@ -127,6 +127,11 @@ hcloud_primary_ip:
             sample:
                 key: value
                 mylabel: 123
+        auto_delete:
+            description: Delete the Primary IP when the resource it is assigned to is deleted.
+            type: bool
+            returned: always
+            sample: false
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -151,6 +156,7 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
             "datacenter": to_native(self.hcloud_primary_ip.datacenter.name),
             "labels": self.hcloud_primary_ip.labels,
             "delete_protection": self.hcloud_primary_ip.protection["delete"],
+            "auto_delete": self.hcloud_primary_ip.auto_delete,
         }
 
     def _get_primary_ip(self):
@@ -168,6 +174,7 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
             params = {
                 "type": self.module.params.get("type"),
                 "name": self.module.params.get("name"),
+                "auto_delete": self.module.params.get("auto_delete"),
                 "datacenter": self.client.datacenters.get_by_name(self.module.params.get("datacenter")),
             }
 
@@ -187,10 +194,19 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
 
     def _update_primary_ip(self):
         try:
+            changes = {}
+
+            auto_delete = self.module.params.get("auto_delete")
+            if auto_delete is not None and auto_delete != self.hcloud_primary_ip.auto_delete:
+                changes["auto_delete"] = auto_delete
+
             labels = self.module.params.get("labels")
             if labels is not None and labels != self.hcloud_primary_ip.labels:
+                changes["labels"] = labels
+
+            if changes:
                 if not self.module.check_mode:
-                    self.hcloud_primary_ip.update(labels=labels)
+                    self.hcloud_primary_ip.update(**changes)
                 self._mark_as_changed()
 
             delete_protection = self.module.params.get("delete_protection")

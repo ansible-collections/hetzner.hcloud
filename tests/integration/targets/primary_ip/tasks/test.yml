@@ -42,6 +42,7 @@
       - result.hcloud_primary_ip.type == "ipv6"
       - result.hcloud_primary_ip.datacenter == "fsn1-dc14"
       - result.hcloud_primary_ip.labels.key == "value"
+      - result.hcloud_primary_ip.auto_delete is false
       - result.hcloud_primary_ip.delete_protection is false
 
 - name: Test create idempotency
@@ -65,6 +66,7 @@
     labels:
       key: value
       foo: bar
+    auto_delete: true
   register: result
 - name: Verify update
   ansible.builtin.assert:
@@ -76,6 +78,7 @@
       - result.hcloud_primary_ip.labels.key == "value"
       - result.hcloud_primary_ip.labels.foo == "bar"
       - result.hcloud_primary_ip.delete_protection is false
+      - result.hcloud_primary_ip.auto_delete is true
 
 - name: Test update idempotency
   hetzner.hcloud.primary_ip:
@@ -85,6 +88,7 @@
     labels:
       key: value
       foo: bar
+    auto_delete: true
   register: result
 - name: Verify update idempotency
   ansible.builtin.assert:
