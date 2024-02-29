@@ -1,0 +1,5 @@
+---
+- name: Cleanup test_primary_ip
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    state: absent
