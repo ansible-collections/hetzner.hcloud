@@ -41,6 +41,8 @@
       - result.hcloud_primary_ip.name == hcloud_primary_ip_name
       - result.hcloud_primary_ip.type == "ipv6"
       - result.hcloud_primary_ip.datacenter == "fsn1-dc14"
+      - result.hcloud_primary_ip.assignee_type == "server"
+      - result.hcloud_primary_ip.assignee_id is none
       - result.hcloud_primary_ip.labels.key == "value"
       - result.hcloud_primary_ip.auto_delete is false
       - result.hcloud_primary_ip.delete_protection is false
@@ -75,6 +77,8 @@
       - result.hcloud_primary_ip.name == hcloud_primary_ip_name
       - result.hcloud_primary_ip.type == "ipv6"
       - result.hcloud_primary_ip.datacenter == "fsn1-dc14"
+      - result.hcloud_primary_ip.assignee_type == "server"
+      - result.hcloud_primary_ip.assignee_id is none
       - result.hcloud_primary_ip.labels.key == "value"
       - result.hcloud_primary_ip.labels.foo == "bar"
       - result.hcloud_primary_ip.delete_protection is false
@@ -135,6 +139,42 @@
     state: absent
   register: result
 - name: Verify delete
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test create with server
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    type: ipv6
+    server: "{{ hcloud_server_name }}"
+  register: result
+- name: Verify create with server
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_primary_ip.name == hcloud_primary_ip_name
+      - result.hcloud_primary_ip.type == "ipv6"
+      - result.hcloud_primary_ip.assignee_id == test_server.hcloud_server.id | string
+      - result.hcloud_primary_ip.assignee_type == "server"
+
+- name: Test create with server idempotency
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    type: ipv6
+    server: "{{ hcloud_server_name }}"
+  register: result
+- name: Verify create with server idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test delete with server
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    state: absent
+  register: result
+- name: Verify delete with server
   ansible.builtin.assert:
     that:
       - result is changed
