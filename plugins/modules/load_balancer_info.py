@@ -64,11 +64,6 @@ hcloud_load_balancer_info:
             returned: always
             type: str
             sample: my-Load-Balancer
-        status:
-            description: Status of the Load Balancer
-            returned: always
-            type: str
-            sample: running
         load_balancer_type:
             description: Name of the Load Balancer type of the Load Balancer
             returned: always
