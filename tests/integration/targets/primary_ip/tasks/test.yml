@@ -1,248 +1,136 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: setup ensure primary ip is absent
+- name: Test missing required parameters
   hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    state: absent
-
-- name: test create Primary IP with check mode
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    datacenter: "fsn1-dc14"
-  register: primaryIP
-  check_mode: true
-- name: verify test create Primary IP with check mode
-  assert:
-    that:
-      - primaryIP is changed
-
-- name: test create Primary IP
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    datacenter: "fsn1-dc14"
-  register: primaryIP
-- name: verify test create Primary IP
-  assert:
-    that:
-      - primaryIP is changed
-      - primaryIP.hcloud_primary_ip.name ==hcloud_primary_ip_name
-      - primaryIP.hcloud_primary_ip.datacenter == "fsn1-dc14"
-
-- name: test create Primary IP idempotency
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    datacenter: "fsn1-dc14"
-  register: primaryIP
-- name: verify test create Primary IP idempotency
-  assert:
-    that:
-      - primaryIP is not changed
-
-- name: test update Primary IP
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    datacenter: "fsn1-dc14"
-    labels:
-      key: value
-  register: primaryIP
-- name: verify test update Primary IP
-  assert:
-    that:
-      - primaryIP is changed
-
-- name: test update Primary IP idempotency
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    datacenter: "fsn1-dc14"
-    labels:
-      key: value
-  register: primaryIP
-- name: verify test update Primary IP idempotency
-  assert:
-    that:
-      - primaryIP is not changed
-
-- name: test update Primary IP with same labels
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    datacenter: "fsn1-dc14"
-    labels:
-      key: value
-  register: primaryIP
-- name: verify test update Primary IP with same labels
-  assert:
-    that:
-      - primaryIP is not changed
-
-- name: test update Primary IP with other labels
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    datacenter: "fsn1-dc14"
-    labels:
-      key: value
-      other: label
-  register: primaryIP
-- name: verify test update Primary IP with other labels
-  assert:
-    that:
-      - primaryIP is changed
-
-- name: test update Primary IP with other labels in different order
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    datacenter: "fsn1-dc14"
-    labels:
-      other: label
-      key: value
-  register: primaryIP
-- name: verify test update Primary IP with other labels in different order
-  assert:
-    that:
-      - primaryIP is not changed
-
-- name: test update Primary IP delete protection
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    delete_protection: true
-  register: primaryIP
-- name: verify update Primary IP delete protection
-  assert:
-    that:
-      - primaryIP is changed
-      - primaryIP.hcloud_primary_ip.delete_protection is sameas true
-
-- name: test update Primary IP delete protection idempotency
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    delete_protection: true
-  register: primaryIP
-- name: verify update Primary IP delete protection idempotency
-  assert:
-    that:
-      - primaryIP is not changed
-      - primaryIP.hcloud_primary_ip.delete_protection is sameas true
-
-- name: test Primary IP without delete protection set to be idempotent
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-  register: primaryIP
-- name: verify  Primary IP without delete protection set to be idempotent
-  assert:
-    that:
-      - primaryIP is not changed
-      - primaryIP.hcloud_primary_ip.delete_protection is sameas true
-
-- name: test delete Primary IP fails if it is protected
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    state: "absent"
-  register: result
+    state: present
   ignore_errors: true
-- name: verify test delete primary ip
-  assert:
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
     that:
       - result is failed
-      - 'result.msg == "Primary IP deletion is protected"'
+      - 'result.msg == "one of the following is required: id, name"'
 
-- name: test update Primary IP delete protection
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
-    delete_protection: false
-  register: primaryIP
-- name: verify update Primary IP delete protection
-  assert:
-    that:
-      - primaryIP is changed
-      - primaryIP.hcloud_primary_ip.delete_protection is sameas false
-
-- name: test delete primary ip
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    state: "absent"
-  register: result
-- name: verify test delete primary ip
-  assert:
-    that:
-      - result is changed
-
-- name: test create ipv6 primary ip
+- name: Test create with check mode
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv6
-    datacenter: "fsn1-dc14"
-    state: "present"
-  register: result
-- name: verify test create ipv6 primary ip
-  assert:
-    that:
-      - result is changed
-
-- name: test delete ipv6 primary ip
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    state: "absent"
-  register: result
-- name: verify test delete ipv6 primary ip
-  assert:
-    that:
-      - result is changed
-
-- name: test create Primary IP with delete protection
-  hetzner.hcloud.primary_ip:
-    name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
     datacenter: fsn1-dc14
-    delete_protection: true
-  register: primaryIP
-- name: verify create Primary IP with delete protection
-  assert:
+    labels:
+      key: value
+  check_mode: true
+  register: result
+- name: Verify create with check mode
+  ansible.builtin.assert:
     that:
-      - primaryIP is changed
-      - primaryIP.hcloud_primary_ip.delete_protection is sameas true
+      - result is changed
 
-- name: test delete Primary IP fails if it is protected
+- name: Test create
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
-    state: "absent"
+    type: ipv6
+    datacenter: fsn1-dc14
+    labels:
+      key: value
   register: result
+- name: Verify create
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_primary_ip.name == hcloud_primary_ip_name
+      - result.hcloud_primary_ip.type == "ipv6"
+      - result.hcloud_primary_ip.datacenter == "fsn1-dc14"
+      - result.hcloud_primary_ip.labels.key == "value"
+      - result.hcloud_primary_ip.delete_protection is false
+
+- name: Test create idempotency
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    type: ipv6
+    datacenter: fsn1-dc14
+    labels:
+      key: value
+  register: result
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    type: ipv6
+    datacenter: fsn1-dc14
+    labels:
+      key: value
+      foo: bar
+  register: result
+- name: Verify update
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_primary_ip.name == hcloud_primary_ip_name
+      - result.hcloud_primary_ip.type == "ipv6"
+      - result.hcloud_primary_ip.datacenter == "fsn1-dc14"
+      - result.hcloud_primary_ip.labels.key == "value"
+      - result.hcloud_primary_ip.labels.foo == "bar"
+      - result.hcloud_primary_ip.delete_protection is false
+
+- name: Test update idempotency
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    type: ipv6
+    datacenter: fsn1-dc14
+    labels:
+      key: value
+      foo: bar
+  register: result
+- name: Verify update idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update delete protection
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    delete_protection: true
+  register: result
+- name: Verify update delete protection
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_primary_ip.delete_protection is true
+
+- name: Test delete with delete protection
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ip_name }}"
+    state: absent
   ignore_errors: true
-- name: verify test delete primary ip
-  assert:
+  register: result
+- name: Verify delete with delete protection
+  ansible.builtin.assert:
     that:
       - result is failed
-      - 'result.msg == "Primary IP deletion is protected"'
+      - '"Primary IP deletion is protected" in result.msg'
 
-- name: test update Primary IP delete protection
+- name: Test update delete protection
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
-    type: ipv4
     delete_protection: false
-  register: primaryIP
-- name: verify update Primary IP delete protection
-  assert:
+  register: result
+- name: Verify update delete protection
+  ansible.builtin.assert:
     that:
-      - primaryIP is changed
-      - primaryIP.hcloud_primary_ip.delete_protection is sameas false
+      - result is changed
+      - result.hcloud_primary_ip.delete_protection is false
 
-- name: test delete primary ip
+- name: Test delete
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
-    state: "absent"
+    state: absent
   register: result
-- name: verify test delete primary ip
-  assert:
+- name: Verify delete
+  ansible.builtin.assert:
     that:
       - result is changed
