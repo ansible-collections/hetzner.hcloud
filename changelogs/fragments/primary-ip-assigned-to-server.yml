@@ -1,0 +1,2 @@
+minor_changes:
+  - primary_ip - Use the `server` option to assign a Primary IP being created to a server.

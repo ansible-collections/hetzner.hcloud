@@ -35,6 +35,12 @@ options:
             - Home Location of the Hetzner Cloud Primary IP.
             - Required if no I(server) is given and Primary IP does not exist.
         type: str
+    server:
+        description:
+            - Name or ID of the Hetzner Cloud Server the Primary IP should be assigned to.
+            - The Primary IP cannot be assigned to a running server.
+            - Required if no O(datacenter) is given and the Primary IP does not exist.
+        type: str
     type:
         description:
             - Type of the Primary IP.
@@ -43,9 +49,9 @@ options:
         type: str
     auto_delete:
         description:
-            - Delete this Primary IP when the resource it is assigned to is deleted
+            - Delete the Primary IP when the resource it is assigned to is deleted.
         type: bool
-        default: no
+        default: false
     delete_protection:
         description:
             - Protect the Primary IP for deletion.
@@ -66,22 +72,39 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = """
-- name: Create a basic IPv4 Primary IP
+- name: Create a IPv4 Primary IP
   hetzner.hcloud.primary_ip:
     name: my-primary-ip
     datacenter: fsn1-dc14
     type: ipv4
     state: present
-- name: Create a basic IPv6 Primary IP
+
+- name: Create a IPv6 Primary IP
   hetzner.hcloud.primary_ip:
     name: my-primary-ip
     datacenter: fsn1-dc14
     type: ipv6
     state: present
-- name: Primary IP should be absent
+
+- name: Delete a Primary IP
   hetzner.hcloud.primary_ip:
     name: my-primary-ip
     state: absent
+
+- name: Ensure the server is stopped
+  hetzner.hcloud.server:
+    name: my-server
+    state: stopped
+- name: Create a Primary IP attached to a Server
+  hetzner.hcloud.primary_ip:
+    name: my-primary-ip
+    server: my-server
+    type: ipv4
+    state: present
+- name: Ensure the server is started
+  hetzner.hcloud.server:
+    name: my-server
+    state: started
 """
 
 RETURN = """
@@ -127,6 +150,21 @@ hcloud_primary_ip:
             sample:
                 key: value
                 mylabel: 123
+        assignee_id:
+            description: ID of the resource the Primary IP is assigned to, null if it is not assigned.
+            type: int
+            returned: always
+            sample: 1937415
+        assignee_type:
+            description: Resource type the Primary IP can be assigned to.
+            type: str
+            returned: always
+            sample: server
+        auto_delete:
+            description: Delete the Primary IP when the resource it is assigned to is deleted.
+            type: bool
+            returned: always
+            sample: false
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -151,6 +189,13 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
             "datacenter": to_native(self.hcloud_primary_ip.datacenter.name),
             "labels": self.hcloud_primary_ip.labels,
             "delete_protection": self.hcloud_primary_ip.protection["delete"],
+            "assignee_id": (
+                to_native(self.hcloud_primary_ip.assignee_id)
+                if self.hcloud_primary_ip.assignee_id is not None
+                else None
+            ),
+            "assignee_type": to_native(self.hcloud_primary_ip.assignee_type),
+            "auto_delete": self.hcloud_primary_ip.auto_delete,
         }
 
     def _get_primary_ip(self):
@@ -163,18 +208,29 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
             self.fail_json_hcloud(exception)
 
     def _create_primary_ip(self):
-        self.module.fail_on_missing_params(required_params=["type", "datacenter"])
+        self.fail_on_invalid_params(
+            required=["type", "name"],
+            required_one_of=[["server", "datacenter"]],
+        )
         try:
             params = {
                 "type": self.module.params.get("type"),
                 "name": self.module.params.get("name"),
-                "datacenter": self.client.datacenters.get_by_name(self.module.params.get("datacenter")),
+                "auto_delete": self.module.params.get("auto_delete"),
+                "datacenter": None,  # TODO: https://github.com/hetznercloud/hcloud-python/pull/363
             }
+
+            if self.module.params.get("datacenter") is not None:
+                params["datacenter"] = self.client.datacenters.get_by_name(self.module.params.get("datacenter"))
+            elif self.module.params.get("server") is not None:
+                params["assignee_id"] = self._client_get_by_name_or_id("servers", self.module.params.get("server")).id
 
             if self.module.params.get("labels") is not None:
                 params["labels"] = self.module.params.get("labels")
             if not self.module.check_mode:
                 resp = self.client.primary_ips.create(**params)
+                if resp.action is not None:
+                    resp.action.wait_until_finished()
                 self.hcloud_primary_ip = resp.primary_ip
 
                 delete_protection = self.module.params.get("delete_protection")
@@ -187,10 +243,19 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
 
     def _update_primary_ip(self):
         try:
+            changes = {}
+
+            auto_delete = self.module.params.get("auto_delete")
+            if auto_delete is not None and auto_delete != self.hcloud_primary_ip.auto_delete:
+                changes["auto_delete"] = auto_delete
+
             labels = self.module.params.get("labels")
             if labels is not None and labels != self.hcloud_primary_ip.labels:
+                changes["labels"] = labels
+
+            if changes:
                 if not self.module.check_mode:
-                    self.hcloud_primary_ip.update(labels=labels)
+                    self.hcloud_primary_ip.update(**changes)
                 self._mark_as_changed()
 
             delete_protection = self.module.params.get("delete_protection")
@@ -228,6 +293,7 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
                 id={"type": "int"},
                 name={"type": "str"},
                 datacenter={"type": "str"},
+                server={"type": "str"},
                 auto_delete={"type": "bool", "default": False},
                 type={"choices": ["ipv4", "ipv6"]},
                 labels={"type": "dict"},
