@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import traceback
 from datetime import datetime, timezone
-from unittest.mock import MagicMock
 
+import pytest
 from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import AnsibleHCloud
 from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
     APIException,
@@ -16,12 +16,7 @@ from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.actio
 )
 
 
-def test_hcloud_fail_json_hcloud():
-    module = MagicMock()
-    module.params = {
-        "api_token": "fake_token",
-        "api_endpoint": "https://api.hetzner.cloud/v1",
-    }
+def test_hcloud_fail_json_hcloud(module):
     AnsibleHCloud.represent = "hcloud_test"
     hcloud = AnsibleHCloud(module)
 
@@ -123,3 +118,28 @@ def test_hcloud_fail_json_hcloud():
                 }
             },
         )
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "msg"),
+    [
+        ({"required": ["key1"]}, None),
+        ({"required": ["missing"]}, "missing required arguments: missing"),
+        ({"required_one_of": [["key1", "missing"]]}, None),
+        ({"required_one_of": [["missing1", "missing2"]]}, "one of the following is required: missing1, missing2"),
+    ],
+)
+def test_hcloud_fail_on_invalid_params(module, kwargs, msg):
+    AnsibleHCloud.represent = "hcloud_test"
+    hcloud = AnsibleHCloud(module)
+
+    module.params = {
+        "key1": "value",
+        "key2": "value",
+    }
+
+    hcloud.fail_on_invalid_params(**kwargs)
+    if msg is None:
+        module.fail_json.assert_not_called()
+    else:
+        module.fail_json.assert_called_with(msg=msg)
