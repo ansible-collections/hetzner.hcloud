@@ -10,6 +10,10 @@ from typing import Any, NoReturn
 
 from ansible.module_utils.basic import AnsibleModule as AnsibleModuleBase, env_fallback
 from ansible.module_utils.common.text.converters import to_native
+from ansible.module_utils.common.validation import (
+    check_missing_parameters,
+    check_required_one_of,
+)
 
 from .client import ClientException, client_check_required_lib, client_get_by_name_or_id
 from .vendor.hcloud import APIException, Client, HCloudException
@@ -93,6 +97,29 @@ class AnsibleHCloud:
 
     def _mark_as_changed(self) -> None:
         self.result["changed"] = True
+
+    def fail_on_invalid_params(
+        self,
+        *,
+        required: list[str] | None = None,
+        required_one_of: list[list[str]] | None = None,
+    ) -> None:
+        """
+        Run additional validation that cannot be done in the argument spec validation.
+
+        :param required_params: Check that terms exists in the module params.
+        :param required_one_of: Check each list of terms to ensure at least one exists in the module parameters.
+        """
+        try:
+            if required:
+                check_missing_parameters(self.module.params, required)
+
+            if required_one_of:
+                params_without_nones = {k: v for k, v in self.module.params.items() if v is not None}
+                check_required_one_of(required_one_of, params_without_nones)
+
+        except TypeError as e:
+            self.module.fail_json(msg=to_native(e))
 
     @classmethod
     def base_module_arguments(cls):
