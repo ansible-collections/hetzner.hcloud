@@ -167,7 +167,7 @@ class AnsibleHCloudCertificate(AnsibleHCloud):
             "certificate": self.hcloud_certificate.certificate,
             "not_valid_before": self.hcloud_certificate.not_valid_before.isoformat(),
             "not_valid_after": self.hcloud_certificate.not_valid_after.isoformat(),
-            "domain_names": [domain for domain in self.hcloud_certificate.domain_names],
+            "domain_names": self.hcloud_certificate.domain_names,
             "labels": self.hcloud_certificate.labels,
         }
 

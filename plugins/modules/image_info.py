@@ -128,20 +128,22 @@ class AnsibleHCloudImageInfo(AnsibleHCloud):
         tmp = []
 
         for image in self.hcloud_image_info:
-            if image is not None:
-                tmp.append(
-                    {
-                        "id": str(image.id),
-                        "status": image.status,
-                        "type": image.type,
-                        "name": image.name,
-                        "description": image.description,
-                        "os_flavor": image.os_flavor,
-                        "os_version": image.os_version,
-                        "architecture": image.architecture,
-                        "labels": image.labels,
-                    }
-                )
+            if image is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": str(image.id),
+                    "status": image.status,
+                    "type": image.type,
+                    "name": image.name,
+                    "description": image.description,
+                    "os_flavor": image.os_flavor,
+                    "os_version": image.os_version,
+                    "architecture": image.architecture,
+                    "labels": image.labels,
+                }
+            )
         return tmp
 
     def get_images(self):

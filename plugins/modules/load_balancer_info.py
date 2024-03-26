@@ -297,27 +297,25 @@ class AnsibleHCloudLoadBalancerInfo(AnsibleHCloud):
         tmp = []
 
         for load_balancer in self.hcloud_load_balancer_info:
-            if load_balancer is not None:
-                services = [self._prepare_service_result(service) for service in load_balancer.services]
-                targets = [self._prepare_target_result(target) for target in load_balancer.targets]
+            if load_balancer is None:
+                continue
 
-                private_ipv4_address = None if len(load_balancer.private_net) == 0 else load_balancer.private_net[0].ip
-                tmp.append(
-                    {
-                        "id": str(load_balancer.id),
-                        "name": load_balancer.name,
-                        "ipv4_address": load_balancer.public_net.ipv4.ip,
-                        "ipv6_address": load_balancer.public_net.ipv6.ip,
-                        "private_ipv4_address": private_ipv4_address,
-                        "load_balancer_type": load_balancer.load_balancer_type.name,
-                        "location": load_balancer.location.name,
-                        "labels": load_balancer.labels,
-                        "delete_protection": load_balancer.protection["delete"],
-                        "disable_public_interface": False if load_balancer.public_net.enabled else True,
-                        "targets": targets,
-                        "services": services,
-                    }
-                )
+            tmp.append(
+                {
+                    "id": str(load_balancer.id),
+                    "name": load_balancer.name,
+                    "ipv4_address": load_balancer.public_net.ipv4.ip,
+                    "ipv6_address": load_balancer.public_net.ipv6.ip,
+                    "private_ipv4_address": load_balancer.private_net[0].ip if len(load_balancer.private_net) else None,
+                    "load_balancer_type": load_balancer.load_balancer_type.name,
+                    "location": load_balancer.location.name,
+                    "labels": load_balancer.labels,
+                    "delete_protection": load_balancer.protection["delete"],
+                    "disable_public_interface": False if load_balancer.public_net.enabled else True,
+                    "targets": [self._prepare_target_result(target) for target in load_balancer.targets],
+                    "services": [self._prepare_service_result(service) for service in load_balancer.services],
+                }
+            )
         return tmp
 
     @staticmethod
@@ -343,7 +341,7 @@ class AnsibleHCloudLoadBalancerInfo(AnsibleHCloud):
                 "domain": service.health_check.http.domain,
                 "path": service.health_check.http.path,
                 "response": service.health_check.http.response,
-                "certificates": [status_code for status_code in service.health_check.http.status_codes],
+                "certificates": service.health_check.http.status_codes,
                 "tls": service.health_check.http.tls,
             }
         return {

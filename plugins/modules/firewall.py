@@ -248,17 +248,17 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
         return {
             "direction": rule.direction,
             "protocol": rule.protocol,
-            "port": rule.port if rule.port is not None else None,
-            "source_ips": [cidr for cidr in rule.source_ips],
-            "destination_ips": [cidr for cidr in rule.destination_ips],
-            "description": rule.description if rule.description is not None else None,
+            "port": rule.port,
+            "source_ips": rule.source_ips,
+            "destination_ips": rule.destination_ips,
+            "description": rule.description,
         }
 
     def _prepare_result_applied_to(self, resource: FirewallResource):
         result = {
             "type": resource.type,
             "server": str(resource.server.id) if resource.server is not None else None,
-            "label_selector": (resource.label_selector.selector if resource.label_selector is not None else None),
+            "label_selector": resource.label_selector.selector if resource.label_selector is not None else None,
         }
         if resource.applied_to_resources is not None:
             result["applied_to_resources"] = [

@@ -179,12 +179,12 @@ class AnsibleHCloudFirewallInfo(AnsibleHCloud):
 
     def _prepare_result_rule(self, rule: FirewallRule):
         return {
-            "description": rule.description if rule.description is not None else None,
+            "description": rule.description,
             "direction": rule.direction,
             "protocol": rule.protocol,
-            "port": rule.port if rule.port is not None else None,
-            "source_ips": [cidr for cidr in rule.source_ips],
-            "destination_ips": [cidr for cidr in rule.destination_ips],
+            "port": rule.port,
+            "source_ips": rule.source_ips,
+            "destination_ips": rule.destination_ips,
         }
 
     def _prepare_result_applied_to(self, resource: FirewallResource):

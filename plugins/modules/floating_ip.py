@@ -173,10 +173,6 @@ class AnsibleHCloudFloatingIP(AnsibleHCloud):
     hcloud_floating_ip: BoundFloatingIP | None = None
 
     def _prepare_result(self):
-        server = None
-
-        if self.hcloud_floating_ip.server is not None:
-            server = self.hcloud_floating_ip.server.name
         return {
             "id": str(self.hcloud_floating_ip.id),
             "name": self.hcloud_floating_ip.name,
@@ -185,7 +181,7 @@ class AnsibleHCloudFloatingIP(AnsibleHCloud):
             "type": self.hcloud_floating_ip.type,
             "home_location": self.hcloud_floating_ip.home_location.name,
             "labels": self.hcloud_floating_ip.labels,
-            "server": server,
+            "server": self.hcloud_floating_ip.server.name if self.hcloud_floating_ip.server is not None else None,
             "delete_protection": self.hcloud_floating_ip.protection["delete"],
         }
 

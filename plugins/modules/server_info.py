@@ -162,36 +162,31 @@ class AnsibleHCloudServerInfo(AnsibleHCloud):
         tmp = []
 
         for server in self.hcloud_server_info:
-            if server is not None:
-                image = None if server.image is None else server.image.name
-                placement_group = None if server.placement_group is None else server.placement_group.name
-                ipv4_address = None if server.public_net.ipv4 is None else server.public_net.ipv4.ip
-                ipv6 = None if server.public_net.ipv6 is None else server.public_net.ipv6.ip
-                backup_window = None if server.backup_window is None else server.backup_window
-                tmp.append(
-                    {
-                        "id": str(server.id),
-                        "name": server.name,
-                        "created": server.created.isoformat(),
-                        "ipv4_address": ipv4_address,
-                        "ipv6": ipv6,
-                        "private_networks": [net.network.name for net in server.private_net],
-                        "private_networks_info": [
-                            {"name": net.network.name, "ip": net.ip} for net in server.private_net
-                        ],
-                        "image": image,
-                        "server_type": server.server_type.name,
-                        "datacenter": server.datacenter.name,
-                        "location": server.datacenter.location.name,
-                        "placement_group": placement_group,
-                        "rescue_enabled": server.rescue_enabled,
-                        "backup_window": backup_window,
-                        "labels": server.labels,
-                        "status": server.status,
-                        "delete_protection": server.protection["delete"],
-                        "rebuild_protection": server.protection["rebuild"],
-                    }
-                )
+            if server is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": str(server.id),
+                    "name": server.name,
+                    "created": server.created.isoformat(),
+                    "ipv4_address": server.public_net.ipv4.ip if server.public_net.ipv4 is not None else None,
+                    "ipv6": server.public_net.ipv6.ip if server.public_net.ipv6 is not None else None,
+                    "private_networks": [net.network.name for net in server.private_net],
+                    "private_networks_info": [{"name": net.network.name, "ip": net.ip} for net in server.private_net],
+                    "image": server.image.name if server.image is not None else None,
+                    "server_type": server.server_type.name,
+                    "datacenter": server.datacenter.name,
+                    "location": server.datacenter.location.name,
+                    "placement_group": server.placement_group.name if server.placement_group is not None else None,
+                    "rescue_enabled": server.rescue_enabled,
+                    "backup_window": server.backup_window,
+                    "labels": server.labels,
+                    "status": server.status,
+                    "delete_protection": server.protection["delete"],
+                    "rebuild_protection": server.protection["rebuild"],
+                }
+            )
         return tmp
 
     def get_servers(self):

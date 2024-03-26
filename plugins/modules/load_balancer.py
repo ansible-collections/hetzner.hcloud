@@ -168,21 +168,20 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
     hcloud_load_balancer: BoundLoadBalancer | None = None
 
     def _prepare_result(self):
-        private_ipv4_address = (
-            None if len(self.hcloud_load_balancer.private_net) == 0 else self.hcloud_load_balancer.private_net[0].ip
-        )
         return {
             "id": str(self.hcloud_load_balancer.id),
             "name": self.hcloud_load_balancer.name,
             "ipv4_address": self.hcloud_load_balancer.public_net.ipv4.ip,
             "ipv6_address": self.hcloud_load_balancer.public_net.ipv6.ip,
-            "private_ipv4_address": private_ipv4_address,
+            "private_ipv4_address": (
+                self.hcloud_load_balancer.private_net[0].ip if len(self.hcloud_load_balancer.private_net) else None
+            ),
             "load_balancer_type": self.hcloud_load_balancer.load_balancer_type.name,
             "algorithm": self.hcloud_load_balancer.algorithm.type,
             "location": self.hcloud_load_balancer.location.name,
             "labels": self.hcloud_load_balancer.labels,
             "delete_protection": self.hcloud_load_balancer.protection["delete"],
-            "disable_public_interface": False if self.hcloud_load_balancer.public_net.enabled else True,
+            "disable_public_interface": not self.hcloud_load_balancer.public_net.enabled,
         }
 
     def _get_load_balancer(self):

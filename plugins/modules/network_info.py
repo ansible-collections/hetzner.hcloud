@@ -201,55 +201,55 @@ class AnsibleHCloudNetworkInfo(AnsibleHCloud):
         tmp = []
 
         for network in self.hcloud_network_info:
-            if network is not None:
-                subnets = []
-                for subnet in network.subnets:
-                    prepared_subnet = {
-                        "type": subnet.type,
-                        "ip_range": subnet.ip_range,
-                        "network_zone": subnet.network_zone,
-                        "gateway": subnet.gateway,
-                    }
-                    subnets.append(prepared_subnet)
-                routes = []
-                for route in network.routes:
-                    prepared_route = {"destination": route.destination, "gateway": route.gateway}
-                    routes.append(prepared_route)
+            if network is None:
+                continue
 
-                servers = []
-                for server in network.servers:
-                    image = None if server.image is None else server.image.name
-                    ipv4_address = None if server.public_net.ipv4 is None else server.public_net.ipv4.ip
-                    ipv6 = None if server.public_net.ipv6 is None else server.public_net.ipv6.ip
-                    prepared_server = {
-                        "id": str(server.id),
-                        "name": server.name,
-                        "ipv4_address": ipv4_address,
-                        "ipv6": ipv6,
-                        "image": image,
-                        "server_type": server.server_type.name,
-                        "datacenter": server.datacenter.name,
-                        "location": server.datacenter.location.name,
-                        "rescue_enabled": server.rescue_enabled,
-                        "backup_window": server.backup_window,
-                        "labels": server.labels,
-                        "status": server.status,
-                    }
-                    servers.append(prepared_server)
+            subnets = []
+            for subnet in network.subnets:
+                prepared_subnet = {
+                    "type": subnet.type,
+                    "ip_range": subnet.ip_range,
+                    "network_zone": subnet.network_zone,
+                    "gateway": subnet.gateway,
+                }
+                subnets.append(prepared_subnet)
 
-                tmp.append(
-                    {
-                        "id": str(network.id),
-                        "name": network.name,
-                        "ip_range": network.ip_range,
-                        "subnetworks": subnets,
-                        "routes": routes,
-                        "expose_routes_to_vswitch": network.expose_routes_to_vswitch,
-                        "servers": servers,
-                        "labels": network.labels,
-                        "delete_protection": network.protection["delete"],
-                    }
-                )
+            routes = []
+            for route in network.routes:
+                prepared_route = {"destination": route.destination, "gateway": route.gateway}
+                routes.append(prepared_route)
+
+            servers = []
+            for server in network.servers:
+                prepared_server = {
+                    "id": str(server.id),
+                    "name": server.name,
+                    "ipv4_address": server.public_net.ipv4.ip if server.public_net.ipv4 is not None else None,
+                    "ipv6": server.public_net.ipv6.ip if server.public_net.ipv6 is not None else None,
+                    "image": server.image.name if server.image is not None else None,
+                    "server_type": server.server_type.name,
+                    "datacenter": server.datacenter.name,
+                    "location": server.datacenter.location.name,
+                    "rescue_enabled": server.rescue_enabled,
+                    "backup_window": server.backup_window,
+                    "labels": server.labels,
+                    "status": server.status,
+                }
+                servers.append(prepared_server)
+
+            tmp.append(
+                {
+                    "id": str(network.id),
+                    "name": network.name,
+                    "ip_range": network.ip_range,
+                    "subnetworks": subnets,
+                    "routes": routes,
+                    "expose_routes_to_vswitch": network.expose_routes_to_vswitch,
+                    "servers": servers,
+                    "labels": network.labels,
+                    "delete_protection": network.protection["delete"],
+                }
+            )
         return tmp
 
     def get_networks(self):

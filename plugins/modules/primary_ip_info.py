@@ -150,11 +150,11 @@ class AnsibleHCloudPrimaryIPInfo(AnsibleHCloud):
                     "name": primary_ip.name,
                     "ip": primary_ip.ip,
                     "type": primary_ip.type,
-                    "assignee_id": (str(primary_ip.assignee_id) if primary_ip.assignee_id is not None else None),
+                    "assignee_id": str(primary_ip.assignee_id) if primary_ip.assignee_id is not None else None,
                     "assignee_type": primary_ip.assignee_type,
                     "auto_delete": primary_ip.auto_delete,
                     "home_location": primary_ip.datacenter.name,
-                    "dns_ptr": primary_ip.dns_ptr[0]["dns_ptr"] if len(primary_ip.dns_ptr) > 0 else None,
+                    "dns_ptr": primary_ip.dns_ptr[0]["dns_ptr"] if len(primary_ip.dns_ptr) else None,
                     "labels": primary_ip.labels,
                     "delete_protection": primary_ip.protection["delete"],
                 }

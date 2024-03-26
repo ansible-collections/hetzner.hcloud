@@ -94,16 +94,18 @@ class AnsibleHCloudLocationInfo(AnsibleHCloud):
         tmp = []
 
         for location in self.hcloud_location_info:
-            if location is not None:
-                tmp.append(
-                    {
-                        "id": str(location.id),
-                        "name": location.name,
-                        "description": location.description,
-                        "city": location.city,
-                        "country": location.country,
-                    }
-                )
+            if location is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": str(location.id),
+                    "name": location.name,
+                    "description": location.description,
+                    "city": location.city,
+                    "country": location.country,
+                }
+            )
         return tmp
 
     def get_locations(self):

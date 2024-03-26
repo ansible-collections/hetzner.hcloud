@@ -131,7 +131,7 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
             "network": self.hcloud_network.name,
             "server": self.hcloud_server.name,
             "ip": self.hcloud_server_network.ip,
-            "alias_ips": [ip for ip in sorted(self.hcloud_server_network.alias_ips)],
+            "alias_ips": list(sorted(self.hcloud_server_network.alias_ips)),
         }
 
     def _get_server_and_network(self):

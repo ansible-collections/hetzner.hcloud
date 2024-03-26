@@ -173,17 +173,13 @@ class AnsibleHCloudVolume(AnsibleHCloud):
     hcloud_volume: BoundVolume | None = None
 
     def _prepare_result(self):
-        server_name = None
-        if self.hcloud_volume.server is not None:
-            server_name = self.hcloud_volume.server.name
-
         return {
             "id": str(self.hcloud_volume.id),
             "name": self.hcloud_volume.name,
             "size": self.hcloud_volume.size,
             "location": self.hcloud_volume.location.name,
             "labels": self.hcloud_volume.labels,
-            "server": server_name,
+            "server": self.hcloud_volume.server.name if self.hcloud_volume.server is not None else None,
             "linux_device": self.hcloud_volume.linux_device,
             "delete_protection": self.hcloud_volume.protection["delete"],
         }

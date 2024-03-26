@@ -116,23 +116,22 @@ class AnsibleHCloudFloatingIPInfo(AnsibleHCloud):
         tmp = []
 
         for floating_ip in self.hcloud_floating_ip_info:
-            if floating_ip is not None:
-                server_name = None
-                if floating_ip.server is not None:
-                    server_name = floating_ip.server.name
-                tmp.append(
-                    {
-                        "id": str(floating_ip.id),
-                        "name": floating_ip.name,
-                        "description": floating_ip.description,
-                        "ip": floating_ip.ip,
-                        "type": floating_ip.type,
-                        "server": server_name,
-                        "home_location": floating_ip.home_location.name,
-                        "labels": floating_ip.labels,
-                        "delete_protection": floating_ip.protection["delete"],
-                    }
-                )
+            if floating_ip is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": str(floating_ip.id),
+                    "name": floating_ip.name,
+                    "description": floating_ip.description,
+                    "ip": floating_ip.ip,
+                    "type": floating_ip.type,
+                    "server": floating_ip.server.name if floating_ip.server is not None else None,
+                    "home_location": floating_ip.home_location.name,
+                    "labels": floating_ip.labels,
+                    "delete_protection": floating_ip.protection["delete"],
+                }
+            )
 
         return tmp
 
