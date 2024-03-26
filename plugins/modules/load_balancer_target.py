@@ -156,17 +156,17 @@ class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
 
     def _prepare_result(self):
         result = {
-            "type": to_native(self.hcloud_load_balancer_target.type),
-            "load_balancer": to_native(self.hcloud_load_balancer.name),
+            "type": self.hcloud_load_balancer_target.type,
+            "load_balancer": self.hcloud_load_balancer.name,
             "use_private_ip": self.hcloud_load_balancer_target.use_private_ip,
         }
 
         if self.hcloud_load_balancer_target.type == "server":
-            result["server"] = to_native(self.hcloud_load_balancer_target.server.name)
+            result["server"] = self.hcloud_load_balancer_target.server.name
         elif self.hcloud_load_balancer_target.type == "label_selector":
-            result["label_selector"] = to_native(self.hcloud_load_balancer_target.label_selector.selector)
+            result["label_selector"] = self.hcloud_load_balancer_target.label_selector.selector
         elif self.hcloud_load_balancer_target.type == "ip":
-            result["ip"] = to_native(self.hcloud_load_balancer_target.ip.ip)
+            result["ip"] = self.hcloud_load_balancer_target.ip.ip
         return result
 
     def _get_load_balancer_and_target(self):

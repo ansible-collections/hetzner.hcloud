@@ -176,14 +176,14 @@ class AnsibleHCloudFloatingIP(AnsibleHCloud):
         server = None
 
         if self.hcloud_floating_ip.server is not None:
-            server = to_native(self.hcloud_floating_ip.server.name)
+            server = self.hcloud_floating_ip.server.name
         return {
-            "id": to_native(self.hcloud_floating_ip.id),
-            "name": to_native(self.hcloud_floating_ip.name),
-            "description": to_native(self.hcloud_floating_ip.description),
-            "ip": to_native(self.hcloud_floating_ip.ip),
-            "type": to_native(self.hcloud_floating_ip.type),
-            "home_location": to_native(self.hcloud_floating_ip.home_location.name),
+            "id": str(self.hcloud_floating_ip.id),
+            "name": self.hcloud_floating_ip.name,
+            "description": self.hcloud_floating_ip.description,
+            "ip": self.hcloud_floating_ip.ip,
+            "type": self.hcloud_floating_ip.type,
+            "home_location": self.hcloud_floating_ip.home_location.name,
             "labels": self.hcloud_floating_ip.labels,
             "server": server,
             "delete_protection": self.hcloud_floating_ip.protection["delete"],

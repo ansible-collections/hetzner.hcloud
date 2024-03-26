@@ -131,14 +131,14 @@ class AnsibleHCloudImageInfo(AnsibleHCloud):
             if image is not None:
                 tmp.append(
                     {
-                        "id": to_native(image.id),
-                        "status": to_native(image.status),
-                        "type": to_native(image.type),
-                        "name": to_native(image.name),
-                        "description": to_native(image.description),
-                        "os_flavor": to_native(image.os_flavor),
-                        "os_version": to_native(image.os_version),
-                        "architecture": to_native(image.architecture),
+                        "id": str(image.id),
+                        "status": image.status,
+                        "type": image.type,
+                        "name": image.name,
+                        "description": image.description,
+                        "os_flavor": image.os_flavor,
+                        "os_version": image.os_version,
+                        "architecture": image.architecture,
                         "labels": image.labels,
                     }
                 )

@@ -160,14 +160,14 @@ class AnsibleHCloudCertificate(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": to_native(self.hcloud_certificate.id),
-            "name": to_native(self.hcloud_certificate.name),
-            "type": to_native(self.hcloud_certificate.type),
-            "fingerprint": to_native(self.hcloud_certificate.fingerprint),
-            "certificate": to_native(self.hcloud_certificate.certificate),
-            "not_valid_before": to_native(self.hcloud_certificate.not_valid_before.isoformat()),
-            "not_valid_after": to_native(self.hcloud_certificate.not_valid_after.isoformat()),
-            "domain_names": [to_native(domain) for domain in self.hcloud_certificate.domain_names],
+            "id": str(self.hcloud_certificate.id),
+            "name": self.hcloud_certificate.name,
+            "type": self.hcloud_certificate.type,
+            "fingerprint": self.hcloud_certificate.fingerprint,
+            "certificate": self.hcloud_certificate.certificate,
+            "not_valid_before": self.hcloud_certificate.not_valid_before.isoformat(),
+            "not_valid_after": self.hcloud_certificate.not_valid_after.isoformat(),
+            "domain_names": [domain for domain in self.hcloud_certificate.domain_names],
             "labels": self.hcloud_certificate.labels,
         }
 

@@ -107,9 +107,9 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "network": to_native(self.hcloud_network.name),
-            "load_balancer": to_native(self.hcloud_load_balancer.name),
-            "ip": to_native(self.hcloud_load_balancer_network.ip),
+            "network": self.hcloud_network.name,
+            "load_balancer": self.hcloud_load_balancer.name,
+            "ip": self.hcloud_load_balancer_network.ip,
         }
 
     def _get_load_balancer_and_network(self):

@@ -302,16 +302,16 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
         http = None
         if self.hcloud_load_balancer_service.protocol != "tcp":
             http = {
-                "cookie_name": to_native(self.hcloud_load_balancer_service.http.cookie_name),
+                "cookie_name": self.hcloud_load_balancer_service.http.cookie_name,
                 "cookie_lifetime": self.hcloud_load_balancer_service.http.cookie_lifetime,
                 "redirect_http": self.hcloud_load_balancer_service.http.redirect_http,
                 "sticky_sessions": self.hcloud_load_balancer_service.http.sticky_sessions,
                 "certificates": [
-                    to_native(certificate.name) for certificate in self.hcloud_load_balancer_service.http.certificates
+                    certificate.name for certificate in self.hcloud_load_balancer_service.http.certificates
                 ],
             }
         health_check = {
-            "protocol": to_native(self.hcloud_load_balancer_service.health_check.protocol),
+            "protocol": self.hcloud_load_balancer_service.health_check.protocol,
             "port": self.hcloud_load_balancer_service.health_check.port,
             "interval": self.hcloud_load_balancer_service.health_check.interval,
             "timeout": self.hcloud_load_balancer_service.health_check.timeout,
@@ -319,18 +319,17 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
         }
         if self.hcloud_load_balancer_service.health_check.protocol != "tcp":
             health_check["http"] = {
-                "domain": to_native(self.hcloud_load_balancer_service.health_check.http.domain),
-                "path": to_native(self.hcloud_load_balancer_service.health_check.http.path),
-                "response": to_native(self.hcloud_load_balancer_service.health_check.http.response),
+                "domain": self.hcloud_load_balancer_service.health_check.http.domain,
+                "path": self.hcloud_load_balancer_service.health_check.http.path,
+                "response": self.hcloud_load_balancer_service.health_check.http.response,
                 "status_codes": [
-                    to_native(status_code)
-                    for status_code in self.hcloud_load_balancer_service.health_check.http.status_codes
+                    status_code for status_code in self.hcloud_load_balancer_service.health_check.http.status_codes
                 ],
                 "tls": self.hcloud_load_balancer_service.health_check.http.tls,
             }
         return {
-            "load_balancer": to_native(self.hcloud_load_balancer.name),
-            "protocol": to_native(self.hcloud_load_balancer_service.protocol),
+            "load_balancer": self.hcloud_load_balancer.name,
+            "protocol": self.hcloud_load_balancer_service.protocol,
             "listen_port": self.hcloud_load_balancer_service.listen_port,
             "destination_port": self.hcloud_load_balancer_service.destination_port,
             "proxyprotocol": self.hcloud_load_balancer_service.proxyprotocol,

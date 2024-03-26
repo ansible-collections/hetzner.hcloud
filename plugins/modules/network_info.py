@@ -218,30 +218,30 @@ class AnsibleHCloudNetworkInfo(AnsibleHCloud):
 
                 servers = []
                 for server in network.servers:
-                    image = None if server.image is None else to_native(server.image.name)
-                    ipv4_address = None if server.public_net.ipv4 is None else to_native(server.public_net.ipv4.ip)
-                    ipv6 = None if server.public_net.ipv6 is None else to_native(server.public_net.ipv6.ip)
+                    image = None if server.image is None else server.image.name
+                    ipv4_address = None if server.public_net.ipv4 is None else server.public_net.ipv4.ip
+                    ipv6 = None if server.public_net.ipv6 is None else server.public_net.ipv6.ip
                     prepared_server = {
-                        "id": to_native(server.id),
-                        "name": to_native(server.name),
+                        "id": str(server.id),
+                        "name": server.name,
                         "ipv4_address": ipv4_address,
                         "ipv6": ipv6,
                         "image": image,
-                        "server_type": to_native(server.server_type.name),
-                        "datacenter": to_native(server.datacenter.name),
-                        "location": to_native(server.datacenter.location.name),
+                        "server_type": server.server_type.name,
+                        "datacenter": server.datacenter.name,
+                        "location": server.datacenter.location.name,
                         "rescue_enabled": server.rescue_enabled,
-                        "backup_window": to_native(server.backup_window),
+                        "backup_window": server.backup_window,
                         "labels": server.labels,
-                        "status": to_native(server.status),
+                        "status": server.status,
                     }
                     servers.append(prepared_server)
 
                 tmp.append(
                     {
-                        "id": to_native(network.id),
-                        "name": to_native(network.name),
-                        "ip_range": to_native(network.ip_range),
+                        "id": str(network.id),
+                        "name": network.name,
+                        "ip_range": network.ip_range,
                         "subnetworks": subnets,
                         "routes": routes,
                         "expose_routes_to_vswitch": network.expose_routes_to_vswitch,

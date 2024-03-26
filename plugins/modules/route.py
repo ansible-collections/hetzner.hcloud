@@ -101,8 +101,8 @@ class AnsibleHCloudRoute(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "network": to_native(self.hcloud_network.name),
-            "destination": to_native(self.hcloud_route.destination),
+            "network": self.hcloud_network.name,
+            "destination": self.hcloud_route.destination,
             "gateway": self.hcloud_route.gateway,
         }
 

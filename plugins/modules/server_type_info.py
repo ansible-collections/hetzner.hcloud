@@ -143,15 +143,15 @@ class AnsibleHCloudServerTypeInfo(AnsibleHCloud):
             if server_type is not None:
                 tmp.append(
                     {
-                        "id": to_native(server_type.id),
-                        "name": to_native(server_type.name),
-                        "description": to_native(server_type.description),
+                        "id": str(server_type.id),
+                        "name": server_type.name,
+                        "description": server_type.description,
                         "cores": server_type.cores,
                         "memory": server_type.memory,
                         "disk": server_type.disk,
-                        "storage_type": to_native(server_type.storage_type),
-                        "cpu_type": to_native(server_type.cpu_type),
-                        "architecture": to_native(server_type.architecture),
+                        "storage_type": server_type.storage_type,
+                        "cpu_type": server_type.cpu_type,
+                        "architecture": server_type.architecture,
                         "included_traffic": server_type.included_traffic,
                         "deprecation": (
                             {

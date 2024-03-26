@@ -107,9 +107,9 @@ class AnsibleHCloudLoadBalancerTypeInfo(AnsibleHCloud):
             if load_balancer_type is not None:
                 tmp.append(
                     {
-                        "id": to_native(load_balancer_type.id),
-                        "name": to_native(load_balancer_type.name),
-                        "description": to_native(load_balancer_type.description),
+                        "id": str(load_balancer_type.id),
+                        "name": load_balancer_type.name,
+                        "description": load_balancer_type.description,
                         "max_connections": load_balancer_type.max_connections,
                         "max_services": load_balancer_type.max_services,
                         "max_targets": load_balancer_type.max_targets,

@@ -121,10 +121,10 @@ class AnsibleHCloudPlacementGroup(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": to_native(self.hcloud_placement_group.id),
-            "name": to_native(self.hcloud_placement_group.name),
+            "id": str(self.hcloud_placement_group.id),
+            "name": self.hcloud_placement_group.name,
             "labels": self.hcloud_placement_group.labels,
-            "type": to_native(self.hcloud_placement_group.type),
+            "type": self.hcloud_placement_group.type,
             "servers": self.hcloud_placement_group.servers,
         }
 

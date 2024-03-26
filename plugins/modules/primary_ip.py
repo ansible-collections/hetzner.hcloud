@@ -182,19 +182,17 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": to_native(self.hcloud_primary_ip.id),
-            "name": to_native(self.hcloud_primary_ip.name),
-            "ip": to_native(self.hcloud_primary_ip.ip),
-            "type": to_native(self.hcloud_primary_ip.type),
-            "datacenter": to_native(self.hcloud_primary_ip.datacenter.name),
+            "id": str(self.hcloud_primary_ip.id),
+            "name": self.hcloud_primary_ip.name,
+            "ip": self.hcloud_primary_ip.ip,
+            "type": self.hcloud_primary_ip.type,
+            "datacenter": self.hcloud_primary_ip.datacenter.name,
             "labels": self.hcloud_primary_ip.labels,
             "delete_protection": self.hcloud_primary_ip.protection["delete"],
             "assignee_id": (
-                to_native(self.hcloud_primary_ip.assignee_id)
-                if self.hcloud_primary_ip.assignee_id is not None
-                else None
+                str(self.hcloud_primary_ip.assignee_id) if self.hcloud_primary_ip.assignee_id is not None else None
             ),
-            "assignee_type": to_native(self.hcloud_primary_ip.assignee_type),
+            "assignee_type": self.hcloud_primary_ip.assignee_type,
             "auto_delete": self.hcloud_primary_ip.auto_delete,
         }
 

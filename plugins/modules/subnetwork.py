@@ -138,10 +138,10 @@ class AnsibleHCloudSubnetwork(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "network": to_native(self.hcloud_network.name),
-            "ip_range": to_native(self.hcloud_subnetwork.ip_range),
-            "type": to_native(self.hcloud_subnetwork.type),
-            "network_zone": to_native(self.hcloud_subnetwork.network_zone),
+            "network": self.hcloud_network.name,
+            "ip_range": self.hcloud_subnetwork.ip_range,
+            "type": self.hcloud_subnetwork.type,
+            "network_zone": self.hcloud_subnetwork.network_zone,
             "gateway": self.hcloud_subnetwork.gateway,
             "vswitch_id": self.hcloud_subnetwork.vswitch_id,
         }

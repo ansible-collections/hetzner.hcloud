@@ -129,9 +129,9 @@ class AnsibleHCloudNetwork(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": to_native(self.hcloud_network.id),
-            "name": to_native(self.hcloud_network.name),
-            "ip_range": to_native(self.hcloud_network.ip_range),
+            "id": str(self.hcloud_network.id),
+            "name": self.hcloud_network.name,
+            "ip_range": self.hcloud_network.ip_range,
             "expose_routes_to_vswitch": self.hcloud_network.expose_routes_to_vswitch,
             "delete_protection": self.hcloud_network.protection["delete"],
             "labels": self.hcloud_network.labels,

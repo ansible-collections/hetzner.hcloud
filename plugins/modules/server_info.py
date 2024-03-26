@@ -163,31 +163,31 @@ class AnsibleHCloudServerInfo(AnsibleHCloud):
 
         for server in self.hcloud_server_info:
             if server is not None:
-                image = None if server.image is None else to_native(server.image.name)
-                placement_group = None if server.placement_group is None else to_native(server.placement_group.name)
-                ipv4_address = None if server.public_net.ipv4 is None else to_native(server.public_net.ipv4.ip)
-                ipv6 = None if server.public_net.ipv6 is None else to_native(server.public_net.ipv6.ip)
-                backup_window = None if server.backup_window is None else to_native(server.backup_window)
+                image = None if server.image is None else server.image.name
+                placement_group = None if server.placement_group is None else server.placement_group.name
+                ipv4_address = None if server.public_net.ipv4 is None else server.public_net.ipv4.ip
+                ipv6 = None if server.public_net.ipv6 is None else server.public_net.ipv6.ip
+                backup_window = None if server.backup_window is None else server.backup_window
                 tmp.append(
                     {
-                        "id": to_native(server.id),
-                        "name": to_native(server.name),
-                        "created": to_native(server.created.isoformat()),
+                        "id": str(server.id),
+                        "name": server.name,
+                        "created": server.created.isoformat(),
                         "ipv4_address": ipv4_address,
                         "ipv6": ipv6,
-                        "private_networks": [to_native(net.network.name) for net in server.private_net],
+                        "private_networks": [net.network.name for net in server.private_net],
                         "private_networks_info": [
-                            {"name": to_native(net.network.name), "ip": net.ip} for net in server.private_net
+                            {"name": net.network.name, "ip": net.ip} for net in server.private_net
                         ],
                         "image": image,
-                        "server_type": to_native(server.server_type.name),
-                        "datacenter": to_native(server.datacenter.name),
-                        "location": to_native(server.datacenter.location.name),
+                        "server_type": server.server_type.name,
+                        "datacenter": server.datacenter.name,
+                        "location": server.datacenter.location.name,
                         "placement_group": placement_group,
                         "rescue_enabled": server.rescue_enabled,
                         "backup_window": backup_window,
                         "labels": server.labels,
-                        "status": to_native(server.status),
+                        "status": server.status,
                         "delete_protection": server.protection["delete"],
                         "rebuild_protection": server.protection["rebuild"],
                     }

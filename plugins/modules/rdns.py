@@ -157,18 +157,18 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
             "server": None,
             "floating_ip": None,
             "load_balancer": None,
-            "ip_address": to_native(self.hcloud_rdns["ip_address"]),
-            "dns_ptr": to_native(self.hcloud_rdns["dns_ptr"]),
+            "ip_address": self.hcloud_rdns["ip_address"],
+            "dns_ptr": self.hcloud_rdns["dns_ptr"],
         }
 
         if self.module.params.get("server"):
-            result["server"] = to_native(self.hcloud_resource.name)
+            result["server"] = self.hcloud_resource.name
         elif self.module.params.get("floating_ip"):
-            result["floating_ip"] = to_native(self.hcloud_resource.name)
+            result["floating_ip"] = self.hcloud_resource.name
         elif self.module.params.get("load_balancer"):
-            result["load_balancer"] = to_native(self.hcloud_resource.name)
+            result["load_balancer"] = self.hcloud_resource.name
         elif self.module.params.get("primary_ip"):
-            result["primary_ip"] = to_native(self.hcloud_resource.name)
+            result["primary_ip"] = self.hcloud_resource.name
         return result
 
     def _get_resource(self):

@@ -97,11 +97,11 @@ class AnsibleHCloudLocationInfo(AnsibleHCloud):
             if location is not None:
                 tmp.append(
                     {
-                        "id": to_native(location.id),
-                        "name": to_native(location.name),
-                        "description": to_native(location.description),
-                        "city": to_native(location.city),
-                        "country": to_native(location.country),
+                        "id": str(location.id),
+                        "name": location.name,
+                        "description": location.description,
+                        "city": location.city,
+                        "country": location.country,
                     }
                 )
         return tmp

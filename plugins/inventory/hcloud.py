@@ -336,43 +336,43 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
     def _build_inventory_server(self, server: Server) -> InventoryServer:
         server_dict: InventoryServer = {}
         server_dict["id"] = server.id
-        server_dict["name"] = to_native(server.name)
-        server_dict["status"] = to_native(server.status)
+        server_dict["name"] = server.name
+        server_dict["status"] = server.status
 
         # Server Type
-        server_dict["type"] = to_native(server.server_type.name)
-        server_dict["server_type"] = to_native(server.server_type.name)
-        server_dict["architecture"] = to_native(server.server_type.architecture)
+        server_dict["type"] = server.server_type.name
+        server_dict["server_type"] = server.server_type.name
+        server_dict["architecture"] = server.server_type.architecture
 
         # Network
         if server.public_net.ipv4:
-            server_dict["ipv4"] = to_native(server.public_net.ipv4.ip)
+            server_dict["ipv4"] = server.public_net.ipv4.ip
 
         if server.public_net.ipv6:
-            server_dict["ipv6"] = to_native(first_ipv6_address(server.public_net.ipv6.ip))
-            server_dict["ipv6_network"] = to_native(server.public_net.ipv6.network)
-            server_dict["ipv6_network_mask"] = to_native(server.public_net.ipv6.network_mask)
+            server_dict["ipv6"] = first_ipv6_address(server.public_net.ipv6.ip)
+            server_dict["ipv6_network"] = server.public_net.ipv6.network
+            server_dict["ipv6_network_mask"] = server.public_net.ipv6.network_mask
 
         server_dict["private_networks"] = [
-            {"id": v.network.id, "name": to_native(v.network.name), "ip": to_native(v.ip)} for v in server.private_net
+            {"id": v.network.id, "name": v.network.name, "ip": v.ip} for v in server.private_net
         ]
 
         if self.get_option("network"):
             for private_net in server.private_net:
                 # Set private_ipv4 if user filtered for one network
                 if private_net.network.id == self.network.id:
-                    server_dict["private_ipv4"] = to_native(private_net.ip)
+                    server_dict["private_ipv4"] = private_net.ip
                     break
 
         # Datacenter
-        server_dict["datacenter"] = to_native(server.datacenter.name)
-        server_dict["location"] = to_native(server.datacenter.location.name)
+        server_dict["datacenter"] = server.datacenter.name
+        server_dict["location"] = server.datacenter.location.name
 
         # Image
         if server.image is not None:
             server_dict["image_id"] = server.image.id
-            server_dict["image_os_flavor"] = to_native(server.image.os_flavor)
-            server_dict["image_name"] = to_native(server.image.name or server.image.description)
+            server_dict["image_os_flavor"] = server.image.os_flavor
+            server_dict["image_name"] = server.image.name or server.image.description
 
         # Labels
         server_dict["labels"] = dict(server.labels)
@@ -391,28 +391,28 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
     def _get_server_ansible_host(self, server: Server):
         if self.get_option("connect_with") == "public_ipv4":
             if server.public_net.ipv4:
-                return to_native(server.public_net.ipv4.ip)
+                return server.public_net.ipv4.ip
             raise AnsibleError("Server has no public ipv4, but connect_with=public_ipv4 was specified")
 
         if self.get_option("connect_with") == "public_ipv6":
             if server.public_net.ipv6:
-                return to_native(first_ipv6_address(server.public_net.ipv6.ip))
+                return first_ipv6_address(server.public_net.ipv6.ip)
             raise AnsibleError("Server has no public ipv6, but connect_with=public_ipv6 was specified")
 
         if self.get_option("connect_with") == "hostname":
             # every server has a name, no need to guard this
-            return to_native(server.name)
+            return server.name
 
         if self.get_option("connect_with") == "ipv4_dns_ptr":
             if server.public_net.ipv4:
-                return to_native(server.public_net.ipv4.dns_ptr)
+                return server.public_net.ipv4.dns_ptr
             raise AnsibleError("Server has no public ipv4, but connect_with=ipv4_dns_ptr was specified")
 
         if self.get_option("connect_with") == "private_ipv4":
             if self.get_option("network"):
                 for private_net in server.private_net:
                     if private_net.network.id == self.network.id:
-                        return to_native(private_net.ip)
+                        return private_net.ip
 
             else:
                 raise AnsibleError("You can only connect via private IPv4 if you specify a network")

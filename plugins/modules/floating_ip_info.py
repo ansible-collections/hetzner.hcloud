@@ -122,13 +122,13 @@ class AnsibleHCloudFloatingIPInfo(AnsibleHCloud):
                     server_name = floating_ip.server.name
                 tmp.append(
                     {
-                        "id": to_native(floating_ip.id),
-                        "name": to_native(floating_ip.name),
-                        "description": to_native(floating_ip.description),
-                        "ip": to_native(floating_ip.ip),
-                        "type": to_native(floating_ip.type),
-                        "server": to_native(server_name),
-                        "home_location": to_native(floating_ip.home_location.name),
+                        "id": str(floating_ip.id),
+                        "name": floating_ip.name,
+                        "description": floating_ip.description,
+                        "ip": floating_ip.ip,
+                        "type": floating_ip.type,
+                        "server": server_name,
+                        "home_location": floating_ip.home_location.name,
                         "labels": floating_ip.labels,
                         "delete_protection": floating_ip.protection["delete"],
                     }

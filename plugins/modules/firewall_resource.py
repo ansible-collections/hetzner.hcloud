@@ -125,12 +125,12 @@ class AnsibleHCloudFirewallResource(AnsibleHCloud):
         label_selectors = []
         for resource in self.hcloud_firewall_resource.applied_to:
             if resource.type == FirewallResource.TYPE_SERVER:
-                servers.append(to_native(resource.server.name))
+                servers.append(resource.server.name)
             elif resource.type == FirewallResource.TYPE_LABEL_SELECTOR:
-                label_selectors.append(to_native(resource.label_selector.selector))
+                label_selectors.append(resource.label_selector.selector)
 
         return {
-            "firewall": to_native(self.hcloud_firewall_resource.name),
+            "firewall": self.hcloud_firewall_resource.name,
             "servers": servers,
             "label_selectors": label_selectors,
         }

@@ -143,9 +143,9 @@ class AnsibleHCloudIsoInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": to_native(iso_info.id),
-                    "name": to_native(iso_info.name),
-                    "description": to_native(iso_info.description),
+                    "id": str(iso_info.id),
+                    "name": iso_info.name,
+                    "description": iso_info.description,
                     "type": iso_info.type,
                     "architecture": iso_info.architecture,
                     "deprecated": (

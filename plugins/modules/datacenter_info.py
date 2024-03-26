@@ -139,10 +139,10 @@ class AnsibleHCloudDatacenterInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": to_native(datacenter.id),
-                    "name": to_native(datacenter.name),
-                    "description": to_native(datacenter.description),
-                    "location": to_native(datacenter.location.name),
+                    "id": str(datacenter.id),
+                    "name": datacenter.name,
+                    "description": datacenter.description,
+                    "location": datacenter.location.name,
                     "server_types": {
                         "available": [o.id for o in datacenter.server_types.available],
                         "available_for_migration": [o.id for o in datacenter.server_types.available_for_migration],

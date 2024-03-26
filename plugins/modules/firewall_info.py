@@ -167,8 +167,8 @@ class AnsibleHCloudFirewallInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": to_native(firewall.id),
-                    "name": to_native(firewall.name),
+                    "id": str(firewall.id),
+                    "name": firewall.name,
                     "labels": firewall.labels,
                     "rules": [self._prepare_result_rule(rule) for rule in firewall.rules],
                     "applied_to": [self._prepare_result_applied_to(resource) for resource in firewall.applied_to],
@@ -179,27 +179,25 @@ class AnsibleHCloudFirewallInfo(AnsibleHCloud):
 
     def _prepare_result_rule(self, rule: FirewallRule):
         return {
-            "description": to_native(rule.description) if rule.description is not None else None,
-            "direction": to_native(rule.direction),
-            "protocol": to_native(rule.protocol),
-            "port": to_native(rule.port) if rule.port is not None else None,
-            "source_ips": [to_native(cidr) for cidr in rule.source_ips],
-            "destination_ips": [to_native(cidr) for cidr in rule.destination_ips],
+            "description": rule.description if rule.description is not None else None,
+            "direction": rule.direction,
+            "protocol": rule.protocol,
+            "port": rule.port if rule.port is not None else None,
+            "source_ips": [cidr for cidr in rule.source_ips],
+            "destination_ips": [cidr for cidr in rule.destination_ips],
         }
 
     def _prepare_result_applied_to(self, resource: FirewallResource):
         result = {
-            "type": to_native(resource.type),
-            "server": to_native(resource.server.id) if resource.server is not None else None,
-            "label_selector": (
-                to_native(resource.label_selector.selector) if resource.label_selector is not None else None
-            ),
+            "type": resource.type,
+            "server": str(resource.server.id) if resource.server is not None else None,
+            "label_selector": resource.label_selector.selector if resource.label_selector is not None else None,
         }
         if resource.applied_to_resources is not None:
             result["applied_to_resources"] = [
                 {
-                    "type": to_native(item.type),
-                    "server": to_native(item.server.id) if item.server is not None else None,
+                    "type": item.type,
+                    "server": str(item.server.id) if item.server is not None else None,
                 }
                 for item in resource.applied_to_resources
             ]

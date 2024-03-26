@@ -146,15 +146,15 @@ class AnsibleHCloudPrimaryIPInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": to_native(primary_ip.id),
-                    "name": to_native(primary_ip.name),
-                    "ip": to_native(primary_ip.ip),
-                    "type": to_native(primary_ip.type),
-                    "assignee_id": (to_native(primary_ip.assignee_id) if primary_ip.assignee_id is not None else None),
-                    "assignee_type": to_native(primary_ip.assignee_type),
+                    "id": str(primary_ip.id),
+                    "name": primary_ip.name,
+                    "ip": primary_ip.ip,
+                    "type": primary_ip.type,
+                    "assignee_id": (str(primary_ip.assignee_id) if primary_ip.assignee_id is not None else None),
+                    "assignee_type": primary_ip.assignee_type,
                     "auto_delete": primary_ip.auto_delete,
-                    "home_location": to_native(primary_ip.datacenter.name),
-                    "dns_ptr": to_native(primary_ip.dns_ptr[0]["dns_ptr"]) if len(primary_ip.dns_ptr) > 0 else None,
+                    "home_location": primary_ip.datacenter.name,
+                    "dns_ptr": primary_ip.dns_ptr[0]["dns_ptr"] if len(primary_ip.dns_ptr) > 0 else None,
                     "labels": primary_ip.labels,
                     "delete_protection": primary_ip.protection["delete"],
                 }

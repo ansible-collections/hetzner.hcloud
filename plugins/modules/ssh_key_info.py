@@ -98,10 +98,10 @@ class AnsibleHCloudSSHKeyInfo(AnsibleHCloud):
             if ssh_key:
                 ssh_keys.append(
                     {
-                        "id": to_native(ssh_key.id),
-                        "name": to_native(ssh_key.name),
-                        "fingerprint": to_native(ssh_key.fingerprint),
-                        "public_key": to_native(ssh_key.public_key),
+                        "id": str(ssh_key.id),
+                        "name": ssh_key.name,
+                        "fingerprint": ssh_key.fingerprint,
+                        "public_key": ssh_key.public_key,
                         "labels": ssh_key.labels,
                     }
                 )
