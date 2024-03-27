@@ -7,7 +7,7 @@ try:
 except ImportError:
     isoparse = None
 
-from ..core import BaseDomain
+from ..core import BaseDomain, DomainIdentityMixin
 
 if TYPE_CHECKING:
     from ..actions import BoundAction
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from .client import BoundLoadBalancer
 
 
-class LoadBalancer(BaseDomain):
+class LoadBalancer(BaseDomain, DomainIdentityMixin):
     """LoadBalancer Domain
 
     :param id: int

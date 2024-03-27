@@ -7,14 +7,14 @@ try:
 except ImportError:
     isoparse = None
 
-from ..core import BaseDomain
+from ..core import BaseDomain, DomainIdentityMixin
 
 if TYPE_CHECKING:
     from ..actions import BoundAction
     from .client import BoundPlacementGroup
 
 
-class PlacementGroup(BaseDomain):
+class PlacementGroup(BaseDomain, DomainIdentityMixin):
     """Placement Group Domain
 
     :param id: int
