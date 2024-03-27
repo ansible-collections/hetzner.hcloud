@@ -113,7 +113,6 @@ hcloud_ssh_key:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -127,10 +126,10 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": to_native(self.hcloud_ssh_key.id),
-            "name": to_native(self.hcloud_ssh_key.name),
-            "fingerprint": to_native(self.hcloud_ssh_key.fingerprint),
-            "public_key": to_native(self.hcloud_ssh_key.public_key),
+            "id": str(self.hcloud_ssh_key.id),
+            "name": self.hcloud_ssh_key.name,
+            "fingerprint": self.hcloud_ssh_key.fingerprint,
+            "public_key": self.hcloud_ssh_key.public_key,
             "labels": self.hcloud_ssh_key.labels,
         }
 

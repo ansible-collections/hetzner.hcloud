@@ -107,7 +107,6 @@ hcloud_placement_group:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -121,10 +120,10 @@ class AnsibleHCloudPlacementGroup(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": to_native(self.hcloud_placement_group.id),
-            "name": to_native(self.hcloud_placement_group.name),
+            "id": str(self.hcloud_placement_group.id),
+            "name": self.hcloud_placement_group.name,
             "labels": self.hcloud_placement_group.labels,
-            "type": to_native(self.hcloud_placement_group.type),
+            "type": self.hcloud_placement_group.type,
             "servers": self.hcloud_placement_group.servers,
         }
 

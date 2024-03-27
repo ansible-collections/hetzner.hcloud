@@ -86,7 +86,6 @@ hcloud_route:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -101,8 +100,8 @@ class AnsibleHCloudRoute(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "network": to_native(self.hcloud_network.name),
-            "destination": to_native(self.hcloud_route.destination),
+            "network": self.hcloud_network.name,
+            "destination": self.hcloud_route.destination,
             "gateway": self.hcloud_route.gateway,
         }
 

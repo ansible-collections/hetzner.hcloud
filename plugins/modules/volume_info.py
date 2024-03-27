@@ -95,7 +95,6 @@ hcloud_volume_info:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -111,22 +110,21 @@ class AnsibleHCloudVolumeInfo(AnsibleHCloud):
         tmp = []
 
         for volume in self.hcloud_volume_info:
-            if volume is not None:
-                server_name = None
-                if volume.server is not None:
-                    server_name = to_native(volume.server.name)
-                tmp.append(
-                    {
-                        "id": to_native(volume.id),
-                        "name": to_native(volume.name),
-                        "size": volume.size,
-                        "location": to_native(volume.location.name),
-                        "labels": volume.labels,
-                        "server": server_name,
-                        "linux_device": to_native(volume.linux_device),
-                        "delete_protection": volume.protection["delete"],
-                    }
-                )
+            if volume is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": str(volume.id),
+                    "name": volume.name,
+                    "size": volume.size,
+                    "location": volume.location.name,
+                    "labels": volume.labels,
+                    "server": volume.server.name if volume.server is not None else None,
+                    "linux_device": volume.linux_device,
+                    "delete_protection": volume.protection["delete"],
+                }
+            )
 
         return tmp
 

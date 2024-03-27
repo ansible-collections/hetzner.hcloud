@@ -87,7 +87,6 @@ hcloud_certificate_info:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -100,23 +99,25 @@ class AnsibleHCloudCertificateInfo(AnsibleHCloud):
     hcloud_certificate_info: list[BoundCertificate] | None = None
 
     def _prepare_result(self):
-        certificates = []
+        tmp = []
 
         for certificate in self.hcloud_certificate_info:
-            if certificate:
-                certificates.append(
-                    {
-                        "id": to_native(certificate.id),
-                        "name": to_native(certificate.name),
-                        "fingerprint": to_native(certificate.fingerprint),
-                        "certificate": to_native(certificate.certificate),
-                        "not_valid_before": to_native(certificate.not_valid_before.isoformat()),
-                        "not_valid_after": to_native(certificate.not_valid_after.isoformat()),
-                        "domain_names": [to_native(domain) for domain in certificate.domain_names],
-                        "labels": certificate.labels,
-                    }
-                )
-        return certificates
+            if certificate is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": str(certificate.id),
+                    "name": certificate.name,
+                    "fingerprint": certificate.fingerprint,
+                    "certificate": certificate.certificate,
+                    "not_valid_before": certificate.not_valid_before.isoformat(),
+                    "not_valid_after": certificate.not_valid_after.isoformat(),
+                    "domain_names": certificate.domain_names,
+                    "labels": certificate.labels,
+                }
+            )
+        return tmp
 
     def get_certificates(self):
         try:

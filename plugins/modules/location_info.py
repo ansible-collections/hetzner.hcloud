@@ -78,7 +78,6 @@ hcloud_location_info:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -94,16 +93,18 @@ class AnsibleHCloudLocationInfo(AnsibleHCloud):
         tmp = []
 
         for location in self.hcloud_location_info:
-            if location is not None:
-                tmp.append(
-                    {
-                        "id": to_native(location.id),
-                        "name": to_native(location.name),
-                        "description": to_native(location.description),
-                        "city": to_native(location.city),
-                        "country": to_native(location.country),
-                    }
-                )
+            if location is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": str(location.id),
+                    "name": location.name,
+                    "description": location.description,
+                    "city": location.city,
+                    "country": location.country,
+                }
+            )
         return tmp
 
     def get_locations(self):

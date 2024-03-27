@@ -88,7 +88,6 @@ hcloud_load_balancer_type_info:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -104,18 +103,20 @@ class AnsibleHCloudLoadBalancerTypeInfo(AnsibleHCloud):
         tmp = []
 
         for load_balancer_type in self.hcloud_load_balancer_type_info:
-            if load_balancer_type is not None:
-                tmp.append(
-                    {
-                        "id": to_native(load_balancer_type.id),
-                        "name": to_native(load_balancer_type.name),
-                        "description": to_native(load_balancer_type.description),
-                        "max_connections": load_balancer_type.max_connections,
-                        "max_services": load_balancer_type.max_services,
-                        "max_targets": load_balancer_type.max_targets,
-                        "max_assigned_certificates": load_balancer_type.max_assigned_certificates,
-                    }
-                )
+            if load_balancer_type is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": str(load_balancer_type.id),
+                    "name": load_balancer_type.name,
+                    "description": load_balancer_type.description,
+                    "max_connections": load_balancer_type.max_connections,
+                    "max_services": load_balancer_type.max_services,
+                    "max_targets": load_balancer_type.max_targets,
+                    "max_assigned_certificates": load_balancer_type.max_assigned_certificates,
+                }
+            )
         return tmp
 
     def get_load_balancer_types(self):

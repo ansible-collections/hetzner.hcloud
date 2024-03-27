@@ -112,7 +112,6 @@ hcloud_image_info:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -128,20 +127,22 @@ class AnsibleHCloudImageInfo(AnsibleHCloud):
         tmp = []
 
         for image in self.hcloud_image_info:
-            if image is not None:
-                tmp.append(
-                    {
-                        "id": to_native(image.id),
-                        "status": to_native(image.status),
-                        "type": to_native(image.type),
-                        "name": to_native(image.name),
-                        "description": to_native(image.description),
-                        "os_flavor": to_native(image.os_flavor),
-                        "os_version": to_native(image.os_version),
-                        "architecture": to_native(image.architecture),
-                        "labels": image.labels,
-                    }
-                )
+            if image is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": str(image.id),
+                    "status": image.status,
+                    "type": image.type,
+                    "name": image.name,
+                    "description": image.description,
+                    "os_flavor": image.os_flavor,
+                    "os_version": image.os_version,
+                    "architecture": image.architecture,
+                    "labels": image.labels,
+                }
+            )
         return tmp
 
     def get_images(self):

@@ -160,7 +160,6 @@ hcloud_volume:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -173,18 +172,14 @@ class AnsibleHCloudVolume(AnsibleHCloud):
     hcloud_volume: BoundVolume | None = None
 
     def _prepare_result(self):
-        server_name = None
-        if self.hcloud_volume.server is not None:
-            server_name = to_native(self.hcloud_volume.server.name)
-
         return {
-            "id": to_native(self.hcloud_volume.id),
-            "name": to_native(self.hcloud_volume.name),
+            "id": str(self.hcloud_volume.id),
+            "name": self.hcloud_volume.name,
             "size": self.hcloud_volume.size,
-            "location": to_native(self.hcloud_volume.location.name),
+            "location": self.hcloud_volume.location.name,
             "labels": self.hcloud_volume.labels,
-            "server": server_name,
-            "linux_device": to_native(self.hcloud_volume.linux_device),
+            "server": self.hcloud_volume.server.name if self.hcloud_volume.server is not None else None,
+            "linux_device": self.hcloud_volume.linux_device,
             "delete_protection": self.hcloud_volume.protection["delete"],
         }
 

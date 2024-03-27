@@ -152,7 +152,6 @@ hcloud_load_balancer:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -168,23 +167,20 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
     hcloud_load_balancer: BoundLoadBalancer | None = None
 
     def _prepare_result(self):
-        private_ipv4_address = (
-            None
-            if len(self.hcloud_load_balancer.private_net) == 0
-            else to_native(self.hcloud_load_balancer.private_net[0].ip)
-        )
         return {
-            "id": to_native(self.hcloud_load_balancer.id),
-            "name": to_native(self.hcloud_load_balancer.name),
-            "ipv4_address": to_native(self.hcloud_load_balancer.public_net.ipv4.ip),
-            "ipv6_address": to_native(self.hcloud_load_balancer.public_net.ipv6.ip),
-            "private_ipv4_address": private_ipv4_address,
-            "load_balancer_type": to_native(self.hcloud_load_balancer.load_balancer_type.name),
-            "algorithm": to_native(self.hcloud_load_balancer.algorithm.type),
-            "location": to_native(self.hcloud_load_balancer.location.name),
+            "id": str(self.hcloud_load_balancer.id),
+            "name": self.hcloud_load_balancer.name,
+            "ipv4_address": self.hcloud_load_balancer.public_net.ipv4.ip,
+            "ipv6_address": self.hcloud_load_balancer.public_net.ipv6.ip,
+            "private_ipv4_address": (
+                self.hcloud_load_balancer.private_net[0].ip if len(self.hcloud_load_balancer.private_net) else None
+            ),
+            "load_balancer_type": self.hcloud_load_balancer.load_balancer_type.name,
+            "algorithm": self.hcloud_load_balancer.algorithm.type,
+            "location": self.hcloud_load_balancer.location.name,
             "labels": self.hcloud_load_balancer.labels,
             "delete_protection": self.hcloud_load_balancer.protection["delete"],
-            "disable_public_interface": False if self.hcloud_load_balancer.public_net.enabled else True,
+            "disable_public_interface": not self.hcloud_load_balancer.public_net.enabled,
         }
 
     def _get_load_balancer(self):

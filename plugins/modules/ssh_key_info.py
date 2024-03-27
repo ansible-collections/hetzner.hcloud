@@ -79,7 +79,6 @@ hcloud_ssh_key_info:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -92,20 +91,22 @@ class AnsibleHCloudSSHKeyInfo(AnsibleHCloud):
     hcloud_ssh_key_info: list[BoundSSHKey] | None = None
 
     def _prepare_result(self):
-        ssh_keys = []
+        tmp = []
 
         for ssh_key in self.hcloud_ssh_key_info:
-            if ssh_key:
-                ssh_keys.append(
-                    {
-                        "id": to_native(ssh_key.id),
-                        "name": to_native(ssh_key.name),
-                        "fingerprint": to_native(ssh_key.fingerprint),
-                        "public_key": to_native(ssh_key.public_key),
-                        "labels": ssh_key.labels,
-                    }
-                )
-        return ssh_keys
+            if ssh_key is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": str(ssh_key.id),
+                    "name": ssh_key.name,
+                    "fingerprint": ssh_key.fingerprint,
+                    "public_key": ssh_key.public_key,
+                    "labels": ssh_key.labels,
+                }
+            )
+        return tmp
 
     def get_ssh_keys(self):
         try:

@@ -122,7 +122,6 @@ hcloud_iso_info:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -143,9 +142,9 @@ class AnsibleHCloudIsoInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": to_native(iso_info.id),
-                    "name": to_native(iso_info.name),
-                    "description": to_native(iso_info.description),
+                    "id": str(iso_info.id),
+                    "name": iso_info.name,
+                    "description": iso_info.description,
                     "type": iso_info.type,
                     "architecture": iso_info.architecture,
                     "deprecated": (

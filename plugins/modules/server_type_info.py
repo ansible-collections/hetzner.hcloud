@@ -124,7 +124,6 @@ hcloud_server_type_info:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -140,29 +139,31 @@ class AnsibleHCloudServerTypeInfo(AnsibleHCloud):
         tmp = []
 
         for server_type in self.hcloud_server_type_info:
-            if server_type is not None:
-                tmp.append(
-                    {
-                        "id": to_native(server_type.id),
-                        "name": to_native(server_type.name),
-                        "description": to_native(server_type.description),
-                        "cores": server_type.cores,
-                        "memory": server_type.memory,
-                        "disk": server_type.disk,
-                        "storage_type": to_native(server_type.storage_type),
-                        "cpu_type": to_native(server_type.cpu_type),
-                        "architecture": to_native(server_type.architecture),
-                        "included_traffic": server_type.included_traffic,
-                        "deprecation": (
-                            {
-                                "announced": server_type.deprecation.announced.isoformat(),
-                                "unavailable_after": server_type.deprecation.unavailable_after.isoformat(),
-                            }
-                            if server_type.deprecation is not None
-                            else None
-                        ),
-                    }
-                )
+            if server_type is None:
+                continue
+
+            tmp.append(
+                {
+                    "id": str(server_type.id),
+                    "name": server_type.name,
+                    "description": server_type.description,
+                    "cores": server_type.cores,
+                    "memory": server_type.memory,
+                    "disk": server_type.disk,
+                    "storage_type": server_type.storage_type,
+                    "cpu_type": server_type.cpu_type,
+                    "architecture": server_type.architecture,
+                    "included_traffic": server_type.included_traffic,
+                    "deprecation": (
+                        {
+                            "announced": server_type.deprecation.announced.isoformat(),
+                            "unavailable_after": server_type.deprecation.unavailable_after.isoformat(),
+                        }
+                        if server_type.deprecation is not None
+                        else None
+                    ),
+                }
+            )
         return tmp
 
     def get_server_types(self):

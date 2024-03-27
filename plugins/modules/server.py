@@ -338,7 +338,6 @@ hcloud_server:
 from datetime import datetime, timedelta, timezone
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
@@ -358,38 +357,31 @@ class AnsibleHCloudServer(AnsibleHCloud):
     hcloud_server: BoundServer | None = None
 
     def _prepare_result(self):
-        image = None if self.hcloud_server.image is None else to_native(self.hcloud_server.image.name)
-        placement_group = (
-            None if self.hcloud_server.placement_group is None else to_native(self.hcloud_server.placement_group.name)
-        )
-        ipv4_address = (
-            None if self.hcloud_server.public_net.ipv4 is None else to_native(self.hcloud_server.public_net.ipv4.ip)
-        )
-        ipv6 = None if self.hcloud_server.public_net.ipv6 is None else to_native(self.hcloud_server.public_net.ipv6.ip)
-        backup_window = (
-            None if self.hcloud_server.backup_window is None else to_native(self.hcloud_server.backup_window)
-        )
         return {
-            "id": to_native(self.hcloud_server.id),
-            "name": to_native(self.hcloud_server.name),
-            "created": to_native(self.hcloud_server.created.isoformat()),
-            "ipv4_address": ipv4_address,
-            "ipv6": ipv6,
-            "private_networks": [to_native(net.network.name) for net in self.hcloud_server.private_net],
+            "id": str(self.hcloud_server.id),
+            "name": self.hcloud_server.name,
+            "created": self.hcloud_server.created.isoformat(),
+            "ipv4_address": (
+                self.hcloud_server.public_net.ipv4.ip if self.hcloud_server.public_net.ipv4 is not None else None
+            ),
+            "ipv6": self.hcloud_server.public_net.ipv6.ip if self.hcloud_server.public_net.ipv6 is not None else None,
+            "private_networks": [net.network.name for net in self.hcloud_server.private_net],
             "private_networks_info": [
-                {"name": to_native(net.network.name), "ip": net.ip} for net in self.hcloud_server.private_net
+                {"name": net.network.name, "ip": net.ip} for net in self.hcloud_server.private_net
             ],
-            "image": image,
-            "server_type": to_native(self.hcloud_server.server_type.name),
-            "datacenter": to_native(self.hcloud_server.datacenter.name),
-            "location": to_native(self.hcloud_server.datacenter.location.name),
-            "placement_group": placement_group,
+            "image": self.hcloud_server.image.name if self.hcloud_server.image is not None else None,
+            "server_type": self.hcloud_server.server_type.name,
+            "datacenter": self.hcloud_server.datacenter.name,
+            "location": self.hcloud_server.datacenter.location.name,
+            "placement_group": (
+                self.hcloud_server.placement_group.name if self.hcloud_server.placement_group is not None else None
+            ),
             "rescue_enabled": self.hcloud_server.rescue_enabled,
-            "backup_window": backup_window,
+            "backup_window": self.hcloud_server.backup_window,
             "labels": self.hcloud_server.labels,
             "delete_protection": self.hcloud_server.protection["delete"],
             "rebuild_protection": self.hcloud_server.protection["rebuild"],
-            "status": to_native(self.hcloud_server.status),
+            "status": self.hcloud_server.status,
         }
 
     def _get_server(self):
