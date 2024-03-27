@@ -7,7 +7,7 @@ try:
 except ImportError:
     isoparse = None
 
-from ..core import BaseDomain
+from ..core import BaseDomain, DomainIdentityMixin
 
 if TYPE_CHECKING:
     from ..actions import BoundAction
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .client import BoundFirewall
 
 
-class Firewall(BaseDomain):
+class Firewall(BaseDomain, DomainIdentityMixin):
     """Firewall Domain
 
     :param id: int
