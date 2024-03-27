@@ -25,4 +25,9 @@ good-names = ["i", "j", "k", "ex", "_", "ip", "id"]
 [tool.pylint.messages_control]
 disable = [
   "wrong-import-position",
+  "missing-module-docstring",
+  "missing-class-docstring",
+  "missing-function-docstring",
+  "duplicate-code",
+  "use-dict-literal",
 ]
