@@ -4,6 +4,21 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v3.1.0
+======
+
+Minor Changes
+-------------
+
+- primary_ip - Use the `server` option to assign a Primary IP being created to a server.
+
+Bugfixes
+--------
+
+- primary_ip - Added the missing `auto_delete` field to the return values.
+- primary_ip - The `auto_delete` option is now used when creating or updating a Primary IP.
+- primary_ip_info - Added the missing `auto_delete` field to the return values.
+- server_network - The returned `alias_ips` list is now sorted.
 
 v3.0.0
 ======
