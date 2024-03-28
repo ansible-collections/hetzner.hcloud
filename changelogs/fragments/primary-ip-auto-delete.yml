@@ -1,4 +1,0 @@
-bugfixes:
-  - primary_ip - Added the missing `auto_delete` field to the return values.
-  - primary_ip_info - Added the missing `auto_delete` field to the return values.
-  - primary_ip - The `auto_delete` option is now used when creating or updating a Primary IP.

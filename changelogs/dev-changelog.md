@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/3.0.0...3.1.0) (2024-03-27)
+
+
+### Features
+
+* assign primary ip to a server on create ([#465](https://github.com/ansible-collections/hetzner.hcloud/issues/465)) ([51afb23](https://github.com/ansible-collections/hetzner.hcloud/commit/51afb2316639d3b996b29544534aaeff6122904c))
+
+
+### Bug Fixes
+
+* return sorted `alias_ips` in `server_network` module ([#458](https://github.com/ansible-collections/hetzner.hcloud/issues/458)) ([1ae6769](https://github.com/ansible-collections/hetzner.hcloud/commit/1ae6769210b1a845084c88c58a545bebc067ca48))
+
 ## [3.0.0](https://github.com/ansible-collections/hetzner.hcloud/compare/2.5.0...3.0.0) (2024-02-05)
 
 
