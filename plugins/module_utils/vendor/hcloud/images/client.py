@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 from ..actions import ActionsPageResult, BoundAction, ResourceActionsClient
@@ -305,18 +306,27 @@ class ImagesClient(ClientEntityBase):
     def get_by_name(self, name: str) -> BoundImage | None:
         """Get image by name
 
-        Deprecated: Use get_by_name_and_architecture instead.
-
         :param name: str
                Used to get image by name.
         :return: :class:`BoundImage <hcloud.images.client.BoundImage>`
+
+        .. deprecated:: 1.19
+            Use :func:`hcloud.images.client.ImagesClient.get_by_name_and_architecture` instead.
         """
+        warnings.warn(
+            "The 'hcloud.images.client.ImagesClient.get_by_name' method is deprecated, please use the "
+            "'hcloud.images.client.ImagesClient.get_by_name_and_architecture' method instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return self._get_first_by(name=name)
 
     def get_by_name_and_architecture(
         self,
         name: str,
         architecture: str,
+        *,
+        include_deprecated: bool | None = None,
     ) -> BoundImage | None:
         """Get image by name
 
@@ -324,9 +334,15 @@ class ImagesClient(ClientEntityBase):
                Used to identify the image.
         :param architecture: str
                Used to identify the image.
+        :param include_deprecated: bool (optional)
+               Include deprecated images. Default: False
         :return: :class:`BoundImage <hcloud.images.client.BoundImage>`
         """
-        return self._get_first_by(name=name, architecture=[architecture])
+        return self._get_first_by(
+            name=name,
+            architecture=[architecture],
+            include_deprecated=include_deprecated,
+        )
 
     def update(
         self,
