@@ -22,50 +22,52 @@ author:
 options:
     id:
         description:
-            - The ID of the Hetzner Cloud server to manage.
-            - Only required if no server I(name) is given
+            - ID of the Hetzner Cloud Server to manage.
+            - Only required if no server O(name) is given
         type: int
     name:
         description:
-            - The Name of the Hetzner Cloud server to manage.
-            - Only required if no server I(id) is given or a server does not exist.
+            - Name of the Hetzner Cloud Server to manage.
+            - Only required if no server O(id) is given or a server does not exist.
         type: str
     server_type:
         description:
-            - The Server Type of the Hetzner Cloud server to manage.
+            - Hetzner Cloud Server Type (name or ID) of the server.
             - Required if server does not exist.
         type: str
     ssh_keys:
         description:
-            - List of SSH key names
-            - The key names correspond to the SSH keys configured for your
-              Hetzner Cloud account access.
+            - List of Hetzner Cloud SSH Keys (name or ID) to create the server with.
+            - Only used during the server creation.
         type: list
         elements: str
     volumes:
         description:
-            - List of Volumes IDs that should be attached to the server on server creation.
+            - List of Hetzner Cloud Volumes (name or ID) that should be attached to the server.
+            - Only used during the server creation.
         type: list
         elements: str
     firewalls:
         description:
-            - List of Firewall IDs that should be attached to the server on server creation.
+            - List of Hetzner Cloud Firewalls (name or ID) that should be attached to the server.
         type: list
         elements: str
     image:
         description:
-            - Image the server should be created from.
-            - Required if server does not exist.
+            - Hetzner Cloud Image (name or ID) to create the server from.
+            - Required if server does not exist or when O(state=rebuild).
         type: str
     location:
         description:
-            - Location of Server.
-            - Required if no I(datacenter) is given and server does not exist.
+            - Hetzner Cloud Location (name or ID) to create the server in.
+            - Required if no O(datacenter) is given and server does not exist.
+            - Only used during the server creation.
         type: str
     datacenter:
         description:
-            - Datacenter of Server.
-            - Required if no I(location) is given and server does not exist.
+            - Hetzner Cloud Datacenter (name or ID) to create the server in.
+            - Required if no O(location) is given and server does not exist.
+            - Only used during the server creation.
         type: str
     backups:
         description:
@@ -79,25 +81,27 @@ options:
         default: false
     enable_ipv4:
         description:
-            - Enables the public ipv4 address
+            - Enables the public ipv4 address.
         type: bool
         default: true
     enable_ipv6:
         description:
-            - Enables the public ipv6 address
+            - Enables the public ipv6 address.
         type: bool
         default: true
     ipv4:
         description:
-            - ID of the ipv4 Primary IP to use. If omitted and enable_ipv4 is true, a new ipv4 Primary IP will automatically be created
+            - Hetzner Cloud Primary IPv4 (name or ID) to use.
+            - If omitted and O(enable_ipv4=true), a new ipv4 Primary IP will automatically be created.
         type: str
     ipv6:
         description:
-            - ID of the ipv6 Primary IP to use. If omitted and enable_ipv6 is true, a new ipv6 Primary IP will automatically be created.
+            - Hetzner Cloud Primary IPv6 (name or ID) to use.
+            - If omitted and O(enable_ipv6=true), a new ipv6 Primary IP will automatically be created.
         type: str
     private_networks:
         description:
-            - List of private networks the server is attached to (name or ID)
+            - List of Hetzner Cloud Networks (name or ID) the server should be attached to.
             - If None, private networks are left as they are (e.g. if previously added by hcloud_server_network),
               if it has any other value (including []), only those networks are attached to the server.
         type: list
@@ -105,7 +109,7 @@ options:
     force:
         description:
             - Force the update of the server.
-            - May power off the server if update.
+            - May power off the server if update is applied.
         type: bool
         default: false
         aliases: [force_upgrade]
@@ -117,7 +121,7 @@ options:
     user_data:
         description:
             - User Data to be passed to the server on creation.
-            - Only used if server does not exist.
+            - Only used during the server creation.
         type: str
     rescue_mode:
         description:
@@ -130,16 +134,16 @@ options:
     delete_protection:
         description:
             - Protect the Server for deletion.
-            - Needs to be the same as I(rebuild_protection).
+            - Needs to be the same as O(rebuild_protection).
         type: bool
     rebuild_protection:
         description:
             - Protect the Server for rebuild.
-            - Needs to be the same as I(delete_protection).
+            - Needs to be the same as O(delete_protection).
         type: bool
     placement_group:
         description:
-            - Placement Group of the server.
+            - Hetzner Cloud Placement Group (name or ID) to create the server in.
         type: str
     state:
         description:
@@ -331,6 +335,7 @@ hcloud_server:
 """
 
 from datetime import datetime, timedelta, timezone
+from typing import TYPE_CHECKING, Literal
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -342,8 +347,14 @@ from ..module_utils.vendor.hcloud.servers import (
     Server,
     ServerCreatePublicNetwork,
 )
-from ..module_utils.vendor.hcloud.ssh_keys import SSHKey
-from ..module_utils.vendor.hcloud.volumes import Volume
+
+if TYPE_CHECKING:
+    from ..module_utils.vendor.hcloud.actions import BoundAction
+    from ..module_utils.vendor.hcloud.firewalls import BoundFirewall
+    from ..module_utils.vendor.hcloud.networks import BoundNetwork
+    from ..module_utils.vendor.hcloud.placement_groups import BoundPlacementGroup
+    from ..module_utils.vendor.hcloud.primary_ips import PrimaryIP
+    from ..module_utils.vendor.hcloud.server_types import ServerType
 
 
 class AnsibleHCloudServer(AnsibleHCloud):
@@ -392,73 +403,74 @@ class AnsibleHCloudServer(AnsibleHCloud):
         self.module.fail_on_missing_params(required_params=["name", "server_type", "image"])
 
         server_type = self._get_server_type()
+        image = self._get_image(server_type)
 
         params = {
             "name": self.module.params.get("name"),
-            "server_type": server_type,
-            "user_data": self.module.params.get("user_data"),
             "labels": self.module.params.get("labels"),
-            "image": self._get_image(server_type),
-            "placement_group": self._get_placement_group(),
+            "server_type": server_type,
+            "image": image,
+            "user_data": self.module.params.get("user_data"),
             "public_net": ServerCreatePublicNetwork(
                 enable_ipv4=self.module.params.get("enable_ipv4"),
                 enable_ipv6=self.module.params.get("enable_ipv6"),
             ),
         }
 
+        if self.module.params.get("placement_group") is not None:
+            params["placement_group"] = self._client_get_by_name_or_id(
+                "placement_groups", self.module.params.get("placement_group")
+            )
+
         if self.module.params.get("ipv4") is not None:
-            primary_ip = self.client.primary_ips.get_by_name(self.module.params.get("ipv4"))
-            if not primary_ip:
-                primary_ip = self.client.primary_ips.get_by_id(self.module.params.get("ipv4"))
-            params["public_net"].ipv4 = primary_ip
+            params["public_net"].ipv4 = self._client_get_by_name_or_id("primary_ips", self.module.params.get("ipv4"))
 
         if self.module.params.get("ipv6") is not None:
-            primary_ip = self.client.primary_ips.get_by_name(self.module.params.get("ipv6"))
-            if not primary_ip:
-                primary_ip = self.client.primary_ips.get_by_id(self.module.params.get("ipv6"))
-            params["public_net"].ipv6 = primary_ip
+            params["public_net"].ipv6 = self._client_get_by_name_or_id("primary_ips", self.module.params.get("ipv6"))
 
         if self.module.params.get("private_networks") is not None:
-            _networks = []
-            for network_name_or_id in self.module.params.get("private_networks"):
-                _networks.append(
-                    self.client.networks.get_by_name(network_name_or_id)
-                    or self.client.networks.get_by_id(network_name_or_id)
-                )
-            params["networks"] = _networks
+            params["networks"] = [
+                self._client_get_by_name_or_id("networks", name_or_id)
+                for name_or_id in self.module.params.get("private_networks")
+            ]
 
         if self.module.params.get("ssh_keys") is not None:
-            params["ssh_keys"] = [SSHKey(name=ssh_key_name) for ssh_key_name in self.module.params.get("ssh_keys")]
+            params["ssh_keys"] = [
+                self._client_get_by_name_or_id("ssh_keys", name_or_id)
+                for name_or_id in self.module.params.get("ssh_keys")
+            ]
 
         if self.module.params.get("volumes") is not None:
-            params["volumes"] = [Volume(id=volume_id) for volume_id in self.module.params.get("volumes")]
+            params["volumes"] = [
+                self._client_get_by_name_or_id("volumes", name_or_id)
+                for name_or_id in self.module.params.get("volumes")
+            ]
+
         if self.module.params.get("firewalls") is not None:
-            params["firewalls"] = []
-            for firewall_param in self.module.params.get("firewalls"):
-                firewall = self.client.firewalls.get_by_name(firewall_param)
-                if firewall is not None:
-                    # When firewall name is not available look for id instead
-                    params["firewalls"].append(firewall)
-                else:
-                    params["firewalls"].append(self.client.firewalls.get_by_id(firewall_param))
+            params["firewalls"] = [
+                self._client_get_by_name_or_id("firewalls", name_or_id)
+                for name_or_id in self.module.params.get("firewalls")
+            ]
 
         if self.module.params.get("location") is None and self.module.params.get("datacenter") is None:
             # When not given, the API will choose the location.
             params["location"] = None
             params["datacenter"] = None
         elif self.module.params.get("location") is not None and self.module.params.get("datacenter") is None:
-            params["location"] = self.client.locations.get_by_name(self.module.params.get("location"))
+            params["location"] = self._client_get_by_name_or_id("locations", self.module.params.get("location"))
         elif self.module.params.get("location") is None and self.module.params.get("datacenter") is not None:
-            params["datacenter"] = self.client.datacenters.get_by_name(self.module.params.get("datacenter"))
+            params["datacenter"] = self._client_get_by_name_or_id("datacenters", self.module.params.get("datacenter"))
 
         if self.module.params.get("state") == "stopped":
             params["start_after_create"] = False
+
         if not self.module.check_mode:
             try:
                 resp = self.client.servers.create(**params)
                 self.result["root_password"] = resp.root_password
                 resp.action.wait_until_finished(max_retries=1000)
-                [action.wait_until_finished() for action in resp.next_actions]
+                for action in resp.next_actions:
+                    action.wait_until_finished()
 
                 rescue_mode = self.module.params.get("rescue_mode")
                 if rescue_mode:
@@ -483,22 +495,15 @@ class AnsibleHCloudServer(AnsibleHCloud):
         self._mark_as_changed()
         self._get_server()
 
-    def _get_image(self, server_type):
-        image_resp = self.client.images.get_list(
+    def _get_image(self, server_type: ServerType):
+        image = self.client.images.get_by_name_and_architecture(
             name=self.module.params.get("image"),
             architecture=server_type.architecture,
             include_deprecated=True,
         )
-        images = getattr(image_resp, "images")
-        image = None
-        if images is not None and len(images) > 0:
-            # If image name is not available look for id instead
-            image = images[0]
-        else:
-            try:
-                image = self.client.images.get_by_id(self.module.params.get("image"))
-            except HCloudException as exception:
-                self.fail_json_hcloud(exception, msg=f"Image {self.module.params.get('image')} was not found")
+        if image is None:
+            image = self.client.images.get_by_id(self.module.params.get("image"))
+
         if image.deprecated is not None:
             available_until = image.deprecated + timedelta(days=90)
             if self.module.params.get("allow_deprecated_image"):
@@ -516,22 +521,13 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 )
         return image
 
-    def _get_server_type(self):
-        server_type = self.client.server_types.get_by_name(self.module.params.get("server_type"))
-        if server_type is None:
-            try:
-                server_type = self.client.server_types.get_by_id(self.module.params.get("server_type"))
-            except HCloudException as exception:
-                self.fail_json_hcloud(
-                    exception,
-                    msg=f"server_type {self.module.params.get('server_type')} was not found",
-                )
+    def _get_server_type(self) -> ServerType:
+        server_type = self._client_get_by_name_or_id("server_types", self.module.params.get("server_type"))
 
         self._check_and_warn_deprecated_server(server_type)
-
         return server_type
 
-    def _check_and_warn_deprecated_server(self, server_type):
+    def _check_and_warn_deprecated_server(self, server_type: ServerType) -> None:
         if server_type.deprecation is None:
             return
 
@@ -554,38 +550,15 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 "the server_type parameter on the hetzner.hcloud.server module."
             )
 
-    def _get_placement_group(self):
-        if self.module.params.get("placement_group") is None:
-            return None
-
-        placement_group = self.client.placement_groups.get_by_name(self.module.params.get("placement_group"))
-        if placement_group is None:
-            try:
-                placement_group = self.client.placement_groups.get_by_id(self.module.params.get("placement_group"))
-            except HCloudException as exception:
-                self.fail_json_hcloud(
-                    exception,
-                    msg=f"placement_group {self.module.params.get('placement_group')} was not found",
-                )
-
-        return placement_group
-
-    def _get_primary_ip(self, field):
-        if self.module.params.get(field) is None:
-            return None
-
-        primary_ip = self.client.primary_ips.get_by_name(self.module.params.get(field))
-        if primary_ip is None:
-            try:
-                primary_ip = self.client.primary_ips.get_by_id(self.module.params.get(field))
-            except HCloudException as exception:
-                self.fail_json_hcloud(exception, msg=f"primary_ip {self.module.params.get(field)} was not found")
-
-        return primary_ip
-
-    def _update_server(self):
+    def _update_server(self) -> None:
         try:
             previous_server_status = self.hcloud_server.status
+
+            labels = self.module.params.get("labels")
+            if labels is not None and labels != self.hcloud_server.labels:
+                if not self.module.check_mode:
+                    self.hcloud_server.update(labels=labels)
+                self._mark_as_changed()
 
             rescue_mode = self.module.params.get("rescue_mode")
             if rescue_mode and self.hcloud_server.rescue_enabled is False:
@@ -607,154 +580,23 @@ class AnsibleHCloudServer(AnsibleHCloud):
                     self.hcloud_server.disable_backup().wait_until_finished()
                 self._mark_as_changed()
 
-            labels = self.module.params.get("labels")
-            if labels is not None and labels != self.hcloud_server.labels:
-                if not self.module.check_mode:
-                    self.hcloud_server.update(labels=labels)
-                self._mark_as_changed()
+            if self.module.params.get("firewalls") is not None:
+                self._update_server_firewalls()
 
-            wanted_firewalls = self.module.params.get("firewalls")
-            if wanted_firewalls is not None:
-                # Removing existing but not wanted firewalls
-                for current_firewall in self.hcloud_server.public_net.firewalls:
-                    if current_firewall.firewall.name not in wanted_firewalls:
-                        self._mark_as_changed()
-                        if self.module.check_mode:
-                            continue
+            if self.module.params.get("placement_group") is not None:
+                self._update_server_placement_group()
 
-                        firewall_resource = FirewallResource(type="server", server=self.hcloud_server)
-                        actions = self.client.firewalls.remove_from_resources(
-                            current_firewall.firewall,
-                            [firewall_resource],
-                        )
-                        for action in actions:
-                            action.wait_until_finished()
+            if self.module.params.get("ipv4") is not None:
+                self._update_server_ip("ipv4")
 
-                # Adding wanted firewalls that doesn't exist yet
-                for firewall_name in wanted_firewalls:
-                    found = False
-                    for firewall in self.hcloud_server.public_net.firewalls:
-                        if firewall.firewall.name == firewall_name:
-                            found = True
-                            break
+            if self.module.params.get("ipv6") is not None:
+                self._update_server_ip("ipv6")
 
-                    if not found:
-                        self._mark_as_changed()
-                        if not self.module.check_mode:
-                            firewall = self.client.firewalls.get_by_name(firewall_name)
-                            if firewall is None:
-                                self.module.fail_json(msg=f"firewall {firewall_name} was not found")
-                            firewall_resource = FirewallResource(type="server", server=self.hcloud_server)
-                            actions = self.client.firewalls.apply_to_resources(firewall, [firewall_resource])
-                            for action in actions:
-                                action.wait_until_finished()
+            if self.module.params.get("private_networks") is not None:
+                self._update_server_networks()
 
-            if "placement_group" in self.module.params:
-                if self.module.params["placement_group"] is None and self.hcloud_server.placement_group is not None:
-                    if not self.module.check_mode:
-                        self.hcloud_server.remove_from_placement_group().wait_until_finished()
-                    self._mark_as_changed()
-                else:
-                    placement_group = self._get_placement_group()
-                    if placement_group is not None and (
-                        self.hcloud_server.placement_group is None
-                        or self.hcloud_server.placement_group.id != placement_group.id
-                    ):
-                        self.stop_server_if_forced()
-                        if not self.module.check_mode:
-                            self.hcloud_server.add_to_placement_group(placement_group).wait_until_finished()
-                        self._mark_as_changed()
-
-            if "ipv4" in self.module.params:
-                if (
-                    self.module.params["ipv4"] is None
-                    and self.hcloud_server.public_net.primary_ipv4 is not None
-                    and not self.module.params.get("enable_ipv4")
-                ):
-                    self.stop_server_if_forced()
-                    if not self.module.check_mode:
-                        self.hcloud_server.public_net.primary_ipv4.unassign().wait_until_finished()
-                    self._mark_as_changed()
-                else:
-                    primary_ip = self._get_primary_ip("ipv4")
-                    if primary_ip is not None and (
-                        self.hcloud_server.public_net.primary_ipv4 is None
-                        or self.hcloud_server.public_net.primary_ipv4.id != primary_ip.id
-                    ):
-                        self.stop_server_if_forced()
-                        if not self.module.check_mode:
-                            if self.hcloud_server.public_net.primary_ipv4:
-                                self.hcloud_server.public_net.primary_ipv4.unassign().wait_until_finished()
-                            primary_ip.assign(self.hcloud_server.id, "server").wait_until_finished()
-                        self._mark_as_changed()
-            if "ipv6" in self.module.params:
-                if (
-                    (self.module.params["ipv6"] is None or self.module.params["ipv6"] == "")
-                    and self.hcloud_server.public_net.primary_ipv6 is not None
-                    and not self.module.params.get("enable_ipv6")
-                ):
-                    self.stop_server_if_forced()
-                    if not self.module.check_mode:
-                        self.hcloud_server.public_net.primary_ipv6.unassign().wait_until_finished()
-                    self._mark_as_changed()
-                else:
-                    primary_ip = self._get_primary_ip("ipv6")
-                    if primary_ip is not None and (
-                        self.hcloud_server.public_net.primary_ipv6 is None
-                        or self.hcloud_server.public_net.primary_ipv6.id != primary_ip.id
-                    ):
-                        self.stop_server_if_forced()
-                        if not self.module.check_mode:
-                            if self.hcloud_server.public_net.primary_ipv6 is not None:
-                                self.hcloud_server.public_net.primary_ipv6.unassign().wait_until_finished()
-                            primary_ip.assign(self.hcloud_server.id, "server").wait_until_finished()
-                        self._mark_as_changed()
-            if "private_networks" in self.module.params and self.module.params["private_networks"] is not None:
-                if not bool(self.module.params["private_networks"]):
-                    # This handles None, "" and []
-                    networks_target = {}
-                else:
-                    _networks = {}
-                    for network_name_or_id in self.module.params.get("private_networks"):
-                        _found_network = self.client.networks.get_by_name(
-                            network_name_or_id
-                        ) or self.client.networks.get_by_id(network_name_or_id)
-                        _networks.update({_found_network.id: _found_network})
-                    networks_target = _networks
-                networks_is = dict()
-                for p_network in self.hcloud_server.private_net:
-                    networks_is.update({p_network.network.id: p_network.network})
-                for network_id in set(list(networks_is) + list(networks_target)):
-                    if network_id in networks_is and network_id not in networks_target:
-                        self.stop_server_if_forced()
-                        if not self.module.check_mode:
-                            self.hcloud_server.detach_from_network(networks_is[network_id]).wait_until_finished()
-                        self._mark_as_changed()
-                    elif network_id in networks_target and network_id not in networks_is:
-                        self.stop_server_if_forced()
-                        if not self.module.check_mode:
-                            self.hcloud_server.attach_to_network(networks_target[network_id]).wait_until_finished()
-                        self._mark_as_changed()
-
-            server_type = self.module.params.get("server_type")
-            if server_type is not None:
-                if self.hcloud_server.server_type.name == server_type:
-                    # Check if we should warn for using an deprecated server type
-                    self._check_and_warn_deprecated_server(self.hcloud_server.server_type)
-
-                else:
-                    # Server type should be changed
-                    self.stop_server_if_forced()
-
-                    timeout = 100
-                    if self.module.params.get("upgrade_disk"):
-                        timeout = 1000  # When we upgrade the disk to the resize progress takes some more time.
-                    if not self.module.check_mode:
-                        self.hcloud_server.change_type(
-                            server_type=self._get_server_type(),
-                            upgrade_disk=self.module.params.get("upgrade_disk"),
-                        ).wait_until_finished(timeout)
-                    self._mark_as_changed()
+            if self.module.params.get("server_type") is not None:
+                self._update_server_server_type()
 
             if not self.module.check_mode and (
                 (self.module.params.get("state") == "present" and previous_server_status == Server.STATUS_RUNNING)
@@ -777,6 +619,181 @@ class AnsibleHCloudServer(AnsibleHCloud):
             self._get_server()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
+
+    def _update_server_placement_group(self) -> None:
+        current: BoundPlacementGroup | None = self.hcloud_server.placement_group
+        wanted = self.module.params.get("placement_group")
+
+        # Return if nothing changed
+        if current is not None and current.has_id_or_name(wanted):
+            return
+
+        # Fetch resource if parameter is truthy
+        if wanted:
+            placement_group = self._client_get_by_name_or_id("placement_groups", wanted)
+
+        # Remove if current is defined
+        if current is not None:
+            if not self.module.check_mode:
+                self.hcloud_server.remove_from_placement_group().wait_until_finished()
+            self._mark_as_changed()
+
+        # Return if parameter is falsy
+        if not wanted:
+            return
+
+        # Assign new
+        self.stop_server_if_forced()
+        if not self.module.check_mode:
+            self.hcloud_server.add_to_placement_group(placement_group).wait_until_finished()
+        self._mark_as_changed()
+
+    def _update_server_server_type(self) -> None:
+        current: ServerType = self.hcloud_server.server_type
+        wanted = self.module.params.get("server_type")
+
+        # Return if nothing changed
+        if current.has_id_or_name(wanted):
+            # Check if we should warn for using an deprecated server type
+            self._check_and_warn_deprecated_server(self.hcloud_server.server_type)
+            return
+
+        self.stop_server_if_forced()
+
+        upgrade_disk = self.module.params.get("upgrade_disk")
+        # Upgrading the disk takes some more time
+        upgrade_timeout = 1000 if upgrade_disk else 100
+
+        if not self.module.check_mode:
+            self.hcloud_server.change_type(
+                server_type=self._get_server_type(),
+                upgrade_disk=upgrade_disk,
+            ).wait_until_finished(upgrade_timeout)
+        self._mark_as_changed()
+
+    def _update_server_ip(self, kind: Literal["ipv4", "ipv6"]) -> None:
+        current: PrimaryIP | None = getattr(self.hcloud_server.public_net, f"primary_{kind}")
+        wanted = self.module.params.get(kind)
+        enable = self.module.params.get(f"enable_{kind}")
+
+        # Return if nothing changed
+        if current is not None and current.has_id_or_name(wanted) and enable:
+            return
+
+        # Fetch resource if parameter is truthy
+        if wanted:
+            primary_ip = self._client_get_by_name_or_id("primary_ips", wanted)
+
+        # Remove if current is defined
+        if current is not None:
+            self.stop_server_if_forced()
+            if not self.module.check_mode:
+                self.client.primary_ips.unassign(current).wait_until_finished()
+            self._mark_as_changed()
+
+        # Return if parameter is falsy or resource is disabled
+        if not wanted or not enable:
+            return
+
+        # Assign new
+        self.stop_server_if_forced()
+        if not self.module.check_mode:
+            self.client.primary_ips.assign(
+                primary_ip,
+                assignee_id=self.hcloud_server.id,
+                assignee_type="server",
+            ).wait_until_finished()
+        self._mark_as_changed()
+
+    def _update_server_networks(self) -> None:
+        current: list[BoundNetwork] = [item.network for item in self.hcloud_server.private_net]
+        wanted: list[BoundNetwork] = [
+            self._client_get_by_name_or_id("networks", name_or_id)
+            for name_or_id in self.module.params.get("private_networks")
+        ]
+
+        current_ids = {item.id for item in current}
+        wanted_ids = {item.id for item in wanted}
+
+        # Removing existing but not wanted networks
+        actions: list[BoundAction] = []
+        for current_network in current:
+            if current_network.id in wanted_ids:
+                continue
+
+            self._mark_as_changed()
+            if self.module.check_mode:
+                continue
+
+            actions.append(self.hcloud_server.detach_from_network(current_network))
+
+        for action in actions:
+            action.wait_until_finished()
+
+        # Adding wanted networks that doesn't exist yet
+        actions: list[BoundAction] = []
+        for wanted_network in wanted:
+            if wanted_network.id in current_ids:
+                continue
+
+            self._mark_as_changed()
+            if self.module.check_mode:
+                continue
+
+            actions.append(self.hcloud_server.attach_to_network(wanted_network))
+
+        for action in actions:
+            action.wait_until_finished()
+
+    def _update_server_firewalls(self) -> None:
+        current: list[BoundFirewall] = [item.firewall for item in self.hcloud_server.public_net.firewalls]
+        wanted: list[BoundFirewall] = [
+            self._client_get_by_name_or_id("firewalls", name_or_id)
+            for name_or_id in self.module.params.get("firewalls")
+        ]
+
+        current_ids = {item.id for item in current}
+        wanted_ids = {item.id for item in wanted}
+
+        # Removing existing but not wanted firewalls
+        actions: list[BoundAction] = []
+        for current_firewall in current:
+            if current_firewall.id in wanted_ids:
+                continue
+
+            self._mark_as_changed()
+            if self.module.check_mode:
+                continue
+
+            actions.extend(
+                self.client.firewalls.remove_from_resources(
+                    current_firewall,
+                    [FirewallResource(type="server", server=self.hcloud_server)],
+                )
+            )
+
+        for action in actions:
+            action.wait_until_finished()
+
+        # Adding wanted firewalls that doesn't exist yet
+        actions: list[BoundAction] = []
+        for wanted_firewall in wanted:
+            if wanted_firewall.id in current_ids:
+                continue
+
+            self._mark_as_changed()
+            if self.module.check_mode:
+                continue
+
+            actions.extend(
+                self.client.firewalls.apply_to_resources(
+                    wanted_firewall,
+                    [FirewallResource(type="server", server=self.hcloud_server)],
+                )
+            )
+
+        for action in actions:
+            action.wait_until_finished()
 
     def _set_rescue_mode(self, rescue_mode):
         if self.module.params.get("ssh_keys"):
