@@ -102,18 +102,13 @@ options:
               if it has any other value (including []), only those networks are attached to the server.
         type: list
         elements: str
-    force_upgrade:
-        description:
-            - Deprecated
-            - Force the upgrade of the server.
-            - Power off the server if it is running on upgrade.
-        type: bool
     force:
         description:
             - Force the update of the server.
             - May power off the server if update.
         type: bool
         default: false
+        aliases: [force_upgrade]
     allow_deprecated_image:
         description:
             - Allows the creation of servers with deprecated images.
@@ -589,9 +584,6 @@ class AnsibleHCloudServer(AnsibleHCloud):
         return primary_ip
 
     def _update_server(self):
-        if "force_upgrade" in self.module.params and self.module.params.get("force_upgrade") is not None:
-            self.module.warn("force_upgrade is deprecated, use force instead")
-
         try:
             previous_server_status = self.hcloud_server.status
 
@@ -825,18 +817,14 @@ class AnsibleHCloudServer(AnsibleHCloud):
     def stop_server_if_forced(self):
         previous_server_status = self.hcloud_server.status
         if previous_server_status == Server.STATUS_RUNNING and not self.module.check_mode:
-            if (
-                self.module.params.get("force_upgrade")
-                or self.module.params.get("force")
-                or self.module.params.get("state") == "stopped"
-            ):
+            if self.module.params.get("force") or self.module.params.get("state") == "stopped":
                 self.stop_server()  # Only stopped server can be upgraded
                 return previous_server_status
-            else:
-                self.module.warn(
-                    f"You can not upgrade a running instance {self.hcloud_server.name}. "
-                    "You need to stop the instance or use force=true."
-                )
+
+            self.module.warn(
+                f"You can not upgrade a running instance {self.hcloud_server.name}. "
+                "You need to stop the instance or use force=true."
+            )
 
         return None
 
@@ -894,8 +882,14 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 ipv4={"type": "str"},
                 ipv6={"type": "str"},
                 private_networks={"type": "list", "elements": "str", "default": None},
-                force={"type": "bool", "default": False},
-                force_upgrade={"type": "bool"},
+                force={
+                    "type": "bool",
+                    "default": False,
+                    "aliases": ["force_upgrade"],
+                    "deprecated_aliases": [
+                        {"collection_name": "hetzner.hcloud", "name": "force_upgrade", "version": "4.0.0"}
+                    ],
+                },
                 allow_deprecated_image={"type": "bool", "default": False},
                 rescue_mode={"type": "str"},
                 delete_protection={"type": "bool"},
