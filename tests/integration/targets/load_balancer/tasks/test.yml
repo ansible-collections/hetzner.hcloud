@@ -120,7 +120,8 @@
   ansible.builtin.assert:
     that:
       - result is failed
-      - 'result.msg == "load balancer deletion is protected"'
+      - result.failure.code == "protected"
+      - result.msg == "load balancer deletion is protected"
 
 - name: Test update delete_protection
   hetzner.hcloud.load_balancer:

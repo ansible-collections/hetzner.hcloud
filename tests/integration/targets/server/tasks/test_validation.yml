@@ -34,7 +34,8 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "server_type not-existing-server-type was not found"'
+      - result.failure.code == "not_found"
+      - result.msg == "server_type not-existing-server-type was not found"
 
 - name: test create server with not existing image
   hetzner.hcloud.server:
@@ -48,4 +49,5 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "Image my-not-existing-image-20.04 was not found"'
+      - result.failure.code == "not_found"
+      - result.msg == "Image my-not-existing-image-20.04 was not found"

@@ -208,7 +208,8 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "volume deletion is protected"'
+      - result.failure.code == "protected"
+      - result.msg == "volume deletion is protected"
 
 - name: test update Volume delete protection
   hetzner.hcloud.volume:
@@ -254,7 +255,8 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "volume deletion is protected"'
+      - result.failure.code == "protected"
+      - result.msg == "volume deletion is protected"
 
 - name: test update Volume delete protection
   hetzner.hcloud.volume:
