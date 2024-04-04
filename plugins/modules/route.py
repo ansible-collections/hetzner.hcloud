@@ -129,7 +129,8 @@ class AnsibleHCloudRoute(AnsibleHCloud):
 
         if not self.module.check_mode:
             try:
-                self.hcloud_network.add_route(route=route).wait_until_finished()
+                action = self.hcloud_network.add_route(route=route)
+                action.wait_until_finished()
             except HCloudException as exception:
                 self.fail_json_hcloud(exception)
 
@@ -149,7 +150,8 @@ class AnsibleHCloudRoute(AnsibleHCloud):
         if self.hcloud_route is not None and self.hcloud_network is not None:
             if not self.module.check_mode:
                 try:
-                    self.hcloud_network.delete_route(self.hcloud_route).wait_until_finished()
+                    action = self.hcloud_network.delete_route(self.hcloud_route)
+                    action.wait_until_finished()
                 except HCloudException as exception:
                     self.fail_json_hcloud(exception)
             self._mark_as_changed()

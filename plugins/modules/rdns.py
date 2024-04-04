@@ -276,7 +276,8 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
 
         if not self.module.check_mode:
             try:
-                self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
+                action = self.hcloud_resource.change_dns_ptr(**params)
+                action.wait_until_finished()
             except HCloudException as exception:
                 self.fail_json_hcloud(exception)
         self._mark_as_changed()
@@ -293,7 +294,8 @@ class AnsibleHCloudReverseDNS(AnsibleHCloud):
 
             if not self.module.check_mode:
                 try:
-                    self.hcloud_resource.change_dns_ptr(**params).wait_until_finished()
+                    action = self.hcloud_resource.change_dns_ptr(**params)
+                    action.wait_until_finished()
                 except HCloudException as exception:
                     self.fail_json_hcloud(exception)
             self._mark_as_changed()

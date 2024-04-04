@@ -173,7 +173,8 @@ class AnsibleHCloudSubnetwork(AnsibleHCloud):
 
         if not self.module.check_mode:
             try:
-                self.hcloud_network.add_subnet(subnet=NetworkSubnet(**params)).wait_until_finished()
+                action = self.hcloud_network.add_subnet(subnet=NetworkSubnet(**params))
+                action.wait_until_finished()
             except HCloudException as exception:
                 self.fail_json_hcloud(exception)
 
@@ -193,7 +194,8 @@ class AnsibleHCloudSubnetwork(AnsibleHCloud):
         if self.hcloud_subnetwork is not None and self.hcloud_network is not None:
             if not self.module.check_mode:
                 try:
-                    self.hcloud_network.delete_subnet(self.hcloud_subnetwork).wait_until_finished()
+                    action = self.hcloud_network.delete_subnet(self.hcloud_subnetwork)
+                    action.wait_until_finished()
                 except HCloudException as exception:
                     self.fail_json_hcloud(exception)
             self._mark_as_changed()

@@ -139,7 +139,8 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
 
         if not self.module.check_mode:
             try:
-                self.hcloud_load_balancer.attach_to_network(**params).wait_until_finished()
+                action = self.hcloud_load_balancer.attach_to_network(**params)
+                action.wait_until_finished()
             except HCloudException as exception:
                 self.fail_json_hcloud(exception)
 
@@ -159,9 +160,8 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
         if self.hcloud_load_balancer_network is not None and self.hcloud_load_balancer is not None:
             if not self.module.check_mode:
                 try:
-                    self.hcloud_load_balancer.detach_from_network(
-                        self.hcloud_load_balancer_network.network
-                    ).wait_until_finished()
+                    action = self.hcloud_load_balancer.detach_from_network(self.hcloud_load_balancer_network.network)
+                    action.wait_until_finished()
                     self._mark_as_changed()
                 except HCloudException as exception:
                     self.fail_json_hcloud(exception)
