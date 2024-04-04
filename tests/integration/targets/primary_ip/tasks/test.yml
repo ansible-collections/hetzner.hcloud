@@ -120,7 +120,8 @@
   ansible.builtin.assert:
     that:
       - result is failed
-      - '"Primary IP deletion is protected" in result.msg'
+      - result.failure.code == "protected"
+      - result.msg == "Primary IP deletion is protected"
 
 - name: Test update delete protection
   hetzner.hcloud.primary_ip:

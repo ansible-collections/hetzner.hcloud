@@ -101,6 +101,7 @@
   assert:
     that:
       - result is failed
+      - result.failure.code == "invalid_input"
       - result.msg == "invalid input in fields 'server', 'home_location'"
 
 - name: test create Floating IP with check mode
@@ -371,7 +372,8 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "Floating IP deletion is protected"'
+      - result.failure.code == "protected"
+      - result.msg == "Floating IP deletion is protected"
 
 - name: test update Floating IP delete protection
   hetzner.hcloud.floating_ip:
@@ -459,7 +461,8 @@
   assert:
     that:
       - result is failed
-      - 'result.msg == "Floating IP deletion is protected"'
+      - result.failure.code == "protected"
+      - result.msg == "Floating IP deletion is protected"
 
 - name: test update Floating IP delete protection
   hetzner.hcloud.floating_ip:

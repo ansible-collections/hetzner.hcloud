@@ -99,7 +99,8 @@
   ansible.builtin.assert:
     that:
       - result is failed
-      - 'result.msg == "network deletion is protected"'
+      - result.failure.code == "protected"
+      - result.msg == "network deletion is protected"
 
 - name: Test update delete protection
   hetzner.hcloud.network:

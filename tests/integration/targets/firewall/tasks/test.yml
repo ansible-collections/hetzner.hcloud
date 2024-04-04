@@ -183,7 +183,7 @@
   ansible.builtin.assert:
     that:
       - result is failed
-      - '"is still in use" in result.msg'
+      - result.failure.code == "resource_in_use"
 
 - name: Test delete with force
   hetzner.hcloud.firewall:
