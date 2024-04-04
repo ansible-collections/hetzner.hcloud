@@ -1,0 +1,3 @@
+bugfixes:
+  - server - Do not remove the server from its placement group when the `placement_group` argument is not specified.
+  - server - Pass an empty string to the `placement_group` argument to remove a server from its placement group.

@@ -80,7 +80,7 @@
 - name: test remove server from placement group
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    placement_group: null
+    placement_group: ""
     state: present
   register: result
 - name: verify remove server from placement group
