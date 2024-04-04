@@ -469,7 +469,9 @@ class AnsibleHCloudServer(AnsibleHCloud):
             try:
                 resp = self.client.servers.create(**params)
                 self.result["root_password"] = resp.root_password
-                resp.action.wait_until_finished(max_retries=1000)
+                # Action should take 60 to 90 seconds on average, but can be >10m when creating a
+                # server from a custom images
+                resp.action.wait_until_finished(max_retries=600)
                 for action in resp.next_actions:
                     action.wait_until_finished()
 
@@ -670,15 +672,16 @@ class AnsibleHCloudServer(AnsibleHCloud):
         self.stop_server_if_forced()
 
         upgrade_disk = self.module.params.get("upgrade_disk")
-        # Upgrading the disk takes some more time
-        upgrade_timeout = 1000 if upgrade_disk else 100
+        # Upgrading a server takes 160 seconds on average, upgrading the disk should
+        # take more time
+        upgrade_timeout = 600 if upgrade_disk else 180
 
         if not self.module.check_mode:
             action = self.hcloud_server.change_type(
                 server_type=self._get_server_type(),
                 upgrade_disk=upgrade_disk,
             )
-            action.wait_until_finished(upgrade_timeout)
+            action.wait_until_finished(max_retries=upgrade_timeout)
         self._mark_as_changed()
 
     def _update_server_ip(self, kind: Literal["ipv4", "ipv6"]) -> None:

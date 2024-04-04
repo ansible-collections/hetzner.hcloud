@@ -369,7 +369,7 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
         if not self.module.check_mode:
             try:
                 action = self.hcloud_load_balancer.add_service(LoadBalancerService(**params))
-                action.wait_until_finished(max_retries=1000)
+                action.wait_until_finished()
             except HCloudException as exception:
                 self.fail_json_hcloud(exception)
         self._mark_as_changed()
@@ -464,7 +464,7 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
 
             if not self.module.check_mode:
                 action = self.hcloud_load_balancer.update_service(LoadBalancerService(**params))
-                action.wait_until_finished(max_retries=1000)
+                action.wait_until_finished()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
         self._get_load_balancer()
@@ -491,7 +491,7 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
                 if not self.module.check_mode:
                     try:
                         action = self.hcloud_load_balancer.delete_service(self.hcloud_load_balancer_service)
-                        action.wait_until_finished(max_retries=1000)
+                        action.wait_until_finished()
                     except HCloudException as exception:
                         self.fail_json_hcloud(exception)
                 self._mark_as_changed()
