@@ -57,6 +57,12 @@ options:
             - Hetzner Cloud Image (name or ID) to create the server from.
             - Required if server does not exist or when O(state=rebuild).
         type: str
+    image_allow_deprecated:
+        description:
+            - Allows the creation of servers with deprecated images.
+        type: bool
+        default: false
+        aliases: [allow_deprecated_image]
     location:
         description:
             - Hetzner Cloud Location (name or ID) to create the server in.
@@ -113,11 +119,6 @@ options:
         type: bool
         default: false
         aliases: [force_upgrade]
-    allow_deprecated_image:
-        description:
-            - Allows the creation of servers with deprecated images.
-        type: bool
-        default: false
     user_data:
         description:
             - User Data to be passed to the server on creation.
@@ -506,7 +507,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
 
         if image.deprecated is not None:
             available_until = image.deprecated + timedelta(days=90)
-            if self.module.params.get("allow_deprecated_image"):
+            if self.module.params.get("image_allow_deprecated"):
                 self.module.warn(
                     f"You try to use a deprecated image. The image {image.name} will "
                     f"continue to be available until {available_until.strftime('%Y-%m-%d')}."
@@ -516,7 +517,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                     msg=(
                         f"You try to use a deprecated image. The image {image.name} will "
                         f"continue to be available until {available_until.strftime('%Y-%m-%d')}. "
-                        "If you want to use this image use allow_deprecated_image=true."
+                        "If you want to use this image use image_allow_deprecated=true."
                     )
                 )
         return image
@@ -884,6 +885,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 id={"type": "int"},
                 name={"type": "str"},
                 image={"type": "str"},
+                image_allow_deprecated={"type": "bool", "default": False, "aliases": ["allow_deprecated_image"]},
                 server_type={"type": "str"},
                 location={"type": "str"},
                 datacenter={"type": "str"},
@@ -907,7 +909,6 @@ class AnsibleHCloudServer(AnsibleHCloud):
                         {"collection_name": "hetzner.hcloud", "name": "force_upgrade", "version": "4.0.0"}
                     ],
                 },
-                allow_deprecated_image={"type": "bool", "default": False},
                 rescue_mode={"type": "str"},
                 delete_protection={"type": "bool"},
                 rebuild_protection={"type": "bool"},
