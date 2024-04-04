@@ -1,0 +1,6 @@
+minor_changes:
+  - server - Allow passing Datacenter name or ID to the `datacenter` argument.
+  - server - Allow passing Image name or ID to the `image` argument.
+  - server - Allow passing Location name or ID to the `location` argument.
+  - server - Allow passing SSH Keys names or IDs to the `ssh_keys` argument.
+  - server - Allow passing Volume names or IDs to the `volumes` argument.
