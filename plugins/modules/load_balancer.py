@@ -213,12 +213,13 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
 
             if not self.module.check_mode:
                 resp = self.client.load_balancers.create(**params)
-                resp.action.wait_until_finished(max_retries=1000)
+                resp.action.wait_until_finished()
 
                 delete_protection = self.module.params.get("delete_protection")
                 if delete_protection is not None:
                     self._get_load_balancer()
-                    self.hcloud_load_balancer.change_protection(delete=delete_protection).wait_until_finished()
+                    action = self.hcloud_load_balancer.change_protection(delete=delete_protection)
+                    action.wait_until_finished()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
         self._mark_as_changed()
@@ -235,7 +236,8 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
             delete_protection = self.module.params.get("delete_protection")
             if delete_protection is not None and delete_protection != self.hcloud_load_balancer.protection["delete"]:
                 if not self.module.check_mode:
-                    self.hcloud_load_balancer.change_protection(delete=delete_protection).wait_until_finished()
+                    action = self.hcloud_load_balancer.change_protection(delete=delete_protection)
+                    action.wait_until_finished()
                 self._mark_as_changed()
             self._get_load_balancer()
 
@@ -245,9 +247,11 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
             ):
                 if not self.module.check_mode:
                     if disable_public_interface is True:
-                        self.hcloud_load_balancer.disable_public_interface().wait_until_finished()
+                        action = self.hcloud_load_balancer.disable_public_interface()
+                        action.wait_until_finished()
                     else:
-                        self.hcloud_load_balancer.enable_public_interface().wait_until_finished()
+                        action = self.hcloud_load_balancer.enable_public_interface()
+                        action.wait_until_finished()
                 self._mark_as_changed()
 
             load_balancer_type = self.module.params.get("load_balancer_type")
@@ -259,17 +263,17 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
                 if not new_load_balancer_type:
                     self.module.fail_json(msg="unknown load balancer type")
                 if not self.module.check_mode:
-                    self.hcloud_load_balancer.change_type(
+                    action = self.hcloud_load_balancer.change_type(
                         load_balancer_type=new_load_balancer_type,
-                    ).wait_until_finished(max_retries=1000)
+                    )
+                    action.wait_until_finished()
 
                 self._mark_as_changed()
 
             algorithm = self.module.params.get("algorithm")
             if algorithm is not None and self.hcloud_load_balancer.algorithm.type != algorithm:
-                self.hcloud_load_balancer.change_algorithm(
-                    algorithm=LoadBalancerAlgorithm(type=algorithm)
-                ).wait_until_finished()
+                action = self.hcloud_load_balancer.change_algorithm(algorithm=LoadBalancerAlgorithm(type=algorithm))
+                action.wait_until_finished()
                 self._mark_as_changed()
 
             self._get_load_balancer()

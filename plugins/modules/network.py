@@ -164,7 +164,8 @@ class AnsibleHCloudNetwork(AnsibleHCloud):
                 delete_protection = self.module.params.get("delete_protection")
                 if delete_protection is not None:
                     self._get_network()
-                    self.hcloud_network.change_protection(delete=delete_protection).wait_until_finished()
+                    action = self.hcloud_network.change_protection(delete=delete_protection)
+                    action.wait_until_finished()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
         self._mark_as_changed()
@@ -188,7 +189,8 @@ class AnsibleHCloudNetwork(AnsibleHCloud):
             ip_range = self.module.params.get("ip_range")
             if ip_range is not None and ip_range != self.hcloud_network.ip_range:
                 if not self.module.check_mode:
-                    self.hcloud_network.change_ip_range(ip_range=ip_range).wait_until_finished()
+                    action = self.hcloud_network.change_ip_range(ip_range=ip_range)
+                    action.wait_until_finished()
                 self._mark_as_changed()
 
             expose_routes_to_vswitch = self.module.params.get("expose_routes_to_vswitch")
@@ -203,7 +205,8 @@ class AnsibleHCloudNetwork(AnsibleHCloud):
             delete_protection = self.module.params.get("delete_protection")
             if delete_protection is not None and delete_protection != self.hcloud_network.protection["delete"]:
                 if not self.module.check_mode:
-                    self.hcloud_network.change_protection(delete=delete_protection).wait_until_finished()
+                    action = self.hcloud_network.change_protection(delete=delete_protection)
+                    action.wait_until_finished()
                 self._mark_as_changed()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)

@@ -469,7 +469,9 @@ class AnsibleHCloudServer(AnsibleHCloud):
             try:
                 resp = self.client.servers.create(**params)
                 self.result["root_password"] = resp.root_password
-                resp.action.wait_until_finished(max_retries=1000)
+                # Action should take 60 to 90 seconds on average, but can be >10m when creating a
+                # server from a custom images
+                resp.action.wait_until_finished(max_retries=1800)
                 for action in resp.next_actions:
                     action.wait_until_finished()
 
@@ -481,16 +483,18 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 backups = self.module.params.get("backups")
                 if backups:
                     self._get_server()
-                    self.hcloud_server.enable_backup().wait_until_finished()
+                    action = self.hcloud_server.enable_backup()
+                    action.wait_until_finished()
 
                 delete_protection = self.module.params.get("delete_protection")
                 rebuild_protection = self.module.params.get("rebuild_protection")
                 if delete_protection is not None and rebuild_protection is not None:
                     self._get_server()
-                    self.hcloud_server.change_protection(
+                    action = self.hcloud_server.change_protection(
                         delete=delete_protection,
                         rebuild=rebuild_protection,
-                    ).wait_until_finished()
+                    )
+                    action.wait_until_finished()
             except HCloudException as exception:
                 self.fail_json_hcloud(exception)
         self._mark_as_changed()
@@ -568,17 +572,20 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 self._mark_as_changed()
             elif not rescue_mode and self.hcloud_server.rescue_enabled is True:
                 if not self.module.check_mode:
-                    self.hcloud_server.disable_rescue().wait_until_finished()
+                    action = self.hcloud_server.disable_rescue()
+                    action.wait_until_finished()
                 self._mark_as_changed()
 
             backups = self.module.params.get("backups")
             if backups and self.hcloud_server.backup_window is None:
                 if not self.module.check_mode:
-                    self.hcloud_server.enable_backup().wait_until_finished()
+                    action = self.hcloud_server.enable_backup()
+                    action.wait_until_finished()
                 self._mark_as_changed()
             elif backups is not None and not backups and self.hcloud_server.backup_window is not None:
                 if not self.module.check_mode:
-                    self.hcloud_server.disable_backup().wait_until_finished()
+                    action = self.hcloud_server.disable_backup()
+                    action.wait_until_finished()
                 self._mark_as_changed()
 
             if self.module.params.get("firewalls") is not None:
@@ -612,10 +619,11 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 or rebuild_protection != self.hcloud_server.protection["rebuild"]
             ):
                 if not self.module.check_mode:
-                    self.hcloud_server.change_protection(
+                    action = self.hcloud_server.change_protection(
                         delete=delete_protection,
                         rebuild=rebuild_protection,
-                    ).wait_until_finished()
+                    )
+                    action.wait_until_finished()
                 self._mark_as_changed()
             self._get_server()
         except HCloudException as exception:
@@ -636,7 +644,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
         # Remove if current is defined
         if current is not None:
             if not self.module.check_mode:
-                self.hcloud_server.remove_from_placement_group().wait_until_finished()
+                action = self.hcloud_server.remove_from_placement_group()
+                action.wait_until_finished()
             self._mark_as_changed()
 
         # Return if parameter is falsy
@@ -646,7 +655,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
         # Assign new
         self.stop_server_if_forced()
         if not self.module.check_mode:
-            self.hcloud_server.add_to_placement_group(placement_group).wait_until_finished()
+            action = self.hcloud_server.add_to_placement_group(placement_group)
+            action.wait_until_finished()
         self._mark_as_changed()
 
     def _update_server_server_type(self) -> None:
@@ -662,14 +672,16 @@ class AnsibleHCloudServer(AnsibleHCloud):
         self.stop_server_if_forced()
 
         upgrade_disk = self.module.params.get("upgrade_disk")
-        # Upgrading the disk takes some more time
-        upgrade_timeout = 1000 if upgrade_disk else 100
+        # Upgrading a server takes 160 seconds on average, upgrading the disk should
+        # take more time
+        upgrade_timeout = 600 if upgrade_disk else 180
 
         if not self.module.check_mode:
-            self.hcloud_server.change_type(
+            action = self.hcloud_server.change_type(
                 server_type=self._get_server_type(),
                 upgrade_disk=upgrade_disk,
-            ).wait_until_finished(upgrade_timeout)
+            )
+            action.wait_until_finished(max_retries=upgrade_timeout)
         self._mark_as_changed()
 
     def _update_server_ip(self, kind: Literal["ipv4", "ipv6"]) -> None:
@@ -689,7 +701,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
         if current is not None:
             self.stop_server_if_forced()
             if not self.module.check_mode:
-                self.client.primary_ips.unassign(current).wait_until_finished()
+                action = self.client.primary_ips.unassign(current)
+                action.wait_until_finished()
             self._mark_as_changed()
 
         # Return if parameter is falsy or resource is disabled
@@ -699,11 +712,12 @@ class AnsibleHCloudServer(AnsibleHCloud):
         # Assign new
         self.stop_server_if_forced()
         if not self.module.check_mode:
-            self.client.primary_ips.assign(
+            action = self.client.primary_ips.assign(
                 primary_ip,
                 assignee_id=self.hcloud_server.id,
                 assignee_type="server",
-            ).wait_until_finished()
+            )
+            action.wait_until_finished()
         self._mark_as_changed()
 
     def _update_server_networks(self) -> None:
@@ -815,7 +829,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
             if self.hcloud_server:
                 if self.hcloud_server.status != Server.STATUS_RUNNING:
                     if not self.module.check_mode:
-                        self.client.servers.power_on(self.hcloud_server).wait_until_finished()
+                        action = self.client.servers.power_on(self.hcloud_server)
+                        action.wait_until_finished()
                     self._mark_as_changed()
                 self._get_server()
         except HCloudException as exception:
@@ -826,7 +841,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
             if self.hcloud_server:
                 if self.hcloud_server.status != Server.STATUS_OFF:
                     if not self.module.check_mode:
-                        self.client.servers.power_off(self.hcloud_server).wait_until_finished()
+                        action = self.client.servers.power_off(self.hcloud_server)
+                        action.wait_until_finished()
                     self._mark_as_changed()
                 self._get_server()
         except HCloudException as exception:
@@ -872,7 +888,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
             self._get_server()
             if self.hcloud_server is not None:
                 if not self.module.check_mode:
-                    self.client.servers.delete(self.hcloud_server).wait_until_finished()
+                    action = self.client.servers.delete(self.hcloud_server)
+                    action.wait_until_finished()
                 self._mark_as_changed()
             self.hcloud_server = None
         except HCloudException as exception:

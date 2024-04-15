@@ -216,7 +216,8 @@ class AnsibleHCloudFloatingIP(AnsibleHCloud):
 
                 delete_protection = self.module.params.get("delete_protection")
                 if delete_protection is not None:
-                    self.hcloud_floating_ip.change_protection(delete=delete_protection).wait_until_finished()
+                    action = self.hcloud_floating_ip.change_protection(delete=delete_protection)
+                    action.wait_until_finished()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
         self._mark_as_changed()
@@ -261,7 +262,8 @@ class AnsibleHCloudFloatingIP(AnsibleHCloud):
             delete_protection = self.module.params.get("delete_protection")
             if delete_protection is not None and delete_protection != self.hcloud_floating_ip.protection["delete"]:
                 if not self.module.check_mode:
-                    self.hcloud_floating_ip.change_protection(delete=delete_protection).wait_until_finished()
+                    action = self.hcloud_floating_ip.change_protection(delete=delete_protection)
+                    action.wait_until_finished()
                 self._mark_as_changed()
 
             self._get_floating_ip()

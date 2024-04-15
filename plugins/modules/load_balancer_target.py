@@ -224,7 +224,8 @@ class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
 
         if not self.module.check_mode:
             try:
-                self.hcloud_load_balancer.add_target(**params).wait_until_finished()
+                action = self.hcloud_load_balancer.add_target(**params)
+                action.wait_until_finished()
             except APIException as exception:
                 if exception.code == "locked" or exception.code == "conflict":
                     self._create_load_balancer_target()
@@ -269,7 +270,8 @@ class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
                         use_private_ip=False,
                     )
                 try:
-                    self.hcloud_load_balancer.remove_target(target).wait_until_finished()
+                    action = self.hcloud_load_balancer.remove_target(target)
+                    action.wait_until_finished()
                 except HCloudException as exception:
                     self.fail_json_hcloud(exception)
             self._mark_as_changed()

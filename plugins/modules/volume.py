@@ -216,7 +216,8 @@ class AnsibleHCloudVolume(AnsibleHCloud):
                 delete_protection = self.module.params.get("delete_protection")
                 if delete_protection is not None:
                     self._get_volume()
-                    self.hcloud_volume.change_protection(delete=delete_protection).wait_until_finished()
+                    action = self.hcloud_volume.change_protection(delete=delete_protection)
+                    action.wait_until_finished()
             except HCloudException as exception:
                 self.fail_json_hcloud(exception)
         self._mark_as_changed()
@@ -228,7 +229,8 @@ class AnsibleHCloudVolume(AnsibleHCloud):
             if size:
                 if self.hcloud_volume.size < size:
                     if not self.module.check_mode:
-                        self.hcloud_volume.resize(size).wait_until_finished()
+                        action = self.hcloud_volume.resize(size)
+                        action.wait_until_finished()
                     self._mark_as_changed()
                 elif self.hcloud_volume.size > size:
                     self.module.warn("Shrinking of volumes is not supported")
@@ -239,12 +241,14 @@ class AnsibleHCloudVolume(AnsibleHCloud):
                 if self.hcloud_volume.server is None or self.hcloud_volume.server.name != server.name:
                     if not self.module.check_mode:
                         automount = self.module.params.get("automount", False)
-                        self.hcloud_volume.attach(server, automount=automount).wait_until_finished()
+                        action = self.hcloud_volume.attach(server, automount=automount)
+                        action.wait_until_finished()
                     self._mark_as_changed()
             else:
                 if self.hcloud_volume.server is not None:
                     if not self.module.check_mode:
-                        self.hcloud_volume.detach().wait_until_finished()
+                        action = self.hcloud_volume.detach()
+                        action.wait_until_finished()
                     self._mark_as_changed()
 
             labels = self.module.params.get("labels")
@@ -256,7 +260,8 @@ class AnsibleHCloudVolume(AnsibleHCloud):
             delete_protection = self.module.params.get("delete_protection")
             if delete_protection is not None and delete_protection != self.hcloud_volume.protection["delete"]:
                 if not self.module.check_mode:
-                    self.hcloud_volume.change_protection(delete=delete_protection).wait_until_finished()
+                    action = self.hcloud_volume.change_protection(delete=delete_protection)
+                    action.wait_until_finished()
                 self._mark_as_changed()
 
             self._get_volume()
@@ -276,7 +281,8 @@ class AnsibleHCloudVolume(AnsibleHCloud):
             if self.hcloud_volume is not None:
                 if not self.module.check_mode:
                     if self.hcloud_volume.server is not None:
-                        self.hcloud_volume.detach().wait_until_finished()
+                        action = self.hcloud_volume.detach()
+                        action.wait_until_finished()
                     self.client.volumes.delete(self.hcloud_volume)
                 self._mark_as_changed()
             self.hcloud_volume = None

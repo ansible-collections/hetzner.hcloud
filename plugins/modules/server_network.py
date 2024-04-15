@@ -164,7 +164,8 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
 
         if not self.module.check_mode:
             try:
-                self.hcloud_server.attach_to_network(**params).wait_until_finished()
+                action = self.hcloud_server.attach_to_network(**params)
+                action.wait_until_finished()
             except HCloudException as exception:
                 self.fail_json_hcloud(exception)
 
@@ -182,7 +183,8 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
 
             if not self.module.check_mode:
                 try:
-                    self.hcloud_server.change_alias_ips(**params).wait_until_finished()
+                    action = self.hcloud_server.change_alias_ips(**params)
+                    action.wait_until_finished()
                 except APIException as exception:
                     self.fail_json_hcloud(exception)
 
@@ -204,7 +206,8 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
         if self.hcloud_server_network is not None and self.hcloud_server is not None:
             if not self.module.check_mode:
                 try:
-                    self.hcloud_server.detach_from_network(self.hcloud_server_network.network).wait_until_finished()
+                    action = self.hcloud_server.detach_from_network(self.hcloud_server_network.network)
+                    action.wait_until_finished()
                 except HCloudException as exception:
                     self.fail_json_hcloud(exception)
             self._mark_as_changed()
