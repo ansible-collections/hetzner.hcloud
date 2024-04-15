@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/3.0.0...3.1.0) (2024-04-15)
+
+
+### Features
+
+* assign primary ip to a server on create ([#465](https://github.com/ansible-collections/hetzner.hcloud/issues/465)) ([51afb23](https://github.com/ansible-collections/hetzner.hcloud/commit/51afb2316639d3b996b29544534aaeff6122904c))
+* rename server `image_allow_deprecated` option ([#487](https://github.com/ansible-collections/hetzner.hcloud/issues/487)) ([d88ecdb](https://github.com/ansible-collections/hetzner.hcloud/commit/d88ecdbccc0da0a61338d23673adf6a6fded211c))
+* use resources name or ID in server module arguments ([#484](https://github.com/ansible-collections/hetzner.hcloud/issues/484)) ([7fdefcf](https://github.com/ansible-collections/hetzner.hcloud/commit/7fdefcfa0243b84a3edb58566ec710e4f4a6db8d))
+
+
+### Bug Fixes
+
+* improve actions waiting timeout based on data ([#488](https://github.com/ansible-collections/hetzner.hcloud/issues/488)) ([0709552](https://github.com/ansible-collections/hetzner.hcloud/commit/07095529a4a23dc380ab4678963da9dceb665fd4))
+* return sorted `alias_ips` in `server_network` module ([#458](https://github.com/ansible-collections/hetzner.hcloud/issues/458)) ([1ae6769](https://github.com/ansible-collections/hetzner.hcloud/commit/1ae6769210b1a845084c88c58a545bebc067ca48))
+* use empty string to remove server from its placement group ([#489](https://github.com/ansible-collections/hetzner.hcloud/issues/489)) ([00a4fdd](https://github.com/ansible-collections/hetzner.hcloud/commit/00a4fdd58aba74ab7e8e1a26ff59beea452c2add))
+
 ## [3.0.0](https://github.com/ansible-collections/hetzner.hcloud/compare/2.5.0...3.0.0) (2024-02-05)
 
 

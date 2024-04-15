@@ -4,6 +4,29 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v3.1.0
+======
+
+Minor Changes
+-------------
+
+- primary_ip - Use the `server` option to assign a Primary IP being created to a server.
+- server - Allow passing Datacenter name or ID to the `datacenter` argument.
+- server - Allow passing Image name or ID to the `image` argument.
+- server - Allow passing Location name or ID to the `location` argument.
+- server - Allow passing SSH Keys names or IDs to the `ssh_keys` argument.
+- server - Allow passing Volume names or IDs to the `volumes` argument.
+- server - Renamed the `allow_deprecated_image` option to `image_allow_deprecated`.
+
+Bugfixes
+--------
+
+- primary_ip - Added the missing `auto_delete` field to the return values.
+- primary_ip - The `auto_delete` option is now used when creating or updating a Primary IP.
+- primary_ip_info - Added the missing `auto_delete` field to the return values.
+- server - Do not remove the server from its placement group when the `placement_group` argument is not specified.
+- server - Pass an empty string to the `placement_group` argument to remove a server from its placement group.
+- server_network - The returned `alias_ips` list is now sorted.
 
 v3.0.0
 ======
