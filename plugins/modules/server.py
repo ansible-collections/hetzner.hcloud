@@ -471,7 +471,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 self.result["root_password"] = resp.root_password
                 # Action should take 60 to 90 seconds on average, but can be >10m when creating a
                 # server from a custom images
-                resp.action.wait_until_finished(max_retries=600)
+                resp.action.wait_until_finished(max_retries=1800)
                 for action in resp.next_actions:
                     action.wait_until_finished()
 
