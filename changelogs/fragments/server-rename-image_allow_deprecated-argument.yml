@@ -1,2 +1,0 @@
-minor_changes:
-  - server - Renamed the `allow_deprecated_image` option to `image_allow_deprecated`.
