@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v3.1.1
+======
+
+Bugfixes
+--------
+
+- inventory - Ensure inventory host variables are serializable and can be cached.
+
 v3.1.0
 ======
 

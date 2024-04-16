@@ -1,2 +1,0 @@
-bugfixes:
-  - inventory - Ensure inventory host variables are serializable and can be cached.
