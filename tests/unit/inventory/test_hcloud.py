@@ -1,20 +1,10 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
-if TYPE_CHECKING:
-    from ....plugins.inventory.hcloud import InventoryModule, first_ipv6_address
-    from ....plugins.module_utils.vendor.hcloud.servers import BoundServer
-
-from ansible_collections.hetzner.hcloud.plugins.inventory.hcloud import (
-    InventoryModule,
-    first_ipv6_address,
-)
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.servers import (
-    BoundServer,
-)
+from plugins.inventory.hcloud import InventoryModule, first_ipv6_address
+from plugins.module_utils.vendor.hcloud.servers import BoundServer
 
 
 def test_first_ipv6_address():
