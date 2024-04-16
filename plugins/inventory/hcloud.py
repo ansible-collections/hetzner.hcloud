@@ -261,7 +261,7 @@ def first_ipv6_address(network: str) -> str:
 
     :param network: IPv6 Network.
     """
-    return next(IPv6Network(network).hosts())
+    return str(next(IPv6Network(network).hosts()))
 
 
 class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
