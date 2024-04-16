@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/ansible-collections/hetzner.hcloud/compare/3.1.0...3.1.1) (2024-04-16)
+
+
+### Bug Fixes
+
+* **inventory:** ensure host ipv6 variable is json serializable ([#496](https://github.com/ansible-collections/hetzner.hcloud/issues/496)) ([a98cf72](https://github.com/ansible-collections/hetzner.hcloud/commit/a98cf72f927bf36ec9745a03bba16c13728154e2))
+
 ## [3.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/3.0.0...3.1.0) (2024-04-15)
 
 
