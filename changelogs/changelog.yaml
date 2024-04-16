@@ -542,3 +542,10 @@ releases:
     - server-use-id-or-name.yml
     - sort-alias-ips-in-server-network.yml
     release_date: '2024-04-15'
+  3.1.1:
+    changes:
+      bugfixes:
+      - inventory - Ensure inventory host variables are serializable and can be cached.
+    fragments:
+    - inventory-fix-serialization.yml
+    release_date: '2024-04-16'
