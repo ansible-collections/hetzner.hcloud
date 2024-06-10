@@ -19,7 +19,7 @@
     - name: Create a server
       hetzner.hcloud.server:
         name: my-server
-        server_type: cx11
+        server_type: cx22
         image: debian-12
         location: fsn1
         volumes:
