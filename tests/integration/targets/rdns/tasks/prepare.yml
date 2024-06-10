@@ -2,7 +2,7 @@
 - name: Create test_server
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cx11
+    server_type: cax11
     image: ubuntu-22.04
     state: present
   register: test_server

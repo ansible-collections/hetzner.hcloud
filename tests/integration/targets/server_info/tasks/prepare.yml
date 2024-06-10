@@ -2,7 +2,7 @@
 - name: Create test_server
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cx11
+    server_type: cax11
     image: ubuntu-22.04
     state: stopped
     labels:
@@ -12,7 +12,7 @@
 - name: Create test_server2 (stopped + without ip)
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}2"
-    server_type: cx11
+    server_type: cax11
     image: ubuntu-22.04
     state: stopped
     labels:

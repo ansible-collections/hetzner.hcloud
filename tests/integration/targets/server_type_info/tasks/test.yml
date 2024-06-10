@@ -26,7 +26,7 @@
   ansible.builtin.assert:
     that:
       - result.hcloud_server_type_info | list | count == 1
-      - result.hcloud_server_type_info[0].deprecation is none # fails if cx11 is ever deprecated
+      - result.hcloud_server_type_info[0].deprecation is none # fails if cax11 is ever deprecated
 
 - name: Gather hcloud_server_type_info with wrong id
   hetzner.hcloud.server_type_info:
