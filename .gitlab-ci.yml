@@ -25,7 +25,7 @@ sanity:
     - tags
   parallel:
     matrix:
-      - ANSIBLE_VERSION: ["devel", "2.14", "2.15"]
+      - ANSIBLE_VERSION: ["devel", "2.15"]
         GROUP: [1]
   script:
     - bash tests/utils/gitlab/gitlab.sh ${ANSIBLE_VERSION}/sanity/${GROUP}

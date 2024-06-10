@@ -56,7 +56,7 @@ repos:
         name: ansible-lint
         args: [--offline]
         additional_dependencies:
-          - ansible-core>=2.14
+          - ansible-core>=2.15
           - netaddr
 
   - repo: local
