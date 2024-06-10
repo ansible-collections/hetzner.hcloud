@@ -179,3 +179,7 @@
   ansible.builtin.assert:
     that:
       - result is changed
+
+- name: Workaround to prevent a timeout during the server deletion
+  ansible.builtin.pause:
+    seconds: 2
