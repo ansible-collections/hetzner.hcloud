@@ -549,3 +549,10 @@ releases:
     fragments:
     - inventory-fix-serialization.yml
     release_date: '2024-04-16'
+  4.0.0:
+    changes:
+      breaking_changes:
+      - Drop support for ansible-core 2.14.
+    fragments:
+    - drop-support-for-ansible-core-2.14.yml
+    release_date: '2024-06-11'

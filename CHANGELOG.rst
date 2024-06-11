@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v4.0.0
+======
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- Drop support for ansible-core 2.14.
+
 v3.1.1
 ======
 
