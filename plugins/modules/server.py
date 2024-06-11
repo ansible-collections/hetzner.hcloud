@@ -923,7 +923,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                     "default": False,
                     "aliases": ["force_upgrade"],
                     "deprecated_aliases": [
-                        {"collection_name": "hetzner.hcloud", "name": "force_upgrade", "version": "4.0.0"}
+                        {"collection_name": "hetzner.hcloud", "name": "force_upgrade", "version": "5.0.0"}
                     ],
                 },
                 rescue_mode={"type": "str"},
