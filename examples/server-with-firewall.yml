@@ -31,7 +31,7 @@
     - name: Create servers
       hetzner.hcloud.server:
         name: "{{ item.name }}"
-        server_type: cx11
+        server_type: cx22
         image: debian-12
         labels:
           kind: runners

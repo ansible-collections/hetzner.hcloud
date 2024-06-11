@@ -28,7 +28,7 @@
     - name: Create servers without public IPs
       hetzner.hcloud.server:
         name: "{{ item.name }}"
-        server_type: cx11
+        server_type: cx22
         image: debian-12
         enable_ipv4: false
         enable_ipv6: false

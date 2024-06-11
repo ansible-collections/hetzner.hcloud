@@ -40,7 +40,7 @@
 - name: test create server with not existing image
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cx11
+    server_type: cax11
     image: my-not-existing-image-20.04
     state: present
   register: result

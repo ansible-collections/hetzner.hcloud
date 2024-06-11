@@ -23,7 +23,7 @@ Alternatively, you may provide the API token directly as module argument:
       hetzner.hcloud.server:
         api_token: LRK9DAWQ1ZAEFSrCNEEzLCUwhYX1U3g7wMg4dTlkkDC96fyDuyJ39nVbVjCKSDfj
         name: my-server
-        server_type: cx11
+        server_type: cx22
         image: debian-12
         state: present
 
@@ -45,6 +45,6 @@ example if you want to store your API token in a vault:
         - name: Create server
           hetzner.hcloud.server:
             name: my-server
-            server_type: cx11
+            server_type: cx22
             image: debian-12
             state: present

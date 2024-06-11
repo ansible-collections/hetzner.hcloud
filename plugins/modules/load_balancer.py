@@ -113,7 +113,7 @@ hcloud_load_balancer:
             description: Name of the Load Balancer type of the Load Balancer
             returned: always
             type: str
-            sample: cx11
+            sample: cx22
         algorithm:
             description: Algorithm of the Load Balancer.
             returned: always

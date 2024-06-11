@@ -1,7 +1,7 @@
 - name: test create server with check mode
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cx11
+    server_type: cax11
     image: ubuntu-22.04
     state: present
   register: result
@@ -14,7 +14,7 @@
 - name: test create server
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cx11
+    server_type: cax11
     image: ubuntu-22.04
     enable_ipv6: False
     state: started
@@ -24,7 +24,7 @@
     that:
       - main_server is changed
       - main_server.hcloud_server.name == hcloud_server_name
-      - main_server.hcloud_server.server_type == "cx11"
+      - main_server.hcloud_server.server_type == "cax11"
       - main_server.hcloud_server.status == "running"
       - main_server.root_password != ""
 
@@ -108,7 +108,7 @@
 - name: test resize server running without force
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cx21"
+    server_type: "cax21"
     state: present
   register: result
   check_mode: true
@@ -116,12 +116,12 @@
   assert:
     that:
       - result is changed
-      - result.hcloud_server.server_type == "cx11"
+      - result.hcloud_server.server_type == "cax11"
 
 - name: test resize server with check mode
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cx21"
+    server_type: "cax21"
     state: stopped
   register: result
   check_mode: true
@@ -133,19 +133,19 @@
 - name: test resize server without disk
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cx21"
+    server_type: "cax21"
     state: stopped
   register: result
 - name: verify resize server without disk
   assert:
     that:
       - result is changed
-      - result.hcloud_server.server_type == "cx21"
+      - result.hcloud_server.server_type == "cax21"
 
 - name: test resize server idempotence
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cx21"
+    server_type: "cax21"
     state: stopped
   register: result
 - name: verify resize server idempotence
@@ -156,19 +156,19 @@
 - name: test resize server to smaller plan
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cx11"
+    server_type: "cax11"
     state: stopped
   register: result
 - name: verify resize server to smaller plan
   assert:
     that:
       - result is changed
-      - result.hcloud_server.server_type == "cx11"
+      - result.hcloud_server.server_type == "cax11"
 
 - name: test resize server with disk
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cx21"
+    server_type: "cax21"
     upgrade_disk: true
     state: stopped
   register: result
@@ -176,7 +176,7 @@
   assert:
     that:
       - result is changed
-      - result.hcloud_server.server_type == "cx21"
+      - result.hcloud_server.server_type == "cax21"
 
 - name: test enable backups with check mode
   hetzner.hcloud.server:
@@ -360,7 +360,7 @@
 - name: test create server with ssh key
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cx11
+    server_type: cax11
     image: "ubuntu-22.04"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
@@ -371,7 +371,7 @@
     that:
       - main_server is changed
       - main_server.hcloud_server.name == hcloud_server_name
-      - main_server.hcloud_server.server_type == "cx11"
+      - main_server.hcloud_server.server_type == "cax11"
       - main_server.hcloud_server.status == "running"
       - main_server.root_password != ""
 
@@ -441,7 +441,7 @@
 - name: test create server with rescue_mode
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cx11
+    server_type: cax11
     image: "ubuntu-22.04"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
@@ -453,7 +453,7 @@
     that:
       - main_server is changed
       - main_server.hcloud_server.name == hcloud_server_name
-      - main_server.hcloud_server.server_type == "cx11"
+      - main_server.hcloud_server.server_type == "cax11"
       - main_server.hcloud_server.status == "running"
       - main_server.root_password != ""
       - main_server.hcloud_server.rescue_enabled is sameas true
@@ -470,7 +470,7 @@
 - name: test create server with labels
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cx11
+    server_type: cax11
     image: "ubuntu-22.04"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
@@ -489,7 +489,7 @@
 - name: test update server with labels
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cx11
+    server_type: cax11
     image: "ubuntu-22.04"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
@@ -508,7 +508,7 @@
 - name: test update server with labels in other order
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cx11
+    server_type: cax11
     image: "ubuntu-22.04"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
