@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/ansible-collections/hetzner.hcloud/compare/3.1.1...4.0.0) (2024-06-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for ansible-core 2.14 ([#512](https://github.com/ansible-collections/hetzner.hcloud/issues/512))
+
+### Features
+
+* drop support for ansible-core 2.14 ([#512](https://github.com/ansible-collections/hetzner.hcloud/issues/512)) ([8157f9a](https://github.com/ansible-collections/hetzner.hcloud/commit/8157f9a250947a7a9b7b3acdb50f78ed28a22903))
+
 ## [3.1.1](https://github.com/ansible-collections/hetzner.hcloud/compare/3.1.0...3.1.1) (2024-04-16)
 
 
