@@ -1,4 +1,4 @@
-ansible-core>=2.14
+ansible-core>=2.15
 
 # Collections requirements
 netaddr
