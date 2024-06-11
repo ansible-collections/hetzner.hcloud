@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.1](https://github.com/ansible-collections/hetzner.hcloud/compare/4.0.0...4.0.1) (2024-06-11)
+
+
+### Bug Fixes
+
+* keep deprecated alias for another major version ([#515](https://github.com/ansible-collections/hetzner.hcloud/issues/515)) ([49e21ae](https://github.com/ansible-collections/hetzner.hcloud/commit/49e21ae4febe18c62e44c9abf365fa2feee7e7cc))
+
 ## [4.0.0](https://github.com/ansible-collections/hetzner.hcloud/compare/3.1.1...4.0.0) (2024-06-11)
 
 

@@ -1,2 +1,0 @@
-bugfixes:
-  - server - Keep `force_upgrade` deprecated alias for another major version.
