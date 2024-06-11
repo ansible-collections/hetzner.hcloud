@@ -556,3 +556,10 @@ releases:
     fragments:
     - drop-support-for-ansible-core-2.14.yml
     release_date: '2024-06-11'
+  4.0.1:
+    changes:
+      bugfixes:
+      - server - Keep `force_upgrade` deprecated alias for another major version.
+    fragments:
+    - keep-deprecated-alias.yml
+    release_date: '2024-06-11'

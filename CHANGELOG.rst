@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v4.0.1
+======
+
+Bugfixes
+--------
+
+- server - Keep `force_upgrade` deprecated alias for another major version.
+
 v4.0.0
 ======
 
