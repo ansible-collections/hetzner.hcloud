@@ -32,7 +32,7 @@
 - name: test create server with firewalls
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cpx11
+    server_type: cax11
     firewalls:
       - "{{ hcloud_firewall_name }}"
     image: "ubuntu-22.04"
@@ -48,7 +48,7 @@
 - name: test create server with firewalls idempotence
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cpx11
+    server_type: cax11
     firewalls:
       - "{{ hcloud_firewall_name }}"
     image: "ubuntu-22.04"
@@ -64,7 +64,7 @@
 - name: test update server with firewalls
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cpx11
+    server_type: cax11
     firewalls:
       - "{{ hcloud_firewall_name }}2"
     image: "ubuntu-22.04"
@@ -80,7 +80,7 @@
 - name: test update server with firewalls idempotence
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cpx11
+    server_type: cax11
     firewalls:
       - "{{ hcloud_firewall_name }}2"
     image: "ubuntu-22.04"

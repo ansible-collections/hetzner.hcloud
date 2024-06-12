@@ -63,7 +63,7 @@
 - name: test create server with primary network and no internet
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cpx11
+    server_type: cax11
     datacenter: "fsn1-dc14"
     image: "ubuntu-22.04"
     enable_ipv4: false
@@ -82,7 +82,7 @@
 - name: test update server by adding secondary network
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cpx11
+    server_type: cax11
     datacenter: "fsn1-dc14"
     image: "ubuntu-22.04"
     enable_ipv4: false
@@ -102,7 +102,7 @@
 - name: test update server idem
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cpx11
+    server_type: cax11
     datacenter: "fsn1-dc14"
     image: "ubuntu-22.04"
     enable_ipv4: false

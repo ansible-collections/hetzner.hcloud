@@ -535,7 +535,7 @@
 - name: test create server with enabled backups
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cpx11
+    server_type: cax11
     backups: true
     image: "ubuntu-22.04"
     ssh_keys:
@@ -563,7 +563,7 @@
     name: "{{ hcloud_server_name }}"
     delete_protection: true
     rebuild_protection: true
-    server_type: cpx11
+    server_type: cax11
     image: "ubuntu-22.04"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"

@@ -25,7 +25,7 @@
 - name: test create server with primary ips
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cpx11
+    server_type: cax11
     datacenter: "fsn1-dc14"
     image: "ubuntu-22.04"
     ipv4: "{{primaryIPv4.hcloud_primary_ip.id}}"
@@ -42,7 +42,7 @@
 - name: test update server with primary ips
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cpx11
+    server_type: cax11
     datacenter: "fsn1-dc14"
     image: "ubuntu-22.04"
     ipv4: "{{secondPrimaryIPv4.hcloud_primary_ip.id}}"
