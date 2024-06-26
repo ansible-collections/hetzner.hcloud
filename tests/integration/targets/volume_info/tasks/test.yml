@@ -27,7 +27,7 @@
     that:
       - result.hcloud_volume_info | list | count == 1
       - result.hcloud_volume_info[0].name == hcloud_volume_name
-      - result.hcloud_volume_info[0].location == 'fsn1'
+      - result.hcloud_volume_info[0].location == hcloud_location_name
       - result.hcloud_volume_info[0].size == 10
       - result.hcloud_volume_info[0].linux_device is defined
 
