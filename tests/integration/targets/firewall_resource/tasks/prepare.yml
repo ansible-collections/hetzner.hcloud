@@ -2,8 +2,8 @@
 - name: Create test_server
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cax11
-    image: ubuntu-22.04
+    server_type: "{{ hcloud_server_type }}"
+    image: "{{ hcloud_image }}"
     labels:
       key: value
     state: stopped

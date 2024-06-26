@@ -64,9 +64,9 @@
 - name: test create server with placement group
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cax11
+    server_type: "{{ hcloud_server_type }}"
     placement_group: "{{ hcloud_placement_group_name }}"
-    image: "ubuntu-22.04"
+    image: "{{ hcloud_image }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     state: present

@@ -40,7 +40,7 @@
 
 - name: Gather hcloud_server_type_info with correct name
   hetzner.hcloud.server_type_info:
-    name: "{{ hcloud_server_type_name }}"
+    name: "{{ hcloud_server_type }}"
   register: result
 - name: Verify hcloud_server_type_info with correct name
   ansible.builtin.assert:
@@ -49,7 +49,7 @@
 
 - name: Gather hcloud_server_type_info with wrong name
   hetzner.hcloud.server_type_info:
-    name: "{{ hcloud_server_type_name }}-invalid"
+    name: "{{ hcloud_server_type }}-invalid"
   register: result
 - name: Verify hcloud_server_type_info with wrong name
   ansible.builtin.assert:
