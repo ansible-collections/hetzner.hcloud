@@ -5,6 +5,7 @@ hcloud_network_name: "{{ hcloud_ns }}"
 # Pool of external Hetzner vSwitch ID, this prevents using the same vSwitch id twice in
 # different jobs.
 hetzner_vswitch_ids:
+  # Hetzner Public account
   - 43065
   - 44166
   - 44167
@@ -21,3 +22,8 @@ hetzner_vswitch_ids:
   - 44179
   - 44180
   - 44181
+  # Hetzner Internal account
+  # - 53379
+  # - 53380
+  # - 53381
+  # - 53382
