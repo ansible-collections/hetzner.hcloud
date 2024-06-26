@@ -112,8 +112,8 @@
 - name: test create server with ssh key
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cax11
-    image: "ubuntu-22.04"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     state: started

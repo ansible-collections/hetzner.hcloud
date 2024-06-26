@@ -1,8 +1,8 @@
 - name: test create server with check mode
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cax11
-    image: ubuntu-22.04
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     state: present
   register: result
   check_mode: true
@@ -14,8 +14,8 @@
 - name: test create server
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cax11
-    image: ubuntu-22.04
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     enable_ipv6: False
     state: started
   register: main_server
@@ -24,7 +24,7 @@
     that:
       - main_server is changed
       - main_server.hcloud_server.name == hcloud_server_name
-      - main_server.hcloud_server.server_type == "cax11"
+      - main_server.hcloud_server.server_type == hcloud_server_type_name
       - main_server.hcloud_server.status == "running"
       - main_server.root_password != ""
 
@@ -108,7 +108,7 @@
 - name: test resize server running without force
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cax21"
+    server_type: "{{ hcloud_server_type_upgrade_name }}"
     state: present
   register: result
   check_mode: true
@@ -116,12 +116,12 @@
   assert:
     that:
       - result is changed
-      - result.hcloud_server.server_type == "cax11"
+      - result.hcloud_server.server_type == hcloud_server_type_name
 
 - name: test resize server with check mode
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cax21"
+    server_type: "{{ hcloud_server_type_upgrade_name }}"
     state: stopped
   register: result
   check_mode: true
@@ -133,19 +133,19 @@
 - name: test resize server without disk
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cax21"
+    server_type: "{{ hcloud_server_type_upgrade_name }}"
     state: stopped
   register: result
 - name: verify resize server without disk
   assert:
     that:
       - result is changed
-      - result.hcloud_server.server_type == "cax21"
+      - result.hcloud_server.server_type == hcloud_server_type_upgrade_name
 
 - name: test resize server idempotence
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cax21"
+    server_type: "{{ hcloud_server_type_upgrade_name }}"
     state: stopped
   register: result
 - name: verify resize server idempotence
@@ -156,19 +156,19 @@
 - name: test resize server to smaller plan
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cax11"
+    server_type: "{{ hcloud_server_type_name }}"
     state: stopped
   register: result
 - name: verify resize server to smaller plan
   assert:
     that:
       - result is changed
-      - result.hcloud_server.server_type == "cax11"
+      - result.hcloud_server.server_type == hcloud_server_type_name
 
 - name: test resize server with disk
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "cax21"
+    server_type: "{{ hcloud_server_type_upgrade_name }}"
     upgrade_disk: true
     state: stopped
   register: result
@@ -176,7 +176,7 @@
   assert:
     that:
       - result is changed
-      - result.hcloud_server.server_type == "cax21"
+      - result.hcloud_server.server_type == hcloud_server_type_upgrade_name
 
 - name: test enable backups with check mode
   hetzner.hcloud.server:
@@ -232,7 +232,7 @@
 - name: test rebuild server
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    image: ubuntu-22.04
+    image: "{{ hcloud_image_name }}"
     state: rebuild
   register: result_after_test
 - name: verify rebuild server
@@ -244,7 +244,7 @@
 - name: test rebuild server with check mode
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    image: ubuntu-22.04
+    image: "{{ hcloud_image_name }}"
     state: rebuild
   register: result_after_test
   check_mode: true
@@ -321,7 +321,7 @@
 - name: test rebuild server fails if it is protected
   hetzner.hcloud.server:
     name: "{{hcloud_server_name}}"
-    image: ubuntu-22.04
+    image: "{{ hcloud_image_name }}"
     state: rebuild
   ignore_errors: true
   register: result
@@ -360,8 +360,8 @@
 - name: test create server with ssh key
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cax11
-    image: "ubuntu-22.04"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     state: started
@@ -371,7 +371,7 @@
     that:
       - main_server is changed
       - main_server.hcloud_server.name == hcloud_server_name
-      - main_server.hcloud_server.server_type == "cax11"
+      - main_server.hcloud_server.server_type == hcloud_server_type_name
       - main_server.hcloud_server.status == "running"
       - main_server.root_password != ""
 
@@ -441,8 +441,8 @@
 - name: test create server with rescue_mode
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cax11
-    image: "ubuntu-22.04"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     rescue_mode: "linux64"
@@ -453,7 +453,7 @@
     that:
       - main_server is changed
       - main_server.hcloud_server.name == hcloud_server_name
-      - main_server.hcloud_server.server_type == "cax11"
+      - main_server.hcloud_server.server_type == hcloud_server_type_name
       - main_server.hcloud_server.status == "running"
       - main_server.root_password != ""
       - main_server.hcloud_server.rescue_enabled is sameas true
@@ -470,8 +470,8 @@
 - name: test create server with labels
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cax11
-    image: "ubuntu-22.04"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     labels:
@@ -489,8 +489,8 @@
 - name: test update server with labels
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cax11
-    image: "ubuntu-22.04"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     labels:
@@ -508,8 +508,8 @@
 - name: test update server with labels in other order
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"
-    server_type: cax11
-    image: "ubuntu-22.04"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     labels:
@@ -535,9 +535,9 @@
 - name: test create server with enabled backups
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cax11
+    server_type: "{{ hcloud_server_type_name }}"
     backups: true
-    image: "ubuntu-22.04"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     state: present
@@ -563,8 +563,8 @@
     name: "{{ hcloud_server_name }}"
     delete_protection: true
     rebuild_protection: true
-    server_type: cax11
-    image: "ubuntu-22.04"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     state: present

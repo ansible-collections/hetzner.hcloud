@@ -4,10 +4,10 @@
 - name: setup server
   hetzner.hcloud.server:
     name: "{{hcloud_server_name}}"
-    server_type: cax11
-    image: ubuntu-22.04
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     state: stopped
-    location: "fsn1"
+    location: "{{ hcloud_location_name }}"
   register: vol_server
 - name: verify setup server
   assert:
@@ -30,7 +30,7 @@
   hetzner.hcloud.volume:
     name: "{{hcloud_volume_name}}"
     size: 10
-    location: "fsn1"
+    location: "{{ hcloud_location_name }}"
   register: result
   check_mode: true
 - name: verify create Volume with check mode result
@@ -42,14 +42,14 @@
   hetzner.hcloud.volume:
     name: "{{hcloud_volume_name}}"
     size: 10
-    location: "fsn1"
+    location: "{{ hcloud_location_name }}"
   register: volume
 - name: verify test create Volume
   assert:
     that:
       - volume is changed
       - volume.hcloud_volume.name == hcloud_volume_name
-      - volume.hcloud_volume.location == "fsn1"
+      - volume.hcloud_volume.location == hcloud_location_name
       - volume.hcloud_volume.size == 10
       - volume.hcloud_volume.server != hcloud_server_name
       - volume.hcloud_volume.linux_device is defined
@@ -58,7 +58,7 @@
   hetzner.hcloud.volume:
     name: "{{hcloud_volume_name}}"
     size: 10
-    location: "fsn1"
+    location: "{{ hcloud_location_name }}"
   register: volume
 - name: verify test create Volume
   assert:
@@ -118,7 +118,7 @@
   assert:
     that:
       - volume is changed
-      - volume.hcloud_volume.location == "fsn1"
+      - volume.hcloud_volume.location == hcloud_location_name
       - volume.hcloud_volume.server != hcloud_server_name
 
 - name: test update Volume label
@@ -236,7 +236,7 @@
   hetzner.hcloud.volume:
     name: "{{hcloud_volume_name}}"
     size: 10
-    location: "fsn1"
+    location: "{{ hcloud_location_name }}"
     delete_protection: true
   register: volume
 - name: verify create Volume with delete protection

@@ -3,4 +3,3 @@
 ---
 hcloud_server_name: "{{ hcloud_ns }}"
 hcloud_snapshot_name: "{{ hcloud_ns }}"
-hcloud_image_name: ubuntu-22.04

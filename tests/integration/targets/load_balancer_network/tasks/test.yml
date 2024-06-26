@@ -30,7 +30,7 @@
     name: "{{hcloud_load_balancer_name}}"
     load_balancer_type: lb11
     state: present
-    location: "fsn1"
+    location: "{{ hcloud_location_name }}"
   register: load_balancer
 - name: verify setup load_balancer
   assert:

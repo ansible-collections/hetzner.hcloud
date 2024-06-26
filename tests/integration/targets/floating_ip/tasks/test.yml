@@ -19,10 +19,10 @@
 - name: setup server
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cax11
-    image: ubuntu-22.04
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     state: stopped
-    location: "fsn1"
+    location: "{{ hcloud_location_name }}"
   register: main_server
 - name: verify setup server
   assert:
@@ -32,8 +32,8 @@
 - name: setup another server
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}2"
-    server_type: cax11
-    image: ubuntu-22.04
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     state: stopped
   register: main_server2
 - name: verify setup another server
@@ -67,7 +67,7 @@
 - name: test missing type parameter on delete Floating IP
   hetzner.hcloud.floating_ip:
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
     state: "absent"
   register: result
   ignore_errors: true
@@ -81,7 +81,7 @@
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv5
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
   register: result
   ignore_errors: true
 - name: verify invalid type
@@ -109,7 +109,7 @@
     name: "{{ hcloud_floating_ip_name }}"
     description: "Web Server"
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
   register: floatingIP
   check_mode: true
 - name: verify test create Floating IP with check mode
@@ -122,7 +122,7 @@
     name: "{{ hcloud_floating_ip_name }}"
     description: "Web Server"
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
   register: floatingIP
 - name: verify test create Floating IP
   assert:
@@ -130,14 +130,14 @@
       - floatingIP is changed
       - floatingIP.hcloud_floating_ip.name ==hcloud_floating_ip_name
       - floatingIP.hcloud_floating_ip.description == "Web Server"
-      - floatingIP.hcloud_floating_ip.home_location == "fsn1"
+      - floatingIP.hcloud_floating_ip.home_location == hcloud_location_name
 
 - name: test create Floating IP idempotency
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     description: "Web Server"
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
   register: floatingIP
 - name: verify test create Floating IP idempotency
   assert:
@@ -149,7 +149,7 @@
     name: "{{ hcloud_floating_ip_name }}"
     description: "changed-description"
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
   check_mode: true
   register: floatingIP
 - name: verify test create Floating IP  with check mode
@@ -163,7 +163,7 @@
     name: "{{ hcloud_floating_ip_name }}"
     description: "changed-description"
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
     labels:
       key: value
   register: floatingIP
@@ -178,7 +178,7 @@
     name: "{{ hcloud_floating_ip_name }}"
     description: "changed-description"
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
     labels:
       key: value
   register: floatingIP
@@ -191,7 +191,7 @@
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
     labels:
       key: value
   register: floatingIP
@@ -204,7 +204,7 @@
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
     labels:
       key: value
       other: label
@@ -218,7 +218,7 @@
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
     labels:
       other: label
       key: value
@@ -271,7 +271,7 @@
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
   register: floatingIP
 - name: verify test unassign Floating IP
   assert:
@@ -283,7 +283,7 @@
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
   register: floatingIP
 - name: verify test unassign Floating IPidempotency
   assert:
@@ -401,7 +401,7 @@
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv6
-    home_location: "fsn1"
+    home_location: "{{ hcloud_location_name }}"
     state: "present"
   register: result
 - name: verify test create ipv6 floating ip
@@ -442,7 +442,7 @@
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
-    home_location: fsn1
+    home_location: "{{ hcloud_location_name }}"
     delete_protection: true
   register: floatingIP
 - name: verify create Floating IP with delete protection

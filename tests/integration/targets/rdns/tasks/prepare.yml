@@ -2,8 +2,8 @@
 - name: Create test_server
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: cax11
-    image: ubuntu-22.04
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     state: present
   register: test_server
 
@@ -11,7 +11,7 @@
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
-    datacenter: fsn1-dc14
+    datacenter: "{{ hcloud_datacenter_name }}"
     state: present
   register: test_primary_ip
 
@@ -19,7 +19,7 @@
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
-    home_location: fsn1
+    home_location: "{{ hcloud_location_name }}"
     state: present
   register: test_floating_ip
 

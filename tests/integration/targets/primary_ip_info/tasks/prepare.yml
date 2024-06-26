@@ -2,7 +2,7 @@
 - name: Create test_primary_ip
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
-    datacenter: fsn1-dc14
+    datacenter: "{{ hcloud_datacenter_name }}"
     type: ipv4
     labels:
       key: value
