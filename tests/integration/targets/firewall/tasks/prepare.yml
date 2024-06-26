@@ -2,7 +2,7 @@
 - name: Create test_server
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "{{ hcloud_server_type }}"
-    image: "{{ hcloud_image }}"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     state: stopped
   register: test_server

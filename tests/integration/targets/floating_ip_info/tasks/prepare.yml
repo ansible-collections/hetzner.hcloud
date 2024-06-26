@@ -2,7 +2,7 @@
 - name: Create test_floating_ip
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
-    home_location: "{{ hcloud_location }}"
+    home_location: "{{ hcloud_location_name }}"
     type: ipv4
     labels:
       key: value

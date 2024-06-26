@@ -26,7 +26,7 @@
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     server_type: not-existing-server-type
-    image: "{{ hcloud_image }}"
+    image: "{{ hcloud_image_name }}"
     state: present
   register: result
   ignore_errors: true
@@ -40,7 +40,7 @@
 - name: test create server with not existing image
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "{{ hcloud_server_type }}"
+    server_type: "{{ hcloud_server_type_name }}"
     image: my-not-existing-image-20.04
     state: present
   register: result

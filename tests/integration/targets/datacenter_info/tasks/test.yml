@@ -26,8 +26,8 @@
   ansible.builtin.assert:
     that:
       - result.hcloud_datacenter_info | list | count == 1
-      - result.hcloud_datacenter_info[0].name == hcloud_datacenter
-      - result.hcloud_datacenter_info[0].location == hcloud_location
+      - result.hcloud_datacenter_info[0].name == hcloud_datacenter_name
+      - result.hcloud_datacenter_info[0].location == hcloud_location_name
 
 - name: Gather hcloud_datacenter_info with wrong id
   hetzner.hcloud.datacenter_info:
@@ -41,7 +41,7 @@
 
 - name: Gather hcloud_datacenter_info with correct name
   hetzner.hcloud.datacenter_info:
-    name: "{{ hcloud_datacenter }}"
+    name: "{{ hcloud_datacenter_name }}"
   register: result
 - name: Verify hcloud_datacenter_info with correct name
   ansible.builtin.assert:
@@ -50,7 +50,7 @@
 
 - name: Gather hcloud_datacenter_info with wrong name
   hetzner.hcloud.datacenter_info:
-    name: "{{ hcloud_datacenter }}-invalid"
+    name: "{{ hcloud_datacenter_name }}-invalid"
   register: result
 - name: Verify hcloud_datacenter_info with wrong name
   ansible.builtin.assert:

@@ -4,10 +4,10 @@
 - name: setup server
   hetzner.hcloud.server:
     name: "{{hcloud_server_name}}"
-    server_type: "{{ hcloud_server_type }}"
-    image: "{{ hcloud_image }}"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     state: stopped
-    location: "{{ hcloud_location }}"
+    location: "{{ hcloud_location_name }}"
   register: server
 - name: verify setup server
   assert:
@@ -19,7 +19,7 @@
     name: "{{hcloud_load_balancer_name}}"
     load_balancer_type: lb11
     state: present
-    location: "{{ hcloud_location }}"
+    location: "{{ hcloud_location_name }}"
   register: load_balancer
 - name: verify setup load_balancer
   assert:

@@ -32,10 +32,10 @@
 - name: test create server with firewalls
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "{{ hcloud_server_type }}"
+    server_type: "{{ hcloud_server_type_name }}"
     firewalls:
       - "{{ hcloud_firewall_name }}"
-    image: "{{ hcloud_image }}"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     state: present
@@ -48,10 +48,10 @@
 - name: test create server with firewalls idempotence
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "{{ hcloud_server_type }}"
+    server_type: "{{ hcloud_server_type_name }}"
     firewalls:
       - "{{ hcloud_firewall_name }}"
-    image: "{{ hcloud_image }}"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     state: present
@@ -64,10 +64,10 @@
 - name: test update server with firewalls
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "{{ hcloud_server_type }}"
+    server_type: "{{ hcloud_server_type_name }}"
     firewalls:
       - "{{ hcloud_firewall_name }}2"
-    image: "{{ hcloud_image }}"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     state: present
@@ -80,10 +80,10 @@
 - name: test update server with firewalls idempotence
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "{{ hcloud_server_type }}"
+    server_type: "{{ hcloud_server_type_name }}"
     firewalls:
       - "{{ hcloud_firewall_name }}2"
-    image: "{{ hcloud_image }}"
+    image: "{{ hcloud_image_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     state: present

@@ -51,7 +51,7 @@
 
 - name: Gather hcloud_image_info with correct name
   hetzner.hcloud.image_info:
-    name: "{{ hcloud_image }}"
+    name: "{{ hcloud_image_name }}"
   register: result
 - name: Verify hcloud_image_info with correct name
   ansible.builtin.assert:
@@ -61,7 +61,7 @@
 
 - name: Gather hcloud_image_info with wrong name
   hetzner.hcloud.image_info:
-    name: "{{ hcloud_image }}-invalid"
+    name: "{{ hcloud_image_name }}-invalid"
   register: result
 - name: Verify hcloud_image_info with wrong name
   ansible.builtin.assert:
@@ -70,7 +70,7 @@
 
 - name: Gather hcloud_image_info with correct name and architecture
   hetzner.hcloud.image_info:
-    name: "{{ hcloud_image }}"
+    name: "{{ hcloud_image_name }}"
     architecture: arm
   register: result
 - name: Verify hcloud_image_info with correct name

@@ -2,8 +2,8 @@
 - name: Create test_server
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "{{ hcloud_server_type }}"
-    image: "{{ hcloud_image }}"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
     state: present
   register: test_server
 
@@ -19,7 +19,7 @@
   hetzner.hcloud.floating_ip:
     name: "{{ hcloud_floating_ip_name }}"
     type: ipv4
-    home_location: "{{ hcloud_location }}"
+    home_location: "{{ hcloud_location_name }}"
     state: present
   register: test_floating_ip
 

@@ -39,7 +39,7 @@
 
 - name: Gather hcloud_location_info with correct name
   hetzner.hcloud.location_info:
-    name: "{{ hcloud_location }}"
+    name: "{{ hcloud_location_name }}"
   register: result
 - name: Verify hcloud_location_info with correct name
   ansible.builtin.assert:
@@ -48,7 +48,7 @@
 
 - name: Gather hcloud_location_info with wrong name
   hetzner.hcloud.location_info:
-    name: "{{ hcloud_location }}-invalid"
+    name: "{{ hcloud_location_name }}-invalid"
   register: result
 - name: Verify hcloud_location_info with wrong name
   ansible.builtin.assert:

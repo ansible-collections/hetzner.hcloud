@@ -5,29 +5,29 @@
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}v4"
     type: ipv4
-    datacenter: "{{ hcloud_datacenter }}"
+    datacenter: "{{ hcloud_datacenter_name }}"
   register: primaryIPv4
 
 - name: setup create second primary ipv4
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}v42"
     type: ipv4
-    datacenter: "{{ hcloud_datacenter }}"
+    datacenter: "{{ hcloud_datacenter_name }}"
   register: secondPrimaryIPv4
 
 - name: setup create primary ipv6
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}v6"
     type: ipv6
-    datacenter: "{{ hcloud_datacenter }}"
+    datacenter: "{{ hcloud_datacenter_name }}"
   register: primaryIPv6
 
 - name: test create server with primary ips
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "{{ hcloud_server_type }}"
-    datacenter: "{{ hcloud_datacenter }}"
-    image: "{{ hcloud_image }}"
+    server_type: "{{ hcloud_server_type_name }}"
+    datacenter: "{{ hcloud_datacenter_name }}"
+    image: "{{ hcloud_image_name }}"
     ipv4: "{{primaryIPv4.hcloud_primary_ip.id}}"
     ipv6: "{{primaryIPv6.hcloud_primary_ip.id}}"
     ssh_keys:
@@ -42,9 +42,9 @@
 - name: test update server with primary ips
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
-    server_type: "{{ hcloud_server_type }}"
-    datacenter: "{{ hcloud_datacenter }}"
-    image: "{{ hcloud_image }}"
+    server_type: "{{ hcloud_server_type_name }}"
+    datacenter: "{{ hcloud_datacenter_name }}"
+    image: "{{ hcloud_image_name }}"
     ipv4: "{{secondPrimaryIPv4.hcloud_primary_ip.id}}"
     ipv6: ""
     enable_ipv6: false
