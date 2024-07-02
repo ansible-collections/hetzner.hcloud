@@ -172,7 +172,7 @@ class AnsibleHCloudIsoInfo(AnsibleHCloud):
             else:
                 self.hcloud_iso_info = self.client.isos.get_all(
                     architecture=self.module.params.get("architecture"),
-                    include_wildcard_architecture=self.module.params.get("include_wildcard_architecture"),
+                    include_architecture_wildcard=self.module.params.get("include_wildcard_architecture"),
                 )
 
         except HCloudException as exception:

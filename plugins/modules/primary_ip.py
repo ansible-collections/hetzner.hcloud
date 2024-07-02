@@ -214,7 +214,6 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
                 "type": self.module.params.get("type"),
                 "name": self.module.params.get("name"),
                 "auto_delete": self.module.params.get("auto_delete"),
-                "datacenter": None,  # TODO: https://github.com/hetznercloud/hcloud-python/pull/363
             }
 
             if self.module.params.get("datacenter") is not None:
