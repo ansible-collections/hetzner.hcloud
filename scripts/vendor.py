@@ -27,20 +27,9 @@ HCLOUD_VENDOR_PATH = "plugins/module_utils/vendor/hcloud"
 
 
 def apply_code_modifications(source_path: Path):
-    # The ansible galaxy-importer consider __version___.py to be an invalid filename in module_utils/
-    # Move the __version__.py file to _version.py
-    move(source_path / "__version__.py", source_path / "_version.py")
-
     for file in source_path.rglob("*.py"):
         content = file.read_text()
         content_orig = content
-
-        # Move the __version__.py file to _version.py
-        content = re.sub(
-            r"from .__version__ import VERSION",
-            r"from ._version import VERSION",
-            content,
-        )
 
         # Wrap requests imports
         content = re.sub(
