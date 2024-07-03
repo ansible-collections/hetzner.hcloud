@@ -209,7 +209,7 @@
     that:
       - result is failed
       - result.failure.code == "protected"
-      - result.msg == "volume deletion is protected"
+      - result.failure.message == "volume deletion is protected"
 
 - name: test update Volume delete protection
   hetzner.hcloud.volume:
@@ -256,7 +256,7 @@
     that:
       - result is failed
       - result.failure.code == "protected"
-      - result.msg == "volume deletion is protected"
+      - result.failure.message == "volume deletion is protected"
 
 - name: test update Volume delete protection
   hetzner.hcloud.volume:

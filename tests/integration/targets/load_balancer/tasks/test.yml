@@ -121,7 +121,7 @@
     that:
       - result is failed
       - result.failure.code == "protected"
-      - result.msg == "load balancer deletion is protected"
+      - result.failure.message == "load balancer deletion is protected"
 
 - name: Test update delete_protection
   hetzner.hcloud.load_balancer:
