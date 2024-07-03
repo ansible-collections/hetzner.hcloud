@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import warnings
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, NamedTuple
 
@@ -336,15 +335,14 @@ class BoundServer(BoundModelBase, Server):
     def rebuild(
         self,
         image: Image | BoundImage,
-        *,
-        return_response: bool = False,
-    ) -> RebuildResponse | BoundAction:
+        # pylint: disable=unused-argument
+        **kwargs: Any,
+    ) -> RebuildResponse:
         """Rebuilds a server overwriting its disk with the content of an image, thereby destroying all data on the target server.
 
         :param image: Image to use for the rebuilt server
-        :param return_response: Whether to return the full response or only the action.
         """
-        return self._client.rebuild(self, image, return_response=return_response)
+        return self._client.rebuild(self, image)
 
     def change_type(
         self,
@@ -1009,14 +1007,13 @@ class ServersClient(ClientEntityBase):
         self,
         server: Server | BoundServer,
         image: Image | BoundImage,
-        *,
-        return_response: bool = False,
-    ) -> RebuildResponse | BoundAction:
+        # pylint: disable=unused-argument
+        **kwargs: Any,
+    ) -> RebuildResponse:
         """Rebuilds a server overwriting its disk with the content of an image, thereby destroying all data on the target server.
 
         :param server: Server to rebuild
         :param image: Image to use for the rebuilt server
-        :param return_response: Whether to return the full response or only the action.
         """
         data: dict[str, Any] = {"image": image.id_or_name}
         response = self._client.request(
@@ -1025,21 +1022,10 @@ class ServersClient(ClientEntityBase):
             json=data,
         )
 
-        rebuild_response = RebuildResponse(
+        return RebuildResponse(
             action=BoundAction(self._client.actions, response["action"]),
             root_password=response.get("root_password"),
         )
-
-        if not return_response:
-            warnings.warn(
-                "Returning only the 'action' is deprecated, please set the "
-                "'return_response' keyword argument to 'True' to return the full "
-                "rebuild response and update your code accordingly.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            return rebuild_response.action
-        return rebuild_response
 
     def enable_backup(self, server: Server | BoundServer) -> BoundAction:
         """Enables and configures the automatic daily backup option for the server. Enabling automatic backups will increase the price of the server by 20%.

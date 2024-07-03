@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 import time
-from typing import NoReturn
+from typing import Protocol
 
 try:
     import requests
 except ImportError:
     requests = None
 
-from ._version import VERSION
 from ._exceptions import APIException
+from ._version import __version__
 from .actions import ActionsClient
 from .certificates import CertificatesClient
 from .datacenters import DatacentersClient
@@ -29,10 +29,19 @@ from .ssh_keys import SSHKeysClient
 from .volumes import VolumesClient
 
 
+class PollIntervalFunction(Protocol):
+    def __call__(self, retries: int) -> float:
+        """
+        Return a interval in seconds to wait between each API call.
+
+        :param retries: Number of calls already made.
+        """
+
+
 class Client:
     """Base Client for accessing the Hetzner Cloud API"""
 
-    _version = VERSION
+    _version = __version__
     _retry_wait_time = 0.5
     __user_agent_prefix = "hcloud-python"
 
@@ -42,7 +51,8 @@ class Client:
         api_endpoint: str = "https://api.hetzner.cloud/v1",
         application_name: str | None = None,
         application_version: str | None = None,
-        poll_interval: int = 1,
+        poll_interval: int | float | PollIntervalFunction = 1.0,
+        poll_max_retries: int = 120,
         timeout: float | tuple[float, float] | None = None,
     ):
         """Create a new Client instance
@@ -51,7 +61,11 @@ class Client:
         :param api_endpoint: Hetzner Cloud API endpoint
         :param application_name: Your application name
         :param application_version: Your application _version
-        :param poll_interval: Interval for polling information from Hetzner Cloud API in seconds
+        :param poll_interval:
+            Interval in seconds to use when polling actions from the API.
+            You may pass a function to compute a custom poll interval.
+        :param poll_max_retries:
+            Max retries before timeout when polling actions from the API.
         :param timeout: Requests timeout in seconds
         """
         self.token = token
@@ -60,7 +74,12 @@ class Client:
         self._application_version = application_version
         self._requests_session = requests.Session()
         self._requests_timeout = timeout
-        self.poll_interval = poll_interval
+
+        if isinstance(poll_interval, (int, float)):
+            self._poll_interval_func = lambda _: poll_interval  # Constant poll interval
+        else:
+            self._poll_interval_func = poll_interval
+        self._poll_max_retries = poll_max_retries
 
         self.datacenters = DatacentersClient(self)
         """DatacentersClient Instance
@@ -174,32 +193,18 @@ class Client:
         }
         return headers
 
-    def _raise_exception_from_response(self, response) -> NoReturn:
-        raise APIException(
-            code=response.status_code,
-            message=response.reason,
-            details={"content": response.content},
-        )
-
-    def _raise_exception_from_content(self, content: dict) -> NoReturn:
-        raise APIException(
-            code=content["error"]["code"],
-            message=content["error"]["message"],
-            details=content["error"]["details"],
-        )
-
     def request(  # type: ignore[no-untyped-def]
         self,
         method: str,
         url: str,
-        tries: int = 1,
+        *,
+        _tries: int = 1,
         **kwargs,
     ) -> dict:
         """Perform a request to the Hetzner Cloud API, wrapper around requests.request
 
         :param method: HTTP Method to perform the Request
         :param url: URL of the Endpoint
-        :param tries: Tries of the request (used internally, should not be set by the user)
         :param timeout: Requests timeout in seconds
         :return: Response
         """
@@ -213,24 +218,40 @@ class Client:
             **kwargs,
         )
 
-        content = response.content
+        correlation_id = response.headers.get("X-Correlation-Id")
+        payload = {}
         try:
-            if len(content) > 0:
-                content = response.json()
-        except (TypeError, ValueError):
-            self._raise_exception_from_response(response)
+            if len(response.content) > 0:
+                payload = response.json()
+        except (TypeError, ValueError) as exc:
+            raise APIException(
+                code=response.status_code,
+                message=response.reason,
+                details={"content": response.content},
+                correlation_id=correlation_id,
+            ) from exc
 
         if not response.ok:
-            if content:
-                assert isinstance(content, dict)
-                if content["error"]["code"] == "rate_limit_exceeded" and tries < 5:
-                    time.sleep(tries * self._retry_wait_time)
-                    tries = tries + 1
-                    return self.request(method, url, tries, **kwargs)
+            if not payload or "error" not in payload:
+                raise APIException(
+                    code=response.status_code,
+                    message=response.reason,
+                    details={"content": response.content},
+                    correlation_id=correlation_id,
+                )
 
-                self._raise_exception_from_content(content)
-            else:
-                self._raise_exception_from_response(response)
+            error: dict = payload["error"]
 
-        # TODO: return an empty dict instead of an empty string when content == "".
-        return content  # type: ignore[return-value]
+            if error["code"] == "rate_limit_exceeded" and _tries < 5:
+                time.sleep(_tries * self._retry_wait_time)
+                _tries = _tries + 1
+                return self.request(method, url, _tries=_tries, **kwargs)
+
+            raise APIException(
+                code=error["code"],
+                message=error["message"],
+                details=error.get("details"),
+                correlation_id=correlation_id,
+            )
+
+        return payload
