@@ -14,7 +14,7 @@
     that:
       - result is failed
       - result.failure.code == "not_found"
-      - result.msg == "firewall not-existing was not found"
+      - result.failure.message == "firewall not-existing was not found"
 
 - name: setup create firewalls
   hetzner.hcloud.firewall:

@@ -121,7 +121,7 @@
     that:
       - result is failed
       - result.failure.code == "protected"
-      - result.msg == "Primary IP deletion is protected"
+      - result.failure.message == "Primary IP deletion is protected"
 
 - name: Test update delete protection
   hetzner.hcloud.primary_ip:

@@ -35,7 +35,7 @@ def test_hcloud_fail_json_hcloud(module):
         hcloud.fail_json_hcloud(exception)
 
         module.fail_json.assert_called_with(
-            msg="invalid input in fields 'server', 'home_location'",
+            msg="invalid input in fields 'server', 'home_location' (invalid_input)",
             exception=traceback.format_exc(),
             failure={
                 "message": "invalid input in fields 'server', 'home_location'",

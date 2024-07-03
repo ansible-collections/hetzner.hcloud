@@ -100,7 +100,7 @@
     that:
       - result is failed
       - result.failure.code == "protected"
-      - result.msg == "network deletion is protected"
+      - result.failure.message == "network deletion is protected"
 
 - name: Test update delete protection
   hetzner.hcloud.network:
