@@ -471,7 +471,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 self.result["root_password"] = resp.root_password
                 # Action should take 60 to 90 seconds on average, but can be >10m when creating a
                 # server from a custom images
-                resp.action.wait_until_finished(max_retries=1800)
+                resp.action.wait_until_finished(max_retries=362)  # 362 retries >= 1802 seconds
                 for action in resp.next_actions:
                     action.wait_until_finished()
 
@@ -671,17 +671,18 @@ class AnsibleHCloudServer(AnsibleHCloud):
 
         self.stop_server_if_forced()
 
-        upgrade_disk = self.module.params.get("upgrade_disk")
-        # Upgrading a server takes 160 seconds on average, upgrading the disk should
-        # take more time
-        upgrade_timeout = 600 if upgrade_disk else 180
-
         if not self.module.check_mode:
+            upgrade_disk = self.module.params.get("upgrade_disk")
+
             action = self.hcloud_server.change_type(
                 server_type=self._get_server_type(),
                 upgrade_disk=upgrade_disk,
             )
-            action.wait_until_finished(max_retries=upgrade_timeout)
+            # Upgrading a server takes 160 seconds on average, upgrading the disk should
+            # take more time
+            # 122 retries >= 602 seconds
+            # 38 retries >= 182 seconds
+            action.wait_until_finished(max_retries=122 if upgrade_disk else 38)
         self._mark_as_changed()
 
     def _update_server_ip(self, kind: Literal["ipv4", "ipv6"]) -> None:
@@ -867,9 +868,9 @@ class AnsibleHCloudServer(AnsibleHCloud):
         try:
             if not self.module.check_mode:
                 image = self._get_image(self.hcloud_server.server_type)
-                # When we rebuild the server progress takes some more time.
                 resp = self.client.servers.rebuild(self.hcloud_server, image)
-                resp.action.wait_until_finished(1000)
+                # When we rebuild the server progress takes some more time.
+                resp.action.wait_until_finished(max_retries=202)  # 202 retries >= 1002 seconds
             self._mark_as_changed()
 
             self._get_server()

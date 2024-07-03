@@ -88,7 +88,7 @@ class AnsibleHCloud:
             application_version=version,
             # Total waiting time before timeout is > 112.0
             poll_interval=exponential_backoff_poll_interval(base=1.0, multiplier=2, cap=5.0, jitter=0.5),
-            poll_max_retries=24,
+            poll_max_retries=25,
         )
 
     def _client_get_by_name_or_id(self, resource: str, param: str | int):
