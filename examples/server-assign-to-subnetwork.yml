@@ -1,0 +1,41 @@
+---
+- name: Demonstrate assigning a server to a specific subnetwork
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Create a network
+      hetzner.hcloud.network:
+        name: my-network
+        ip_range: 10.0.0.0/8
+        state: present
+
+    - name: Create first subnetwork
+      hetzner.hcloud.subnetwork:
+        network: my-network
+        ip_range: 10.0.1.0/24
+        network_zone: eu-central
+        type: cloud
+        state: present
+
+    - name: Create second subnetwork
+      hetzner.hcloud.subnetwork:
+        network: my-network
+        ip_range: 10.0.2.0/24
+        network_zone: eu-central
+        type: cloud
+        state: present
+
+    - name: Create servers
+      hetzner.hcloud.server:
+        name: my-server
+        server_type: cx22
+        image: debian-12
+        state: present
+
+    - name: Attach server to second subnetwork
+      hetzner.hcloud.server_network:
+        network: my-network
+        server: my-server
+        ip: 10.0.2.2
+        state: present
