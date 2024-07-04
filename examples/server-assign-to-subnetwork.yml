@@ -3,6 +3,15 @@
   hosts: localhost
   connection: local
 
+  vars:
+    servers:
+      - name: my-server1
+        subnetwork: 10.0.2.0/24
+      - name: my-server2
+        subnetwork: 10.0.1.0/24
+      - name: my-server3
+        subnetwork: 10.0.2.0/24
+
   tasks:
     - name: Create a network
       hetzner.hcloud.network:
@@ -28,14 +37,18 @@
 
     - name: Create servers
       hetzner.hcloud.server:
-        name: my-server
+        name: "{{ item.name }}"
         server_type: cx22
         image: debian-12
         state: present
+      loop: "{{ servers }}"
 
-    - name: Attach server to second subnetwork
+    - name: Attach servers to subnetworks
       hetzner.hcloud.server_network:
         network: my-network
-        server: my-server
-        ip: 10.0.2.2
+        server: "{{ item.name }}"
+        ip: "{{ item.subnetwork | ansible.utils.nthhost(index+1) }}"
         state: present
+      loop: "{{ servers }}"
+      loop_control:
+        index_var: index
