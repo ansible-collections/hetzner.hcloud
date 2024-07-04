@@ -86,7 +86,7 @@ class AnsibleHCloud:
             api_endpoint=self.module.params["api_endpoint"],
             application_name="ansible-module",
             application_version=version,
-            # Total waiting time before timeout is > 112.0
+            # Total waiting time before timeout is > 117.0
             poll_interval=exponential_backoff_poll_interval(base=1.0, multiplier=2, cap=5.0, jitter=0.5),
             poll_max_retries=25,
         )
