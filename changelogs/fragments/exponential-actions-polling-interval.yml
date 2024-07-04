@@ -1,0 +1,2 @@
+minor_changes:
+  - Use a truncated exponential backoff algorithm when polling actions from the API.

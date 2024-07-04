@@ -204,7 +204,7 @@ class AnsibleHCloudCertificate(AnsibleHCloud):
                     resp = self.client.certificates.create_managed(**params)
                     # Action should take 60 to 90 seconds on average, wait for 5m to
                     # allow DNS or Let's Encrypt slowdowns.
-                    resp.action.wait_until_finished(max_retries=300)
+                    resp.action.wait_until_finished(max_retries=62)  # 62 retries >= 302 seconds
                 except HCloudException as exception:
                     self.fail_json_hcloud(exception)
 
