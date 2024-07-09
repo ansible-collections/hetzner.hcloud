@@ -3,42 +3,7 @@ include:
     file:
       - default.yml
       - pre-commit.yml
-
-stages:
-  - test
-  - sanity
-  - integration
-
-variables:
-  PYTHON_VERSION: "3.10"
-
-default:
-  image: python:$PYTHON_VERSION
+      - workflows/feature-branches.yml
 
 pre-commit:
   extends: [.pre-commit]
-
-sanity:
-  stage: sanity
-  allow_failure: true
-  except:
-    - tags
-  parallel:
-    matrix:
-      - ANSIBLE_VERSION: ["devel", "2.15"]
-        GROUP: [1]
-  script:
-    - bash tests/utils/gitlab/gitlab.sh ${ANSIBLE_VERSION}/sanity/${GROUP}
-
-integration:
-  stage: integration
-  except:
-    - tags
-  parallel:
-    matrix:
-      - ANSIBLE_VERSION: ["devel"]
-        GROUP: [1, 2, 3]
-  script:
-    - echo "$HCLOUD_TOKEN" >> "$(pwd)/hcloud_token.txt"
-    - echo "$CI_JOB_ID" >> "$(pwd)/prefix.txt"
-    - bash tests/utils/gitlab/gitlab.sh ${ANSIBLE_VERSION}/hcloud/${PYTHON_VERSION}/${GROUP}
