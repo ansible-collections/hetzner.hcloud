@@ -96,7 +96,10 @@ hcloud_server_type_info:
             type: str
             sample: x86
         included_traffic:
-            description: Free traffic per month in bytes
+            description: |
+                Free traffic per month in bytes
+
+                B(Deprecated): This field is deprecated and will be set to C(None) on 5 August 2024. See U($LINK).
             returned: always
             type: int
             sample: 21990232555520
