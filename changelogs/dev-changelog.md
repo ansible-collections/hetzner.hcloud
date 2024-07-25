@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/4.0.1...4.1.0) (2024-07-25)
+
+
+### Features
+
+* deprecate `server_type_info` `included_traffic` return value ([#532](https://github.com/ansible-collections/hetzner.hcloud/issues/532)) ([39aa356](https://github.com/ansible-collections/hetzner.hcloud/commit/39aa356c4c8a8c47b0c510bf3bc217b5bb58dbf5))
+* use exponential backoff algorithm when polling actions ([#524](https://github.com/ansible-collections/hetzner.hcloud/issues/524)) ([19e586f](https://github.com/ansible-collections/hetzner.hcloud/commit/19e586fa22708348eca056377d9b8c51401c7cbb))
+
 ## [4.0.1](https://github.com/ansible-collections/hetzner.hcloud/compare/4.0.0...4.0.1) (2024-06-11)
 
 
