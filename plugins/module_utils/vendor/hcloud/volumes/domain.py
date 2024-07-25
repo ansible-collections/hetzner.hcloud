@@ -48,7 +48,7 @@ class Volume(BaseDomain, DomainIdentityMixin):
     STATUS_AVAILABLE = "available"
     """Volume Status available"""
 
-    __slots__ = (
+    __api_properties__ = (
         "id",
         "name",
         "server",
@@ -61,6 +61,7 @@ class Volume(BaseDomain, DomainIdentityMixin):
         "status",
         "created",
     )
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -100,7 +101,8 @@ class CreateVolumeResponse(BaseDomain):
            List of actions that are performed after the creation, like attaching to a server
     """
 
-    __slots__ = ("volume", "action", "next_actions")
+    __api_properties__ = ("volume", "action", "next_actions")
+    __slots__ = __api_properties__
 
     def __init__(
         self,

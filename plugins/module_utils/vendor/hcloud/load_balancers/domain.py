@@ -55,7 +55,7 @@ class LoadBalancer(BaseDomain, DomainIdentityMixin):
            Free Traffic for the current billing period in bytes
     """
 
-    __slots__ = (
+    __api_properties__ = (
         "id",
         "name",
         "public_net",
@@ -72,6 +72,7 @@ class LoadBalancer(BaseDomain, DomainIdentityMixin):
         "ingoing_traffic",
         "included_traffic",
     )
+    __slots__ = __api_properties__
 
     # pylint: disable=too-many-locals
     def __init__(
@@ -425,7 +426,8 @@ class PublicNetwork(BaseDomain):
     :param enabled:  boolean
     """
 
-    __slots__ = ("ipv4", "ipv6", "enabled")
+    __api_properties__ = ("ipv4", "ipv6", "enabled")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -445,7 +447,8 @@ class IPv4Address(BaseDomain):
            The IPv4 Address
     """
 
-    __slots__ = ("ip", "dns_ptr")
+    __api_properties__ = ("ip", "dns_ptr")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -463,7 +466,8 @@ class IPv6Network(BaseDomain):
            The IPv6 Network as CIDR Notation
     """
 
-    __slots__ = ("ip", "dns_ptr")
+    __api_properties__ = ("ip", "dns_ptr")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -483,7 +487,8 @@ class PrivateNet(BaseDomain):
            The main IP Address of the LoadBalancer in the Network
     """
 
-    __slots__ = ("network", "ip")
+    __api_properties__ = ("network", "ip")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -503,7 +508,8 @@ class CreateLoadBalancerResponse(BaseDomain):
            Shows the progress of the Load Balancer creation
     """
 
-    __slots__ = ("load_balancer", "action")
+    __api_properties__ = ("load_balancer", "action")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -528,7 +534,8 @@ class GetMetricsResponse(BaseDomain):
     :param metrics: The Load Balancer metrics
     """
 
-    __slots__ = ("metrics",)
+    __api_properties__ = ("metrics",)
+    __slots__ = __api_properties__
 
     def __init__(
         self,

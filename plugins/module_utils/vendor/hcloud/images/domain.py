@@ -54,7 +54,7 @@ class Image(BaseDomain, DomainIdentityMixin):
             User-defined labels (key-value pairs)
     """
 
-    __slots__ = (
+    __api_properties__ = (
         "id",
         "name",
         "type",
@@ -73,6 +73,7 @@ class Image(BaseDomain, DomainIdentityMixin):
         "created",
         "deprecated",
     )
+    __slots__ = __api_properties__
 
     # pylint: disable=too-many-locals
     def __init__(
@@ -123,7 +124,8 @@ class CreateImageResponse(BaseDomain):
            The Action which shows the progress of the Floating IP Creation
     """
 
-    __slots__ = ("action", "image")
+    __api_properties__ = ("action", "image")
+    __slots__ = __api_properties__
 
     def __init__(
         self,

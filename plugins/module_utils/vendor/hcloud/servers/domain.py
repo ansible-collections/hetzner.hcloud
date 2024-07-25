@@ -84,7 +84,8 @@ class Server(BaseDomain, DomainIdentityMixin):
     """Server Status rebuilding"""
     STATUS_UNKNOWN = "unknown"
     """Server Status unknown"""
-    __slots__ = (
+
+    __api_properties__ = (
         "id",
         "name",
         "status",
@@ -107,6 +108,7 @@ class Server(BaseDomain, DomainIdentityMixin):
         "primary_disk_size",
         "placement_group",
     )
+    __slots__ = __api_properties__
 
     # pylint: disable=too-many-locals
     def __init__(
@@ -169,7 +171,8 @@ class CreateServerResponse(BaseDomain):
            The root password of the server if no SSH-Key was given on server creation
     """
 
-    __slots__ = ("server", "action", "next_actions", "root_password")
+    __api_properties__ = ("server", "action", "next_actions", "root_password")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -193,7 +196,8 @@ class ResetPasswordResponse(BaseDomain):
            The root password of the server
     """
 
-    __slots__ = ("action", "root_password")
+    __api_properties__ = ("action", "root_password")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -213,7 +217,8 @@ class EnableRescueResponse(BaseDomain):
            The root password of the server in the rescue mode
     """
 
-    __slots__ = ("action", "root_password")
+    __api_properties__ = ("action", "root_password")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -235,7 +240,8 @@ class RequestConsoleResponse(BaseDomain):
            VNC password to use for this connection. This password only works in combination with a wss_url with valid token.
     """
 
-    __slots__ = ("action", "wss_url", "password")
+    __api_properties__ = ("action", "wss_url", "password")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -255,7 +261,8 @@ class RebuildResponse(BaseDomain):
     :param root_password: The root password of the server when not using SSH keys
     """
 
-    __slots__ = ("action", "root_password")
+    __api_properties__ = ("action", "root_password")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -277,7 +284,7 @@ class PublicNetwork(BaseDomain):
     :param firewalls: List[:class:`PublicNetworkFirewall <hcloud.servers.client.PublicNetworkFirewall>`]
     """
 
-    __slots__ = (
+    __api_properties__ = (
         "ipv4",
         "ipv6",
         "floating_ips",
@@ -285,6 +292,7 @@ class PublicNetwork(BaseDomain):
         "primary_ipv4",
         "primary_ipv6",
     )
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -310,7 +318,8 @@ class PublicNetworkFirewall(BaseDomain):
     :param status: str
     """
 
-    __slots__ = ("firewall", "status")
+    __api_properties__ = ("firewall", "status")
+    __slots__ = __api_properties__
 
     STATUS_APPLIED = "applied"
     """Public Network Firewall Status applied"""
@@ -337,7 +346,8 @@ class IPv4Address(BaseDomain):
            DNS PTR for the ip
     """
 
-    __slots__ = ("ip", "blocked", "dns_ptr")
+    __api_properties__ = ("ip", "blocked", "dns_ptr")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -365,7 +375,8 @@ class IPv6Network(BaseDomain):
            The network mask
     """
 
-    __slots__ = ("ip", "blocked", "dns_ptr", "network", "network_mask")
+    __api_properties__ = ("ip", "blocked", "dns_ptr", "network", "network_mask")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -394,7 +405,8 @@ class PrivateNet(BaseDomain):
            The mac address of the interface on the server
     """
 
-    __slots__ = ("network", "ip", "alias_ips", "mac_address")
+    __api_properties__ = ("network", "ip", "alias_ips", "mac_address")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -418,7 +430,8 @@ class ServerCreatePublicNetwork(BaseDomain):
     :param enable_ipv6: bool
     """
 
-    __slots__ = ("ipv4", "ipv6", "enable_ipv4", "enable_ipv6")
+    __api_properties__ = ("ipv4", "ipv6", "enable_ipv4", "enable_ipv6")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -446,7 +459,8 @@ class GetMetricsResponse(BaseDomain):
     :param metrics: The Server metrics
     """
 
-    __slots__ = ("metrics",)
+    __api_properties__ = ("metrics",)
+    __slots__ = __api_properties__
 
     def __init__(
         self,
