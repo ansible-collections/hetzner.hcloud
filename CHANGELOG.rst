@@ -4,6 +4,15 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v4.1.0
+======
+
+Minor Changes
+-------------
+
+- Use a truncated exponential backoff algorithm when polling actions from the API.
+- server_type_info - The 'included_traffic' return value is deprecated and will be set to 'None' on 5 August 2024. See https://docs.hetzner.cloud/changelog#2024-07-25-cloud-api-returns-traffic-information-in-different-format.
+
 v4.0.1
 ======
 

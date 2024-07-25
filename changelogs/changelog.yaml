@@ -563,3 +563,14 @@ releases:
     fragments:
     - keep-deprecated-alias.yml
     release_date: '2024-06-11'
+  4.1.0:
+    changes:
+      minor_changes:
+      - Use a truncated exponential backoff algorithm when polling actions from the
+        API.
+      - server_type_info - The 'included_traffic' return value is deprecated and will
+        be set to 'None' on 5 August 2024. See https://docs.hetzner.cloud/changelog#2024-07-25-cloud-api-returns-traffic-information-in-different-format.
+    fragments:
+    - deprecate-server-type-pricing.yml
+    - exponential-actions-polling-interval.yml
+    release_date: '2024-07-25'
