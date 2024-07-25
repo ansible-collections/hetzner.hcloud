@@ -32,7 +32,8 @@ class Firewall(BaseDomain, DomainIdentityMixin):
            Point in time when the image was created
     """
 
-    __slots__ = ("id", "name", "labels", "rules", "applied_to", "created")
+    __api_properties__ = ("id", "name", "labels", "rules", "applied_to", "created")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -69,7 +70,7 @@ class FirewallRule(BaseDomain):
            Short description of the firewall rule
     """
 
-    __slots__ = (
+    __api_properties__ = (
         "direction",
         "port",
         "protocol",
@@ -77,6 +78,7 @@ class FirewallRule(BaseDomain):
         "destination_ips",
         "description",
     )
+    __slots__ = __api_properties__
 
     DIRECTION_IN = "in"
     """Firewall Rule Direction In"""
@@ -141,7 +143,8 @@ class FirewallResource(BaseDomain):
            applied to.
     """
 
-    __slots__ = ("type", "server", "label_selector", "applied_to_resources")
+    __api_properties__ = ("type", "server", "label_selector", "applied_to_resources")
+    __slots__ = __api_properties__
 
     TYPE_SERVER = "server"
     """Firewall Used By Type Server"""
@@ -180,7 +183,8 @@ class FirewallResourceAppliedToResources(BaseDomain):
     :param server: Server the Firewall is applied to
     """
 
-    __slots__ = ("type", "server")
+    __api_properties__ = ("type", "server")
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -210,7 +214,8 @@ class CreateFirewallResponse(BaseDomain):
            The Action which shows the progress of the Firewall Creation
     """
 
-    __slots__ = ("firewall", "actions")
+    __api_properties__ = ("firewall", "actions")
+    __slots__ = __api_properties__
 
     def __init__(
         self,

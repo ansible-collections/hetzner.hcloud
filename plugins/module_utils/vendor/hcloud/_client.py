@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+from random import uniform
 from typing import Protocol
 
 try:
@@ -29,7 +30,7 @@ from .ssh_keys import SSHKeysClient
 from .volumes import VolumesClient
 
 
-class PollIntervalFunction(Protocol):
+class BackoffFunction(Protocol):
     def __call__(self, retries: int) -> float:
         """
         Return a interval in seconds to wait between each API call.
@@ -38,12 +39,57 @@ class PollIntervalFunction(Protocol):
         """
 
 
+def constant_backoff_function(interval: float) -> BackoffFunction:
+    """
+    Return a backoff function, implementing a constant backoff.
+
+    :param interval: Constant interval to return.
+    """
+
+    # pylint: disable=unused-argument
+    def func(retries: int) -> float:
+        return interval
+
+    return func
+
+
+def exponential_backoff_function(
+    *,
+    base: float,
+    multiplier: int,
+    cap: float,
+    jitter: bool = False,
+) -> BackoffFunction:
+    """
+    Return a backoff function, implementing a truncated exponential backoff with
+    optional full jitter.
+
+    :param base: Base for the exponential backoff algorithm.
+    :param multiplier: Multiplier for the exponential backoff algorithm.
+    :param cap: Value at which the interval is truncated.
+    :param jitter: Whether to add jitter.
+    """
+
+    def func(retries: int) -> float:
+        interval = base * multiplier**retries  # Exponential backoff
+        interval = min(cap, interval)  # Cap backoff
+        if jitter:
+            interval = uniform(base, interval)  # Add jitter
+        return interval
+
+    return func
+
+
 class Client:
     """Base Client for accessing the Hetzner Cloud API"""
 
     _version = __version__
-    _retry_wait_time = 0.5
     __user_agent_prefix = "hcloud-python"
+
+    _retry_interval = exponential_backoff_function(
+        base=1.0, multiplier=2, cap=60.0, jitter=True
+    )
+    _retry_max_retries = 5
 
     def __init__(
         self,
@@ -51,7 +97,7 @@ class Client:
         api_endpoint: str = "https://api.hetzner.cloud/v1",
         application_name: str | None = None,
         application_version: str | None = None,
-        poll_interval: int | float | PollIntervalFunction = 1.0,
+        poll_interval: int | float | BackoffFunction = 1.0,
         poll_max_retries: int = 120,
         timeout: float | tuple[float, float] | None = None,
     ):
@@ -76,7 +122,7 @@ class Client:
         self._requests_timeout = timeout
 
         if isinstance(poll_interval, (int, float)):
-            self._poll_interval_func = lambda _: poll_interval  # Constant poll interval
+            self._poll_interval_func = constant_backoff_function(poll_interval)
         else:
             self._poll_interval_func = poll_interval
         self._poll_max_retries = poll_max_retries
@@ -197,8 +243,6 @@ class Client:
         self,
         method: str,
         url: str,
-        *,
-        _tries: int = 1,
         **kwargs,
     ) -> dict:
         """Perform a request to the Hetzner Cloud API, wrapper around requests.request
@@ -208,50 +252,58 @@ class Client:
         :param timeout: Requests timeout in seconds
         :return: Response
         """
-        timeout = kwargs.pop("timeout", self._requests_timeout)
+        kwargs.setdefault("timeout", self._requests_timeout)
 
-        response = self._requests_session.request(
-            method=method,
-            url=self._api_endpoint + url,
-            headers=self._get_headers(),
-            timeout=timeout,
-            **kwargs,
-        )
+        url = self._api_endpoint + url
+        headers = self._get_headers()
 
-        correlation_id = response.headers.get("X-Correlation-Id")
-        payload = {}
-        try:
-            if len(response.content) > 0:
-                payload = response.json()
-        except (TypeError, ValueError) as exc:
-            raise APIException(
-                code=response.status_code,
-                message=response.reason,
-                details={"content": response.content},
-                correlation_id=correlation_id,
-            ) from exc
+        retries = 0
+        while True:
+            response = self._requests_session.request(
+                method=method,
+                url=url,
+                headers=headers,
+                **kwargs,
+            )
 
-        if not response.ok:
-            if not payload or "error" not in payload:
+            correlation_id = response.headers.get("X-Correlation-Id")
+            payload = {}
+            try:
+                if len(response.content) > 0:
+                    payload = response.json()
+            except (TypeError, ValueError) as exc:
                 raise APIException(
                     code=response.status_code,
                     message=response.reason,
                     details={"content": response.content},
                     correlation_id=correlation_id,
+                ) from exc
+
+            if not response.ok:
+                if not payload or "error" not in payload:
+                    raise APIException(
+                        code=response.status_code,
+                        message=response.reason,
+                        details={"content": response.content},
+                        correlation_id=correlation_id,
+                    )
+
+                error: dict = payload["error"]
+
+                if (
+                    error["code"] == "rate_limit_exceeded"
+                    and retries < self._retry_max_retries
+                ):
+                    # pylint: disable=too-many-function-args
+                    time.sleep(self._retry_interval(retries))
+                    retries += 1
+                    continue
+
+                raise APIException(
+                    code=error["code"],
+                    message=error["message"],
+                    details=error.get("details"),
+                    correlation_id=correlation_id,
                 )
 
-            error: dict = payload["error"]
-
-            if error["code"] == "rate_limit_exceeded" and _tries < 5:
-                time.sleep(_tries * self._retry_wait_time)
-                _tries = _tries + 1
-                return self.request(method, url, _tries=_tries, **kwargs)
-
-            raise APIException(
-                code=error["code"],
-                message=error["message"],
-                details=error.get("details"),
-                correlation_id=correlation_id,
-            )
-
-        return payload
+            return payload

@@ -46,7 +46,7 @@ class PrimaryIP(BaseDomain, DomainIdentityMixin):
            Delete the Primary IP when the Assignee it is assigned to is deleted.
     """
 
-    __slots__ = (
+    __api_properties__ = (
         "id",
         "ip",
         "type",
@@ -61,6 +61,7 @@ class PrimaryIP(BaseDomain, DomainIdentityMixin):
         "assignee_type",
         "auto_delete",
     )
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -102,7 +103,8 @@ class CreatePrimaryIPResponse(BaseDomain):
            The Action which shows the progress of the Primary IP Creation
     """
 
-    __slots__ = ("primary_ip", "action")
+    __api_properties__ = ("primary_ip", "action")
+    __slots__ = __api_properties__
 
     def __init__(
         self,

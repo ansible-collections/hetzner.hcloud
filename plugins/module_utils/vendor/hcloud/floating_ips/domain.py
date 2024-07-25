@@ -45,7 +45,7 @@ class FloatingIP(BaseDomain, DomainIdentityMixin):
            Name of the Floating IP
     """
 
-    __slots__ = (
+    __api_properties__ = (
         "id",
         "type",
         "description",
@@ -59,6 +59,7 @@ class FloatingIP(BaseDomain, DomainIdentityMixin):
         "name",
         "created",
     )
+    __slots__ = __api_properties__
 
     def __init__(
         self,
@@ -98,7 +99,8 @@ class CreateFloatingIPResponse(BaseDomain):
            The Action which shows the progress of the Floating IP Creation
     """
 
-    __slots__ = ("floating_ip", "action")
+    __api_properties__ = ("floating_ip", "action")
+    __slots__ = __api_properties__
 
     def __init__(
         self,

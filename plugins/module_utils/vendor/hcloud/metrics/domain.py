@@ -29,12 +29,13 @@ class Metrics(BaseDomain):
     step: float
     time_series: TimeSeries
 
-    __slots__ = (
+    __api_properties__ = (
         "start",
         "end",
         "step",
         "time_series",
     )
+    __slots__ = __api_properties__
 
     def __init__(
         self,
