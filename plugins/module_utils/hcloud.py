@@ -15,13 +15,13 @@ from ansible.module_utils.common.validation import (
     check_required_one_of,
 )
 
-from .client import (
-    ClientException,
-    client_check_required_lib,
-    client_get_by_name_or_id,
-    exponential_backoff_poll_interval,
+from .client import ClientException, client_check_required_lib, client_get_by_name_or_id
+from .vendor.hcloud import (
+    APIException,
+    Client,
+    HCloudException,
+    exponential_backoff_function,
 )
-from .vendor.hcloud import APIException, Client, HCloudException
 from .vendor.hcloud.actions import ActionException
 from .version import version
 
@@ -87,7 +87,7 @@ class AnsibleHCloud:
             application_name="ansible-module",
             application_version=version,
             # Total waiting time before timeout is > 117.0
-            poll_interval=exponential_backoff_poll_interval(base=1.0, multiplier=2, cap=5.0, jitter=0.5),
+            poll_interval=exponential_backoff_function(base=1.0, multiplier=2, cap=5.0),
             poll_max_retries=25,
         )
 

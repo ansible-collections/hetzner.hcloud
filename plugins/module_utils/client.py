@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
-from random import random
 
 from ansible.module_utils.basic import missing_required_lib
 
@@ -107,22 +106,3 @@ class Client(ClientBase):
             yield
         finally:
             self._requests_session = requests.Session()
-
-
-def exponential_backoff_poll_interval(*, base: float, multiplier: int, cap: float, jitter: float):
-    """
-    Return a poll interval function, implementing a truncated exponential backoff with jitter.
-
-    :param base: Base for the exponential backoff algorithm.
-    :param multiplier: Multiplier for the exponential backoff algorithm.
-    :param cap: Value at which the interval is truncated.
-    :param jitter: Proportion of the interval to add as random jitter.
-    """
-
-    def func(retries: int) -> float:
-        interval = base * multiplier**retries  # Exponential backoff
-        interval = min(cap, interval)  # Cap backoff
-        interval += random() * interval * jitter  # Add jitter
-        return interval
-
-    return func
