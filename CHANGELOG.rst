@@ -4,6 +4,26 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v4.1.0
+======
+
+Release Summary
+---------------
+
+**API Changes for Traffic Prices and Server Type Included Traffic**
+
+There will be a breaking change in the API regarding Traffic Prices and Server Type
+Included Traffic on 2024-08-05. This release marks the affected fields as
+`Deprecated`. Please check if this affects any of your code.
+
+You can learn more about this change in `our changelog <https://docs.hetzner.cloud/changelog#2024-07-25-cloud-api-returns-traffic-information-in-different-format>`_.
+
+Minor Changes
+-------------
+
+- Use a truncated exponential backoff algorithm when polling actions from the API.
+- server_type_info - The 'included_traffic' return value is deprecated and will be set to 'None' on 5 August 2024. See https://docs.hetzner.cloud/changelog#2024-07-25-cloud-api-returns-traffic-information-in-different-format.
+
 v4.0.1
 ======
 

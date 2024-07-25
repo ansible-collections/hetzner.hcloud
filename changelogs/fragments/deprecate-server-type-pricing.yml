@@ -1,3 +1,0 @@
-minor_changes:
-  - server_type_info - The 'included_traffic' return value is deprecated and will be set to 'None' on 5 August 2024.
-    See https://docs.hetzner.cloud/changelog#2024-07-25-cloud-api-returns-traffic-information-in-different-format.
