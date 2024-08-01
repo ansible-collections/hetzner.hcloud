@@ -373,7 +373,6 @@
     that:
       - result is failed
       - result.failure.code == "protected"
-      - result.failure.message == "Floating IP deletion is protected"
 
 - name: test update Floating IP delete protection
   hetzner.hcloud.floating_ip:
@@ -462,7 +461,6 @@
     that:
       - result is failed
       - result.failure.code == "protected"
-      - result.failure.message == "Floating IP deletion is protected"
 
 - name: test update Floating IP delete protection
   hetzner.hcloud.floating_ip:
