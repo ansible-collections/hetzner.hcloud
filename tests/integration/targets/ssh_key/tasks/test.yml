@@ -114,6 +114,7 @@
     name: "{{ hcloud_server_name }}"
     server_type: "{{ hcloud_server_type_name }}"
     image: "{{ hcloud_image_name }}"
+    location: "{{ hcloud_location_name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
     state: started
