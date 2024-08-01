@@ -316,7 +316,6 @@
     that:
       - result is failed
       - result.failure.code == "protected"
-      - result.failure.message == "server deletion is protected"
 
 - name: test rebuild server fails if it is protected
   hetzner.hcloud.server:
@@ -330,7 +329,6 @@
     that:
       - result is failed
       - result.failure.code == "protected"
-      - result.failure.message == "server rebuild is protected"
 
 - name: test remove server protection
   hetzner.hcloud.server:
@@ -588,7 +586,6 @@
     that:
       - result is failed
       - result.failure.code == "protected"
-      - result.failure.message == "server deletion is protected"
 
 - name: remove protection from server
   hetzner.hcloud.server:

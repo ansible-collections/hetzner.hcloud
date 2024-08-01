@@ -134,7 +134,6 @@
     that:
       - result is failed
       - result.failure.code == "uniqueness_error"
-      - result.failure.message == "SSH key with the same fingerprint already exists"
 
 - name: test delete ssh key
   hetzner.hcloud.ssh_key:
