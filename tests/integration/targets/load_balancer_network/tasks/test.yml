@@ -17,7 +17,7 @@
     network: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/16"
     type: "cloud"
-    network_zone: "eu-central"
+    network_zone: "{{ hcloud_network_zone_name }}"
     state: present
   register: subnetwork
 - name: verify subnetwork
@@ -162,7 +162,7 @@
     network: "{{ hcloud_network_name }}"
     ip_range: "10.0.0.0/16"
     type: "cloud"
-    network_zone: "eu-central"
+    network_zone: "{{ hcloud_network_zone_name }}"
     state: absent
   register: result
 - name: verify cleanup subnetwork

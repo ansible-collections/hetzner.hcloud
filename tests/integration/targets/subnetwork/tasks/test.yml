@@ -16,7 +16,7 @@
 - name: Test create with checkmode
   hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
-    network_zone: eu-central
+    network_zone: "{{ hcloud_network_zone_name }}"
     type: cloud
     ip_range: 10.0.0.0/24
     state: present
@@ -30,7 +30,7 @@
 - name: Test create
   hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
-    network_zone: eu-central
+    network_zone: "{{ hcloud_network_zone_name }}"
     type: cloud
     ip_range: 10.0.0.0/24
     state: present
@@ -40,14 +40,14 @@
     that:
       - result is changed
       - result.hcloud_subnetwork.network == hcloud_network_name
-      - result.hcloud_subnetwork.network_zone == "eu-central"
+      - result.hcloud_subnetwork.network_zone == hcloud_network_zone_name
       - result.hcloud_subnetwork.type == "cloud"
       - result.hcloud_subnetwork.ip_range == "10.0.0.0/24"
 
 - name: Test create idempotency
   hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
-    network_zone: eu-central
+    network_zone: "{{ hcloud_network_zone_name }}"
     type: cloud
     ip_range: 10.0.0.0/24
     state: present
@@ -60,7 +60,7 @@
 - name: Test delete
   hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
-    network_zone: eu-central
+    network_zone: "{{ hcloud_network_zone_name }}"
     type: cloud
     ip_range: 10.0.0.0/24
     state: absent
@@ -73,7 +73,7 @@
 - name: Test create with vswitch
   hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
-    network_zone: eu-central
+    network_zone: "{{ hcloud_network_zone_name }}"
     type: vswitch
     ip_range: 10.0.1.0/24
     vswitch_id: "{{ test_vswitch_id }}"
@@ -84,7 +84,7 @@
     that:
       - result is changed
       - result.hcloud_subnetwork.network == hcloud_network_name
-      - result.hcloud_subnetwork.network_zone == "eu-central"
+      - result.hcloud_subnetwork.network_zone == hcloud_network_zone_name
       - result.hcloud_subnetwork.type == "vswitch"
       - result.hcloud_subnetwork.ip_range == "10.0.1.0/24"
       - result.hcloud_subnetwork.vswitch_id | string == test_vswitch_id
@@ -92,7 +92,7 @@
 - name: Test delete with vswitch
   hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
-    network_zone: eu-central
+    network_zone: "{{ hcloud_network_zone_name }}"
     type: vswitch
     ip_range: 10.0.1.0/24
     state: absent
