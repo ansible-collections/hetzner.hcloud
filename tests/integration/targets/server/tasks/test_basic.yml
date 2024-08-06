@@ -468,6 +468,7 @@
   assert:
     that:
       - result is success
+
 - name: test create server with labels
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name}}"

@@ -11,7 +11,7 @@
   hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     type: server
-    network_zone: eu-central
+    network_zone: "{{ hcloud_network_zone_name }}"
     ip_range: 10.0.1.0/24
   register: test_subnetwork
 

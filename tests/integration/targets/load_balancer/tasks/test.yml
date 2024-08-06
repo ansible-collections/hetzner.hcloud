@@ -17,7 +17,7 @@
   hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb11
-    network_zone: eu-central
+    network_zone: "{{ hcloud_network_zone_name }}"
     state: present
   check_mode: true
   register: result
@@ -30,7 +30,7 @@
   hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb11
-    network_zone: eu-central
+    network_zone: "{{ hcloud_network_zone_name }}"
     labels:
       key: value
       label: value123
@@ -51,7 +51,7 @@
   hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb11
-    network_zone: eu-central
+    network_zone: "{{ hcloud_network_zone_name }}"
     state: present
   register: result
 - name: Verify create idempotency

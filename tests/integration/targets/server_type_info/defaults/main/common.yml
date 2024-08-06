@@ -25,3 +25,5 @@ hcloud_location_name: hel1
 hcloud_location_id: 3
 hcloud_datacenter_name: hel1-dc2
 hcloud_datacenter_id: 3
+
+hcloud_network_zone_name: eu-central

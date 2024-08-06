@@ -28,6 +28,6 @@
   hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     load_balancer_type: lb11
-    network_zone: eu-central
+    network_zone: "{{ hcloud_network_zone_name }}"
     state: present
   register: test_load_balancer
