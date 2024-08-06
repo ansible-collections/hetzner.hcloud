@@ -1,181 +1,113 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: setup network
-  hetzner.hcloud.network:
-    name: "{{ hcloud_network_name }}"
-    ip_range: "10.0.0.0/8"
-    state: present
-  register: network
-- name: verify setup network
-  assert:
-    that:
-      - network is success
-
-- name: setup subnetwork
-  hetzner.hcloud.subnetwork:
-    network: "{{ hcloud_network_name }}"
-    ip_range: "10.0.0.0/16"
-    type: "cloud"
-    network_zone: "{{ hcloud_network_zone_name }}"
-    state: present
-  register: subnetwork
-- name: verify subnetwork
-  assert:
-    that:
-      - subnetwork is success
-
-- name: setup load_balancer
-  hetzner.hcloud.load_balancer:
-    name: "{{hcloud_load_balancer_name}}"
-    load_balancer_type: lb11
-    state: present
-    location: "{{ hcloud_location_name }}"
-  register: load_balancer
-- name: verify setup load_balancer
-  assert:
-    that:
-      - load_balancer is success
-
-- name: test missing required parameters on create load_balancer network
+- name: Test missing required parameters
   hetzner.hcloud.load_balancer_network:
     state: present
-  register: result
   ignore_errors: true
-- name: verify fail test missing required parameters on create load_balancer network
-  assert:
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
     that:
       - result is failed
-      - '"missing required arguments:" in result.msg'
+      - 'result.msg == "missing required arguments: load_balancer, network"'
 
-- name: test fail load balancer does not exist
+- name: Test create with checkmode
   hetzner.hcloud.load_balancer_network:
-    network: "{{ hcloud_network_name }}"
-    load_balancer: does-not-exist
-    state: present
-  register: result
-  ignore_errors: true
-- name: verify test fail load_balancer does not exist
-  assert:
-    that:
-      - result is failed
-      - "result.msg == 'resource (load_balancer) does not exist: does-not-exist'"
-
-- name: test fail network does not exist
-  hetzner.hcloud.load_balancer_network:
-    network: does-not-exist
     load_balancer: "{{ hcloud_load_balancer_name }}"
+    network: "{{ hcloud_network_name }}"
+    state: present
+  check_mode: true
+  register: result
+- name: Verify create with checkmode
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test create
+  hetzner.hcloud.load_balancer_network:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    network: "{{ hcloud_network_name }}"
     state: present
   register: result
+- name: Verify create
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_load_balancer_network.load_balancer == hcloud_load_balancer_name
+      - result.hcloud_load_balancer_network.network == hcloud_load_balancer_name
+
+- name: Test create idempotency
+  hetzner.hcloud.load_balancer_network:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    network: "{{ hcloud_network_name }}"
+    state: present
+  register: result
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test create with not existing load_balancer
+  hetzner.hcloud.load_balancer_network:
+    load_balancer: not-existing
+    network: "{{ hcloud_network_name }}"
+    state: present
   ignore_errors: true
-- name: verify test fail network does not exist
-  assert:
+  register: result
+- name: Verify create with not existing load_balancer
+  ansible.builtin.assert:
     that:
       - result is failed
-      - "result.msg == 'resource (network) does not exist: does-not-exist'"
+      - 'result.msg == "resource (load_balancer) does not exist: not-existing"'
 
-- name: test create load_balancer network with checkmode
+- name: Test create with not existing network
   hetzner.hcloud.load_balancer_network:
-    network: "{{ hcloud_network_name }}"
-    load_balancer: "{{hcloud_load_balancer_name}}"
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    network: not-existing
     state: present
+  ignore_errors: true
   register: result
-  check_mode: true
-- name: verify test create load_balancer network with checkmode
-  assert:
+- name: Verify create with not existing network
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "resource (network) does not exist: not-existing"'
+
+- name: Test delete
+  hetzner.hcloud.load_balancer_network:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    network: "{{ hcloud_network_name }}"
+    state: absent
+  register: result
+- name: Verify delete
+  ansible.builtin.assert:
     that:
       - result is changed
 
-- name: test create load_balancer network
+- name: Test create with ip
   hetzner.hcloud.load_balancer_network:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
     network: "{{ hcloud_network_name }}"
-    load_balancer: "{{hcloud_load_balancer_name}}"
+    ip: 10.0.1.2
     state: present
-  register: load_balancerNetwork
-- name: verify create load_balancer network
-  assert:
-    that:
-      - load_balancerNetwork is changed
-      - load_balancerNetwork.hcloud_load_balancer_network.network == hcloud_network_name
-      - load_balancerNetwork.hcloud_load_balancer_network.load_balancer == hcloud_load_balancer_name
-
-- name: test create load_balancer network idempotency
-  hetzner.hcloud.load_balancer_network:
-    network: "{{ hcloud_network_name }}"
-    load_balancer: "{{hcloud_load_balancer_name}}"
-    state: present
-  register: load_balancerNetwork
-- name: verify create load_balancer network idempotency
-  assert:
-    that:
-      - load_balancerNetwork is not changed
-
-- name: test absent load_balancer network
-  hetzner.hcloud.load_balancer_network:
-    network: "{{ hcloud_network_name }}"
-    load_balancer: "{{hcloud_load_balancer_name}}"
-    state: absent
   register: result
-- name: verify test absent load_balancer network
-  assert:
+- name: Verify create with ip
+  ansible.builtin.assert:
     that:
       - result is changed
+      - result.hcloud_load_balancer_network.load_balancer == hcloud_load_balancer_name
+      - result.hcloud_load_balancer_network.network == hcloud_load_balancer_name
+      - result.hcloud_load_balancer_network.ip == "10.0.1.2"
 
-- name: test create load_balancer network with specified ip
+- name: Test delete with ip
   hetzner.hcloud.load_balancer_network:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
     network: "{{ hcloud_network_name }}"
-    load_balancer: "{{hcloud_load_balancer_name}}"
-    ip: "10.0.0.2"
-    state: present
-  register: load_balancerNetwork
-- name: verify create load_balancer network with specified ip
-  assert:
-    that:
-      - load_balancerNetwork is changed
-      - load_balancerNetwork.hcloud_load_balancer_network.network == hcloud_network_name
-      - load_balancerNetwork.hcloud_load_balancer_network.load_balancer == hcloud_load_balancer_name
-      - load_balancerNetwork.hcloud_load_balancer_network.ip == "10.0.0.2"
-
-- name: cleanup create load_balancer network with specified ip
-  hetzner.hcloud.load_balancer_network:
-    network: "{{ hcloud_network_name }}"
-    load_balancer: "{{hcloud_load_balancer_name}}"
+    ip: 10.0.1.2
     state: absent
   register: result
-- name: verify cleanup create load_balancer network with specified ip
-  assert:
+- name: Verify delete with ip
+  ansible.builtin.assert:
     that:
       - result is changed
-
-- name: cleanup load_balancer
-  hetzner.hcloud.load_balancer:
-    name: "{{ hcloud_load_balancer_name }}"
-    state: absent
-  register: result
-- name: verify cleanup load_balancer
-  assert:
-    that:
-      - result is success
-
-- name: cleanup subnetwork
-  hetzner.hcloud.subnetwork:
-    network: "{{ hcloud_network_name }}"
-    ip_range: "10.0.0.0/16"
-    type: "cloud"
-    network_zone: "{{ hcloud_network_zone_name }}"
-    state: absent
-  register: result
-- name: verify cleanup subnetwork
-  assert:
-    that:
-      - result is changed
-
-- name: cleanup
-  hetzner.hcloud.network:
-    name: "{{hcloud_network_name}}"
-    state: absent
-  register: result
-- name: verify cleanup
-  assert:
-    that:
-      - result is success
