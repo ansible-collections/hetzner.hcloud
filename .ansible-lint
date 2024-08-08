@@ -8,7 +8,6 @@ exclude_paths:
   - examples/
   - tests/integration/targets/certificate
   - tests/integration/targets/floating_ip
-  - tests/integration/targets/load_balancer_network
   - tests/integration/targets/load_balancer_service
   - tests/integration/targets/load_balancer_target
   - tests/integration/targets/placement_group

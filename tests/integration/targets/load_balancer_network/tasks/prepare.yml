@@ -1,0 +1,21 @@
+---
+- name: Create test_network
+  hetzner.hcloud.network:
+    name: "{{ hcloud_network_name }}"
+    ip_range: 10.0.0.0/16
+  register: test_network
+
+- name: Create test_subnetwork
+  hetzner.hcloud.subnetwork:
+    network: "{{ hcloud_network_name }}"
+    network_zone: "{{ hcloud_network_zone_name }}"
+    type: cloud
+    ip_range: 10.0.1.0/24
+  register: test_subnetwork
+
+- name: Create test_load_balancer
+  hetzner.hcloud.load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    load_balancer_type: lb11
+    location: "{{ hcloud_location_name }}"
+  register: test_load_balancer
