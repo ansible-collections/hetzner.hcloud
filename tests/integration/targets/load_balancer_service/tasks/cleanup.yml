@@ -1,0 +1,5 @@
+---
+- name: Cleanup test_load_balancer
+  hetzner.hcloud.load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    state: absent

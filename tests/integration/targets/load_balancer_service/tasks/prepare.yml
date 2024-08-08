@@ -1,0 +1,7 @@
+---
+- name: Create test_load_balancer
+  hetzner.hcloud.load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    load_balancer_type: lb11
+    location: "{{ hcloud_location_name }}"
+  register: test_load_balancer
