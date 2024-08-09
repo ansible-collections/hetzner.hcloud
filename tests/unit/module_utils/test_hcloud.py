@@ -33,7 +33,7 @@ def test_hcloud_fail_json_hcloud(module):
         )
     except APIException as exception:
         hcloud.fail_json_hcloud(exception)
-
+        # pylint: disable=unreachable
         module.fail_json.assert_called_with(
             msg="invalid input in fields 'server', 'home_location' (invalid_input)",
             exception=traceback.format_exc(),
@@ -66,7 +66,7 @@ def test_hcloud_fail_json_hcloud(module):
         )
     except ActionException as exception:
         hcloud.fail_json_hcloud(exception)
-
+        # pylint: disable=unreachable
         module.fail_json.assert_called_with(
             msg="The pending action failed: Server does not exist anymore",
             exception=traceback.format_exc(),
@@ -101,7 +101,7 @@ def test_hcloud_fail_json_hcloud(module):
         )
     except ActionException as exception:
         hcloud.fail_json_hcloud(exception)
-
+        # pylint: disable=unreachable
         module.fail_json.assert_called_with(
             msg="The pending action timed out",
             exception=traceback.format_exc(),
