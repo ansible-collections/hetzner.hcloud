@@ -1,0 +1,2 @@
+minor_changes:
+  - load_balancer_status - Add new filter to compute the status of a Load Balancer based on its targets.
