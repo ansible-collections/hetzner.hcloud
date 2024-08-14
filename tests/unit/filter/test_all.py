@@ -4,39 +4,27 @@ import pytest
 
 from plugins.filter.all import load_balancer_status
 
+
+def _lb_target_server(status: str) -> dict:
+    return {"type": "server", "health_status": [{"status": status}]}
+
+
+def _lb_target_label_selector(status: str) -> dict:
+    return {"type": "label_selector", "targets": [_lb_target_server(status)]}
+
+
 LOAD_BALANCER_STATUS_TEST_CASES = (
-    ({"targets": [{"health_status": []}]}, "unknown"),
-    ({"targets": [{"health_status": [{}]}]}, "unknown"),
-    ({"targets": [{"health_status": [{"status": "unknown"}]}]}, "unknown"),
-    ({"targets": [{"health_status": [{"status": "unhealthy"}]}]}, "unhealthy"),
-    ({"targets": [{"health_status": [{"status": "healthy"}]}]}, "healthy"),
-    (
-        {
-            "targets": [
-                {"health_status": [{"status": "healthy"}]},
-                {"health_status": [{"status": "healthy"}]},
-            ]
-        },
-        "healthy",
-    ),
-    (
-        {
-            "targets": [
-                {"health_status": [{"status": "healthy"}, {"status": "unhealthy"}]},
-                {"health_status": [{"status": "healthy"}, {"status": "unknown"}]},
-            ]
-        },
-        "unhealthy",
-    ),
-    (
-        {
-            "targets": [
-                {"health_status": [{"status": "healthy"}]},
-                {"health_status": [{"status": "unhealthy"}]},
-            ]
-        },
-        "unhealthy",
-    ),
+    ({"targets": [{"type": "server", "health_status": []}]}, "unknown"),
+    ({"targets": [{"type": "server", "health_status": [{}]}]}, "unknown"),
+    ({"targets": [_lb_target_server("healthy")]}, "healthy"),
+    ({"targets": [_lb_target_server("unhealthy")]}, "unhealthy"),
+    ({"targets": [_lb_target_server("unknown")]}, "unknown"),
+    ({"targets": [_lb_target_server("healthy"), _lb_target_label_selector("healthy")]}, "healthy"),
+    ({"targets": [_lb_target_server("healthy"), _lb_target_label_selector("unhealthy")]}, "unhealthy"),
+    ({"targets": [_lb_target_server("unhealthy"), _lb_target_label_selector("healthy")]}, "unhealthy"),
+    ({"targets": [_lb_target_label_selector("healthy"), _lb_target_server("healthy")]}, "healthy"),
+    ({"targets": [_lb_target_label_selector("healthy"), _lb_target_server("unhealthy")]}, "unhealthy"),
+    ({"targets": [_lb_target_label_selector("unhealthy"), _lb_target_server("healthy")]}, "unhealthy"),
 )
 
 
