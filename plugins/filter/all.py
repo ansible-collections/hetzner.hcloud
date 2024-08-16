@@ -21,6 +21,10 @@ def load_balancer_status(load_balancer: dict, *args, **kwargs) -> Literal["unkno
                 status = targets_status(target["targets"])
                 if status == "unhealthy":
                     return "unhealthy"
+
+                if status in (None, "unknown"):
+                    result = "unknown"
+
                 continue
 
             # Report missing health status as unknown
