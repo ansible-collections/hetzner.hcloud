@@ -11,29 +11,38 @@ def load_balancer_status(load_balancer: dict, *args, **kwargs) -> Literal["unkno
     """
     Return the status of a Load Balancer based on its targets.
     """
-    try:
+
+    def targets_status(targets: list) -> Literal["unknown", "unhealthy", "healthy"]:
         result = "healthy"
-        for target in load_balancer["targets"]:
-            target_health_status = target.get("health_status")
 
-            # Report missing health status as unknown
-            if not target_health_status:
-                result = "unknown"
-                continue
-
-            for health_status in target_health_status:
-                status = health_status.get("status")
-                if status == "healthy":
-                    continue
-
-                if status in (None, "unknown"):
-                    result = "unknown"
-                    continue
-
+        for target in targets:
+            # Label selector targets have child targets that must be checked
+            if target["type"] == "label_selector":
+                status = targets_status(target["targets"])
                 if status == "unhealthy":
                     return "unhealthy"
 
+                if status in (None, "unknown"):
+                    result = "unknown"
+
+                continue
+
+            # Report missing health status as unknown
+            if not target.get("health_status"):
+                return "unknown"
+
+            for health_status in target.get("health_status"):
+                status = health_status.get("status")
+                if status == "unhealthy":
+                    return "unhealthy"
+
+                if status in (None, "unknown"):
+                    result = "unknown"
+
         return result
+
+    try:
+        return targets_status(load_balancer["targets"])
     except Exception as exc:
         raise AnsibleFilterError(f"load_balancer_status - {to_native(exc)}", orig_exc=exc) from exc
 
