@@ -4,14 +4,14 @@
       ansible.builtin.set_fact:
         load_balancer_status_healthy: >-
           {{ { "targets": [
-            {"health_status": [{"status": "healthy"}]},
-            {"health_status": [{"status": "healthy"}]},
+                { "type": "server", "health_status": [{ "status": "healthy" }]},
+                { "type": "label_selector", "targets": [{ "type": "server", "health_status": [{ "status": "healthy" }] }]}
           ]} | hetzner.hcloud.load_balancer_status }}
 
         load_balancer_status_healthy_and_unhealthy: >-
           {{ { "targets": [
-            {"health_status": [{"status": "healthy"}, {"status": "unhealthy"}]},
-            {"health_status": [{"status": "healthy"}, {"status": "healthy"}]},
+                { "type": "server", "health_status": [{ "status": "healthy" }, { "status": "unhealthy" }]},
+                { "type": "label_selector", "targets": [{ "type": "server", "health_status": [{ "status": "healthy" }, { "status": "unhealthy" }] }]}
           ]} | hetzner.hcloud.load_balancer_status }}
 
     - name: Verify filter load_balancer_status
