@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v4.2.0
+======
+
+Minor Changes
+-------------
+
+- load_balancer_status - Add new filter to compute the status of a Load Balancer based on its targets.
+
 v4.1.0
 ======
 
