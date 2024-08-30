@@ -590,3 +590,11 @@ releases:
     - exponential-actions-polling-interval.yml
     - release-summary.yml
     release_date: '2024-07-25'
+  4.2.0:
+    changes:
+      minor_changes:
+      - load_balancer_status - Add new filter to compute the status of a Load Balancer
+        based on its targets.
+    fragments:
+    - load-balancer-status-filter.yml
+    release_date: '2024-08-30'

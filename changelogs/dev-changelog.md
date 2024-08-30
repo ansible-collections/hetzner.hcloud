@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/4.1.0...4.2.0) (2024-08-30)
+
+
+### Features
+
+* compute load balancer targets status using a filter ([#550](https://github.com/ansible-collections/hetzner.hcloud/issues/550)) ([fce8bc9](https://github.com/ansible-collections/hetzner.hcloud/commit/fce8bc9bb971e87cacfeca115fe7be01b0f908d9))
+
+
+### Bug Fixes
+
+* check label_selector child targets with load_balancer_status filter ([#552](https://github.com/ansible-collections/hetzner.hcloud/issues/552)) ([abdf722](https://github.com/ansible-collections/hetzner.hcloud/commit/abdf72212b73ad1fc67856e88df97b5173ed1767))
+
 ## [4.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/4.0.1...4.1.0) (2024-07-25)
 
 
