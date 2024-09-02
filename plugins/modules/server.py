@@ -473,7 +473,12 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 # server from a custom images
                 resp.action.wait_until_finished(max_retries=362)  # 362 retries >= 1802 seconds
                 for action in resp.next_actions:
-                    action.wait_until_finished()
+                    # Starting the server or attaching to the network might take a few minutes,
+                    # depending on the current activity in the project.
+                    # This waits up to 30minutes for each action in series, but in the background
+                    # the actions are mostly running in parallel, so after the first one the other
+                    # actions are usually completed already.
+                    action.wait_until_finished(max_retries=362) # 362 retries >= 1802 seconds
 
                 rescue_mode = self.module.params.get("rescue_mode")
                 if rescue_mode:
