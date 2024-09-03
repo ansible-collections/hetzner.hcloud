@@ -476,7 +476,10 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 )
                 resp.action.wait_until_finished(max_retries=1000)  # 362 retries >= 1802 seconds
                 for action in resp.next_actions:
-                    action.wait_until_finished(max_retries=362)
+                    self.module.warn(
+                        f"Next action {action}"                    
+                    )                    
+                    action.wait_until_finished()
 
                 rescue_mode = self.module.params.get("rescue_mode")
                 if rescue_mode:
