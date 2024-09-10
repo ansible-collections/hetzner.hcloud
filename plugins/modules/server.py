@@ -479,7 +479,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                     self.module.warn(
                         f"Next action {action}"                    
                     )                    
-                    action.wait_until_finished()
+                    action.wait_until_finished(max_retries=1000)
 
                 rescue_mode = self.module.params.get("rescue_mode")
                 if rescue_mode:
