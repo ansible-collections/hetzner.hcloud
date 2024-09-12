@@ -48,7 +48,7 @@ extends_documentation_fragment:
 EXAMPLES = """
 - name: Apply a firewall to a list of servers
   hetzner.hcloud.firewall_resource:
-    name: my-firewall
+    firewall: my-firewall
     servers:
       - my-server
       - 3456789
@@ -56,7 +56,7 @@ EXAMPLES = """
 
 - name: Remove a firewall from a list of servers
   hetzner.hcloud.firewall_resource:
-    name: my-firewall
+    firewall: my-firewall
     servers:
       - my-server
       - 3456789
@@ -64,14 +64,14 @@ EXAMPLES = """
 
 - name: Apply a firewall to resources using label selectors
   hetzner.hcloud.firewall_resource:
-    name: my-firewall
+    firewall: my-firewall
     label_selectors:
       - env=prod
     state: present
 
 - name: Remove a firewall from resources using label selectors
   hetzner.hcloud.firewall_resource:
-    name: my-firewall
+    firewall: my-firewall
     label_selectors:
       - env=prod
     state: absent
