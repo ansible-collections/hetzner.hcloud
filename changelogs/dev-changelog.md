@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.1](https://github.com/ansible-collections/hetzner.hcloud/compare/4.2.0...4.2.1) (2024-09-23)
+
+
+### Bug Fixes
+
+* **server:** timeout in server creation when waiting on next actions ([#561](https://github.com/ansible-collections/hetzner.hcloud/issues/561)) ([98e9c52](https://github.com/ansible-collections/hetzner.hcloud/commit/98e9c52c74d2ceaa53dfc1c7e5c9f77e166dd865))
+
 ## [4.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/4.1.0...4.2.0) (2024-08-30)
 
 
