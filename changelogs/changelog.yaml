@@ -598,3 +598,10 @@ releases:
     fragments:
     - load-balancer-status-filter.yml
     release_date: '2024-08-30'
+  4.2.1:
+    changes:
+      bugfixes:
+      - server - Wait up to 30 minutes for every action returned from server create
+    fragments:
+    - server-create-next-actions.yml
+    release_date: '2024-09-23'
