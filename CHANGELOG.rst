@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v4.2.1
+======
+
+Bugfixes
+--------
+
+- server - Wait up to 30 minutes for every action returned from server create
+
 v4.2.0
 ======
 
