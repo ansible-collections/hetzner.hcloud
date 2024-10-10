@@ -282,6 +282,7 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import APIException, HCloudException
+from ..module_utils.vendor.hcloud.certificates import BoundCertificate
 from ..module_utils.vendor.hcloud.load_balancers import (
     BoundLoadBalancer,
     LoadBalancerHealtCheckHttp,
@@ -389,16 +390,12 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
         if http_arg.get("certificates") is not None:
             certificates = http_arg.get("certificates")
             if certificates is not None:
-                for certificate in certificates:
-                    hcloud_cert = None
-                    try:
-                        try:
-                            hcloud_cert = self.client.certificates.get_by_name(certificate)
-                        except Exception:
-                            hcloud_cert = self.client.certificates.get_by_id(certificate)
-                    except HCloudException as exception:
-                        self.fail_json_hcloud(exception)
-                    service_http.certificates.append(hcloud_cert)
+                for certificate_id_or_name in certificates:
+                    certificate: BoundCertificate = self._client_get_by_name_or_id(
+                        "certificates",
+                        certificate_id_or_name,
+                    )
+                    service_http.certificates.append(certificate)
 
         return service_http
 
