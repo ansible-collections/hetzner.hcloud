@@ -76,6 +76,25 @@
       - result is failed
       - 'result.msg == "resource (load_balancer) does not exist: not-existing"'
 
+- name: Test create with not existing certificate
+  hetzner.hcloud.load_balancer_service:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    listen_port: 443
+    destination_port: 80
+    protocol: https
+    http:
+      redirect_http: true
+      certificates:
+        - not-existing
+    state: present
+  ignore_errors: true
+  register: result
+- name: Verify create with not existing certificate
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "resource (certificate) does not exist: not-existing"'
+
 - name: Test update
   hetzner.hcloud.load_balancer_service:
     load_balancer: "{{ hcloud_load_balancer_name }}"
