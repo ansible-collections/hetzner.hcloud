@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v4.2.2
+======
+
+Bugfixes
+--------
+
+- hcloud_load_balancer_service - Improve unknown certificate id or name error.
+
 v4.2.1
 ======
 
