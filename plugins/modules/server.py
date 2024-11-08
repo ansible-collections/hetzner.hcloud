@@ -869,18 +869,25 @@ class AnsibleHCloudServer(AnsibleHCloud):
         return None
 
     def rebuild_server(self):
-        self.module.fail_on_missing_params(required_params=["image"])
-        try:
-            if not self.module.check_mode:
-                image = self._get_image(self.hcloud_server.server_type)
-                resp = self.client.servers.rebuild(self.hcloud_server, image)
-                # When we rebuild the server progress takes some more time.
-                resp.action.wait_until_finished(max_retries=202)  # 202 retries >= 1002 seconds
-            self._mark_as_changed()
+        self._get_server()
+        if self.hcloud_server is None:
+            self._create_server()
+        else:
+            self._update_server()
 
-            self._get_server()
-        except HCloudException as exception:
-            self.fail_json_hcloud(exception)
+            # Only rebuild the server if it already existed.
+            self.module.fail_on_missing_params(required_params=["image"])
+            try:
+                if not self.module.check_mode:
+                    image = self._get_image(self.hcloud_server.server_type)
+                    resp = self.client.servers.rebuild(self.hcloud_server, image)
+                    # When we rebuild the server progress takes some more time.
+                    resp.action.wait_until_finished(max_retries=202)  # 202 retries >= 1002 seconds
+                self._mark_as_changed()
+
+                self._get_server()
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception)
 
     def present_server(self):
         self._get_server()
@@ -969,7 +976,6 @@ def main():
         hcloud.stop_server()
         hcloud.start_server()
     elif state == "rebuild":
-        hcloud.present_server()
         hcloud.rebuild_server()
 
     module.exit_json(**hcloud.get_result())
