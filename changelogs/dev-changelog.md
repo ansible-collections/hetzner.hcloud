@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.2.2](https://github.com/ansible-collections/hetzner.hcloud/compare/4.2.1...4.2.2) (2024-11-22)
+
+
+### Bug Fixes
+
+* improve unknown certificate error in `load_balancer_service` ([#570](https://github.com/ansible-collections/hetzner.hcloud/issues/570)) ([fe3bfa9](https://github.com/ansible-collections/hetzner.hcloud/commit/fe3bfa9020323034817013ffb5dc318532cfad20))
+* only rebuild existing servers, skip rebuild if it was just created ([#581](https://github.com/ansible-collections/hetzner.hcloud/issues/581)) ([06718d0](https://github.com/ansible-collections/hetzner.hcloud/commit/06718d0db0f928c476d5ca294d1a977b7b8e69f6))
+
 ## [4.2.1](https://github.com/ansible-collections/hetzner.hcloud/compare/4.2.0...4.2.1) (2024-09-23)
 
 
