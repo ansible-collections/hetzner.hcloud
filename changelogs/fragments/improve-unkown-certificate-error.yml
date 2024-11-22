@@ -1,2 +1,0 @@
-bugfixes:
-  - hcloud_load_balancer_service - Improve unknown certificate id or name error.
