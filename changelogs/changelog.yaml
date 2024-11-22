@@ -605,3 +605,13 @@ releases:
     fragments:
     - server-create-next-actions.yml
     release_date: '2024-09-23'
+  4.2.2:
+    changes:
+      bugfixes:
+      - hcloud_load_balancer_service - Improve unknown certificate id or name error.
+      - hcloud_server - Only rebuild existing servers, skip rebuild if the server
+        was just created.
+    fragments:
+    - improve-unkown-certificate-error.yml
+    - only-rebuild-existing-servers.yml
+    release_date: '2024-11-22'

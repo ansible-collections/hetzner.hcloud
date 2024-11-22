@@ -1,2 +1,0 @@
-bugfixes:
-  - hcloud_server - Only rebuild existing servers, skip rebuild if the server was just created.
