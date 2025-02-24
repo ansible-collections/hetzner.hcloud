@@ -459,12 +459,12 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
                 )
                 changed = True
 
-            if not self.module.check_mode:
+            if changed and not self.module.check_mode:
                 action = self.hcloud_load_balancer.update_service(LoadBalancerService(**params))
                 action.wait_until_finished()
+                self._get_load_balancer()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
-        self._get_load_balancer()
 
         if changed:
             self._mark_as_changed()
