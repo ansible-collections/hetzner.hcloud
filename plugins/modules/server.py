@@ -150,7 +150,7 @@ options:
         description:
             - State of the server.
         default: present
-        choices: [ absent, present, restarted, started, stopped, rebuild ]
+        choices: [ absent, present, created, restarted, started, stopped, rebuild ]
         type: str
 extends_documentation_fragment:
 - hetzner.hcloud.hcloud
@@ -462,7 +462,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
         elif self.module.params.get("location") is None and self.module.params.get("datacenter") is not None:
             params["datacenter"] = self._client_get_by_name_or_id("datacenters", self.module.params.get("datacenter"))
 
-        if self.module.params.get("state") == "stopped":
+        if self.module.params.get("state") == "stopped" or self.module.params.get("state") == "created":
             params["start_after_create"] = False
 
         if not self.module.check_mode:
@@ -944,7 +944,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 rebuild_protection={"type": "bool"},
                 placement_group={"type": "str"},
                 state={
-                    "choices": ["absent", "present", "restarted", "started", "stopped", "rebuild"],
+                    "choices": ["absent", "present", "created", "restarted", "started", "stopped", "rebuild"],
                     "default": "present",
                 },
                 **super().base_module_arguments(),
@@ -964,6 +964,9 @@ def main():
     if state == "absent":
         hcloud.delete_server()
     elif state == "present":
+        hcloud.present_server()
+        hcloud.start_server()
+    elif state == "created":
         hcloud.present_server()
     elif state == "started":
         hcloud.present_server()
