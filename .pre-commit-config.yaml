@@ -44,7 +44,7 @@ repos:
       - id: black
 
   - repo: https://github.com/ansible-community/antsibull-changelog
-    rev: 0.31.2
+    rev: 0.32.0
     hooks:
       - id: antsibull-changelog-lint
       - id: antsibull-changelog-lint-changelog-yaml
