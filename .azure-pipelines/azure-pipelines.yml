@@ -137,10 +137,13 @@ stages:
     condition: succeededOrFailed()
     dependsOn:
       - Sanity_devel
+      - Sanity_2_18
       - Sanity_2_17
       - Units_devel
+      - Units_2_18
       - Units_2_17
       - Integration_devel
+      - Integration_2_18
       - Integration_2_17
     jobs:
       - template: templates/coverage.yml
