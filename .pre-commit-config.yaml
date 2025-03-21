@@ -57,7 +57,7 @@ repos:
         entry: env HCLOUD_TOKEN= python3 -m ansiblelint -v --force-color
         args: [--offline]
         additional_dependencies:
-          - ansible-core>=2.16
+          - ansible-core>=2.17
           - netaddr
 
   - repo: local
