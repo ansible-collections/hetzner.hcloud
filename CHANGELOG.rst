@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v4.3.0
+======
+
+Minor Changes
+-------------
+
+- server - Add `created` state that creates a server but do not start it.
+
 v4.2.2
 ======
 

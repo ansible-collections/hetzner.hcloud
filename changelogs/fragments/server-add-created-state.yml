@@ -1,2 +1,0 @@
-minor_changes:
-  - server - Add `created` state that creates a server but do not start it.
