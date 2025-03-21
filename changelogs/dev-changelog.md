@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.3.0](https://github.com/ansible-collections/hetzner.hcloud/compare/4.2.2...4.3.0) (2025-03-21)
+
+
+### Features
+
+* add new `created` state for idempotent server creation ([#606](https://github.com/ansible-collections/hetzner.hcloud/issues/606)) ([4534cf6](https://github.com/ansible-collections/hetzner.hcloud/commit/4534cf6b9d0fc422e77192d6994b86afb7d4b1df))
+
+
+### Bug Fixes
+
+* only update load balancer service when changed ([#603](https://github.com/ansible-collections/hetzner.hcloud/issues/603)) ([6956596](https://github.com/ansible-collections/hetzner.hcloud/commit/6956596fd2a4a570834fbfb42fb6194ed5271d59))
+
 ## [4.2.2](https://github.com/ansible-collections/hetzner.hcloud/compare/4.2.1...4.2.2) (2024-11-22)
 
 
