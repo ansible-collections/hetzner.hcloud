@@ -6,7 +6,7 @@
     name: "{{hcloud_server_name}}"
     server_type: "{{ hcloud_server_type_name }}"
     image: "{{ hcloud_image_name }}"
-    state: stopped
+    state: created
     location: "{{ hcloud_location_name }}"
   register: vol_server
 - name: verify setup server

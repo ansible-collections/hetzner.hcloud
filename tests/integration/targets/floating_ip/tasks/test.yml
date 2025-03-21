@@ -22,7 +22,7 @@
     server_type: "{{ hcloud_server_type_name }}"
     image: "{{ hcloud_image_name }}"
     location: "{{ hcloud_location_name }}"
-    state: stopped
+    state: created
   register: main_server
 - name: verify setup server
   assert:
@@ -35,7 +35,7 @@
     server_type: "{{ hcloud_server_type_name }}"
     image: "{{ hcloud_image_name }}"
     location: "{{ hcloud_location_name }}"
-    state: stopped
+    state: created
   register: main_server2
 - name: verify setup another server
   assert:

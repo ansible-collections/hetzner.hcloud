@@ -5,7 +5,7 @@
     server_type: "{{ hcloud_server_type_name }}"
     image: "{{ hcloud_image_name }}"
     location: "{{ hcloud_location_name }}"
-    state: stopped
+    state: created
     enable_ipv4: false
     enable_ipv6: false
   register: test_server

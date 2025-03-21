@@ -5,18 +5,18 @@
     server_type: "{{ hcloud_server_type_name }}"
     image: "{{ hcloud_image_name }}"
     location: "{{ hcloud_location_name }}"
-    state: stopped
+    state: created
     labels:
       key: value
   register: test_server
 
-- name: Create test_server2 (stopped + without ip)
+- name: Create test_server2 (without ip)
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}2"
     server_type: "{{ hcloud_server_type_name }}"
     image: "{{ hcloud_image_name }}"
     location: "{{ hcloud_location_name }}"
-    state: stopped
+    state: created
     labels:
       key: value
     enable_ipv4: false
