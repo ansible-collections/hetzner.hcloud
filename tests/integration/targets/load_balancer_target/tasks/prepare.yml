@@ -5,7 +5,7 @@
     server_type: "{{ hcloud_server_type_name }}"
     image: "{{ hcloud_image_name }}"
     location: "{{ hcloud_location_name }}"
-    state: stopped
+    state: created
   register: test_server
 
 - name: Create test_load_balancer

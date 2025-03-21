@@ -32,7 +32,7 @@
     ipv6: "{{primaryIPv6.hcloud_primary_ip.id}}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
-    state: stopped
+    state: created
   register: result
 - name: verify test create server with primary ips
   assert:
@@ -50,7 +50,7 @@
     enable_ipv6: false
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
-    state: stopped
+    state: created
   register: result
 - name: verify test create server with primary ips
   assert:

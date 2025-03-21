@@ -7,7 +7,7 @@
     location: "{{ hcloud_location_name }}"
     labels:
       key: value
-    state: stopped
+    state: created
   register: test_server
 
 - name: Create test_firewall

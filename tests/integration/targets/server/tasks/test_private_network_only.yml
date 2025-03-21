@@ -72,7 +72,7 @@
       - "{{ primaryNetwork.hcloud_network.name }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
-    state: stopped
+    state: created
   register: result
 - name: verify test create server with primary network
   assert:
@@ -92,7 +92,7 @@
       - "{{ secondaryNetwork.hcloud_network.id }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
-    state: stopped
+    state: created
   register: result
 - name: verify test update server by adding secondary network
   assert:
@@ -112,7 +112,47 @@
       - "{{ secondaryNetwork.hcloud_network.id }}"
     ssh_keys:
       - "{{ hcloud_ssh_key_name }}"
-    state: stopped
+    state: created
+  register: result
+- name: verify test update server idem
+  assert:
+    that:
+      - result is not changed
+
+- name: test server can now be started
+  hetzner.hcloud.server:
+    name: "{{ hcloud_server_name }}"
+    server_type: "{{ hcloud_server_type_name }}"
+    datacenter: "{{ hcloud_datacenter_name }}"
+    image: "{{ hcloud_image_name }}"
+    enable_ipv4: false
+    enable_ipv6: false
+    private_networks:
+      - "{{ primaryNetwork.hcloud_network.name }}"
+      - "{{ secondaryNetwork.hcloud_network.id }}"
+    ssh_keys:
+      - "{{ hcloud_ssh_key_name }}"
+    state: started
+  register: result
+- name: verify test server can now be started
+  assert:
+    that:
+      - result is changed
+
+- name: test update server idem
+  hetzner.hcloud.server:
+    name: "{{ hcloud_server_name }}"
+    server_type: "{{ hcloud_server_type_name }}"
+    datacenter: "{{ hcloud_datacenter_name }}"
+    image: "{{ hcloud_image_name }}"
+    enable_ipv4: false
+    enable_ipv6: false
+    private_networks:
+      - "{{ primaryNetwork.hcloud_network.name }}"
+      - "{{ secondaryNetwork.hcloud_network.id }}"
+    ssh_keys:
+      - "{{ hcloud_ssh_key_name }}"
+    state: created
   register: result
 - name: verify test update server idem
   assert:

@@ -32,7 +32,7 @@
         image: debian-12
         enable_ipv4: false
         enable_ipv6: false
-        state: stopped # A server without networking cannot be started!
+        state: created # A server without networking cannot be started!
       loop: "{{ servers }}"
 
     - name: Attach private IP to servers
