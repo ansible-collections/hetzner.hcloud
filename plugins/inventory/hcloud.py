@@ -102,6 +102,7 @@ options:
   hostvars_prefix:
     description:
       - The prefix for host variables names coming from Hetzner Cloud.
+    default: hcloud_
     type: str
     version_added: 2.5.0
   hostvars_suffix:
@@ -144,11 +145,11 @@ status:
 # and status with prefix e.g. "server_status_running"
 plugin: hetzner.hcloud.hcloud
 keyed_groups:
-  - key: location
+  - key: hcloud_location
     prefix: hcloud_location
   - key: image_os_flavor
     separator: ""
-  - key: status
+  - key: hcloud_status
     prefix: server_status
 
 ---
@@ -157,34 +158,34 @@ plugin: hetzner.hcloud.hcloud
 
 # Available variables are for example:
 ## Server
-#   id: 42984895
-#   name: "my-server"
-#   labels:
+#   hcloud_id: 42984895
+#   hcloud_name: "my-server"
+#   hcloud_labels:
 #     foo: "bar"
-#   status: "running"
+#   hcloud_status: "running"
 ## Server Type
-#   type: "cx22"
-#   server_type: "cx22"
-#   architecture: "x86"
+#   hcloud_type: "cx22"
+#   hcloud_server_type: "cx22"
+#   hcloud_architecture: "x86"
 ## Image
-#   image_id: 114690387
-#   image_name: "debian-12"
-#   image_os_flavor: "debian"
+#   hcloud_image_id: 114690387
+#   hcloud_image_name: "debian-12"
+#   hcloud_image_os_flavor: "debian"
 ## Datacenter
-#   datacenter: "hel1-dc2"
-#   location: "hel1"
+#   hcloud_datacenter: "hel1-dc2"
+#   hcloud_location: "hel1"
 ## Network
-#   ipv4: "65.109.140.95" # Value is optional!
-#   ipv6: "2a01:4f9:c011:b83f::1" # Value is optional!
-#   ipv6_network: 2a01:4f9:c011:b83f::" # Value is optional!
-#   ipv6_network_mask: "64" # Value is optional!
-#   private_ipv4: "10.0.0.3" # Value is optional!
-#   private_networks:
+#   hcloud_ipv4: "65.109.140.95" # Value is optional!
+#   hcloud_ipv6: "2a01:4f9:c011:b83f::1" # Value is optional!
+#   hcloud_ipv6_network: 2a01:4f9:c011:b83f::" # Value is optional!
+#   hcloud_ipv6_network_mask: "64" # Value is optional!
+#   hcloud_private_ipv4: "10.0.0.3" # Value is optional!
+#   hcloud_private_networks:
 #     - id: 114690387
 #       name: "my-private-network"
 #       ip: "10.0.0.3"
 #
-hostname: "my-prefix-{{ datacenter }}-{{ name }}-{{ server_type }}"
+hostname: "my-prefix-{{ hcloud_datacenter }}-{{ hcloud_name }}-{{ hcloud_server_type }}"
 """
 
 import sys
