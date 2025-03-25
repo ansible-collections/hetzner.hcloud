@@ -564,10 +564,20 @@ class AnsibleHCloudServer(AnsibleHCloud):
         try:
             previous_server_status = self.hcloud_server.status
 
+            update_params = {}
+
+            name = self.module.params.get("name")
+            if name is not None and self.hcloud_server.name != name:
+                self.module.fail_on_missing_params(required_params=["id"])
+                update_params["name"] = name
+
             labels = self.module.params.get("labels")
             if labels is not None and labels != self.hcloud_server.labels:
+                update_params["labels"] = labels
+
+            if update_params:
                 if not self.module.check_mode:
-                    self.hcloud_server.update(labels=labels)
+                    self.hcloud_server.update(**update_params)
                 self._mark_as_changed()
 
             rescue_mode = self.module.params.get("rescue_mode")

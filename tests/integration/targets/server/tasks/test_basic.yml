@@ -40,6 +40,28 @@
     that:
       - result is not changed
 
+- name: test rename server
+  hetzner.hcloud.server:
+    id: "{{ main_server.hcloud_server.id }}"
+    name: "{{ hcloud_server_name }}-new"
+  register: result
+- name: verify rename server
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_server.name == hcloud_server_name + '-new'
+
+- name: reset server name
+  hetzner.hcloud.server:
+    id: "{{ main_server.hcloud_server.id }}"
+    name: "{{ hcloud_server_name }}"
+  register: result
+- name: verify reset server name
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_server.name == hcloud_server_name
+
 - name: test stop server with check mode
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
