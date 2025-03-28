@@ -4,6 +4,22 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v5.0.0
+======
+
+Minor Changes
+-------------
+
+- server - Allow renaming a server.
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- Drop support for ansible-core 2.15.
+- Drop support for ansible-core 2.16.
+- Drop support for python 3.8.
+- inventory - The default value for the `hostvars_prefix` option is now set to `hcloud_`. Make sure to update all references to host variables provided by the inventory. You may revert this change by setting the `hostvars_prefix` option to `""`.
+
 v4.3.0
 ======
 
