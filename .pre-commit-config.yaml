@@ -48,6 +48,7 @@ repos:
     hooks:
       - id: antsibull-changelog-lint
       - id: antsibull-changelog-lint-changelog-yaml
+        args: [--strict]
 
   - repo: https://github.com/ansible/ansible-lint
     rev: v25.1.3
