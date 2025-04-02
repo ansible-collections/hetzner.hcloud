@@ -25,7 +25,7 @@
     that:
       - vol_volume is changed
 
-- name: Test missing volume name or id # noqa: args[module]
+- name: Test missing volume name # noqa: args[module]
   hetzner.hcloud.server_volume:
     server: "{{ hcloud_server_name }}"
   register: result
@@ -34,7 +34,7 @@
   ansible.builtin.assert:
     that:
       - result is failed
-      - 'result.msg == "one of the following is required: id, volume"'
+      - 'result.msg == "missing required arguments: volume"'
 
 - name: Test missing server name # noqa: args[module]
   hetzner.hcloud.server_volume:
@@ -69,7 +69,6 @@
       - volume is changed
       - volume.hcloud_server_volume.volume == hcloud_volume_name
       - volume.hcloud_server_volume.server == hcloud_server_name
-      - volume.hcloud_server_volume.id is defined
 
 - name: Test attach Volume idempotence (Volume)
   hetzner.hcloud.server_volume:
@@ -85,7 +84,7 @@
   hetzner.hcloud.server_volume:
     volume: "{{ hcloud_volume_name }}"
     server: "{{ hcloud_server_name }}"
-    state: "detached"
+    state: "absent"
   check_mode: true
   register: volume
 - name: Verify detach Volume with checkmode (Volume)
@@ -98,7 +97,7 @@
   hetzner.hcloud.server_volume:
     volume: "{{ hcloud_volume_name }}"
     server: "{{ hcloud_server_name }}"
-    state: "detached"
+    state: "absent"
   register: volume
 - name: Verify detach volume (Volume)
   ansible.builtin.assert:
@@ -110,79 +109,9 @@
   hetzner.hcloud.server_volume:
     volume: "{{ hcloud_volume_name }}"
     server: "{{ hcloud_server_name }}"
-    state: "detached"
+    state: "absent"
   register: volume
 - name: Verify detach volume idempotency (Volume)
-  ansible.builtin.assert:
-    that:
-      - volume is not changed
-
-- name: Test attach Volume with check mode (ID)
-  hetzner.hcloud.server_volume:
-    id: "{{ vol_volume.hcloud_volume.id }}"
-    server: "{{ hcloud_server_name }}"
-  register: result
-  check_mode: true
-- name: Verify attach Volume with check mode result (ID)
-  ansible.builtin.assert:
-    that:
-      - result is changed
-
-- name: Test attach Volume (ID)
-  hetzner.hcloud.server_volume:
-    id: "{{ vol_volume.hcloud_volume.id }}"
-    server: "{{ hcloud_server_name }}"
-  register: volume
-- name: Verify test attach Volume (ID)
-  ansible.builtin.assert:
-    that:
-      - volume is changed
-      - volume.hcloud_server_volume.volume == hcloud_volume_name
-      - volume.hcloud_server_volume.server == hcloud_server_name
-      - volume.hcloud_server_volume.id is defined
-
-- name: Test attach Volume idempotence (ID)
-  hetzner.hcloud.server_volume:
-    id: "{{ vol_volume.hcloud_volume.id }}"
-    server: "{{ hcloud_server_name }}"
-  register: volume
-- name: Verify test create Volume (ID)
-  ansible.builtin.assert:
-    that:
-      - volume is not changed
-
-- name: Test detach Volume with checkmode (ID)
-  hetzner.hcloud.server_volume:
-    id: "{{ vol_volume.hcloud_volume.id }}"
-    server: "{{ hcloud_server_name }}"
-    state: "detached"
-  check_mode: true
-  register: volume
-- name: Verify detach Volume with checkmode (ID)
-  ansible.builtin.assert:
-    that:
-      - volume is changed
-      - volume.hcloud_server_volume.server == hcloud_server_name
-
-- name: Test detach Volume (ID)
-  hetzner.hcloud.server_volume:
-    id: "{{ vol_volume.hcloud_volume.id }}"
-    server: "{{ hcloud_server_name }}"
-    state: "detached"
-  register: volume
-- name: Verify detach volume (ID)
-  ansible.builtin.assert:
-    that:
-      - volume is changed
-      - volume.hcloud_server_volume.server == hcloud_server_name
-
-- name: Test detach Volume idempotency (ID)
-  hetzner.hcloud.server_volume:
-    id: "{{ vol_volume.hcloud_volume.id }}"
-    server: "{{ hcloud_server_name }}"
-    state: "detached"
-  register: volume
-- name: Verify detach volume idempotency (ID)
   ansible.builtin.assert:
     that:
       - volume is not changed
