@@ -39,8 +39,8 @@ options:
             - Attach to server
             - Detach from server
         type: str
-        default: attached
-        choices: [ attached, detached ]
+        default: present
+        choices: [ present, absent ]
     automount:
         description:
             - Automatically mount the volume to server.
@@ -163,8 +163,8 @@ class AnsibleHCloudServerVolume(AnsibleHCloud):
                 server={"type": "str", "required": True},
                 automount={"type": "bool", "default": False},
                 state={
-                    "choices": ["attached", "detached"],
-                    "default": "attached",
+                    "choices": ["present", "absent"],
+                    "default": "present",
                 },
                 **super().base_module_arguments(),
             ),
@@ -179,9 +179,9 @@ def main():
 
     hcloud = AnsibleHCloudServerVolume(module)
     state = module.params["state"]
-    if state == "attached":
+    if state == "present":
         hcloud.attach_volume()
-    elif state == "detached":
+    elif state == "absent":
         hcloud.detach_volume()
 
     module.exit_json(**hcloud.get_result())
