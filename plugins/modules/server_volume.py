@@ -99,8 +99,8 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.volumes import BoundVolume
 from ..module_utils.vendor.hcloud.servers import BoundServer
+from ..module_utils.vendor.hcloud.volumes import BoundVolume
 
 
 class AnsibleHCloudServerVolume(AnsibleHCloud):
@@ -119,15 +119,9 @@ class AnsibleHCloudServerVolume(AnsibleHCloud):
     def _get_server_and_volume(self):
         try:
             if self.module.params.get("id") is not None:
-                self.hcloud_server_volume = self._client_get_by_name_or_id(
-                    "volumes",
-                    self.module.params.get("id")
-                )
+                self.hcloud_server_volume = self._client_get_by_name_or_id("volumes", self.module.params.get("id"))
             else:
-                self.hcloud_server_volume = self._client_get_by_name_or_id(
-                    "volumes",
-                    self.module.params.get("volume")
-                )
+                self.hcloud_server_volume = self._client_get_by_name_or_id("volumes", self.module.params.get("volume"))
 
             self.hcloud_server = self._client_get_by_name_or_id(
                 "servers",
