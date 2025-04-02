@@ -1,0 +1,188 @@
+# Copyright: (c) 2025, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Setup server
+  hetzner.hcloud.server:
+    name: "{{ hcloud_server_name }}"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
+    state: created
+    location: "{{ hcloud_location_name }}"
+  register: vol_server
+- name: Verify setup server
+  ansible.builtin.assert:
+    that:
+      - vol_server is changed
+
+- name: Setup volume
+  hetzner.hcloud.volume:
+    name: "{{ hcloud_volume_name }}"
+    size: 10
+    location: "{{ hcloud_location_name }}"
+  register: vol_volume
+- name: Verify setup volume
+  ansible.builtin.assert:
+    that:
+      - vol_volume is changed
+
+- name: Test missing volume name or id # noqa: args[module]
+  hetzner.hcloud.server_volume:
+    server: "{{ hcloud_server_name }}"
+  register: result
+  ignore_errors: true
+- name: Verify fail test volume name or id
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "one of the following is required: id, volume"'
+
+- name: Test missing server name # noqa: args[module]
+  hetzner.hcloud.server_volume:
+    volume: "{{ hcloud_volume_name }}"
+  register: result
+  ignore_errors: true
+- name: Verify fail test server name
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "missing required arguments: server"'
+
+- name: Test attach Volume with check mode (Volume)
+  hetzner.hcloud.server_volume:
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}"
+  register: result
+  check_mode: true
+- name: Verify attach Volume with check mode result (Volume)
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test attach Volume (Volume)
+  hetzner.hcloud.server_volume:
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}"
+  register: volume
+- name: Verify test attach Volume (Volume)
+  ansible.builtin.assert:
+    that:
+      - volume is changed
+      - volume.hcloud_server_volume.volume == hcloud_volume_name
+      - volume.hcloud_server_volume.server == hcloud_server_name
+      - volume.hcloud_server_volume.id is defined
+
+- name: Test attach Volume idempotence (Volume)
+  hetzner.hcloud.server_volume:
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}"
+  register: volume
+- name: Verify test create Volume (Volume)
+  ansible.builtin.assert:
+    that:
+      - volume is not changed
+
+- name: Test detach Volume with checkmode (Volume)
+  hetzner.hcloud.server_volume:
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}"
+    state: "detached"
+  check_mode: true
+  register: volume
+- name: Verify detach Volume with checkmode (Volume)
+  ansible.builtin.assert:
+    that:
+      - volume is changed
+      - volume.hcloud_server_volume.server == hcloud_server_name
+
+- name: Test detach Volume (Volume)
+  hetzner.hcloud.server_volume:
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}"
+    state: "detached"
+  register: volume
+- name: Verify detach volume (Volume)
+  ansible.builtin.assert:
+    that:
+      - volume is changed
+      - volume.hcloud_server_volume.server == hcloud_server_name
+
+- name: Test detach Volume idempotency (Volume)
+  hetzner.hcloud.server_volume:
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}"
+    state: "detached"
+  register: volume
+- name: Verify detach volume idempotency (Volume)
+  ansible.builtin.assert:
+    that:
+      - volume is not changed
+
+- name: Test attach Volume with check mode (ID)
+  hetzner.hcloud.server_volume:
+    id: "{{ vol_volume.hcloud_volume.id }}"
+    server: "{{ hcloud_server_name }}"
+  register: result
+  check_mode: true
+- name: Verify attach Volume with check mode result (ID)
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test attach Volume (ID)
+  hetzner.hcloud.server_volume:
+    id: "{{ vol_volume.hcloud_volume.id }}"
+    server: "{{ hcloud_server_name }}"
+  register: volume
+- name: Verify test attach Volume (ID)
+  ansible.builtin.assert:
+    that:
+      - volume is changed
+      - volume.hcloud_server_volume.volume == hcloud_volume_name
+      - volume.hcloud_server_volume.server == hcloud_server_name
+      - volume.hcloud_server_volume.id is defined
+
+- name: Test attach Volume idempotence (ID)
+  hetzner.hcloud.server_volume:
+    id: "{{ vol_volume.hcloud_volume.id }}"
+    server: "{{ hcloud_server_name }}"
+  register: volume
+- name: Verify test create Volume (ID)
+  ansible.builtin.assert:
+    that:
+      - volume is not changed
+
+- name: Test detach Volume with checkmode (ID)
+  hetzner.hcloud.server_volume:
+    id: "{{ vol_volume.hcloud_volume.id }}"
+    server: "{{ hcloud_server_name }}"
+    state: "detached"
+  check_mode: true
+  register: volume
+- name: Verify detach Volume with checkmode (ID)
+  ansible.builtin.assert:
+    that:
+      - volume is changed
+      - volume.hcloud_server_volume.server == hcloud_server_name
+
+- name: Test detach Volume (ID)
+  hetzner.hcloud.server_volume:
+    id: "{{ vol_volume.hcloud_volume.id }}"
+    server: "{{ hcloud_server_name }}"
+    state: "detached"
+  register: volume
+- name: Verify detach volume (ID)
+  ansible.builtin.assert:
+    that:
+      - volume is changed
+      - volume.hcloud_server_volume.server == hcloud_server_name
+
+- name: Test detach Volume idempotency (ID)
+  hetzner.hcloud.server_volume:
+    id: "{{ vol_volume.hcloud_volume.id }}"
+    server: "{{ hcloud_server_name }}"
+    state: "detached"
+  register: volume
+- name: Verify detach volume idempotency (ID)
+  ansible.builtin.assert:
+    that:
+      - volume is not changed
