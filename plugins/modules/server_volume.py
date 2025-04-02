@@ -23,11 +23,11 @@ options:
     id:
         description:
             - ID of the volume
+        type: int
     volume:
         description:
             - Name of the volume
         type: str
-        required: true
     server:
         description:
             - Server name where volume will be assigned to
@@ -39,7 +39,6 @@ options:
             - Attach to server
             - Detach from server
         type: str
-        required: true
         default: attached
         choices: [ attached, detached ]
     automount:
@@ -162,7 +161,7 @@ class AnsibleHCloudServerVolume(AnsibleHCloud):
                 id={"type": "int"},
                 volume={"type": "str"},
                 server={"type": "str", "required": True},
-                automount={"type": "bool"},
+                automount={"type": "bool", "default": False},
                 state={
                     "choices": ["attached", "detached"],
                     "default": "attached",
