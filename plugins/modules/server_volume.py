@@ -77,11 +77,6 @@ hcloud_server_volume:
     returned: always
     type: complex
     contains:
-        id:
-            description: ID of the Volume
-            type: int
-            returned: always
-            sample: 123456
         volume:
             description: Name of the Volume
             type: str
@@ -110,7 +105,6 @@ class AnsibleHCloudServerVolume(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": str(self.hcloud_server_volume.id),
             "volume": self.hcloud_server_volume.name,
             "server": self.hcloud_server.name,
         }
