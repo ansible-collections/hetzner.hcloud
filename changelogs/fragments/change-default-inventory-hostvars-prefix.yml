@@ -1,4 +1,0 @@
-breaking_changes:
-  - inventory - The default value for the `hostvars_prefix` option is now set to `hcloud_`.
-    Make sure to update all references to host variables provided by the inventory. You
-    may revert this change by setting the `hostvars_prefix` option to `""`.
