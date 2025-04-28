@@ -1,186 +1,128 @@
 # Copyright: (c) 2025, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
-- name: Setup server
-  hetzner.hcloud.server:
-    name: "{{ hcloud_server_name }}"
-    server_type: "{{ hcloud_server_type_name }}"
-    image: "{{ hcloud_image_name }}"
-    state: created
-    location: "{{ hcloud_location_name }}"
-  register: vol_server
-- name: Verify setup server
-  ansible.builtin.assert:
-    that:
-      - vol_server is changed
-
-- name: Setup volume
-  hetzner.hcloud.volume:
-    name: "{{ hcloud_volume_name }}"
-    size: 10
-    location: "{{ hcloud_location_name }}"
-  register: vol_volume
-- name: Verify setup volume
-  ansible.builtin.assert:
-    that:
-      - vol_volume is changed
-
-- name: Test missing volume name # noqa: args[module]
+- name: Test missing required parameters # noqa: args[module]
   hetzner.hcloud.volume_attachment:
     server: "{{ hcloud_server_name }}"
   register: result
   ignore_errors: true
-- name: Verify fail test volume name or id
+- name: Verify missing required parameters
   ansible.builtin.assert:
     that:
       - result is failed
       - 'result.msg == "missing required arguments: volume"'
 
-- name: Test missing server name # noqa: args[module]
+- name: Test missing required parameters # noqa: args[module]
   hetzner.hcloud.volume_attachment:
     volume: "{{ hcloud_volume_name }}"
   register: result
   ignore_errors: true
-- name: Verify fail test server name
+- name: Verify missing required parameters
   ansible.builtin.assert:
     that:
       - result is failed
       - 'result.msg == "missing required arguments: server"'
 
-- name: Test attach Volume with check mode (Volume)
+- name: Test attach with check mode
   hetzner.hcloud.volume_attachment:
     volume: "{{ hcloud_volume_name }}"
     server: "{{ hcloud_server_name }}"
   register: result
   check_mode: true
-- name: Verify attach Volume with check mode result (Volume)
+- name: Verify attach with check mode
   ansible.builtin.assert:
     that:
       - result is changed
 
-- name: Test attach Volume (Volume)
+- name: Test attach volume not found
   hetzner.hcloud.volume_attachment:
-    volume: "{{ hcloud_volume_name }}"
-    server: "{{ hcloud_server_name }}"
-  register: volume
-- name: Verify test attach Volume (Volume)
-  ansible.builtin.assert:
-    that:
-      - volume is changed
-      - volume.hcloud_volume_attachment.volume == hcloud_volume_name
-      - volume.hcloud_volume_attachment.server == hcloud_server_name
-
-- name: Test attach Volume idempotence (Volume)
-  hetzner.hcloud.volume_attachment:
-    volume: "{{ hcloud_volume_name }}"
-    server: "{{ hcloud_server_name }}"
-  register: volume
-- name: Verify test create Volume (Volume)
-  ansible.builtin.assert:
-    that:
-      - volume is not changed
-
-- name: Test detach Volume with checkmode (Volume)
-  hetzner.hcloud.volume_attachment:
-    volume: "{{ hcloud_volume_name }}"
-    server: "{{ hcloud_server_name }}"
-    state: "absent"
-  check_mode: true
-  register: volume
-- name: Verify detach Volume with checkmode (Volume)
-  ansible.builtin.assert:
-    that:
-      - volume is changed
-      - volume.hcloud_volume_attachment.server == hcloud_server_name
-
-- name: Test detach Volume (Volume)
-  hetzner.hcloud.volume_attachment:
-    volume: "{{ hcloud_volume_name }}"
-    server: "{{ hcloud_server_name }}"
-    state: "absent"
-  register: volume
-- name: Verify detach volume (Volume)
-  ansible.builtin.assert:
-    that:
-      - volume is changed
-      - volume.hcloud_volume_attachment.server == hcloud_server_name
-
-- name: Test detach Volume idempotency (Volume)
-  hetzner.hcloud.volume_attachment:
-    volume: "{{ hcloud_volume_name }}"
-    server: "{{ hcloud_server_name }}"
-    state: "absent"
-  register: volume
-- name: Verify detach volume idempotency (Volume)
-  ansible.builtin.assert:
-    that:
-      - volume is not changed
-
-- name: Test attach Volume with check mode (ID)
-  hetzner.hcloud.volume_attachment:
-    volume: "{{ vol_volume.hcloud_volume.id }}"
+    volume: "invalid"
     server: "{{ hcloud_server_name }}"
   register: result
-  check_mode: true
-- name: Verify attach Volume with check mode result (ID)
+  ignore_errors: true
+- name: Verify attach volume not found
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "resource (volume) does not exist: invalid"'
+
+- name: Test attach server not found
+  hetzner.hcloud.volume_attachment:
+    volume: "{{ hcloud_volume_name }}"
+    server: "invalid"
+  register: result
+  ignore_errors: true
+- name: Verify attach server not found
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "resource (server) does not exist: invalid"'
+
+- name: Test attach
+  hetzner.hcloud.volume_attachment:
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}"
+  register: result
+- name: Verify attach
   ansible.builtin.assert:
     that:
       - result is changed
+      - result.hcloud_volume_attachment.volume == hcloud_volume_name
+      - result.hcloud_volume_attachment.server == hcloud_server_name
 
-- name: Test attach Volume (ID)
+- name: Test attach idempotency
   hetzner.hcloud.volume_attachment:
-    volume: "{{ vol_volume.hcloud_volume.id }}"
+    volume: "{{ hcloud_volume_name }}"
     server: "{{ hcloud_server_name }}"
-  register: volume
-- name: Verify test attach Volume (ID)
+  register: result
+- name: Verify attach idempotency
   ansible.builtin.assert:
     that:
-      - volume is changed
-      - volume.hcloud_volume_attachment.volume == hcloud_volume_name
-      - volume.hcloud_volume_attachment.server == hcloud_server_name
+      - result is not changed
 
-- name: Test attach Volume idempotence (ID)
+- name: Test attach to another server
   hetzner.hcloud.volume_attachment:
-    volume: "{{ vol_volume.hcloud_volume.id }}"
-    server: "{{ hcloud_server_name }}"
-  register: volume
-- name: Verify test create Volume (ID)
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}2"
+  register: result
+- name: Verify attach
   ansible.builtin.assert:
     that:
-      - volume is not changed
+      - result is changed
+      - result.hcloud_volume_attachment.volume == hcloud_volume_name
+      - result.hcloud_volume_attachment.server == hcloud_server_name + '2'
 
-- name: Test detach Volume with checkmode (ID)
+- name: Test detach with check mode
   hetzner.hcloud.volume_attachment:
-    volume: "{{ vol_volume.hcloud_volume.id }}"
-    server: "{{ hcloud_server_name }}"
+    volume: "{{ hcloud_volume_name }}"
     state: "absent"
   check_mode: true
-  register: volume
-- name: Verify detach Volume with checkmode (ID)
+  register: result
+- name: Verify detach with check mode
   ansible.builtin.assert:
     that:
-      - volume is changed
-      - volume.hcloud_volume_attachment.server == hcloud_server_name
+      - result is changed
+      - result.hcloud_volume_attachment.volume == hcloud_volume_name
+      - result.hcloud_volume_attachment.server is none
 
-- name: Test detach Volume (ID)
+- name: Test detach
   hetzner.hcloud.volume_attachment:
-    volume: "{{ vol_volume.hcloud_volume.id }}"
-    server: "{{ hcloud_server_name }}"
+    volume: "{{ hcloud_volume_name }}"
     state: "absent"
-  register: volume
-- name: Verify detach volume (ID)
+  register: result
+- name: Verify detach
   ansible.builtin.assert:
     that:
-      - volume is changed
-      - volume.hcloud_volume_attachment.server == hcloud_server_name
+      - result is changed
+      - result.hcloud_volume_attachment.volume == hcloud_volume_name
+      - result.hcloud_volume_attachment.server is none
 
-- name: Test detach Volume idempotency (ID)
+- name: Test detach idempotency
   hetzner.hcloud.volume_attachment:
-    volume: "{{ vol_volume.hcloud_volume.id }}"
-    server: "{{ hcloud_server_name }}"
+    volume: "{{ hcloud_volume_name }}"
     state: "absent"
-  register: volume
-- name: Verify detach volume idempotency (ID)
+  register: result
+- name: Verify detach idempotency
   ansible.builtin.assert:
     that:
-      - volume is not changed
+      - result is not changed

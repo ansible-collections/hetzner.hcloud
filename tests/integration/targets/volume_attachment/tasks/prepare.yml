@@ -1,0 +1,25 @@
+---
+- name: Create test_server
+  hetzner.hcloud.server:
+    name: "{{ hcloud_server_name }}"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
+    location: "{{ hcloud_location_name }}"
+    state: created
+  register: test_server
+
+- name: Create test_server2
+  hetzner.hcloud.server:
+    name: "{{ hcloud_server_name }}2"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
+    location: "{{ hcloud_location_name }}"
+    state: created
+  register: test_server2
+
+- name: Create test_volume
+  hetzner.hcloud.volume:
+    name: "{{ hcloud_volume_name }}"
+    size: 10
+    location: "{{ hcloud_location_name }}"
+  register: test_volume

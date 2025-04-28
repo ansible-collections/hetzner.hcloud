@@ -55,7 +55,6 @@ EXAMPLES = """
 - name: Detach my-volume from my-server
   hetzner.hcloud.volume_attachment:
     volume: my-volume
-    server: my-server
     state: absent
 
 - name: Attach my-volume using id to my-server with automount enabled
@@ -92,25 +91,33 @@ from ..module_utils.vendor.hcloud.servers import BoundServer
 from ..module_utils.vendor.hcloud.volumes import BoundVolume
 
 
-class AnsibleHcloudVolumeAttachment(AnsibleHCloud):
+class AnsibleHCloudVolumeAttachment(AnsibleHCloud):
     represent = "hcloud_volume_attachment"
 
-    hcloud_volume: BoundVolume | None = None
+    # We must the hcloud_volume_attachment name instead of hcloud_volume, because
+    # AnsibleHCloud.get_result does funny things.
+    hcloud_volume_attachment: BoundVolume | None = None
     hcloud_server: BoundServer | None = None
 
     def _prepare_result(self):
         return {
-            "volume": self.hcloud_volume.name,
-            "server": self.hcloud_volume.server.name if self.hcloud_volume.server is not None else None,
+            "volume": self.hcloud_volume_attachment.name,
+            "server": (
+                self.hcloud_volume_attachment.server.name if self.hcloud_volume_attachment.server is not None else None
+            ),
         }
 
-    def _get_server_and_volume(self):
+    def _get_volume(self):
         try:
-            self.hcloud_volume = self._client_get_by_name_or_id(
+            self.hcloud_volume_attachment = self._client_get_by_name_or_id(
                 "volumes",
                 self.module.params.get("volume"),
             )
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
 
+    def _get_server(self):
+        try:
             self.hcloud_server = self._client_get_by_name_or_id(
                 "servers",
                 self.module.params.get("server"),
@@ -119,41 +126,46 @@ class AnsibleHcloudVolumeAttachment(AnsibleHCloud):
             self.fail_json_hcloud(exception)
 
     def attach_volume(self):
-        try:
-            self._get_server_and_volume()
+        self.module.fail_on_missing_params(required_params=["server"])
 
-            if self.hcloud_volume.server is not None:
-                if self.hcloud_volume.server.id == self.hcloud_server.id:
+        try:
+            self._get_volume()
+            self._get_server()
+
+            if self.hcloud_volume_attachment.server is not None:
+                if self.hcloud_volume_attachment.server.id == self.hcloud_server.id:
                     return
 
                 if not self.module.check_mode:
-                    action = self.hcloud_volume.detach()
+                    action = self.hcloud_volume_attachment.detach()
                     action.wait_until_finished()
 
-                self.hcloud_volume.server = None
+                self.hcloud_volume_attachment.server = None
                 self._mark_as_changed()
 
-            else:
-                if not self.module.check_mode:
-                    action = self.hcloud_volume.attach(
-                        server=self.hcloud_server,
-                        automount=self.module.params.get("automount"),
-                    )
-                    action.wait_until_finished()
+            if not self.module.check_mode:
+                action = self.hcloud_volume_attachment.attach(
+                    server=self.hcloud_server,
+                    automount=self.module.params.get("automount"),
+                )
+                action.wait_until_finished()
 
-                self.hcloud_volume.server = self.hcloud_server
-                self._mark_as_changed()
+            self.hcloud_volume_attachment.server = self.hcloud_server
+            self._mark_as_changed()
 
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
 
     def detach_volume(self):
         try:
-            self._get_server_and_volume()
-            if self.hcloud_volume.server is not None:
+            self._get_volume()
+
+            if self.hcloud_volume_attachment.server is not None:
                 if not self.module.check_mode:
-                    action = self.hcloud_volume.detach()
+                    action = self.hcloud_volume_attachment.detach()
                     action.wait_until_finished()
+
+                self.hcloud_volume_attachment.server = None
                 self._mark_as_changed()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
@@ -163,8 +175,8 @@ class AnsibleHcloudVolumeAttachment(AnsibleHCloud):
         return AnsibleModule(
             argument_spec=dict(
                 volume={"type": "str", "required": True},
-                server={"type": "str", "required": True},
-                automount={"type": "bool", "default": False},
+                server={"type": "str"},
+                automount={"type": "bool"},
                 state={
                     "choices": ["present", "absent"],
                     "default": "present",
@@ -176,9 +188,9 @@ class AnsibleHcloudVolumeAttachment(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHcloudVolumeAttachment.define_module()
+    module = AnsibleHCloudVolumeAttachment.define_module()
 
-    hcloud = AnsibleHcloudVolumeAttachment(module)
+    hcloud = AnsibleHCloudVolumeAttachment(module)
     state = module.params["state"]
     if state == "present":
         hcloud.attach_volume()
