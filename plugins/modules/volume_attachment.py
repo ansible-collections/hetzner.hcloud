@@ -8,7 +8,7 @@ from __future__ import annotations
 
 DOCUMENTATION = """
 ---
-module: server_volume
+module: volume_attachment
 
 short_description: Manage the relationship between Hetzner Cloud Volumes and Servers
 
@@ -48,18 +48,18 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Attach my-volume to my-server
-  hetzner.hcloud.server_volume:
+  hetzner.hcloud.volume_attachment:
     volume: my-volume
     server: my-server
 
 - name: Detach my-volume from my-server
-  hetzner.hcloud.server_volume:
+  hetzner.hcloud.volume_attachment:
     volume: my-volume
     server: my-server
     state: absent
 
 - name: Attach my-volume using id to my-server with automount enabled
-  hetzner.hcloud.server_volume:
+  hetzner.hcloud.volume_attachment:
     volume: 123456
     server: my-server
     automount: true
@@ -67,7 +67,7 @@ EXAMPLES = """
 """
 
 RETURN = """
-hcloud_server_volume:
+hcloud_volume_attachment:
     description: The relationship between a Server and a Volume
     returned: always
     type: complex
@@ -92,21 +92,24 @@ from ..module_utils.vendor.hcloud.servers import BoundServer
 from ..module_utils.vendor.hcloud.volumes import BoundVolume
 
 
-class AnsibleHCloudServerVolume(AnsibleHCloud):
-    represent = "hcloud_server_volume"
+class AnsibleHcloudVolumeAttachment(AnsibleHCloud):
+    represent = "hcloud_volume_attachment"
 
+    hcloud_volume: BoundVolume | None = None
     hcloud_server: BoundServer | None = None
-    hcloud_server_volume: BoundVolume | None = None
 
     def _prepare_result(self):
         return {
-            "volume": self.hcloud_server_volume.name,
+            "volume": self.hcloud_volume.name,
             "server": self.hcloud_server.name,
         }
 
     def _get_server_and_volume(self):
         try:
-            self.hcloud_server_volume = self._client_get_by_name_or_id("volumes", self.module.params.get("volume"))
+            self.hcloud_volume = self._client_get_by_name_or_id(
+                "volumes",
+                self.module.params.get("volume"),
+            )
 
             self.hcloud_server = self._client_get_by_name_or_id(
                 "servers",
@@ -120,10 +123,10 @@ class AnsibleHCloudServerVolume(AnsibleHCloud):
             self._get_server_and_volume()
             server_name = self.module.params.get("server")
             server = self.client.servers.get_by_name(server_name)
-            if self.hcloud_server_volume.server is None or self.hcloud_server.name != server.name:
+            if self.hcloud_volume.server is None or self.hcloud_server.name != server.name:
                 if not self.module.check_mode:
                     automount = self.module.params.get("automount", False)
-                    action = self.hcloud_server_volume.attach(server=server, automount=automount)
+                    action = self.hcloud_volume.attach(server=server, automount=automount)
                     action.wait_until_finished()
                 self._mark_as_changed()
         except HCloudException as exception:
@@ -132,9 +135,9 @@ class AnsibleHCloudServerVolume(AnsibleHCloud):
     def detach_volume(self):
         try:
             self._get_server_and_volume()
-            if self.hcloud_server_volume.server is not None:
+            if self.hcloud_volume.server is not None:
                 if not self.module.check_mode:
-                    action = self.hcloud_server_volume.detach()
+                    action = self.hcloud_volume.detach()
                     action.wait_until_finished()
                 self._mark_as_changed()
         except HCloudException as exception:
@@ -158,9 +161,9 @@ class AnsibleHCloudServerVolume(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHCloudServerVolume.define_module()
+    module = AnsibleHcloudVolumeAttachment.define_module()
 
-    hcloud = AnsibleHCloudServerVolume(module)
+    hcloud = AnsibleHcloudVolumeAttachment(module)
     state = module.params["state"]
     if state == "present":
         hcloud.attach_volume()
