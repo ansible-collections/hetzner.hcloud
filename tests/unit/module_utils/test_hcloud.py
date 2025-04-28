@@ -68,7 +68,7 @@ def test_hcloud_fail_json_hcloud(module):
         hcloud.fail_json_hcloud(exception)
         # pylint: disable=unreachable
         module.fail_json.assert_called_with(
-            msg="The pending action failed: Server does not exist anymore",
+            msg="The pending action failed: Server does not exist anymore (server_does_not_exist_anymore, 1084730887)",
             exception=traceback.format_exc(),
             failure={
                 "action": {
@@ -103,7 +103,7 @@ def test_hcloud_fail_json_hcloud(module):
         hcloud.fail_json_hcloud(exception)
         # pylint: disable=unreachable
         module.fail_json.assert_called_with(
-            msg="The pending action timed out",
+            msg="The pending action timed out (create_server, 1084659545)",
             exception=traceback.format_exc(),
             failure={
                 "action": {
