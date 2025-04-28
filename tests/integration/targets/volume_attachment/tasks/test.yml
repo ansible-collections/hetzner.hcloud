@@ -1,0 +1,130 @@
+# Copyright: (c) 2025, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Test missing required parameters # noqa: args[module]
+  hetzner.hcloud.volume_attachment:
+    server: "{{ hcloud_server_name }}"
+  register: result
+  ignore_errors: true
+- name: Verify missing required parameters
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "missing required arguments: volume"'
+
+- name: Test missing required parameters # noqa: args[module]
+  hetzner.hcloud.volume_attachment:
+    volume: "{{ hcloud_volume_name }}"
+  register: result
+  ignore_errors: true
+- name: Verify missing required parameters
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "missing required arguments: server"'
+
+- name: Test attach with check mode
+  hetzner.hcloud.volume_attachment:
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}"
+  register: result
+  check_mode: true
+- name: Verify attach with check mode
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_volume_attachment.volume == hcloud_volume_name
+      - result.hcloud_volume_attachment.server == hcloud_server_name
+
+- name: Test attach volume not found
+  hetzner.hcloud.volume_attachment:
+    volume: "invalid"
+    server: "{{ hcloud_server_name }}"
+  register: result
+  ignore_errors: true
+- name: Verify attach volume not found
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "resource (volume) does not exist: invalid"'
+
+- name: Test attach server not found
+  hetzner.hcloud.volume_attachment:
+    volume: "{{ hcloud_volume_name }}"
+    server: "invalid"
+  register: result
+  ignore_errors: true
+- name: Verify attach server not found
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "resource (server) does not exist: invalid"'
+
+- name: Test attach
+  hetzner.hcloud.volume_attachment:
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}"
+  register: result
+- name: Verify attach
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_volume_attachment.volume == hcloud_volume_name
+      - result.hcloud_volume_attachment.server == hcloud_server_name
+
+- name: Test attach idempotency
+  hetzner.hcloud.volume_attachment:
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}"
+  register: result
+- name: Verify attach idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test attach to another server
+  hetzner.hcloud.volume_attachment:
+    volume: "{{ hcloud_volume_name }}"
+    server: "{{ hcloud_server_name }}2"
+  register: result
+- name: Verify attach
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_volume_attachment.volume == hcloud_volume_name
+      - result.hcloud_volume_attachment.server == hcloud_server_name + '2'
+
+- name: Test detach with check mode
+  hetzner.hcloud.volume_attachment:
+    volume: "{{ hcloud_volume_name }}"
+    state: "absent"
+  check_mode: true
+  register: result
+- name: Verify detach with check mode
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_volume_attachment.volume == hcloud_volume_name
+      - result.hcloud_volume_attachment.server is none
+
+- name: Test detach
+  hetzner.hcloud.volume_attachment:
+    volume: "{{ hcloud_volume_name }}"
+    state: "absent"
+  register: result
+- name: Verify detach
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_volume_attachment.volume == hcloud_volume_name
+      - result.hcloud_volume_attachment.server is none
+
+- name: Test detach idempotency
+  hetzner.hcloud.volume_attachment:
+    volume: "{{ hcloud_volume_name }}"
+    state: "absent"
+  register: result
+- name: Verify detach idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
