@@ -34,7 +34,6 @@ options:
         description:
             - Automatically mount the Volume in the Server.
         type: bool
-        default: False
     state:
         description:
             - State of the Volume.
