@@ -87,7 +87,8 @@
       - result.hcloud_subnetwork.network_zone == hcloud_network_zone_name
       - result.hcloud_subnetwork.type == "vswitch"
       - result.hcloud_subnetwork.ip_range == "10.0.1.0/24"
-      - result.hcloud_subnetwork.vswitch_id == test_vswitch_id
+      # Type casting can be removed once ansible-core < 2.19 is dropped
+      - result.hcloud_subnetwork.vswitch_id == test_vswitch_id | int
 
 - name: Test delete with vswitch
   hetzner.hcloud.subnetwork:
