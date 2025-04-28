@@ -101,7 +101,7 @@ class AnsibleHcloudVolumeAttachment(AnsibleHCloud):
     def _prepare_result(self):
         return {
             "volume": self.hcloud_volume.name,
-            "server": self.hcloud_server.name,
+            "server": self.hcloud_volume.server.name if self.hcloud_volume.server is not None else None,
         }
 
     def _get_server_and_volume(self):
