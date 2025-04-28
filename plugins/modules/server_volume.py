@@ -10,11 +10,11 @@ DOCUMENTATION = """
 ---
 module: server_volume
 
-short_description: Manage the relationship between Hetzner Cloud volumes and servers
+short_description: Manage the relationship between Hetzner Cloud Volumes and Servers
 
 
 description:
-    - Attach and Detach volumes from Hetzner Cloud servers
+    - Attach and detach Volumes from Hetzner Cloud Servers.
 
 author:
     - Amirhossein Shaerpour (@shaerpour)
@@ -22,30 +22,28 @@ author:
 options:
     volume:
         description:
-            - Name of the volume
+            - Name or ID of the Hetzner Cloud Volume to attach/detach.
         type: str
         required: true
     server:
         description:
-            - Server name where volume will be assigned to
+            - Name or ID of the Hetzner Cloud Server to attach/detach the Volume to.
         type: str
         required: true
+    automount:
+        description:
+            - Automatically mount the Volume in the Server.
+        type: bool
+        default: False
     state:
         description:
-            - State of the volume
-            - Attach to server
-            - Detach from server
+            - State of the Volume.
         type: str
         default: present
         choices: [ present, absent ]
-    automount:
-        description:
-            - Automatically mount the volume to server.
-        type: bool
-        default: False
 
 extends_documentation_fragment:
-- hetzner.hcloud.hcloud
+    - hetzner.hcloud.hcloud
 """
 
 EXAMPLES = """
@@ -58,19 +56,19 @@ EXAMPLES = """
   hetzner.hcloud.server_volume:
     volume: my-volume
     server: my-server
-    state: detached
+    state: absent
 
 - name: Attach my-volume using id to my-server with automount enabled
   hetzner.hcloud.server_volume:
-    volume: "123456"
+    volume: 123456
     server: my-server
-    state: attached
     automount: true
+    state: present
 """
 
 RETURN = """
 hcloud_server_volume:
-    description: Attach or Detach external volume of a server
+    description: The relationship between a Server and a Volume
     returned: always
     type: complex
     contains:
