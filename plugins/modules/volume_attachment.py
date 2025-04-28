@@ -121,14 +121,29 @@ class AnsibleHcloudVolumeAttachment(AnsibleHCloud):
     def attach_volume(self):
         try:
             self._get_server_and_volume()
-            server_name = self.module.params.get("server")
-            server = self.client.servers.get_by_name(server_name)
-            if self.hcloud_volume.server is None or self.hcloud_server.name != server.name:
+
+            if self.hcloud_volume.server is not None:
+                if self.hcloud_volume.server.id == self.hcloud_server.id:
+                    return
+
                 if not self.module.check_mode:
-                    automount = self.module.params.get("automount", False)
-                    action = self.hcloud_volume.attach(server=server, automount=automount)
+                    action = self.hcloud_volume.detach()
                     action.wait_until_finished()
+
+                self.hcloud_volume.server = None
                 self._mark_as_changed()
+
+            else:
+                if not self.module.check_mode:
+                    action = self.hcloud_volume.attach(
+                        server=self.hcloud_server,
+                        automount=self.module.params.get("automount"),
+                    )
+                    action.wait_until_finished()
+
+                self.hcloud_volume.server = self.hcloud_server
+                self._mark_as_changed()
+
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
 
