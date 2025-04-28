@@ -28,8 +28,8 @@ options:
     server:
         description:
             - Name or ID of the Hetzner Cloud Server to attach/detach the Volume to.
+            - Required if O(state=present).
         type: str
-        required: true
     automount:
         description:
             - Automatically mount the Volume in the Server.
