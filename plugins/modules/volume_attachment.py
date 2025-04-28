@@ -10,7 +10,7 @@ DOCUMENTATION = """
 ---
 module: volume_attachment
 
-short_description: Manage the relationship between Hetzner Cloud Volumes and Servers
+short_description: Manage the attachment of Hetzner Cloud Volumes
 
 
 description:

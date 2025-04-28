@@ -1,0 +1,2 @@
+minor_changes:
+  - volume_attachment - Add new `volume_attachment` module to manage Volumes attachment.
