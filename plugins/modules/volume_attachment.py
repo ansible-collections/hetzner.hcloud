@@ -27,7 +27,7 @@ options:
         required: true
     server:
         description:
-            - Name or ID of the Hetzner Cloud Server to attach/detach the Volume to.
+            - Name or ID of the Hetzner Cloud Server to attach the Volume to.
             - Required if O(state=present).
         type: str
     automount:
@@ -76,7 +76,7 @@ hcloud_volume_attachment:
             returned: always
             sample: my-volume
         server:
-            description: Name of the Server
+            description: Name of the attached Server
             type: str
             returned: always
             sample: my-server
