@@ -33,6 +33,8 @@
   ansible.builtin.assert:
     that:
       - result is changed
+      - result.hcloud_volume_attachment.volume == hcloud_volume_name
+      - result.hcloud_volume_attachment.server == hcloud_server_name
 
 - name: Test attach volume not found
   hetzner.hcloud.volume_attachment:
