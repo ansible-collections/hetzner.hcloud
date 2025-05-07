@@ -1,2 +1,2 @@
 breaking_changes:
-  - Remove volume auto detach if server parameter not set
+  - volume - Volumes are no longer detached when the server argument is not provided. Please use the ``volume_attachment`` module to manage volume attachments.
