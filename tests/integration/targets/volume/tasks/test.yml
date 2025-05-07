@@ -99,28 +99,6 @@
       - volume is not changed
       - volume.hcloud_volume.server == hcloud_server_name
 
-- name: test detach Volume with checkmode
-  hetzner.hcloud.volume:
-    name: "{{hcloud_volume_name}}"
-  check_mode: true
-  register: volume
-- name: verify detach Volume with checkmode
-  assert:
-    that:
-      - volume is changed
-      - volume.hcloud_volume.server == hcloud_server_name
-
-- name: test detach Volume
-  hetzner.hcloud.volume:
-    name: "{{hcloud_volume_name}}"
-  register: volume
-- name: verify detach volume
-  assert:
-    that:
-      - volume is changed
-      - volume.hcloud_volume.location == hcloud_location_name
-      - volume.hcloud_volume.server != hcloud_server_name
-
 - name: test update Volume label
   hetzner.hcloud.volume:
     name: "{{hcloud_volume_name}}"

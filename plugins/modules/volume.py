@@ -244,12 +244,6 @@ class AnsibleHCloudVolume(AnsibleHCloud):
                         action = self.hcloud_volume.attach(server, automount=automount)
                         action.wait_until_finished()
                     self._mark_as_changed()
-            else:
-                if self.hcloud_volume.server is not None:
-                    if not self.module.check_mode:
-                        action = self.hcloud_volume.detach()
-                        action.wait_until_finished()
-                    self._mark_as_changed()
 
             labels = self.module.params.get("labels")
             if labels is not None and labels != self.hcloud_volume.labels:
