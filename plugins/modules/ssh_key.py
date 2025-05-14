@@ -44,6 +44,12 @@ options:
             - The Public Key to add.
             - Required if ssh_key does not exist.
         type: str
+    force:
+        description:
+            - Recreate ssh_key if it exists, using a new public key.
+            - Required only if using the same key name.
+        type: bool
+        default: false
     state:
         description:
             - State of the ssh_key.
@@ -70,6 +76,13 @@ EXAMPLES = """
       key: value
       mylabel: 123
     state: present
+
+- name: Force create ssh_key that already exists
+  hetzner.hcloud.ssh_key:
+    name: my-ssh_key
+    public_key: ssh-rsa AAAAC3NzaC1...0C
+    state: present
+    force: true
 
 - name: Ensure the ssh_key is absent (remove if needed)
   hetzner.hcloud.ssh_key:
@@ -175,6 +188,12 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
                 self.hcloud_ssh_key.update(labels=labels)
             self._mark_as_changed()
 
+        force = self.module.params.get("force")
+        if force is not None and force:
+            if not self.module.check_mode:
+                self.hcloud_ssh_key.delete()
+                self._create_ssh_key()
+            self._mark_as_changed()
         self._get_ssh_key()
 
     def present_ssh_key(self):
@@ -204,6 +223,10 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
                 public_key={"type": "str"},
                 fingerprint={"type": "str"},
                 labels={"type": "dict"},
+                force={
+                    "type": "bool",
+                    "default": False,
+                },
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
