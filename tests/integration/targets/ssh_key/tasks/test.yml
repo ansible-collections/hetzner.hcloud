@@ -93,7 +93,7 @@
       key: value
       test: "val123"
   register: result
-- name: test update ssh key  with other labels
+- name: test update ssh key with other labels
   assert:
     that:
       - result is changed
@@ -135,6 +135,31 @@
     that:
       - result is failed
       - result.failure.code == "uniqueness_error"
+
+- name: test force update ssh key with new public key with check mode
+  hetzner.hcloud.ssh_key:
+    name: "{{ hcloud_ssh_key_name }}-other-name"
+    public_key: "{{ test_ssh_keypair_2.public_key }}"
+    force: true
+  register: result
+  check_mode: true
+- name: verify force update ssh key with new public key with check mode
+  assert:
+    that:
+      - result is changed
+
+- name: test force update ssh key with new public key
+  hetzner.hcloud.ssh_key:
+    name: "{{ hcloud_ssh_key_name }}-other-name"
+    public_key: "{{ test_ssh_keypair_2.public_key }}"
+    force: true
+  register: ssh_key
+- name: verify force update ssh key with new public key
+  assert:
+    that:
+      - ssh_key is changed
+      - ssh_key.hcloud_ssh_key.name == "{{ hcloud_ssh_key_name }}-other-name"
+      - ssh_key.hcloud_ssh_key.public_key == test_ssh_keypair_2.public_key
 
 - name: test delete ssh key
   hetzner.hcloud.ssh_key:
