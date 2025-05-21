@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.1](https://github.com/ansible-collections/hetzner.hcloud/compare/5.0.0...5.0.1) (2025-05-21)
+
+
+### Bug Fixes
+
+* remove deprecated force_upgrade argument ([#637](https://github.com/ansible-collections/hetzner.hcloud/issues/637)) ([88f84e7](https://github.com/ansible-collections/hetzner.hcloud/commit/88f84e7d7c41fec1a01aee1229212443472aa591))
+
 ## [5.0.0](https://github.com/ansible-collections/hetzner.hcloud/compare/4.3.0...5.0.0) (2025-05-21)
 
 
