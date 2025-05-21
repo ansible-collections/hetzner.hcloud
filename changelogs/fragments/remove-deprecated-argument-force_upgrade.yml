@@ -1,2 +1,0 @@
-breaking_changes:
-  - server - The deprecated ``force_upgrade`` argument is removed from the server module. Please use the ``force`` argument instead.
