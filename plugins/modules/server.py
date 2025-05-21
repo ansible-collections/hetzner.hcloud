@@ -118,7 +118,6 @@ options:
             - May power off the server if update is applied.
         type: bool
         default: false
-        aliases: [force_upgrade]
     user_data:
         description:
             - User Data to be passed to the server on creation.
@@ -946,14 +945,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 ipv4={"type": "str"},
                 ipv6={"type": "str"},
                 private_networks={"type": "list", "elements": "str", "default": None},
-                force={
-                    "type": "bool",
-                    "default": False,
-                    "aliases": ["force_upgrade"],
-                    "deprecated_aliases": [
-                        {"collection_name": "hetzner.hcloud", "name": "force_upgrade", "version": "5.0.0"}
-                    ],
-                },
+                force={"type": "bool", "default": False},
                 rescue_mode={"type": "str"},
                 delete_protection={"type": "bool"},
                 rebuild_protection={"type": "bool"},
