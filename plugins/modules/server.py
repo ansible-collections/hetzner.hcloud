@@ -333,6 +333,11 @@ hcloud_server:
             returned: always
             sample: false
             version_added: "0.1.0"
+root_password:
+    description: Root password for the server
+    returned: when created without ssh_keys
+    type: str
+    sample: YItygq1v3GYjjMomLaKc
 """
 
 from datetime import datetime, timedelta, timezone
