@@ -1,5 +1,29 @@
 # Changelog
 
+## [5.0.0](https://github.com/ansible-collections/hetzner.hcloud/compare/4.3.0...5.0.0) (2025-05-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* do not detach volume if `server` is not provided ([#632](https://github.com/ansible-collections/hetzner.hcloud/issues/632))
+* prevent host variable name collision with ansible reserved names ([#617](https://github.com/ansible-collections/hetzner.hcloud/issues/617))
+* drop support for ansible-core 2.16 ([#612](https://github.com/ansible-collections/hetzner.hcloud/issues/612))
+* drop support for ansible-core 2.15 ([#611](https://github.com/ansible-collections/hetzner.hcloud/issues/611))
+
+### Features
+
+* add volume_attachment module ([#622](https://github.com/ansible-collections/hetzner.hcloud/issues/622)) ([c37cdf0](https://github.com/ansible-collections/hetzner.hcloud/commit/c37cdf0bc654eeeb987e6407648ce8e6a0aed599))
+* allow renaming a server ([#619](https://github.com/ansible-collections/hetzner.hcloud/issues/619)) ([e59e787](https://github.com/ansible-collections/hetzner.hcloud/commit/e59e787d9927041d1c50261476e6df6c58d71869))
+* drop support for ansible-core 2.15 ([#611](https://github.com/ansible-collections/hetzner.hcloud/issues/611)) ([92f1354](https://github.com/ansible-collections/hetzner.hcloud/commit/92f135456fa6caff29e832d99db9870ae9c61aaf))
+* drop support for ansible-core 2.16 ([#612](https://github.com/ansible-collections/hetzner.hcloud/issues/612)) ([140d150](https://github.com/ansible-collections/hetzner.hcloud/commit/140d1508ccb8adb1d8fc2f64e446e993bfc02336))
+* drop support for python 3.8 ([#615](https://github.com/ansible-collections/hetzner.hcloud/issues/615)) ([b82e18f](https://github.com/ansible-collections/hetzner.hcloud/commit/b82e18ffbdf8a584b89d43970f6f0cb63d5ac3b8))
+
+
+### Bug Fixes
+
+* do not detach volume if `server` is not provided ([#632](https://github.com/ansible-collections/hetzner.hcloud/issues/632)) ([e8fda35](https://github.com/ansible-collections/hetzner.hcloud/commit/e8fda3557cf835e4e711a934b46d4f672f9b517c))
+* prevent host variable name collision with ansible reserved names ([#617](https://github.com/ansible-collections/hetzner.hcloud/issues/617)) ([5de425c](https://github.com/ansible-collections/hetzner.hcloud/commit/5de425c90c3ea365ebd24527cce5828a1debd35b))
+
 ## [4.3.0](https://github.com/ansible-collections/hetzner.hcloud/compare/4.2.2...4.3.0) (2025-03-21)
 
 
