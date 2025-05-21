@@ -1,2 +1,0 @@
-breaking_changes:
-  - volume - Volumes are no longer detached when the server argument is not provided. Please use the ``volume_attachment`` module to manage volume attachments.
