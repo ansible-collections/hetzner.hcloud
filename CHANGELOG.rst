@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v5.0.1
+======
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- server - The deprecated ``force_upgrade`` argument is removed from the server module. Please use the ``force`` argument instead.
+
 v5.0.0
 ======
 

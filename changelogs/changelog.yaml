@@ -646,3 +646,11 @@ releases:
     - remove-auto-detach-volume.yml
     - renaming-a-server.yml
     release_date: '2025-05-21'
+  5.0.1:
+    changes:
+      breaking_changes:
+      - server - The deprecated ``force_upgrade`` argument is removed from the server
+        module. Please use the ``force`` argument instead.
+    fragments:
+    - remove-deprecated-argument-force_upgrade.yml
+    release_date: '2025-05-21'
