@@ -191,8 +191,8 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
 
         force = self.module.params.get("force")
         public_key = self.module.params.get("public_key")
-        fingerprint = ssh_public_key_md5_fingerprint(public_key)
-        if fingerprint != self.hcloud_ssh_key.fingerprint:
+        fingerprint = ssh_public_key_md5_fingerprint(public_key) if public_key is not None else None
+        if fingerprint is not None and fingerprint != self.hcloud_ssh_key.fingerprint:
             if not force:
                 self.module.warn(
                     "A new public key with same name has been detected. "
