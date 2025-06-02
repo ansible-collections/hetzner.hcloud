@@ -139,7 +139,7 @@
   assert:
     that:
       - result is changed
-      - result.hcloud_placement_group.name == "changed-{{ hcloud_placement_group_name }}"
+      - result.hcloud_placement_group.name == "changed-" + hcloud_placement_group_name
 
 - name: test update placement group idempotence
   hetzner.hcloud.placement_group:

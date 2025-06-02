@@ -71,7 +71,7 @@
   assert:
     that:
       - result is changed
-      - result.hcloud_ssh_key.name == "changed-{{ hcloud_ssh_key_name }}"
+      - result.hcloud_ssh_key.name == "changed-" + hcloud_ssh_key_name
 
 - name: test update ssh key with same labels
   hetzner.hcloud.ssh_key:
