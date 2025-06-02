@@ -191,13 +191,19 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
 
         force = self.module.params.get("force")
         public_key = self.module.params.get("public_key")
-        if force is not None and public_key is not None and force:
-            fingerprint = ssh_public_key_md5_fingerprint(public_key)
-            if fingerprint != self.hcloud_ssh_key.fingerprint:
-                if not self.module.check_mode:
-                    self.hcloud_ssh_key.delete()
-                    self._create_ssh_key()
-                self._mark_as_changed()
+        fingerprint = ssh_public_key_md5_fingerprint(public_key)
+        if fingerprint != self.hcloud_ssh_key.fingerprint:
+            if not force:
+                self.module.warn(
+                    "A new public key with same name has been detected. "
+                    "Use force option to overwrite the existing public key"
+                )
+            elif force:
+                if fingerprint != self.hcloud_ssh_key.fingerprint:
+                    if not self.module.check_mode:
+                        self.hcloud_ssh_key.delete()
+                        self._create_ssh_key()
+                    self._mark_as_changed()
         self._get_ssh_key()
 
     def present_ssh_key(self):
