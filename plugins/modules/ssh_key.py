@@ -46,8 +46,7 @@ options:
         type: str
     force:
         description:
-            - Recreate ssh_key if it exists, using a new public key.
-            - Required only if using the same key name.
+            - Recreate the SSH Key if the fingerprint does not match the one in the API.
         type: bool
         default: false
     state:
@@ -76,13 +75,6 @@ EXAMPLES = """
       key: value
       mylabel: 123
     state: present
-
-- name: Force create ssh_key that already exists
-  hetzner.hcloud.ssh_key:
-    name: my-ssh_key
-    public_key: ssh-rsa AAAAC3NzaC1...0C
-    state: present
-    force: true
 
 - name: Ensure the ssh_key is absent (remove if needed)
   hetzner.hcloud.ssh_key:
@@ -189,21 +181,21 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
                 self.hcloud_ssh_key.update(labels=labels)
             self._mark_as_changed()
 
-        force = self.module.params.get("force")
         public_key = self.module.params.get("public_key")
-        fingerprint = ssh_public_key_md5_fingerprint(public_key) if public_key is not None else None
-        if fingerprint is not None and fingerprint != self.hcloud_ssh_key.fingerprint:
-            if not force:
-                self.module.warn(
-                    "A new public key with same name has been detected. "
-                    "Use force option to overwrite the existing public key"
-                )
-            elif force:
-                if fingerprint != self.hcloud_ssh_key.fingerprint:
+        if public_key is not None:
+            fingerprint = ssh_public_key_md5_fingerprint(public_key)
+            if fingerprint != self.hcloud_ssh_key.fingerprint:
+                if self.module.params.get("force"):
                     if not self.module.check_mode:
                         self.hcloud_ssh_key.delete()
                         self._create_ssh_key()
                     self._mark_as_changed()
+                else:
+                    self.module.warn(
+                        f"SSH Key '{self.hcloud_ssh_key.name}' in the API has a "
+                        f"different public key than the one provided. "
+                        f"Use the force=true argument to recreate the SSH Key in the API."
+                    )
         self._get_ssh_key()
 
     def present_ssh_key(self):
@@ -233,10 +225,7 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
                 public_key={"type": "str"},
                 fingerprint={"type": "str"},
                 labels={"type": "dict"},
-                force={
-                    "type": "bool",
-                    "default": False,
-                },
+                force={"type": "bool" , "default": False},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
