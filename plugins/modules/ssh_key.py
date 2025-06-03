@@ -46,7 +46,7 @@ options:
         type: str
     force:
         description:
-            - Recreate the SSH Key if the fingerprint does not match the one in the API.
+            - Recreate the SSH Key if the public key does not match the one in the API.
         type: bool
         default: false
     state:
@@ -225,7 +225,7 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
                 public_key={"type": "str"},
                 fingerprint={"type": "str"},
                 labels={"type": "dict"},
-                force={"type": "bool" , "default": False},
+                force={"type": "bool", "default": False},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
