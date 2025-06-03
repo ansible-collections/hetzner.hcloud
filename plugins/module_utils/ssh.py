@@ -5,6 +5,9 @@ from hashlib import md5
 
 
 def ssh_public_key_md5_fingerprint(value: str) -> str:
+    """
+    Compute the md5 fingerprint of a SSH public key.
+    """
     parts = value.strip().split()
     if len(parts) < 2:
         raise ValueError("invalid ssh public key")
