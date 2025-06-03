@@ -49,17 +49,6 @@
     that:
       - result is not changed
 
-- name: test create ssh key idempotence with force
-  hetzner.hcloud.ssh_key:
-    name: "{{ hcloud_ssh_key_name }}"
-    public_key: "{{ test_ssh_keypair.public_key }}"
-    force: true
-  register: result
-- name: verify create ssh key idempotence with force
-  assert:
-    that:
-      - result is not changed
-
 - name: test update ssh key with check mode
   hetzner.hcloud.ssh_key:
     id: "{{ ssh_key.hcloud_ssh_key.id }}"
@@ -147,34 +136,45 @@
       - result is failed
       - result.failure.code == "uniqueness_error"
 
-- name: test force update ssh key with new public key with check mode
+- name: test update public key warning
   hetzner.hcloud.ssh_key:
-    name: "{{ hcloud_ssh_key_name }}-other-name"
-    public_key: "{{ test_ssh_keypair_2.public_key }}"
+    name: "{{ hcloud_ssh_key_name }}"
+    public_key: "{{ test_ssh_keypair2.public_key }}"
+  register: result
+- name: verify update public key warning
+  assert:
+    that:
+      - result is not changed
+      - result.hcloud_ssh_key.name == hcloud_ssh_key_name
+      - result.hcloud_ssh_key.public_key == test_ssh_keypair.public_key
+
+- name: test update public key with force
+  hetzner.hcloud.ssh_key:
+    name: "{{ hcloud_ssh_key_name }}"
+    public_key: "{{ test_ssh_keypair2.public_key }}"
     force: true
   register: result
-  check_mode: true
-- name: verify force update ssh key with new public key with check mode
+- name: verify update public key with force
   assert:
     that:
       - result is changed
+      - result.hcloud_ssh_key.name == hcloud_ssh_key_name
+      - result.hcloud_ssh_key.public_key == test_ssh_keypair2.public_key
 
-- name: test force update ssh key with new public key
+- name: test update public key with force idempotence
   hetzner.hcloud.ssh_key:
-    name: "{{ hcloud_ssh_key_name }}-other-name"
-    public_key: "{{ test_ssh_keypair_2.public_key }}"
+    name: "{{ hcloud_ssh_key_name }}"
+    public_key: "{{ test_ssh_keypair2.public_key }}"
     force: true
-  register: ssh_key
-- name: verify force update ssh key with new public key
+  register: result
+- name: verify update public key with force idempotence
   assert:
     that:
-      - ssh_key is changed
-      - ssh_key.hcloud_ssh_key.name == "{{ hcloud_ssh_key_name }}-other-name"
-      - ssh_key.hcloud_ssh_key.public_key == test_ssh_keypair_2.public_key
+      - result is not changed
 
 - name: test delete ssh key
   hetzner.hcloud.ssh_key:
-    id: "{{ ssh_key.hcloud_ssh_key.id }}"
+    name: "{{ hcloud_ssh_key_name }}"
     state: absent
   register: result
 - name: verify absent ssh_key

@@ -18,14 +18,14 @@
     force: true
   register: test_ssh_keypair
 
-- name: Create temporary file for test_ssh_keypair_2
+- name: Create temporary file for test_ssh_keypair2
   ansible.builtin.tempfile:
     path: ~/tmp
     suffix: "{{ hcloud_ssh_key_name }}"
-  register: _tmp_ssh_key_file_2
+  register: _tmp_ssh_key_file2
 
-- name: Create test_ssh_keypair_2
+- name: Create test_ssh_keypair2
   community.crypto.openssh_keypair:
-    path: "{{ _tmp_ssh_key_file_2.path }}"
+    path: "{{ _tmp_ssh_key_file2.path }}"
     force: true
-  register: test_ssh_keypair_2
+  register: test_ssh_keypair2
