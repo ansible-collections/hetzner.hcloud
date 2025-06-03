@@ -4,4 +4,7 @@
 hcloud_server_name: "{{ hcloud_ns }}"
 hcloud_load_balancer_name: "{{ hcloud_ns }}"
 
+# Hetzner Public account
 hetzner_server_ip: 142.132.203.104
+# Hetzner Internal account
+# hetzner_server_ip: 213.239.214.25

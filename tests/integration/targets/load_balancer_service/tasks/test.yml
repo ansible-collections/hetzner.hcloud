@@ -160,7 +160,7 @@
       - result.hcloud_load_balancer_service.health_check.timeout == 10
       - result.hcloud_load_balancer_service.health_check.http.domain == ""
       - result.hcloud_load_balancer_service.health_check.http.path == "/"
-      - result.hcloud_load_balancer_service.health_check.http.status_codes == ["2??", "3??"]
+      - result.hcloud_load_balancer_service.health_check.http.status_codes | sort == ["2??", "3??"]
 
 - name: Test delete with http
   hetzner.hcloud.load_balancer_service:
