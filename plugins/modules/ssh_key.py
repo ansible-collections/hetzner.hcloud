@@ -44,6 +44,11 @@ options:
             - The Public Key to add.
             - Required if ssh_key does not exist.
         type: str
+    force:
+        description:
+            - Recreate the SSH Key if the public key does not match the one in the API.
+        type: bool
+        default: false
     state:
         description:
             - State of the ssh_key.
@@ -115,6 +120,7 @@ hcloud_ssh_key:
 from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils.hcloud import AnsibleHCloud
+from ..module_utils.ssh import ssh_public_key_md5_fingerprint
 from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.ssh_keys import BoundSSHKey
 
@@ -175,6 +181,21 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
                 self.hcloud_ssh_key.update(labels=labels)
             self._mark_as_changed()
 
+        public_key = self.module.params.get("public_key")
+        if public_key is not None:
+            fingerprint = ssh_public_key_md5_fingerprint(public_key)
+            if fingerprint != self.hcloud_ssh_key.fingerprint:
+                if self.module.params.get("force"):
+                    if not self.module.check_mode:
+                        self.hcloud_ssh_key.delete()
+                        self._create_ssh_key()
+                    self._mark_as_changed()
+                else:
+                    self.module.warn(
+                        f"SSH Key '{self.hcloud_ssh_key.name}' in the API has a "
+                        f"different public key than the one provided. "
+                        f"Use the force=true argument to recreate the SSH Key in the API."
+                    )
         self._get_ssh_key()
 
     def present_ssh_key(self):
@@ -204,6 +225,7 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
                 public_key={"type": "str"},
                 fingerprint={"type": "str"},
                 labels={"type": "dict"},
+                force={"type": "bool", "default": False},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
