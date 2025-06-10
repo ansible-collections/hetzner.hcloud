@@ -103,14 +103,28 @@
       - result.hcloud_server.placement_group == hcloud_placement_group_name
       - result.hcloud_server.status == "running"
 
-- name: test add server to placement group idempotence
+- name: test add server to placement group by name idempotence
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     placement_group: "{{ hcloud_placement_group_name }}"
     force: True
     state: present
   register: result
-- name: verify add server to placement group idempotence
+- name: verify add server to placement group by name idempotence
+  assert:
+    that:
+      - result is not changed
+      - result.hcloud_server.placement_group == hcloud_placement_group_name
+      - result.hcloud_server.status == "running"
+
+- name: test add server to placement group by id idempotence
+  hetzner.hcloud.server:
+    name: "{{ hcloud_server_name }}"
+    placement_group: "{{ placement_group.hcloud_placement_group.id}}"
+    force: True
+    state: present
+  register: result
+- name: verify add server to placement group by id idempotence
   assert:
     that:
       - result is not changed
