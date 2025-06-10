@@ -173,7 +173,7 @@ class AnsibleHCloudFloatingIP(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": str(self.hcloud_floating_ip.id),
+            "id": self.hcloud_floating_ip.id,
             "name": self.hcloud_floating_ip.name,
             "description": self.hcloud_floating_ip.description,
             "ip": self.hcloud_floating_ip.ip,

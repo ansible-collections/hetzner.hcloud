@@ -120,7 +120,7 @@ class AnsibleHCloudFloatingIPInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(floating_ip.id),
+                    "id": floating_ip.id,
                     "name": floating_ip.name,
                     "description": floating_ip.description,
                     "ip": floating_ip.ip,

@@ -173,7 +173,7 @@ class AnsibleHCloudVolume(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": str(self.hcloud_volume.id),
+            "id": self.hcloud_volume.id,
             "name": self.hcloud_volume.name,
             "size": self.hcloud_volume.size,
             "location": self.hcloud_volume.location.name,

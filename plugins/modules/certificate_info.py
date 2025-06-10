@@ -107,7 +107,7 @@ class AnsibleHCloudCertificateInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(certificate.id),
+                    "id": certificate.id,
                     "name": certificate.name,
                     "fingerprint": certificate.fingerprint,
                     "certificate": certificate.certificate,

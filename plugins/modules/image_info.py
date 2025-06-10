@@ -132,7 +132,7 @@ class AnsibleHCloudImageInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(image.id),
+                    "id": image.id,
                     "status": image.status,
                     "type": image.type,
                     "name": image.name,

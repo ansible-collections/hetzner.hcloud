@@ -98,7 +98,7 @@ class AnsibleHCloudLocationInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(location.id),
+                    "id": location.id,
                     "name": location.name,
                     "description": location.description,
                     "city": location.city,

@@ -148,7 +148,7 @@ class AnsibleHCloudServerTypeInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(server_type.id),
+                    "id": server_type.id,
                     "name": server_type.name,
                     "description": server_type.description,
                     "cores": server_type.cores,

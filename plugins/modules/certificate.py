@@ -159,7 +159,7 @@ class AnsibleHCloudCertificate(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": str(self.hcloud_certificate.id),
+            "id": self.hcloud_certificate.id,
             "name": self.hcloud_certificate.name,
             "type": self.hcloud_certificate.type,
             "fingerprint": self.hcloud_certificate.fingerprint,

@@ -99,7 +99,7 @@ class AnsibleHCloudSSHKeyInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(ssh_key.id),
+                    "id": ssh_key.id,
                     "name": ssh_key.name,
                     "fingerprint": ssh_key.fingerprint,
                     "public_key": ssh_key.public_key,

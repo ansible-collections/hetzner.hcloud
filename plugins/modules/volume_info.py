@@ -115,7 +115,7 @@ class AnsibleHCloudVolumeInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(volume.id),
+                    "id": volume.id,
                     "name": volume.name,
                     "size": volume.size,
                     "location": volume.location.name,

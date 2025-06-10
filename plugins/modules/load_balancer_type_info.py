@@ -108,7 +108,7 @@ class AnsibleHCloudLoadBalancerTypeInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(load_balancer_type.id),
+                    "id": load_balancer_type.id,
                     "name": load_balancer_type.name,
                     "description": load_balancer_type.description,
                     "max_connections": load_balancer_type.max_connections,

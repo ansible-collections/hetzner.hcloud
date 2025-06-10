@@ -132,7 +132,7 @@ class AnsibleHCloudSSHKey(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": str(self.hcloud_ssh_key.id),
+            "id": self.hcloud_ssh_key.id,
             "name": self.hcloud_ssh_key.name,
             "fingerprint": self.hcloud_ssh_key.fingerprint,
             "public_key": self.hcloud_ssh_key.public_key,

@@ -369,7 +369,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
 
     def _prepare_result(self):
         return {
-            "id": str(self.hcloud_server.id),
+            "id": self.hcloud_server.id,
             "name": self.hcloud_server.name,
             "created": self.hcloud_server.created.isoformat(),
             "ipv4_address": (
