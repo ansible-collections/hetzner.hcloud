@@ -1,12 +1,2 @@
-ansible-core>=2.17
-
-# Collections requirements
-netaddr
-cryptography
-
 python-dateutil
 requests
-
-# Development requirements
-pylint
-antsibull-docs>=2.17,<2.18
