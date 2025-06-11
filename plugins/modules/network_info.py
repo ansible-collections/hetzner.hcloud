@@ -221,7 +221,7 @@ class AnsibleHCloudNetworkInfo(AnsibleHCloud):
             servers = []
             for server in network.servers:
                 prepared_server = {
-                    "id": str(server.id),
+                    "id": server.id,
                     "name": server.name,
                     "ipv4_address": server.public_net.ipv4.ip if server.public_net.ipv4 is not None else None,
                     "ipv6": server.public_net.ipv6.ip if server.public_net.ipv6 is not None else None,
@@ -238,7 +238,7 @@ class AnsibleHCloudNetworkInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(network.id),
+                    "id": network.id,
                     "name": network.name,
                     "ip_range": network.ip_range,
                     "subnetworks": subnets,

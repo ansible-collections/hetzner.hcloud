@@ -142,7 +142,7 @@ class AnsibleHCloudIsoInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(iso_info.id),
+                    "id": iso_info.id,
                     "name": iso_info.name,
                     "description": iso_info.description,
                     "type": iso_info.type,

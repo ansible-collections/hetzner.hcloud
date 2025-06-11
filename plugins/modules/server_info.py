@@ -166,7 +166,7 @@ class AnsibleHCloudServerInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(server.id),
+                    "id": server.id,
                     "name": server.name,
                     "created": server.created.isoformat(),
                     "ipv4_address": server.public_net.ipv4.ip if server.public_net.ipv4 is not None else None,

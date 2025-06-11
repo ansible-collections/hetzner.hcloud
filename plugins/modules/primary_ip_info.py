@@ -145,11 +145,11 @@ class AnsibleHCloudPrimaryIPInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(primary_ip.id),
+                    "id": primary_ip.id,
                     "name": primary_ip.name,
                     "ip": primary_ip.ip,
                     "type": primary_ip.type,
-                    "assignee_id": str(primary_ip.assignee_id) if primary_ip.assignee_id is not None else None,
+                    "assignee_id": primary_ip.assignee_id if primary_ip.assignee_id is not None else None,
                     "assignee_type": primary_ip.assignee_type,
                     "auto_delete": primary_ip.auto_delete,
                     "home_location": primary_ip.datacenter.name,

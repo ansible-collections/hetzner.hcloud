@@ -296,7 +296,7 @@ class AnsibleHCloudLoadBalancerInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(load_balancer.id),
+                    "id": load_balancer.id,
                     "name": load_balancer.name,
                     "ipv4_address": load_balancer.public_net.ipv4.ip,
                     "ipv6_address": load_balancer.public_net.ipv6.ip,

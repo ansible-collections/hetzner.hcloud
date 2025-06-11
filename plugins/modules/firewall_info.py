@@ -166,7 +166,7 @@ class AnsibleHCloudFirewallInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(firewall.id),
+                    "id": firewall.id,
                     "name": firewall.name,
                     "labels": firewall.labels,
                     "rules": [self._prepare_result_rule(rule) for rule in firewall.rules],
@@ -189,14 +189,14 @@ class AnsibleHCloudFirewallInfo(AnsibleHCloud):
     def _prepare_result_applied_to(self, resource: FirewallResource):
         result = {
             "type": resource.type,
-            "server": str(resource.server.id) if resource.server is not None else None,
+            "server": resource.server.id if resource.server is not None else None,
             "label_selector": resource.label_selector.selector if resource.label_selector is not None else None,
         }
         if resource.applied_to_resources is not None:
             result["applied_to_resources"] = [
                 {
                     "type": item.type,
-                    "server": str(item.server.id) if item.server is not None else None,
+                    "server": item.server.id if item.server is not None else None,
                 }
                 for item in resource.applied_to_resources
             ]

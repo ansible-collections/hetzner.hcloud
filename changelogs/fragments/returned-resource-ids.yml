@@ -1,0 +1,2 @@
+bugfixes:
+  - All returned resource IDs are now integers instead of strings.

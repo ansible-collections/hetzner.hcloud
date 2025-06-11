@@ -138,7 +138,7 @@ class AnsibleHCloudDatacenterInfo(AnsibleHCloud):
 
             tmp.append(
                 {
-                    "id": str(datacenter.id),
+                    "id": datacenter.id,
                     "name": datacenter.name,
                     "description": datacenter.description,
                     "location": datacenter.location.name,
