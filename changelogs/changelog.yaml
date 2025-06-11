@@ -654,3 +654,16 @@ releases:
     fragments:
     - remove-deprecated-argument-force_upgrade.yml
     release_date: '2025-05-21'
+  5.1.0:
+    changes:
+      bugfixes:
+      - All returned resource IDs are now integers instead of strings.
+      minor_changes:
+      - ssh_key - Log a warning when the provided public key does not match one in
+        the API.
+      - ssh_key - When the public key does not match the one in the API, allow recreating
+        the SSH Key in the API using the ``force=true`` argument.
+    fragments:
+    - returned-resource-ids.yml
+    - ssh-key-force-argument.yml
+    release_date: '2025-06-11'

@@ -4,6 +4,20 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v5.1.0
+======
+
+Minor Changes
+-------------
+
+- ssh_key - Log a warning when the provided public key does not match one in the API.
+- ssh_key - When the public key does not match the one in the API, allow recreating the SSH Key in the API using the ``force=true`` argument.
+
+Bugfixes
+--------
+
+- All returned resource IDs are now integers instead of strings.
+
 v5.0.1
 ======
 
