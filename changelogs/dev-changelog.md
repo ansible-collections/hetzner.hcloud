@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.0.1...5.1.0) (2025-06-11)
+
+
+### Features
+
+* allow recreating ssh key when public key in the API does not match  ([#634](https://github.com/ansible-collections/hetzner.hcloud/issues/634)) ([4fc2003](https://github.com/ansible-collections/hetzner.hcloud/commit/4fc2003f304971ace64be27581b117aa5ad09378))
+
+
+### Bug Fixes
+
+* ensure returned resource ids are integers ([#651](https://github.com/ansible-collections/hetzner.hcloud/issues/651)) ([579b34e](https://github.com/ansible-collections/hetzner.hcloud/commit/579b34e754a53a10522e5edcd5994133ba653f42))
+
 ## [5.0.1](https://github.com/ansible-collections/hetzner.hcloud/compare/5.0.0...5.0.1) (2025-05-21)
 
 
