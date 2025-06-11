@@ -1,0 +1,2 @@
+bugfixes:
+  - server - The ``placement_group`` argument now correctly handles placement group IDs during updates.
