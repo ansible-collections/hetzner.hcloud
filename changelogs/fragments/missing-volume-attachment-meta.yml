@@ -1,0 +1,3 @@
+bugfixes:
+  - volume_attachment - Add ``volume_attachment`` module to action group ``all``.
+  - volume_attachment - Add ``hcloud_volume_attachment`` alias to ``volume_attachment`` module.
