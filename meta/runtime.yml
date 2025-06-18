@@ -35,6 +35,7 @@ action_groups:
     - subnetwork
     - volume
     - volume_info
+    - volume_attachment
 
 plugin_routing:
   modules:
@@ -104,3 +105,5 @@ plugin_routing:
       redirect: hetzner.hcloud.volume_info
     hcloud_volume:
       redirect: hetzner.hcloud.volume
+    hcloud_volume_attachment:
+      redirect: hetzner.hcloud.volume_attachment
