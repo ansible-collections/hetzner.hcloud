@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.1](https://github.com/ansible-collections/hetzner.hcloud/compare/5.1.0...5.1.1) (2025-06-19)
+
+
+### Bug Fixes
+
+* add `volume_attachment` module to meta ([#655](https://github.com/ansible-collections/hetzner.hcloud/issues/655)) ([e6e4ce1](https://github.com/ansible-collections/hetzner.hcloud/commit/e6e4ce1d5f4117262bc234b14ab87d6e753474d8))
+
 ## [5.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.0.1...5.1.0) (2025-06-11)
 
 
