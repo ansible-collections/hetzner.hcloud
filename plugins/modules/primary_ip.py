@@ -56,6 +56,11 @@ options:
         description:
             - Protect the Primary IP for deletion.
         type: bool
+    dns_ptr:
+        description:
+            - Change default dns pointer of Primary IP.
+            - Only supports ipv4 type.
+        type: str
     labels:
         description:
             - User-defined labels (key-value pairs).
@@ -84,6 +89,14 @@ EXAMPLES = """
     name: my-primary-ip
     datacenter: fsn1-dc14
     type: ipv6
+    state: present
+
+- name: Create a IPv4 Primary IP with custom DNS Pointer
+  hetzner.hcloud.primary_ip:
+    name: my-primary-ip
+    datacenter: fsn1-dc14
+    dns_ptr: test.example.com
+    type: ipv4
     state: present
 
 - name: Delete a Primary IP
@@ -233,6 +246,12 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
                 if delete_protection is not None:
                     action = self.hcloud_primary_ip.change_protection(delete=delete_protection)
                     action.wait_until_finished()
+
+                dns_ptr = self.module.params.get("dns_ptr")
+                ip = self.hcloud_primary_ip.ip
+                if dns_ptr is not None and self.hcloud_primary_ip.type == "ipv4":
+                    action = self.hcloud_primary_ip.change_dns_ptr(ip=ip, dns_ptr=dns_ptr)
+                    action.wait_until_finished()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
         self._mark_as_changed()
@@ -261,6 +280,15 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
                     action = self.hcloud_primary_ip.change_protection(delete=delete_protection)
                     action.wait_until_finished()
                 self._mark_as_changed()
+
+            dns_ptr = self.module.params.get("dns_ptr")
+            ip = self.hcloud_primary_ip.ip
+            if self.hcloud_primary_ip.type == "ipv4":
+                if dns_ptr is not None and dns_ptr != self.hcloud_primary_ip.dns_ptr[0]["dns_ptr"]:
+                    if not self.module.check_mode:
+                        action = self.hcloud_primary_ip.change_dns_ptr(ip=ip, dns_ptr=dns_ptr)
+                        action.wait_until_finished()
+                    self._mark_as_changed()
 
             self._get_primary_ip()
         except HCloudException as exception:
@@ -296,6 +324,7 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
                 type={"choices": ["ipv4", "ipv6"]},
                 labels={"type": "dict"},
                 delete_protection={"type": "bool"},
+                dns_ptr={"type": "str"},
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
