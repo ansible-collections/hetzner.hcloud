@@ -3,7 +3,7 @@
 Authentication
 ==============
 
-To `authenticate the API call against the Hetzner Cloud API <https://docs.hetzner.cloud/#authentication>`_ when
+To `authenticate the API call against the Hetzner Cloud API <https://docs.hetzner.cloud/reference/cloud#authentication>`_ when
 using the ``hetzner.hcloud`` collection, you can provide the API token by different means:
 
 You can pass the API token using an environment variable (recommended):
