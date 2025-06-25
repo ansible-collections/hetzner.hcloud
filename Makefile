@@ -21,6 +21,7 @@ lint-docs: venv
 	venv/bin/antsibull-docs lint-collection-docs \
 		--plugin-docs \
 		--validate-collection-refs self \
+		--check-extra-docs-refs \
 		.
 
 clean:
