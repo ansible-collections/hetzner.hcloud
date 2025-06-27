@@ -15,6 +15,7 @@ short_description: Create and manage cloud Primary IPs on the Hetzner Cloud.
 
 description:
     - Create, update and manage cloud Primary IPs on the Hetzner Cloud.
+    - To manage the DNS pointer of a Primary IP, use the M(hetzner.hcloud.rdns) module.
 
 author:
     - Lukas Kaemmerling (@lkaemmerling)
