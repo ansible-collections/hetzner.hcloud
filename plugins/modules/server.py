@@ -15,6 +15,7 @@ short_description: Create and manage cloud servers on the Hetzner Cloud.
 
 description:
     - Create, update and manage cloud servers on the Hetzner Cloud.
+    - To manage the DNS pointer of a Server, use the M(hetzner.hcloud.rdns) module.
 
 author:
     - Lukas Kaemmerling (@LKaemmerling)
