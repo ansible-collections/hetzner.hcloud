@@ -90,6 +90,13 @@ class ManagedCertificateStatus(BaseDomain):
           If issuance or renewal reports failure, this property contains information about what happened
     """
 
+    __api_properties__ = (
+        "issuance",
+        "renewal",
+        "error",
+    )
+    __slots__ = __api_properties__
+
     def __init__(
         self,
         issuance: str | None = None,
@@ -109,6 +116,12 @@ class ManagedCertificateError(BaseDomain):
     :param message:
         Message detailing the error
     """
+
+    __api_properties__ = (
+        "code",
+        "message",
+    )
+    __slots__ = __api_properties__
 
     def __init__(self, code: str | None = None, message: str | None = None):
         self.code = code
