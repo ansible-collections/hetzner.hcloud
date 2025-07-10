@@ -69,7 +69,7 @@ After this you should be able to use `ansible-test integration` to perform the i
 Sample:
 
 ```
-ansible-test integration --color --local  -vvv hetzner.hcloud.server // Executed all integration tests for server module
+ansible-test integration --color --local -vvv hetzner.hcloud.server // Executed all integration tests for server module
 ```
 
 ## Releasing a new version
