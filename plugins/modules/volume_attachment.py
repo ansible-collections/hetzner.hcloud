@@ -34,6 +34,7 @@ options:
         description:
             - Automatically mount the Volume in the Server.
         type: bool
+        default: False
     state:
         description:
             - State of the Volume.
@@ -175,7 +176,7 @@ class AnsibleHCloudVolumeAttachment(AnsibleHCloud):
             argument_spec=dict(
                 volume={"type": "str", "required": True},
                 server={"type": "str"},
-                automount={"type": "bool"},
+                automount={"type": "bool", "default": False},
                 state={
                     "choices": ["present", "absent"],
                     "default": "present",
