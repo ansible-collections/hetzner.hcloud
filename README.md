@@ -75,3 +75,33 @@ ansible-test integration --color --local -vvv hetzner.hcloud.server // Executed 
 ## Releasing a new version
 
 If there are releasable changes, `release-please` will open a PR on GitHub with the proposed version. When this PR is merged, `release-please` will tag the release.
+
+## Releasing experimental features
+
+To publish experimental features as part of regular releases:
+
+- an announcement, including a link to a changelog entry, must written in the release notes.
+
+- an `Experimental` notice, including a link to a changelog entry, must be added to the experimental plugins documentation:
+
+  ```py
+  DOCUMENTATION = """
+  ---
+  module: product
+
+  description:
+      - Create, update and manage Product on the Hetzner Cloud.
+      - B(Experimental:) Product is experimental, breaking changes may occur within minor releases. See https://docs.hetzner.cloud/changelog#new-product for more details.
+  """
+  ```
+
+- a `Experimental` warning, including a link to a changelog entry, must be logged when experimental plugins are being used:
+
+  ```py
+  product_experimental_warning = experimental_warning_function("Product", "https://docs.hetzner.cloud/changelog#new-product")
+
+  class AnsibleProduct(AnsibleHCloud):
+      def __init__(self, module: AnsibleModule):
+          product_experimental_warning(module)
+          super().__init__(module)
+  ```
