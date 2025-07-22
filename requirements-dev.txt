@@ -6,4 +6,4 @@ cryptography
 
 # Development requirements
 pylint
-antsibull-docs>=2.18,<2.19
+antsibull-docs>=2.19,<2.20
