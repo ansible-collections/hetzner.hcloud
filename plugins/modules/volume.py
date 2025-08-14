@@ -245,10 +245,20 @@ class AnsibleHCloudVolume(AnsibleHCloud):
                         action.wait_until_finished()
                     self._mark_as_changed()
 
+            update_params = {}
+
+            name = self.module.params.get("name")
+            if name is not None and name != self.hcloud_volume.name:
+                self.module.fail_on_missing_params(required_params=["id"])
+                update_params["name"] = name
+
             labels = self.module.params.get("labels")
             if labels is not None and labels != self.hcloud_volume.labels:
+                update_params["labels"] = labels
+
+            if update_params:
                 if not self.module.check_mode:
-                    self.hcloud_volume.update(labels=labels)
+                    self.hcloud_volume.update(**update_params)
                 self._mark_as_changed()
 
             delete_protection = self.module.params.get("delete_protection")

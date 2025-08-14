@@ -122,6 +122,28 @@
     that:
       - volume is not changed
 
+- name: test update Volume name
+  hetzner.hcloud.volume:
+    id: "{{ volume.hcloud_volume.id }}"
+    name: "{{ hcloud_volume_name }}-new"
+  register: result
+- name: verify test update Volume name
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_volume.name == hcloud_volume_name + '-new'
+
+- name: reset volume name
+  hetzner.hcloud.volume:
+    id: "{{ volume.hcloud_volume.id }}"
+    name: "{{ hcloud_server_name }}"
+  register: result
+- name: verify reset volume name
+  assert:
+    that:
+      - result is changed
+      - result.hcloud_volume.name == hcloud_volume_name
+
 - name: test increase Volume size
   hetzner.hcloud.volume:
     name: "{{hcloud_volume_name}}"
