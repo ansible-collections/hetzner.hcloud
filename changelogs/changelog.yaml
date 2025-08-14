@@ -670,3 +670,15 @@ releases:
     - server-placement-group-id-idempotency.yml
     - ssh-key-force-argument.yml
     release_date: '2025-06-11'
+  5.2.0:
+    changes:
+      bugfixes:
+      - volume_attachment - Add ``hcloud_volume_attachment`` alias to ``volume_attachment``
+        module.
+      - volume_attachment - Add ``volume_attachment`` module to action group ``all``.
+      minor_changes:
+      - volume - Allow renaming a volume.
+    fragments:
+    - missing-volume-attachment-meta.yml
+    - rename-volume.yml
+    release_date: '2025-08-14'

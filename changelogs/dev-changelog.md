@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.1.0...5.2.0) (2025-08-14)
+
+
+### Features
+
+* allow renaming a volume ([#683](https://github.com/ansible-collections/hetzner.hcloud/issues/683)) ([8c8a52c](https://github.com/ansible-collections/hetzner.hcloud/commit/8c8a52ceed3bb26c0dfcb0aaf4b9bdb9359b0609))
+* warn when experimental features are used ([#669](https://github.com/ansible-collections/hetzner.hcloud/issues/669)) ([36053c7](https://github.com/ansible-collections/hetzner.hcloud/commit/36053c7ee802d26dabcc97bf88013966f8f6411a))
+
+
+### Bug Fixes
+
+* add `volume_attachment` module to meta ([#655](https://github.com/ansible-collections/hetzner.hcloud/issues/655)) ([e6e4ce1](https://github.com/ansible-collections/hetzner.hcloud/commit/e6e4ce1d5f4117262bc234b14ab87d6e753474d8))
+
 ## [5.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.0.1...5.1.0) (2025-06-11)
 
 
