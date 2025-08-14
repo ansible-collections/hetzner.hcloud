@@ -4,6 +4,20 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v5.2.0
+======
+
+Minor Changes
+-------------
+
+- volume - Allow renaming a volume.
+
+Bugfixes
+--------
+
+- volume_attachment - Add ``hcloud_volume_attachment`` alias to ``volume_attachment`` module.
+- volume_attachment - Add ``volume_attachment`` module to action group ``all``.
+
 v5.1.0
 ======
 
