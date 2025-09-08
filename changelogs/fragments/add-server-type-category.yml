@@ -1,0 +1,2 @@
+minor_changes:
+  - server_type_info - Return new Server Type ``category`` property.
