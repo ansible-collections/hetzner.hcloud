@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 from ..actions import BoundAction, ResourceActionsClient
-from ..core import BoundModelBase, ClientEntityBase, Meta
+from ..core import BoundModelBase, Meta, ResourceClientBase
 from .domain import CreatePrimaryIPResponse, PrimaryIP
 
 if TYPE_CHECKING:
@@ -22,7 +22,7 @@ class BoundPrimaryIP(BoundModelBase, PrimaryIP):
 
         datacenter = data.get("datacenter", {})
         if datacenter:
-            data["datacenter"] = BoundDatacenter(client._client.datacenters, datacenter)
+            data["datacenter"] = BoundDatacenter(client._parent.datacenters, datacenter)
 
         super().__init__(client, data, complete)
 
@@ -97,8 +97,8 @@ class PrimaryIPsPageResult(NamedTuple):
     meta: Meta
 
 
-class PrimaryIPsClient(ClientEntityBase):
-    _client: Client
+class PrimaryIPsClient(ResourceClientBase):
+    _base_url = "/primary_ips"
 
     actions: ResourceActionsClient
     """Primary IPs scoped actions client
@@ -108,7 +108,7 @@ class PrimaryIPsClient(ClientEntityBase):
 
     def __init__(self, client: Client):
         super().__init__(client)
-        self.actions = ResourceActionsClient(client, "/primary_ips")
+        self.actions = ResourceActionsClient(client, self._base_url)
 
     def get_by_id(self, id: int) -> BoundPrimaryIP:
         """Returns a specific Primary IP object.
@@ -116,7 +116,7 @@ class PrimaryIPsClient(ClientEntityBase):
         :param id: int
         :return: :class:`BoundPrimaryIP <hcloud.primary_ips.client.BoundPrimaryIP>`
         """
-        response = self._client.request(url=f"/primary_ips/{id}", method="GET")
+        response = self._client.request(url=f"{self._base_url}/{id}", method="GET")
         return BoundPrimaryIP(self, response["primary_ip"])
 
     def get_list(
@@ -154,7 +154,7 @@ class PrimaryIPsClient(ClientEntityBase):
         if ip is not None:
             params["ip"] = ip
 
-        response = self._client.request(url="/primary_ips", method="GET", params=params)
+        response = self._client.request(url=self._base_url, method="GET", params=params)
         primary_ips = [
             BoundPrimaryIP(self, primary_ip_data)
             for primary_ip_data in response["primary_ips"]
@@ -221,11 +221,11 @@ class PrimaryIPsClient(ClientEntityBase):
         if labels is not None:
             data["labels"] = labels
 
-        response = self._client.request(url="/primary_ips", json=data, method="POST")
+        response = self._client.request(url=self._base_url, json=data, method="POST")
 
         action = None
         if response.get("action") is not None:
-            action = BoundAction(self._client.actions, response["action"])
+            action = BoundAction(self._parent.actions, response["action"])
 
         result = CreatePrimaryIPResponse(
             primary_ip=BoundPrimaryIP(self, response["primary_ip"]), action=action
@@ -259,7 +259,7 @@ class PrimaryIPsClient(ClientEntityBase):
             data["name"] = name
 
         response = self._client.request(
-            url=f"/primary_ips/{primary_ip.id}",
+            url=f"{self._base_url}/{primary_ip.id}",
             method="PUT",
             json=data,
         )
@@ -272,7 +272,7 @@ class PrimaryIPsClient(ClientEntityBase):
         :return: boolean
         """
         self._client.request(
-            url=f"/primary_ips/{primary_ip.id}",
+            url=f"{self._base_url}/{primary_ip.id}",
             method="DELETE",
         )
         # Return always true, because the API does not return an action for it. When an error occurs a HcloudAPIException will be raised
@@ -295,11 +295,11 @@ class PrimaryIPsClient(ClientEntityBase):
             data.update({"delete": delete})
 
         response = self._client.request(
-            url=f"/primary_ips/{primary_ip.id}/actions/change_protection",
+            url=f"{self._base_url}/{primary_ip.id}/actions/change_protection",
             method="POST",
             json=data,
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def assign(
         self,
@@ -317,11 +317,11 @@ class PrimaryIPsClient(ClientEntityBase):
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
         response = self._client.request(
-            url=f"/primary_ips/{primary_ip.id}/actions/assign",
+            url=f"{self._base_url}/{primary_ip.id}/actions/assign",
             method="POST",
             json={"assignee_id": assignee_id, "assignee_type": assignee_type},
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def unassign(self, primary_ip: PrimaryIP | BoundPrimaryIP) -> BoundAction:
         """Unassigns a Primary IP, resulting in it being unreachable. You may assign it to a server again at a later time.
@@ -330,10 +330,10 @@ class PrimaryIPsClient(ClientEntityBase):
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
         response = self._client.request(
-            url=f"/primary_ips/{primary_ip.id}/actions/unassign",
+            url=f"{self._base_url}/{primary_ip.id}/actions/unassign",
             method="POST",
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def change_dns_ptr(
         self,
@@ -351,8 +351,8 @@ class PrimaryIPsClient(ClientEntityBase):
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
         response = self._client.request(
-            url=f"/primary_ips/{primary_ip.id}/actions/change_dns_ptr",
+            url=f"{self._base_url}/{primary_ip.id}/actions/change_dns_ptr",
             method="POST",
             json={"ip": ip, "dns_ptr": dns_ptr},
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])

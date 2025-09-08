@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 from ..actions import ActionsPageResult, BoundAction, ResourceActionsClient
-from ..core import BoundModelBase, ClientEntityBase, Meta
+from ..core import BoundModelBase, Meta, ResourceClientBase
 from ..locations import BoundLocation
 from .domain import CreateVolumeResponse, Volume
 
@@ -21,7 +21,7 @@ class BoundVolume(BoundModelBase, Volume):
     def __init__(self, client: VolumesClient, data: dict, complete: bool = True):
         location = data.get("location")
         if location is not None:
-            data["location"] = BoundLocation(client._client.locations, location)
+            data["location"] = BoundLocation(client._parent.locations, location)
 
         # pylint: disable=import-outside-toplevel
         from ..servers import BoundServer
@@ -29,7 +29,7 @@ class BoundVolume(BoundModelBase, Volume):
         server = data.get("server")
         if server is not None:
             data["server"] = BoundServer(
-                client._client.servers, {"id": server}, complete=False
+                client._parent.servers, {"id": server}, complete=False
             )
         super().__init__(client, data, complete)
 
@@ -135,8 +135,8 @@ class VolumesPageResult(NamedTuple):
     meta: Meta
 
 
-class VolumesClient(ClientEntityBase):
-    _client: Client
+class VolumesClient(ResourceClientBase):
+    _base_url = "/volumes"
 
     actions: ResourceActionsClient
     """Volumes scoped actions client
@@ -146,7 +146,7 @@ class VolumesClient(ClientEntityBase):
 
     def __init__(self, client: Client):
         super().__init__(client)
-        self.actions = ResourceActionsClient(client, "/volumes")
+        self.actions = ResourceActionsClient(client, self._base_url)
 
     def get_by_id(self, id: int) -> BoundVolume:
         """Get a specific volume by its id
@@ -154,7 +154,7 @@ class VolumesClient(ClientEntityBase):
         :param id: int
         :return: :class:`BoundVolume <hcloud.volumes.client.BoundVolume>`
         """
-        response = self._client.request(url=f"/volumes/{id}", method="GET")
+        response = self._client.request(url=f"{self._base_url}/{id}", method="GET")
         return BoundVolume(self, response["volume"])
 
     def get_list(
@@ -191,7 +191,7 @@ class VolumesClient(ClientEntityBase):
         if per_page is not None:
             params["per_page"] = per_page
 
-        response = self._client.request(url="/volumes", method="GET", params=params)
+        response = self._client.request(url=self._base_url, method="GET", params=params)
         volumes = [
             BoundVolume(self, volume_data) for volume_data in response["volumes"]
         ]
@@ -271,13 +271,13 @@ class VolumesClient(ClientEntityBase):
         if format is not None:
             data["format"] = format
 
-        response = self._client.request(url="/volumes", json=data, method="POST")
+        response = self._client.request(url=self._base_url, json=data, method="POST")
 
         result = CreateVolumeResponse(
             volume=BoundVolume(self, response["volume"]),
-            action=BoundAction(self._client.actions, response["action"]),
+            action=BoundAction(self._parent.actions, response["action"]),
             next_actions=[
-                BoundAction(self._client.actions, action)
+                BoundAction(self._parent.actions, action)
                 for action in response["next_actions"]
             ],
         )
@@ -315,12 +315,12 @@ class VolumesClient(ClientEntityBase):
             params["per_page"] = per_page
 
         response = self._client.request(
-            url=f"/volumes/{volume.id}/actions",
+            url=f"{self._base_url}/{volume.id}/actions",
             method="GET",
             params=params,
         )
         actions = [
-            BoundAction(self._client.actions, action_data)
+            BoundAction(self._parent.actions, action_data)
             for action_data in response["actions"]
         ]
         return ActionsPageResult(actions, Meta.parse_meta(response))
@@ -368,7 +368,7 @@ class VolumesClient(ClientEntityBase):
         if labels is not None:
             data.update({"labels": labels})
         response = self._client.request(
-            url=f"/volumes/{volume.id}",
+            url=f"{self._base_url}/{volume.id}",
             method="PUT",
             json=data,
         )
@@ -380,7 +380,7 @@ class VolumesClient(ClientEntityBase):
         :param volume: :class:`BoundVolume <hcloud.volumes.client.BoundVolume>` or :class:`Volume <hcloud.volumes.domain.Volume>`
         :return: boolean
         """
-        self._client.request(url=f"/volumes/{volume.id}", method="DELETE")
+        self._client.request(url=f"{self._base_url}/{volume.id}", method="DELETE")
         return True
 
     def resize(self, volume: Volume | BoundVolume, size: int) -> BoundAction:
@@ -392,11 +392,11 @@ class VolumesClient(ClientEntityBase):
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
         data = self._client.request(
-            url=f"/volumes/{volume.id}/actions/resize",
+            url=f"{self._base_url}/{volume.id}/actions/resize",
             json={"size": size},
             method="POST",
         )
-        return BoundAction(self._client.actions, data["action"])
+        return BoundAction(self._parent.actions, data["action"])
 
     def attach(
         self,
@@ -416,11 +416,11 @@ class VolumesClient(ClientEntityBase):
             data["automount"] = automount
 
         data = self._client.request(
-            url=f"/volumes/{volume.id}/actions/attach",
+            url=f"{self._base_url}/{volume.id}/actions/attach",
             json=data,
             method="POST",
         )
-        return BoundAction(self._client.actions, data["action"])
+        return BoundAction(self._parent.actions, data["action"])
 
     def detach(self, volume: Volume | BoundVolume) -> BoundAction:
         """Detaches a volume from the server it’s attached to. You may attach it to a server again at a later time.
@@ -429,10 +429,10 @@ class VolumesClient(ClientEntityBase):
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
         data = self._client.request(
-            url=f"/volumes/{volume.id}/actions/detach",
+            url=f"{self._base_url}/{volume.id}/actions/detach",
             method="POST",
         )
-        return BoundAction(self._client.actions, data["action"])
+        return BoundAction(self._parent.actions, data["action"])
 
     def change_protection(
         self,
@@ -451,8 +451,8 @@ class VolumesClient(ClientEntityBase):
             data.update({"delete": delete})
 
         response = self._client.request(
-            url=f"/volumes/{volume.id}/actions/change_protection",
+            url=f"{self._base_url}/{volume.id}/actions/change_protection",
             method="POST",
             json=data,
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])

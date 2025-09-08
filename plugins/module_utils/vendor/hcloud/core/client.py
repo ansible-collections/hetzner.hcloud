@@ -1,22 +1,24 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable
+import warnings
+from typing import TYPE_CHECKING, Any, Callable, ClassVar
 
 if TYPE_CHECKING:
-    from .._client import Client
+    from .._client import Client, ClientBase
+    from .domain import BaseDomain
 
 
-class ClientEntityBase:
-    _client: Client
+class ResourceClientBase:
+    _base_url: ClassVar[str]
+    _parent: Client
+    _client: ClientBase
 
     max_per_page: int = 50
 
     def __init__(self, client: Client):
-        """
-        :param client: Client
-        :return self
-        """
-        self._client = client
+        self._parent = client
+        # Use the parent "default" base client.
+        self._client = client._client
 
     def _iter_pages(  # type: ignore[no-untyped-def]
         self,
@@ -50,14 +52,32 @@ class ClientEntityBase:
         return entities[0] if entities else None
 
 
+class ClientEntityBase(ResourceClientBase):
+    """
+    Kept for backward compatibility.
+
+    .. deprecated:: 2.6.0
+        Use :class:``hcloud.core.client.ResourceClientBase`` instead.
+    """
+
+    def __init__(self, client: Client):
+        warnings.warn(
+            "The 'hcloud.core.client.ClientEntityBase' class is deprecated, please use the "
+            "'hcloud.core.client.ResourceClientBase' class instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(client)
+
+
 class BoundModelBase:
     """Bound Model Base"""
 
-    model: Any
+    model: type[BaseDomain]
 
     def __init__(
         self,
-        client: ClientEntityBase,
+        client: ResourceClientBase,
         data: dict,
         complete: bool = True,
     ):

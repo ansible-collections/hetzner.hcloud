@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, NamedTuple
+from typing import Any, NamedTuple
 
 from ..actions import BoundAction
-from ..core import BoundModelBase, ClientEntityBase, Meta
+from ..core import BoundModelBase, Meta, ResourceClientBase
 from .domain import CreatePlacementGroupResponse, PlacementGroup
-
-if TYPE_CHECKING:
-    from .._client import Client
 
 
 class BoundPlacementGroup(BoundModelBase, PlacementGroup):
@@ -43,8 +40,8 @@ class PlacementGroupsPageResult(NamedTuple):
     meta: Meta
 
 
-class PlacementGroupsClient(ClientEntityBase):
-    _client: Client
+class PlacementGroupsClient(ResourceClientBase):
+    _base_url = "/placement_groups"
 
     def get_by_id(self, id: int) -> BoundPlacementGroup:
         """Returns a specific Placement Group object
@@ -53,7 +50,7 @@ class PlacementGroupsClient(ClientEntityBase):
         :return: :class:`BoundPlacementGroup <hcloud.placement_groups.client.BoundPlacementGroup>`
         """
         response = self._client.request(
-            url=f"/placement_groups/{id}",
+            url=f"{self._base_url}/{id}",
             method="GET",
         )
         return BoundPlacementGroup(self, response["placement_group"])
@@ -96,9 +93,7 @@ class PlacementGroupsClient(ClientEntityBase):
             params["sort"] = sort
         if type is not None:
             params["type"] = type
-        response = self._client.request(
-            url="/placement_groups", method="GET", params=params
-        )
+        response = self._client.request(url=self._base_url, method="GET", params=params)
         placement_groups = [
             BoundPlacementGroup(self, placement_group_data)
             for placement_group_data in response["placement_groups"]
@@ -158,13 +153,11 @@ class PlacementGroupsClient(ClientEntityBase):
         data: dict[str, Any] = {"name": name, "type": type}
         if labels is not None:
             data["labels"] = labels
-        response = self._client.request(
-            url="/placement_groups", json=data, method="POST"
-        )
+        response = self._client.request(url=self._base_url, json=data, method="POST")
 
         action = None
         if response.get("action") is not None:
-            action = BoundAction(self._client.actions, response["action"])
+            action = BoundAction(self._parent.actions, response["action"])
 
         result = CreatePlacementGroupResponse(
             placement_group=BoundPlacementGroup(self, response["placement_group"]),
@@ -195,7 +188,7 @@ class PlacementGroupsClient(ClientEntityBase):
             data["name"] = name
 
         response = self._client.request(
-            url=f"/placement_groups/{placement_group.id}",
+            url=f"{self._base_url}/{placement_group.id}",
             method="PUT",
             json=data,
         )
@@ -208,7 +201,7 @@ class PlacementGroupsClient(ClientEntityBase):
         :return: boolean
         """
         self._client.request(
-            url=f"/placement_groups/{placement_group.id}",
+            url=f"{self._base_url}/{placement_group.id}",
             method="DELETE",
         )
         return True

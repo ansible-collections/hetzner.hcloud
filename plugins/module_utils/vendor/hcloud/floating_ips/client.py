@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 from ..actions import ActionsPageResult, BoundAction, ResourceActionsClient
-from ..core import BoundModelBase, ClientEntityBase, Meta
+from ..core import BoundModelBase, Meta, ResourceClientBase
 from ..locations import BoundLocation
 from .domain import CreateFloatingIPResponse, FloatingIP
 
@@ -25,13 +25,13 @@ class BoundFloatingIP(BoundModelBase, FloatingIP):
         server = data.get("server")
         if server is not None:
             data["server"] = BoundServer(
-                client._client.servers, {"id": server}, complete=False
+                client._parent.servers, {"id": server}, complete=False
             )
 
         home_location = data.get("home_location")
         if home_location is not None:
             data["home_location"] = BoundLocation(
-                client._client.locations, home_location
+                client._parent.locations, home_location
             )
 
         super().__init__(client, data, complete)
@@ -139,8 +139,8 @@ class FloatingIPsPageResult(NamedTuple):
     meta: Meta
 
 
-class FloatingIPsClient(ClientEntityBase):
-    _client: Client
+class FloatingIPsClient(ResourceClientBase):
+    _base_url = "/floating_ips"
 
     actions: ResourceActionsClient
     """Floating IPs scoped actions client
@@ -150,7 +150,7 @@ class FloatingIPsClient(ClientEntityBase):
 
     def __init__(self, client: Client):
         super().__init__(client)
-        self.actions = ResourceActionsClient(client, "/floating_ips")
+        self.actions = ResourceActionsClient(client, self._base_url)
 
     def get_actions_list(
         self,
@@ -183,12 +183,12 @@ class FloatingIPsClient(ClientEntityBase):
         if per_page is not None:
             params["per_page"] = per_page
         response = self._client.request(
-            url=f"/floating_ips/{floating_ip.id}/actions",
+            url=f"{self._base_url}/{floating_ip.id}/actions",
             method="GET",
             params=params,
         )
         actions = [
-            BoundAction(self._client.actions, action_data)
+            BoundAction(self._parent.actions, action_data)
             for action_data in response["actions"]
         ]
         return ActionsPageResult(actions, Meta.parse_meta(response))
@@ -222,7 +222,7 @@ class FloatingIPsClient(ClientEntityBase):
         :param id: int
         :return: :class:`BoundFloatingIP <hcloud.floating_ips.client.BoundFloatingIP>`
         """
-        response = self._client.request(url=f"/floating_ips/{id}", method="GET")
+        response = self._client.request(url=f"{self._base_url}/{id}", method="GET")
         return BoundFloatingIP(self, response["floating_ip"])
 
     def get_list(
@@ -255,9 +255,7 @@ class FloatingIPsClient(ClientEntityBase):
         if name is not None:
             params["name"] = name
 
-        response = self._client.request(
-            url="/floating_ips", method="GET", params=params
-        )
+        response = self._client.request(url=self._base_url, method="GET", params=params)
         floating_ips = [
             BoundFloatingIP(self, floating_ip_data)
             for floating_ip_data in response["floating_ips"]
@@ -325,11 +323,11 @@ class FloatingIPsClient(ClientEntityBase):
         if name is not None:
             data["name"] = name
 
-        response = self._client.request(url="/floating_ips", json=data, method="POST")
+        response = self._client.request(url=self._base_url, json=data, method="POST")
 
         action = None
         if response.get("action") is not None:
-            action = BoundAction(self._client.actions, response["action"])
+            action = BoundAction(self._parent.actions, response["action"])
 
         result = CreateFloatingIPResponse(
             floating_ip=BoundFloatingIP(self, response["floating_ip"]), action=action
@@ -363,7 +361,7 @@ class FloatingIPsClient(ClientEntityBase):
             data["name"] = name
 
         response = self._client.request(
-            url=f"/floating_ips/{floating_ip.id}",
+            url=f"{self._base_url}/{floating_ip.id}",
             method="PUT",
             json=data,
         )
@@ -376,7 +374,7 @@ class FloatingIPsClient(ClientEntityBase):
         :return: boolean
         """
         self._client.request(
-            url=f"/floating_ips/{floating_ip.id}",
+            url=f"{self._base_url}/{floating_ip.id}",
             method="DELETE",
         )
         # Return always true, because the API does not return an action for it. When an error occurs a HcloudAPIException will be raised
@@ -399,11 +397,11 @@ class FloatingIPsClient(ClientEntityBase):
             data.update({"delete": delete})
 
         response = self._client.request(
-            url=f"/floating_ips/{floating_ip.id}/actions/change_protection",
+            url=f"{self._base_url}/{floating_ip.id}/actions/change_protection",
             method="POST",
             json=data,
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def assign(
         self,
@@ -418,11 +416,11 @@ class FloatingIPsClient(ClientEntityBase):
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
         response = self._client.request(
-            url=f"/floating_ips/{floating_ip.id}/actions/assign",
+            url=f"{self._base_url}/{floating_ip.id}/actions/assign",
             method="POST",
             json={"server": server.id},
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def unassign(self, floating_ip: FloatingIP | BoundFloatingIP) -> BoundAction:
         """Unassigns a Floating IP, resulting in it being unreachable. You may assign it to a server again at a later time.
@@ -431,10 +429,10 @@ class FloatingIPsClient(ClientEntityBase):
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
         response = self._client.request(
-            url=f"/floating_ips/{floating_ip.id}/actions/unassign",
+            url=f"{self._base_url}/{floating_ip.id}/actions/unassign",
             method="POST",
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def change_dns_ptr(
         self,
@@ -452,8 +450,8 @@ class FloatingIPsClient(ClientEntityBase):
         :return: :class:`BoundAction <hcloud.actions.client.BoundAction>`
         """
         response = self._client.request(
-            url=f"/floating_ips/{floating_ip.id}/actions/change_dns_ptr",
+            url=f"{self._base_url}/{floating_ip.id}/actions/change_dns_ptr",
             method="POST",
             json={"ip": ip, "dns_ptr": dns_ptr},
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
