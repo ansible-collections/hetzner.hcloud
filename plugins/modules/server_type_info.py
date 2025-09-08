@@ -65,6 +65,11 @@ hcloud_server_type_info:
             returned: always
             type: str
             sample: Falkenstein DC Park 1
+        category:
+            description: Category of Server Type
+            returned: always
+            type: str
+            sample: Shared vCPU
         cores:
             description: Number of cpu cores a server of this type will have
             returned: always
@@ -151,6 +156,7 @@ class AnsibleHCloudServerTypeInfo(AnsibleHCloud):
                     "id": server_type.id,
                     "name": server_type.name,
                     "description": server_type.description,
+                    "category": server_type.category,
                     "cores": server_type.cores,
                     "memory": server_type.memory,
                     "disk": server_type.disk,
