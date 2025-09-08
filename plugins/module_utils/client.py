@@ -101,8 +101,8 @@ class Client(ClientBase):
         Cached response will not expire, therefore the cached client must not be used
         for long living scopes.
         """
-        self._requests_session = CachedSession()
+        self._client._session = CachedSession()
         try:
             yield
         finally:
-            self._requests_session = requests.Session()
+            self._client._session = requests.Session()
