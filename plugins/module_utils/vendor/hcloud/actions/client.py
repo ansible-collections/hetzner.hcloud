@@ -4,7 +4,7 @@ import time
 import warnings
 from typing import TYPE_CHECKING, Any, NamedTuple
 
-from ..core import BoundModelBase, ClientEntityBase, Meta
+from ..core import BoundModelBase, Meta, ResourceClientBase
 from .domain import Action, ActionFailedException, ActionTimeoutException
 
 if TYPE_CHECKING:
@@ -50,11 +50,19 @@ class ActionsPageResult(NamedTuple):
     meta: Meta
 
 
-class ResourceActionsClient(ClientEntityBase):
+class ResourceActionsClient(ResourceClientBase):
     _resource: str
 
-    def __init__(self, client: Client, resource: str | None):
-        super().__init__(client)
+    def __init__(self, client: ResourceClientBase | Client, resource: str | None):
+        if isinstance(client, ResourceClientBase):
+            super().__init__(client._parent)
+            # Use the same base client as the the resource base client. Allows us to
+            # choose the base client outside of the ResourceActionsClient.
+            self._client = client._client
+        else:
+            # Backward compatibility, defaults to the parent ("top level") base client (`_client`).
+            super().__init__(client)
+
         self._resource = resource or ""
 
     def get_by_id(self, id: int) -> BoundAction:
@@ -67,7 +75,7 @@ class ResourceActionsClient(ClientEntityBase):
             url=f"{self._resource}/actions/{id}",
             method="GET",
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def get_list(
         self,
@@ -104,7 +112,7 @@ class ResourceActionsClient(ClientEntityBase):
             params=params,
         )
         actions = [
-            BoundAction(self._client.actions, action_data)
+            BoundAction(self._parent.actions, action_data)
             for action_data in response["actions"]
         ]
         return ActionsPageResult(actions, Meta.parse_meta(response))

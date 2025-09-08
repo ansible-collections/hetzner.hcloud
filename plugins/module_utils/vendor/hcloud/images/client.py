@@ -4,7 +4,7 @@ import warnings
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 from ..actions import ActionsPageResult, BoundAction, ResourceActionsClient
-from ..core import BoundModelBase, ClientEntityBase, Meta
+from ..core import BoundModelBase, Meta, ResourceClientBase
 from .domain import Image
 
 if TYPE_CHECKING:
@@ -23,12 +23,12 @@ class BoundImage(BoundModelBase, Image):
         created_from = data.get("created_from")
         if created_from is not None:
             data["created_from"] = BoundServer(
-                client._client.servers, created_from, complete=False
+                client._parent.servers, created_from, complete=False
             )
         bound_to = data.get("bound_to")
         if bound_to is not None:
             data["bound_to"] = BoundServer(
-                client._client.servers, {"id": bound_to}, complete=False
+                client._parent.servers, {"id": bound_to}, complete=False
             )
 
         super().__init__(client, data)
@@ -112,8 +112,8 @@ class ImagesPageResult(NamedTuple):
     meta: Meta
 
 
-class ImagesClient(ClientEntityBase):
-    _client: Client
+class ImagesClient(ResourceClientBase):
+    _base_url = "/images"
 
     actions: ResourceActionsClient
     """Images scoped actions client
@@ -123,7 +123,7 @@ class ImagesClient(ClientEntityBase):
 
     def __init__(self, client: Client):
         super().__init__(client)
-        self.actions = ResourceActionsClient(client, "/images")
+        self.actions = ResourceActionsClient(client, self._base_url)
 
     def get_actions_list(
         self,
@@ -156,12 +156,12 @@ class ImagesClient(ClientEntityBase):
         if per_page is not None:
             params["per_page"] = per_page
         response = self._client.request(
-            url=f"/images/{image.id}/actions",
+            url=f"{self._base_url}/{image.id}/actions",
             method="GET",
             params=params,
         )
         actions = [
-            BoundAction(self._client.actions, action_data)
+            BoundAction(self._parent.actions, action_data)
             for action_data in response["actions"]
         ]
         return ActionsPageResult(actions, Meta.parse_meta(response))
@@ -194,7 +194,7 @@ class ImagesClient(ClientEntityBase):
         :param id: int
         :return: :class:`BoundImage <hcloud.images.client.BoundImage`
         """
-        response = self._client.request(url=f"/images/{id}", method="GET")
+        response = self._client.request(url=f"{self._base_url}/{id}", method="GET")
         return BoundImage(self, response["image"])
 
     def get_list(
@@ -255,7 +255,7 @@ class ImagesClient(ClientEntityBase):
             params["status"] = per_page
         if include_deprecated is not None:
             params["include_deprecated"] = include_deprecated
-        response = self._client.request(url="/images", method="GET", params=params)
+        response = self._client.request(url=self._base_url, method="GET", params=params)
         images = [BoundImage(self, image_data) for image_data in response["images"]]
 
         return ImagesPageResult(images, Meta.parse_meta(response))
@@ -371,7 +371,7 @@ class ImagesClient(ClientEntityBase):
         if labels is not None:
             data.update({"labels": labels})
         response = self._client.request(
-            url=f"/images/{image.id}", method="PUT", json=data
+            url=f"{self._base_url}/{image.id}", method="PUT", json=data
         )
         return BoundImage(self, response["image"])
 
@@ -381,7 +381,7 @@ class ImagesClient(ClientEntityBase):
         :param :class:`BoundImage <hcloud.images.client.BoundImage>` or :class:`Image <hcloud.images.domain.Image>`
         :return: bool
         """
-        self._client.request(url=f"/images/{image.id}", method="DELETE")
+        self._client.request(url=f"{self._base_url}/{image.id}", method="DELETE")
         # Return allays true, because the API does not return an action for it. When an error occurs a APIException will be raised
         return True
 
@@ -402,8 +402,8 @@ class ImagesClient(ClientEntityBase):
             data.update({"delete": delete})
 
         response = self._client.request(
-            url=f"/images/{image.id}/actions/change_protection",
+            url=f"{self._base_url}/{image.id}/actions/change_protection",
             method="POST",
             json=data,
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])

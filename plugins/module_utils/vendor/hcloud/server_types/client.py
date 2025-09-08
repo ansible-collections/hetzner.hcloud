@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, NamedTuple
+from typing import Any, NamedTuple
 
-from ..core import BoundModelBase, ClientEntityBase, Meta
+from ..core import BoundModelBase, Meta, ResourceClientBase
 from .domain import ServerType
-
-if TYPE_CHECKING:
-    from .._client import Client
 
 
 class BoundServerType(BoundModelBase, ServerType):
@@ -20,8 +17,8 @@ class ServerTypesPageResult(NamedTuple):
     meta: Meta
 
 
-class ServerTypesClient(ClientEntityBase):
-    _client: Client
+class ServerTypesClient(ResourceClientBase):
+    _base_url = "/server_types"
 
     def get_by_id(self, id: int) -> BoundServerType:
         """Returns a specific Server Type.
@@ -29,7 +26,7 @@ class ServerTypesClient(ClientEntityBase):
         :param id: int
         :return: :class:`BoundServerType <hcloud.server_types.client.BoundServerType>`
         """
-        response = self._client.request(url=f"/server_types/{id}", method="GET")
+        response = self._client.request(url=f"{self._base_url}/{id}", method="GET")
         return BoundServerType(self, response["server_type"])
 
     def get_list(
@@ -56,9 +53,7 @@ class ServerTypesClient(ClientEntityBase):
         if per_page is not None:
             params["per_page"] = per_page
 
-        response = self._client.request(
-            url="/server_types", method="GET", params=params
-        )
+        response = self._client.request(url=self._base_url, method="GET", params=params)
         server_types = [
             BoundServerType(self, server_type_data)
             for server_type_data in response["server_types"]

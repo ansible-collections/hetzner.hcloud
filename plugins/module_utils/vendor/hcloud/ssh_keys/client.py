@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, NamedTuple
+from typing import Any, NamedTuple
 
-from ..core import BoundModelBase, ClientEntityBase, Meta
+from ..core import BoundModelBase, Meta, ResourceClientBase
 from .domain import SSHKey
-
-if TYPE_CHECKING:
-    from .._client import Client
 
 
 class BoundSSHKey(BoundModelBase, SSHKey):
@@ -41,8 +38,8 @@ class SSHKeysPageResult(NamedTuple):
     meta: Meta
 
 
-class SSHKeysClient(ClientEntityBase):
-    _client: Client
+class SSHKeysClient(ResourceClientBase):
+    _base_url = "/ssh_keys"
 
     def get_by_id(self, id: int) -> BoundSSHKey:
         """Get a specific SSH Key by its ID
@@ -50,7 +47,7 @@ class SSHKeysClient(ClientEntityBase):
         :param id: int
         :return: :class:`BoundSSHKey <hcloud.ssh_keys.client.BoundSSHKey>`
         """
-        response = self._client.request(url=f"/ssh_keys/{id}", method="GET")
+        response = self._client.request(url=f"{self._base_url}/{id}", method="GET")
         return BoundSSHKey(self, response["ssh_key"])
 
     def get_list(
@@ -87,7 +84,7 @@ class SSHKeysClient(ClientEntityBase):
         if per_page is not None:
             params["per_page"] = per_page
 
-        response = self._client.request(url="/ssh_keys", method="GET", params=params)
+        response = self._client.request(url=self._base_url, method="GET", params=params)
 
         ssh_keys = [
             BoundSSHKey(self, server_data) for server_data in response["ssh_keys"]
@@ -153,7 +150,7 @@ class SSHKeysClient(ClientEntityBase):
         data: dict[str, Any] = {"name": name, "public_key": public_key}
         if labels is not None:
             data["labels"] = labels
-        response = self._client.request(url="/ssh_keys", method="POST", json=data)
+        response = self._client.request(url=self._base_url, method="POST", json=data)
         return BoundSSHKey(self, response["ssh_key"])
 
     def update(
@@ -177,7 +174,7 @@ class SSHKeysClient(ClientEntityBase):
         if labels is not None:
             data["labels"] = labels
         response = self._client.request(
-            url=f"/ssh_keys/{ssh_key.id}",
+            url=f"{self._base_url}/{ssh_key.id}",
             method="PUT",
             json=data,
         )
@@ -189,6 +186,6 @@ class SSHKeysClient(ClientEntityBase):
         :param ssh_key: :class:`BoundSSHKey <hcloud.ssh_keys.client.BoundSSHKey>` or  :class:`SSHKey <hcloud.ssh_keys.domain.SSHKey>`
         :return: True
         """
-        self._client.request(url=f"/ssh_keys/{ssh_key.id}", method="DELETE")
+        self._client.request(url=f"{self._base_url}/{ssh_key.id}", method="DELETE")
         # Return always true, because the API does not return an action for it. When an error occurs a HcloudAPIException will be raised
         return True

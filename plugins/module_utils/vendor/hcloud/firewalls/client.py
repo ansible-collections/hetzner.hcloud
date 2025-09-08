@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 from ..actions import ActionsPageResult, BoundAction, ResourceActionsClient
-from ..core import BoundModelBase, ClientEntityBase, Meta
+from ..core import BoundModelBase, Meta, ResourceClientBase
 from .domain import (
     CreateFirewallResponse,
     Firewall,
@@ -52,7 +52,7 @@ class BoundFirewall(BoundModelBase, Firewall):
                             type=resource["type"],
                             server=(
                                 BoundServer(
-                                    client._client.servers,
+                                    client._parent.servers,
                                     resource.get("server"),
                                     complete=False,
                                 )
@@ -68,7 +68,7 @@ class BoundFirewall(BoundModelBase, Firewall):
                         FirewallResource(
                             type=firewall_resource["type"],
                             server=BoundServer(
-                                client._client.servers,
+                                client._parent.servers,
                                 firewall_resource["server"],
                                 complete=False,
                             ),
@@ -183,8 +183,8 @@ class FirewallsPageResult(NamedTuple):
     meta: Meta
 
 
-class FirewallsClient(ClientEntityBase):
-    _client: Client
+class FirewallsClient(ResourceClientBase):
+    _base_url = "/firewalls"
 
     actions: ResourceActionsClient
     """Firewalls scoped actions client
@@ -194,7 +194,7 @@ class FirewallsClient(ClientEntityBase):
 
     def __init__(self, client: Client):
         super().__init__(client)
-        self.actions = ResourceActionsClient(client, "/firewalls")
+        self.actions = ResourceActionsClient(client, self._base_url)
 
     def get_actions_list(
         self,
@@ -227,12 +227,12 @@ class FirewallsClient(ClientEntityBase):
         if per_page is not None:
             params["per_page"] = per_page
         response = self._client.request(
-            url=f"/firewalls/{firewall.id}/actions",
+            url=f"{self._base_url}/{firewall.id}/actions",
             method="GET",
             params=params,
         )
         actions = [
-            BoundAction(self._client.actions, action_data)
+            BoundAction(self._parent.actions, action_data)
             for action_data in response["actions"]
         ]
         return ActionsPageResult(actions, Meta.parse_meta(response))
@@ -266,7 +266,7 @@ class FirewallsClient(ClientEntityBase):
         :param id: int
         :return: :class:`BoundFirewall <hcloud.firewalls.client.BoundFirewall>`
         """
-        response = self._client.request(url=f"/firewalls/{id}", method="GET")
+        response = self._client.request(url=f"{self._base_url}/{id}", method="GET")
         return BoundFirewall(self, response["firewall"])
 
     def get_list(
@@ -303,7 +303,7 @@ class FirewallsClient(ClientEntityBase):
             params["name"] = name
         if sort is not None:
             params["sort"] = sort
-        response = self._client.request(url="/firewalls", method="GET", params=params)
+        response = self._client.request(url=self._base_url, method="GET", params=params)
         firewalls = [
             BoundFirewall(self, firewall_data)
             for firewall_data in response["firewalls"]
@@ -373,12 +373,12 @@ class FirewallsClient(ClientEntityBase):
             data.update({"apply_to": []})
             for resource in resources:
                 data["apply_to"].append(resource.to_payload())
-        response = self._client.request(url="/firewalls", json=data, method="POST")
+        response = self._client.request(url=self._base_url, json=data, method="POST")
 
         actions = []
         if response.get("actions") is not None:
             actions = [
-                BoundAction(self._client.actions, action_data)
+                BoundAction(self._parent.actions, action_data)
                 for action_data in response["actions"]
             ]
 
@@ -409,7 +409,7 @@ class FirewallsClient(ClientEntityBase):
             data["name"] = name
 
         response = self._client.request(
-            url=f"/firewalls/{firewall.id}",
+            url=f"{self._base_url}/{firewall.id}",
             method="PUT",
             json=data,
         )
@@ -422,7 +422,7 @@ class FirewallsClient(ClientEntityBase):
         :return: boolean
         """
         self._client.request(
-            url=f"/firewalls/{firewall.id}",
+            url=f"{self._base_url}/{firewall.id}",
             method="DELETE",
         )
         # Return always true, because the API does not return an action for it. When an error occurs a HcloudAPIException will be raised
@@ -443,12 +443,12 @@ class FirewallsClient(ClientEntityBase):
         for rule in rules:
             data["rules"].append(rule.to_payload())
         response = self._client.request(
-            url=f"/firewalls/{firewall.id}/actions/set_rules",
+            url=f"{self._base_url}/{firewall.id}/actions/set_rules",
             method="POST",
             json=data,
         )
         return [
-            BoundAction(self._client.actions, action_data)
+            BoundAction(self._parent.actions, action_data)
             for action_data in response["actions"]
         ]
 
@@ -467,12 +467,12 @@ class FirewallsClient(ClientEntityBase):
         for resource in resources:
             data["apply_to"].append(resource.to_payload())
         response = self._client.request(
-            url=f"/firewalls/{firewall.id}/actions/apply_to_resources",
+            url=f"{self._base_url}/{firewall.id}/actions/apply_to_resources",
             method="POST",
             json=data,
         )
         return [
-            BoundAction(self._client.actions, action_data)
+            BoundAction(self._parent.actions, action_data)
             for action_data in response["actions"]
         ]
 
@@ -491,11 +491,11 @@ class FirewallsClient(ClientEntityBase):
         for resource in resources:
             data["remove_from"].append(resource.to_payload())
         response = self._client.request(
-            url=f"/firewalls/{firewall.id}/actions/remove_from_resources",
+            url=f"{self._base_url}/{firewall.id}/actions/remove_from_resources",
             method="POST",
             json=data,
         )
         return [
-            BoundAction(self._client.actions, action_data)
+            BoundAction(self._parent.actions, action_data)
             for action_data in response["actions"]
         ]

@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, NamedTuple
+from typing import Any, NamedTuple
 
-from ..core import BoundModelBase, ClientEntityBase, Meta
+from ..core import BoundModelBase, Meta, ResourceClientBase
 from .domain import Location
-
-if TYPE_CHECKING:
-    from .._client import Client
 
 
 class BoundLocation(BoundModelBase, Location):
@@ -20,8 +17,8 @@ class LocationsPageResult(NamedTuple):
     meta: Meta
 
 
-class LocationsClient(ClientEntityBase):
-    _client: Client
+class LocationsClient(ResourceClientBase):
+    _base_url = "/locations"
 
     def get_by_id(self, id: int) -> BoundLocation:
         """Get a specific location by its ID.
@@ -29,7 +26,7 @@ class LocationsClient(ClientEntityBase):
         :param id: int
         :return: :class:`BoundLocation <hcloud.locations.client.BoundLocation>`
         """
-        response = self._client.request(url=f"/locations/{id}", method="GET")
+        response = self._client.request(url=f"{self._base_url}/{id}", method="GET")
         return BoundLocation(self, response["location"])
 
     def get_list(
@@ -56,7 +53,7 @@ class LocationsClient(ClientEntityBase):
         if per_page is not None:
             params["per_page"] = per_page
 
-        response = self._client.request(url="/locations", method="GET", params=params)
+        response = self._client.request(url=self._base_url, method="GET", params=params)
         locations = [
             BoundLocation(self, location_data)
             for location_data in response["locations"]

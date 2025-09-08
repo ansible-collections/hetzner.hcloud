@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 from ..actions import ActionsPageResult, BoundAction, ResourceActionsClient
-from ..core import BoundModelBase, ClientEntityBase, Meta
+from ..core import BoundModelBase, Meta, ResourceClientBase
 from .domain import Network, NetworkRoute, NetworkSubnet
 
 if TYPE_CHECKING:
@@ -32,7 +32,7 @@ class BoundNetwork(BoundModelBase, Network):
         servers = data.get("servers", [])
         if servers is not None:
             servers = [
-                BoundServer(client._client.servers, {"id": server}, complete=False)
+                BoundServer(client._parent.servers, {"id": server}, complete=False)
                 for server in servers
             ]
             data["servers"] = servers
@@ -166,8 +166,8 @@ class NetworksPageResult(NamedTuple):
     meta: Meta
 
 
-class NetworksClient(ClientEntityBase):
-    _client: Client
+class NetworksClient(ResourceClientBase):
+    _base_url = "/networks"
 
     actions: ResourceActionsClient
     """Networks scoped actions client
@@ -177,7 +177,7 @@ class NetworksClient(ClientEntityBase):
 
     def __init__(self, client: Client):
         super().__init__(client)
-        self.actions = ResourceActionsClient(client, "/networks")
+        self.actions = ResourceActionsClient(client, self._base_url)
 
     def get_by_id(self, id: int) -> BoundNetwork:
         """Get a specific network
@@ -185,7 +185,7 @@ class NetworksClient(ClientEntityBase):
         :param id: int
         :return: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>`
         """
-        response = self._client.request(url=f"/networks/{id}", method="GET")
+        response = self._client.request(url=f"{self._base_url}/{id}", method="GET")
         return BoundNetwork(self, response["network"])
 
     def get_list(
@@ -217,7 +217,7 @@ class NetworksClient(ClientEntityBase):
         if per_page is not None:
             params["per_page"] = per_page
 
-        response = self._client.request(url="/networks", method="GET", params=params)
+        response = self._client.request(url=self._base_url, method="GET", params=params)
 
         networks = [
             BoundNetwork(self, network_data) for network_data in response["networks"]
@@ -301,7 +301,7 @@ class NetworksClient(ClientEntityBase):
         if labels is not None:
             data["labels"] = labels
 
-        response = self._client.request(url="/networks", method="POST", json=data)
+        response = self._client.request(url=self._base_url, method="POST", json=data)
 
         return BoundNetwork(self, response["network"])
 
@@ -335,7 +335,7 @@ class NetworksClient(ClientEntityBase):
             data.update({"labels": labels})
 
         response = self._client.request(
-            url=f"/networks/{network.id}",
+            url=f"{self._base_url}/{network.id}",
             method="PUT",
             json=data,
         )
@@ -347,7 +347,7 @@ class NetworksClient(ClientEntityBase):
         :param network: :class:`BoundNetwork <hcloud.networks.client.BoundNetwork>` or :class:`Network <hcloud.networks.domain.Network>`
         :return: boolean
         """
-        self._client.request(url=f"/networks/{network.id}", method="DELETE")
+        self._client.request(url=f"{self._base_url}/{network.id}", method="DELETE")
         return True
 
     def get_actions_list(
@@ -382,12 +382,12 @@ class NetworksClient(ClientEntityBase):
             params["per_page"] = per_page
 
         response = self._client.request(
-            url=f"/networks/{network.id}/actions",
+            url=f"{self._base_url}/{network.id}/actions",
             method="GET",
             params=params,
         )
         actions = [
-            BoundAction(self._client.actions, action_data)
+            BoundAction(self._parent.actions, action_data)
             for action_data in response["actions"]
         ]
         return ActionsPageResult(actions, Meta.parse_meta(response))
@@ -436,11 +436,11 @@ class NetworksClient(ClientEntityBase):
             data["vswitch_id"] = subnet.vswitch_id
 
         response = self._client.request(
-            url=f"/networks/{network.id}/actions/add_subnet",
+            url=f"{self._base_url}/{network.id}/actions/add_subnet",
             method="POST",
             json=data,
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def delete_subnet(
         self,
@@ -457,11 +457,11 @@ class NetworksClient(ClientEntityBase):
         data: dict[str, Any] = {"ip_range": subnet.ip_range}
 
         response = self._client.request(
-            url=f"/networks/{network.id}/actions/delete_subnet",
+            url=f"{self._base_url}/{network.id}/actions/delete_subnet",
             method="POST",
             json=data,
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def add_route(
         self,
@@ -481,11 +481,11 @@ class NetworksClient(ClientEntityBase):
         }
 
         response = self._client.request(
-            url=f"/networks/{network.id}/actions/add_route",
+            url=f"{self._base_url}/{network.id}/actions/add_route",
             method="POST",
             json=data,
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def delete_route(
         self,
@@ -505,11 +505,11 @@ class NetworksClient(ClientEntityBase):
         }
 
         response = self._client.request(
-            url=f"/networks/{network.id}/actions/delete_route",
+            url=f"{self._base_url}/{network.id}/actions/delete_route",
             method="POST",
             json=data,
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def change_ip_range(
         self,
@@ -526,11 +526,11 @@ class NetworksClient(ClientEntityBase):
         data: dict[str, Any] = {"ip_range": ip_range}
 
         response = self._client.request(
-            url=f"/networks/{network.id}/actions/change_ip_range",
+            url=f"{self._base_url}/{network.id}/actions/change_ip_range",
             method="POST",
             json=data,
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
 
     def change_protection(
         self,
@@ -549,8 +549,8 @@ class NetworksClient(ClientEntityBase):
             data.update({"delete": delete})
 
         response = self._client.request(
-            url=f"/networks/{network.id}/actions/change_protection",
+            url=f"{self._base_url}/{network.id}/actions/change_protection",
             method="POST",
             json=data,
         )
-        return BoundAction(self._client.actions, response["action"])
+        return BoundAction(self._parent.actions, response["action"])
