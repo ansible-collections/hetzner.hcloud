@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.2.0...5.3.0) (2025-09-19)
+
+
+### Features
+
+* return server type category ([#687](https://github.com/ansible-collections/hetzner.hcloud/issues/687)) ([3d809cb](https://github.com/ansible-collections/hetzner.hcloud/commit/3d809cbc6f21d26085e7dd6aaa7768599456f845))
+
 ## [5.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.1.0...5.2.0) (2025-08-14)
 
 

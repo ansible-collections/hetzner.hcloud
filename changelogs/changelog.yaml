@@ -682,3 +682,10 @@ releases:
     - missing-volume-attachment-meta.yml
     - rename-volume.yml
     release_date: '2025-08-14'
+  5.3.0:
+    changes:
+      minor_changes:
+      - server_type_info - Return new Server Type ``category`` property.
+    fragments:
+    - add-server-type-category.yml
+    release_date: '2025-09-19'

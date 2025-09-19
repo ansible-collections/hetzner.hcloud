@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v5.3.0
+======
+
+Minor Changes
+-------------
+
+- server_type_info - Return new Server Type ``category`` property.
+
 v5.2.0
 ======
 
