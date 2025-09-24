@@ -340,11 +340,12 @@ root_password:
     sample: YItygq1v3GYjjMomLaKc
 """
 
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 from typing import TYPE_CHECKING, Literal
 
 from ansible.module_utils.basic import AnsibleModule
 
+from ..module_utils.deprecation import deprecated_server_type_warning
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.firewalls import FirewallResource
@@ -408,7 +409,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
     def _create_server(self):
         self.module.fail_on_missing_params(required_params=["name", "server_type", "image"])
 
-        server_type = self._get_server_type()
+        server_type = self._client_get_by_name_or_id("server_types", self.module.params.get("server_type"))
         image = self._get_image(server_type)
 
         params = {
@@ -458,17 +459,27 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 for name_or_id in self.module.params.get("firewalls")
             ]
 
+        server_type_location = None
+
         if self.module.params.get("location") is None and self.module.params.get("datacenter") is None:
             # When not given, the API will choose the location.
             params["location"] = None
             params["datacenter"] = None
         elif self.module.params.get("location") is not None and self.module.params.get("datacenter") is None:
             params["location"] = self._client_get_by_name_or_id("locations", self.module.params.get("location"))
+            server_type_location = params["location"]
         elif self.module.params.get("location") is None and self.module.params.get("datacenter") is not None:
             params["datacenter"] = self._client_get_by_name_or_id("datacenters", self.module.params.get("datacenter"))
+            server_type_location = params["datacenter"].location
 
         if self.module.params.get("state") == "stopped" or self.module.params.get("state") == "created":
             params["start_after_create"] = False
+
+        deprecated_server_type_warning(
+            self.module,
+            server_type,
+            server_type_location,
+        )
 
         if not self.module.check_mode:
             try:
@@ -535,35 +546,6 @@ class AnsibleHCloudServer(AnsibleHCloud):
                     )
                 )
         return image
-
-    def _get_server_type(self) -> ServerType:
-        server_type = self._client_get_by_name_or_id("server_types", self.module.params.get("server_type"))
-
-        self._check_and_warn_deprecated_server(server_type)
-        return server_type
-
-    def _check_and_warn_deprecated_server(self, server_type: ServerType) -> None:
-        if server_type.deprecation is None:
-            return
-
-        if server_type.deprecation.unavailable_after < datetime.now(timezone.utc):
-            self.module.warn(
-                f"Attention: The server plan {server_type.name} is deprecated and can "
-                "no longer be ordered. Existing servers of that plan will continue to "
-                "work as before and no action is required on your part. "
-                "It is possible to migrate this server to another server plan by setting "
-                "the server_type parameter on the hetzner.hcloud.server module."
-            )
-        else:
-            server_type_unavailable_date = server_type.deprecation.unavailable_after.strftime("%Y-%m-%d")
-            self.module.warn(
-                f"Attention: The server plan {server_type.name} is deprecated and will "
-                f"no longer be available for order as of {server_type_unavailable_date}. "
-                "Existing servers of that plan will continue to work as before and no "
-                "action is required on your part. "
-                "It is possible to migrate this server to another server plan by setting "
-                "the server_type parameter on the hetzner.hcloud.server module."
-            )
 
     def _update_server(self) -> None:
         try:
@@ -686,8 +668,21 @@ class AnsibleHCloudServer(AnsibleHCloud):
         # Return if nothing changed
         if current.has_id_or_name(wanted):
             # Check if we should warn for using an deprecated server type
-            self._check_and_warn_deprecated_server(self.hcloud_server.server_type)
+            deprecated_server_type_warning(
+                self.module,
+                self.hcloud_server.server_type,
+                self.hcloud_server.datacenter.location,
+            )
             return
+
+        server_type = self._client_get_by_name_or_id("server_types", wanted)
+
+        # Check if we should warn for updating to a deprecated server type
+        deprecated_server_type_warning(
+            self.module,
+            server_type,
+            self.hcloud_server.datacenter.location,
+        )
 
         self.stop_server_if_forced()
 
@@ -695,7 +690,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
             upgrade_disk = self.module.params.get("upgrade_disk")
 
             action = self.hcloud_server.change_type(
-                server_type=self._get_server_type(),
+                server_type=server_type,
                 upgrade_disk=upgrade_disk,
             )
             # Upgrading a server takes 160 seconds on average, upgrading the disk should

@@ -100,6 +100,36 @@ hcloud_server_type_info:
             returned: always
             type: str
             sample: x86
+        locations:
+            description: List of supported Locations
+            returned: always
+            type: list
+            contains:
+                id:
+                    description: Numeric identifier of the Location
+                    returned: always
+                    type: int
+                    sample: 1
+                name:
+                    description: Name of the Location
+                    returned: always
+                    type: str
+                    sample: fsn1
+                deprecation:
+                    description: Wether the Server Type is deprecated in the Location.
+                    returned: when deprecated
+                    type: dict
+                    contains:
+                        announced:
+                            description: Date of the deprecation announcement.
+                            returned: when deprecated
+                            type: str
+                            sample: "2025-09-09T09:00:00Z"
+                        unavailable_after:
+                            description: Date after which the Server Type will be unavailable for new order.
+                            returned: when deprecated
+                            type: str
+                            sample: "2025-12-09T09:00:00Z"
         included_traffic:
             description: |
                 Free traffic per month in bytes
@@ -113,6 +143,9 @@ hcloud_server_type_info:
             description: |
               Describes if, when & how the resources was deprecated.
               If this field is set to None the resource is not deprecated. If it has a value, it is considered deprecated.
+
+              B(Deprecated): This field is deprecated and will gradually be phased starting 24 September 2025. Use the locations field instead.
+              See U(https://docs.hetzner.cloud/changelog#2025-09-24-per-location-server-types).
             returned: success
             type: dict
             contains:
@@ -163,6 +196,21 @@ class AnsibleHCloudServerTypeInfo(AnsibleHCloud):
                     "storage_type": server_type.storage_type,
                     "cpu_type": server_type.cpu_type,
                     "architecture": server_type.architecture,
+                    "locations": [
+                        {
+                            "id": o.location.id,
+                            "name": o.location.name,
+                            "deprecation": (
+                                {
+                                    "announced": o.deprecation.announced.isoformat(),
+                                    "unavailable_after": o.deprecation.unavailable_after.isoformat(),
+                                }
+                                if o.deprecation is not None
+                                else None
+                            ),
+                        }
+                        for o in server_type.locations or []
+                    ],
                     "included_traffic": server_type.included_traffic,
                     "deprecation": (
                         {

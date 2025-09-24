@@ -1,0 +1,3 @@
+minor_changes:
+  - server_type_info - Return new Server Type ``locations`` property. The new property defines a list of supported Locations and additional per Locations details such as deprecations information.
+  - server_type_info - Deprecate Server Type ``deprecation`` property. The property will gradually be phased out as per Locations deprecations are being announced. Please use the new per Locations deprecation information instead.
