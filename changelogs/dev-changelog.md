@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.3.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.2.0...5.3.0) (2025-09-26)
+
+
+### Features
+
+* per location server types ([#692](https://github.com/ansible-collections/hetzner.hcloud/issues/692)) ([826e6a5](https://github.com/ansible-collections/hetzner.hcloud/commit/826e6a5309b3b46d1a0a1d43933efe2439ff1fd3))
+* return server type category ([#687](https://github.com/ansible-collections/hetzner.hcloud/issues/687)) ([3d809cb](https://github.com/ansible-collections/hetzner.hcloud/commit/3d809cbc6f21d26085e7dd6aaa7768599456f845))
+
+
+### Bug Fixes
+
+* wait for floating ip assign action ([#694](https://github.com/ansible-collections/hetzner.hcloud/issues/694)) ([c3ec5d1](https://github.com/ansible-collections/hetzner.hcloud/commit/c3ec5d1dcc9e0662c690da06d7f22e7121c46ec0))
+
 ## [5.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.1.0...5.2.0) (2025-08-14)
 
 
