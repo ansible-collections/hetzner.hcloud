@@ -4,6 +4,21 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v5.3.0
+======
+
+Minor Changes
+-------------
+
+- server_type_info - Deprecate Server Type ``deprecation`` property. The property will gradually be phased out as per Locations deprecations are being announced. Please use the new per Locations deprecation information instead.
+- server_type_info - Return new Server Type ``category`` property.
+- server_type_info - Return new Server Type ``locations`` property. The new property defines a list of supported Locations and additional per Locations details such as deprecations information.
+
+Bugfixes
+--------
+
+- floating_ip - Wait for the Floating IP assign action to complete to reduce chances of running into ``locked`` errors.
+
 v5.2.0
 ======
 
