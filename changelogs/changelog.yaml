@@ -682,3 +682,50 @@ releases:
     - missing-volume-attachment-meta.yml
     - rename-volume.yml
     release_date: '2025-08-14'
+  5.3.0:
+    changes:
+      bugfixes:
+      - floating_ip - Wait for the Floating IP assign action to complete to reduce
+        chances of running into ``locked`` errors.
+      deprecated_features:
+      - server_type_info - Deprecate Server Type ``deprecation`` property.
+      minor_changes:
+      - server_type_info - Return new Server Type ``category`` property.
+      - server_type_info - Return new Server Type ``locations`` property.
+      release_summary: "`Server Types`_ now depend on `Locations`_.\n\n- We added
+        a new ``locations`` property to the `Server Types`_ resource. The new\n  property
+        defines a list of supported `Locations`_ and additional per `Locations`_\n
+        \ details such as deprecations information.\n\n- We deprecated the ``deprecation``
+        property from the `Server Types`_ resource. The\n  property will gradually
+        be phased out as per `Locations`_ deprecations are being\n  announced. Please
+        use the new per `Locations`_ deprecation information instead.\n\nSee our `changelog`_
+        for more details.\n\n**Upgrading**\n\n.. code:: yaml\n\n    # Before\n    ---\n
+        \   - name: Validate server type\n      hosts: localhost\n      connection:
+        local\n      tasks:\n        - name: Fetch server type info\n          hetzner.hcloud.server_type_info:\n
+        \           name: cx22\n          register: server_type\n\n        - name:
+        Ensure server type exists\n          ansible.builtin.assert:\n            fail_msg:
+        server type does not exists\n            that:\n              - server_type.hcloud_server_type_info
+        | count == 1\n\n        - name: Ensure server type is not deprecated\n          ansible.builtin.assert:\n
+        \           fail_msg: server type is deprecated\n            that:\n              -
+        server_type.hcloud_server_type_info[0].deprecation is none\n\n.. code:: yaml\n\n
+        \   # After\n    ---\n    - name: Validate server type\n      hosts: localhost\n
+        \     connection: local\n      tasks:\n        - name: Fetch location info\n
+        \         hetzner.hcloud.location_info:\n            name: fsn1\n          register:
+        location\n\n        - name: Fetch server type info\n          hetzner.hcloud.server_type_info:\n
+        \           name: cx22\n          register: server_type\n\n        - name:
+        Ensure server type exists\n          ansible.builtin.assert:\n            fail_msg:
+        server type does not exists\n            that:\n              - server_type.hcloud_server_type_info
+        | count == 1\n\n        - name: Extract server type location info\n          ansible.builtin.set_fact:\n
+        \           server_type_location: >\n              {{\n                server_type.hcloud_server_type_info[0].locations\n
+        \               | selectattr(\"name\", \"eq\", location.hcloud_location_info[0].name)\n
+        \               | first\n              }}\n\n        - name: Ensure server
+        type is not deprecated\n          ansible.builtin.assert:\n            fail_msg:
+        server type is deprecated in location\n            that:\n              -
+        server_type_location.deprecation is none\n\n.. _Server Types: https://docs.hetzner.cloud/reference/cloud#server-types\n..
+        _Locations: https://docs.hetzner.cloud/reference/cloud#locations\n.. _changelog:
+        https://docs.hetzner.cloud/changelog#2025-09-24-per-location-server-types\n"
+    fragments:
+    - add-server-type-category.yml
+    - per-location-server-types.yml
+    - wait-floating-ip-assign-action.yml
+    release_date: '2025-09-26'

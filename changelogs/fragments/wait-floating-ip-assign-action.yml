@@ -1,2 +1,0 @@
-bugfixes:
-  - floating_ip - Wait for the Floating IP assign action to complete to reduce chances of running into ``locked`` errors.
