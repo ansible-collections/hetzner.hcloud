@@ -475,7 +475,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
         if self.module.params.get("state") == "stopped" or self.module.params.get("state") == "created":
             params["start_after_create"] = False
 
-        deprecated_server_type_warning(
+        server_type_deprecation_printed = deprecated_server_type_warning(
             self.module,
             server_type,
             server_type_location,
@@ -484,6 +484,14 @@ class AnsibleHCloudServer(AnsibleHCloud):
         if not self.module.check_mode:
             try:
                 resp = self.client.servers.create(**params)
+
+                if not server_type_deprecation_printed:
+                    deprecated_server_type_warning(
+                        self.module,
+                        resp.server.server_type,
+                        resp.server.datacenter.location,
+                    )
+
                 self.result["root_password"] = resp.root_password
                 # Action should take 60 to 90 seconds on average, but can be >10m when creating a
                 # server from a custom images
