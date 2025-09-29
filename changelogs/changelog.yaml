@@ -729,3 +729,10 @@ releases:
     - per-location-server-types.yml
     - wait-floating-ip-assign-action.yml
     release_date: '2025-09-26'
+  5.3.1:
+    changes:
+      bugfixes:
+      - server - Also check server type deprecation after server creation.
+    fragments:
+    - server-type-deprecation.yml
+    release_date: '2025-09-29'

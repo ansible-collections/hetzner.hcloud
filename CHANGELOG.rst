@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v5.3.1
+======
+
+Bugfixes
+--------
+
+- server - Also check server type deprecation after server creation.
+
 v5.3.0
 ======
 

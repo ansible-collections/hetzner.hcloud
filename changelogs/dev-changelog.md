@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.1](https://github.com/ansible-collections/hetzner.hcloud/compare/5.3.0...5.3.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* also check server type deprecation after server creation ([#696](https://github.com/ansible-collections/hetzner.hcloud/issues/696)) ([c4dc19c](https://github.com/ansible-collections/hetzner.hcloud/commit/c4dc19c6750afa26269f77b8bc855175fcc01516))
+
 ## [5.3.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.2.0...5.3.0) (2025-09-26)
 
 
