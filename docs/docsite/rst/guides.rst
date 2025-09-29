@@ -48,3 +48,22 @@ example if you want to store your API token in a vault:
             server_type: cx22
             image: debian-12
             state: present
+
+Experimental features
+=====================
+
+Experimental features are published as part of our regular releases (e.g. a product
+public beta). During an experimental phase, breaking changes on those features may occur
+within minor releases.
+
+The stability of experimental features is not related to the stability of its upstream API.
+
+Experimental features have different levels of maturity (e.g. experimental, alpha, beta)
+based on the maturity of the upstream API.
+
+While experimental features will be announced in the release notes, you can also find
+whether a module, or filter is experimental in its documentation:
+
+.. code-block:: txt
+
+    Experimental: $PRODUCT is $MATURITY, breaking changes may occur within minor releases. See https://docs.hetzner.cloud/changelog#$SLUG for more details.

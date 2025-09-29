@@ -91,14 +91,18 @@ To publish experimental features as part of regular releases:
 
   description:
       - Create, update and manage Product on the Hetzner Cloud.
-      - B(Experimental:) Product is experimental, breaking changes may occur within minor releases. See https://docs.hetzner.cloud/changelog#new-product for more details.
+      - B(Experimental:) $PRODUCT is $MATURITY, breaking changes may occur within minor releases. See https://docs.hetzner.cloud/changelog#$SLUG for more details.
   """
   ```
 
 - a `Experimental` warning, including a link to a changelog entry, must be logged when experimental plugins are being used:
 
   ```py
-  product_experimental_warning = experimental_warning_function("Product", "https://docs.hetzner.cloud/changelog#new-product")
+  product_experimental_warning = experimental_warning_function(
+      "$PRODUCT",
+      "$MATURITY",
+      "https://docs.hetzner.cloud/changelog#$SLUG",
+  )
 
   class AnsibleProduct(AnsibleHCloud):
       def __init__(self, module: AnsibleModule):
