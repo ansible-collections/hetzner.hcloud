@@ -18,7 +18,7 @@ def deprecated_server_type_warning(
     module: AnsibleModule,
     server_type: BoundServerType,
     location: BoundLocation | None = None,
-) -> None:
+) -> bool:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         if server_type.deprecation is not None:
@@ -40,7 +40,7 @@ def deprecated_server_type_warning(
                     )
                     + DEPRECATED_EXISTING_SERVERS,
                 )
-            return
+            return True
 
     deprecated_locations: list[ServerTypeLocation] = []
     unavailable_locations: list[ServerTypeLocation] = []
@@ -52,13 +52,13 @@ def deprecated_server_type_warning(
                 unavailable_locations.append(o)
 
     if not deprecated_locations:
-        return
+        return False
 
     # Warn when the server type is deprecated in the given location
     if location:
         found = [o for o in deprecated_locations if location.name == o.location.name]
         if not found:
-            return
+            return False
 
         deprecated_location = found[0]
 
@@ -83,11 +83,11 @@ def deprecated_server_type_warning(
                 + DEPRECATED_EXISTING_SERVERS,
             )
 
-        return
+        return True
 
     # No location given, only warn when all locations are deprecated
     if len(server_type.locations) != len(deprecated_locations):
-        return
+        return False
 
     if unavailable_locations:
 
@@ -122,3 +122,5 @@ def deprecated_server_type_warning(
             )
             + DEPRECATED_EXISTING_SERVERS,
         )
+
+    return True
