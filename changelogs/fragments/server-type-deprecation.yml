@@ -1,2 +1,0 @@
-bugfixes:
-  - server - Also check server type deprecation after server creation.
