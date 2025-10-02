@@ -51,7 +51,7 @@ repos:
         args: [--strict]
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v25.9.0
+    rev: v25.9.1
     hooks:
       - id: ansible-lint
         name: ansible-lint
