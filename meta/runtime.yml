@@ -36,6 +36,10 @@ action_groups:
     - volume
     - volume_info
     - volume_attachment
+    - zone
+    - zone_info
+    - zone_rrset
+    - zone_rrset_info
 
 plugin_routing:
   modules:
@@ -107,3 +111,11 @@ plugin_routing:
       redirect: hetzner.hcloud.volume
     hcloud_volume_attachment:
       redirect: hetzner.hcloud.volume_attachment
+    hcloud_zone:
+      redirect: hetzner.hcloud.zone
+    hcloud_zone_info:
+      redirect: hetzner.hcloud.zone_info
+    hcloud_zone_rrset:
+      redirect: hetzner.hcloud.zone_rrset
+    hcloud_zone_rrset_info:
+      redirect: hetzner.hcloud.zone_rrset_info

@@ -1,0 +1,9 @@
+---
+- name: Create test_zone
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    mode: primary
+    ttl: 10800
+    labels:
+      key: value
+  register: test_zone

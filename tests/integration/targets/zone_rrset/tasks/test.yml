@@ -1,0 +1,186 @@
+---
+- name: Test missing required parameters # noqa: args[module]
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ hcloud_zone_name }}"
+    state: present
+  ignore_errors: true
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "one of the following is required: id, name"'
+
+- name: Test create with check mode
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ hcloud_zone_name }}"
+    name: www
+    type: A
+    ttl: 300
+    labels:
+      key: value
+    records:
+      - value: 201.118.10.11
+        comment: web server 1
+      - value: 201.118.10.12
+        comment: web server 2
+  check_mode: true
+  register: result
+- name: Verify create with check mode
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test create
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ hcloud_zone_name }}"
+    name: www
+    type: A
+    ttl: 300
+    labels:
+      key: value
+    records:
+      - value: 201.118.10.11
+        comment: web server 1
+      - value: 201.118.10.12
+        comment: web server 2
+  register: result
+- name: Verify create
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_zone_rrset.zone == test_zone.hcloud_zone.id
+      - result.hcloud_zone_rrset.id == "www/A"
+      - result.hcloud_zone_rrset.name == "www"
+      - result.hcloud_zone_rrset.type == "A"
+      - result.hcloud_zone_rrset.ttl == 300
+      - result.hcloud_zone_rrset.labels.key == "value"
+      - result.hcloud_zone_rrset.change_protection == false
+      - result.hcloud_zone_rrset.records | count == 2
+      - result.hcloud_zone_rrset.records[0].value == "201.118.10.11"
+      - result.hcloud_zone_rrset.records[0].comment == "web server 1"
+      - result.hcloud_zone_rrset.records[1].value == "201.118.10.12"
+      - result.hcloud_zone_rrset.records[1].comment == "web server 2"
+
+- name: Test create idempotency
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ hcloud_zone_name }}"
+    name: www
+    type: A
+    ttl: 300
+    labels:
+      key: value
+    records:
+      - value: 201.118.10.11
+        comment: web server 1
+      - value: 201.118.10.12
+        comment: web server 2
+  register: result
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ hcloud_zone_name }}"
+    name: www
+    type: A
+    ttl: 60
+    labels:
+      key: changed
+      new: value
+    records:
+      - value: 201.118.10.11
+        comment: web server 1
+      - value: 201.118.10.13
+        comment: web server 3
+    change_protection: true
+  register: result
+- name: Verify update
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_zone_rrset.zone == test_zone.hcloud_zone.id
+      - result.hcloud_zone_rrset.id == "www/A"
+      - result.hcloud_zone_rrset.ttl == 60
+      - result.hcloud_zone_rrset.labels.key == "changed"
+      - result.hcloud_zone_rrset.labels.new == "value"
+      - result.hcloud_zone_rrset.change_protection == true
+      - result.hcloud_zone_rrset.records | count == 2
+      - result.hcloud_zone_rrset.records[0].value == "201.118.10.11"
+      - result.hcloud_zone_rrset.records[0].comment == "web server 1"
+      - result.hcloud_zone_rrset.records[1].value == "201.118.10.13"
+      - result.hcloud_zone_rrset.records[1].comment == "web server 3"
+
+- name: Test update idempotency
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ hcloud_zone_name }}"
+    name: www
+    type: A
+    ttl: 60
+    labels:
+      key: changed
+      new: value
+    records:
+      - value: 201.118.10.11
+        comment: web server 1
+      - value: 201.118.10.13
+        comment: web server 3
+    change_protection: true
+  register: result
+- name: Verify update idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test delete with change protection
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ hcloud_zone_name }}"
+    name: www
+    type: A
+    state: absent
+  ignore_errors: true
+  register: result
+- name: Verify delete with change protection
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - result.failure.code == "protected"
+
+- name: Test delete zone with change protection
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    state: absent
+  ignore_errors: true
+  register: result
+- name: Verify delete zone with change protection
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - result.failure.code == "protected"
+
+- name: Test update change protection
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ hcloud_zone_name }}"
+    name: www
+    type: A
+    change_protection: false
+  register: result
+- name: Verify update delete protection
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_zone_rrset.change_protection == false
+
+- name: Test delete
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ hcloud_zone_name }}"
+    name: www
+    type: A
+    state: absent
+  register: result
+- name: Verify delete
+  ansible.builtin.assert:
+    that:
+      - result is changed

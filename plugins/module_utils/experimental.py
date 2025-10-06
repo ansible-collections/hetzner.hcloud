@@ -32,3 +32,10 @@ def experimental_warning_function(product: str, maturity: str, url: str):
         module.warn(message)
 
     return fn
+
+
+dns_experimental_warning = experimental_warning_function(
+    "DNS API",
+    "in beta",
+    "https://docs.hetzner.cloud/changelog#2025-10-07-dns-beta",
+)

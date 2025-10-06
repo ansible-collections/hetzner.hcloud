@@ -1,0 +1,36 @@
+---
+- name: Create test_zone
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    mode: primary
+    ttl: 3600
+    labels:
+      key: value
+  register: test_zone
+
+- name: Create test_zone_rrset1
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ hcloud_zone_name }}"
+    name: www
+    type: A
+    ttl: 600
+    labels:
+      key: value
+    records:
+      - comment: webserver 1
+        value: 201.34.52.45
+      - comment: webserver 2
+        value: 201.34.52.46
+  register: test_zone_rrset1
+
+- name: Create test_zone_rrset2
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ hcloud_zone_name }}"
+    name: blog
+    type: A
+    records:
+      - comment: webserver 3
+        value: 201.34.52.47
+      - comment: webserver 4
+        value: 201.34.52.48
+  register: test_zone_rrset2

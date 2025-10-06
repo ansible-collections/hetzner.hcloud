@@ -1,0 +1,96 @@
+# Copyright: (c) 2025, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Gather hcloud_zone_rrset_info
+  hetzner.hcloud.zone_rrset_info:
+    zone: "{{ hcloud_zone_name }}"
+  register: result
+- name: Verify hcloud_zone_rrset_info
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_zone_rrset_info | list | count >= 1
+
+- name: Gather hcloud_zone_rrset_info in check mode
+  hetzner.hcloud.zone_rrset_info:
+    zone: "{{ hcloud_zone_name }}"
+  check_mode: true
+  register: result
+- name: Verify hcloud_zone_rrset_info in check mode
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_zone_rrset_info | list | count >= 1
+
+- name: Gather hcloud_zone_rrset_info with wrong zone
+  hetzner.hcloud.zone_rrset_info:
+    zone: invalid.de
+  ignore_errors: true
+  register: result
+- name: Verify hcloud_zone_rrset_info with wrong zone
+  ansible.builtin.assert:
+    that:
+      - result is failed
+
+- name: Gather hcloud_zone_rrset_info with correct id
+  hetzner.hcloud.zone_rrset_info:
+    zone: "{{ hcloud_zone_name }}"
+    id: www/A
+  register: result
+- name: Verify hcloud_zone_rrset_info with correct id
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_zone_rrset_info | list | count == 1
+
+- name: Gather hcloud_zone_rrset_info with wrong id
+  hetzner.hcloud.zone_rrset_info:
+    zone: "{{ hcloud_zone_name }}"
+    id: invalid/A
+  register: result
+- name: Verify hcloud_zone_rrset_info with wrong id
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_zone_rrset_info | list | count == 0
+
+- name: Gather hcloud_zone_rrset_info with correct name
+  hetzner.hcloud.zone_rrset_info:
+    zone: "{{ hcloud_zone_name }}"
+    name: www
+    type: A
+  register: result
+- name: Verify hcloud_zone_rrset_info with correct name
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_zone_rrset_info | list | count == 1
+
+- name: Gather hcloud_zone_rrset_info with wrong name
+  hetzner.hcloud.zone_rrset_info:
+    zone: "{{ hcloud_zone_name }}"
+    name: invalid
+    type: A
+  register: result
+- name: Verify hcloud_zone_rrset_info with wrong name
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_zone_rrset_info | list | count == 0
+
+- name: Gather hcloud_zone_rrset_info with correct label selector
+  hetzner.hcloud.zone_rrset_info:
+    zone: "{{ hcloud_zone_name }}"
+    label_selector: "key=value"
+  register: result
+- name: Verify hcloud_zone_rrset_info with correct label selector
+  ansible.builtin.assert:
+    that:
+      - >
+        result.hcloud_zone_rrset_info
+        | selectattr('id', 'equalto', "www/A")
+        | list | count == 1
+
+- name: Gather hcloud_zone_rrset_info with wrong label selector
+  hetzner.hcloud.zone_rrset_info:
+    zone: "{{ hcloud_zone_name }}"
+    label_selector: "key!=value"
+  register: result
+- name: Verify hcloud_zone_rrset_info with wrong label selector
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_zone_rrset_info | list | count == 0
