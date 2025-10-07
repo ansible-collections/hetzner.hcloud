@@ -1,0 +1,317 @@
+---
+- name: Test missing required parameters
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    state: present
+  ignore_errors: true
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "missing required arguments: mode"'
+
+- name: Test create with check mode
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    mode: primary
+    ttl: 10800
+    labels:
+      key: value
+  check_mode: true
+  register: result
+- name: Verify create with check mode
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test create primary
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    mode: primary
+    ttl: 10800
+    labels:
+      key: value
+  register: result
+- name: Verify create primary
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_zone.id is not none
+      - result.hcloud_zone.name == hcloud_zone_name
+      - result.hcloud_zone.mode == "primary"
+      - result.hcloud_zone.primary_nameservers | count == 0
+      - result.hcloud_zone.ttl == 10800
+      - result.hcloud_zone.labels.key == "value"
+      - result.hcloud_zone.delete_protection == false
+      - result.hcloud_zone.status == "ok"
+      - result.hcloud_zone.registrar == "other"
+      - result.hcloud_zone.authoritative_nameservers.assigned == ["hydrogen.ns.hetzner.com.", "oxygen.ns.hetzner.com.", "helium.ns.hetzner.de."]
+      - result.hcloud_zone.authoritative_nameservers.delegated == []
+      - result.hcloud_zone.authoritative_nameservers.delegation_last_check is none
+      - result.hcloud_zone.authoritative_nameservers.delegation_status == "unknown"
+
+- name: Test create primary idempotency
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    mode: primary
+    ttl: 10800
+    labels:
+      key: value
+  register: result
+- name: Verify create primary idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update primary
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    ttl: 3600
+    labels:
+      key: changed
+      new: value
+    delete_protection: true
+  register: result
+- name: Verify update primary
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_zone.name == hcloud_zone_name
+      - result.hcloud_zone.mode == "primary"
+      - result.hcloud_zone.ttl == 3600
+      - result.hcloud_zone.labels.key == "changed"
+      - result.hcloud_zone.labels.new == "value"
+      - result.hcloud_zone.delete_protection == true
+
+- name: Test update primary idempotency
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    ttl: 3600
+    labels:
+      key: changed
+      new: value
+    delete_protection: true
+  register: result
+- name: Verify update primary idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test delete primary with delete protection
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    state: absent
+  ignore_errors: true
+  register: result
+- name: Verify delete primary with delete protection
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - result.failure.code == "protected"
+
+- name: Test update primary delete protection
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    delete_protection: false
+  register: result
+- name: Verify update primary delete protection
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_zone.delete_protection == false
+
+- name: Test delete primary
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    state: absent
+  register: result
+- name: Verify delete primary
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test create secondary
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    mode: secondary
+    primary_nameservers:
+      - address: 203.0.113.1
+        port: 53
+  register: result
+- name: Verify create secondary
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_zone.id is not none
+      - result.hcloud_zone.name == hcloud_zone_name
+      - result.hcloud_zone.mode == "secondary"
+      - result.hcloud_zone.primary_nameservers | count == 1
+      - result.hcloud_zone.primary_nameservers[0].address == "203.0.113.1"
+      - result.hcloud_zone.primary_nameservers[0].port == 53
+      - result.hcloud_zone.ttl == 3600
+
+- name: Test create secondary idempotency
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    mode: secondary
+    primary_nameservers:
+      - address: 203.0.113.1
+        port: 53
+  register: result
+- name: Verify create secondary idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update secondary
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    primary_nameservers:
+      - address: 203.0.113.1
+        port: 5353
+  register: result
+- name: Verify update secondary
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_zone.name == hcloud_zone_name
+      - result.hcloud_zone.mode == "secondary"
+      - result.hcloud_zone.primary_nameservers | count == 1
+      - result.hcloud_zone.primary_nameservers[0].address == "203.0.113.1"
+      - result.hcloud_zone.primary_nameservers[0].port == 5353
+
+- name: Test update secondary idempotency
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    primary_nameservers:
+      - address: 203.0.113.1
+        port: 5353
+  register: result
+- name: Verify update secondary idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test delete secondary
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    state: absent
+  register: result
+- name: Verify delete secondary
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test create primary from zonefile
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    mode: primary
+    zonefile: |
+      $ORIGIN	{{ hcloud_zone_name }}.
+      $TTL	3600
+
+      @ 300 IN CAA 0 issue "letsencrypt.org"
+
+      @	600	IN	A	192.168.254.2
+      @	600	IN	A	192.168.254.3
+
+      @	IN	AAAA	fdd0:367a:0cb7::2
+      @	IN	AAAA	fdd0:367a:0cb7::3
+
+      www	IN	CNAME	{{ hcloud_zone_name }}.
+      blog	IN	CNAME	{{ hcloud_zone_name }}.
+
+      anything	IN	TXT	"some value"
+  register: result
+- name: Verify create primary from zonefile
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_zone.id is not none
+      - result.hcloud_zone.name == hcloud_zone_name
+      - result.hcloud_zone.mode == "primary"
+      - result.hcloud_zone.primary_nameservers | count == 0
+      - result.hcloud_zone.ttl == 3600
+      - result.hcloud_zone.labels | count == 0
+      - result.hcloud_zone.delete_protection == false
+      - result.hcloud_zone.status == "ok"
+      - result.hcloud_zone.registrar == "other"
+
+- name: Test create primary from zonefile idempotency
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    mode: primary
+    zonefile: |
+      $ORIGIN	{{ hcloud_zone_name }}.
+      $TTL	3600
+
+      @ 300 IN CAA 0 issue "letsencrypt.org"
+
+      @	600	IN	A	192.168.254.2
+      @	600	IN	A	192.168.254.3
+
+      @	IN	AAAA	fdd0:367a:0cb7::2
+      @	IN	AAAA	fdd0:367a:0cb7::3
+
+      www	IN	CNAME	{{ hcloud_zone_name }}.
+      blog	IN	CNAME	{{ hcloud_zone_name }}.
+
+      anything	IN	TXT	"some value"
+  register: result
+- name: Verify create primary from zonefile idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test import from zonefile
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    mode: primary
+    zonefile: |
+      @	SOA	hydrogen.ns.hetzner.com. dns.hetzner.com. 2025032100 86400 10800 3600000 3600
+
+      @	NS	hydrogen.ns.hetzner.com.
+      @	NS	oxygen.ns.hetzner.com.
+      @	NS	helium.ns.hetzner.de.
+
+      $ORIGIN	{{ hcloud_zone_name }}.
+      $TTL	3600
+
+      @ 300 IN CAA 0 issue "letsencrypt.org"
+
+      @	600	IN	A	192.168.254.2
+      @	600	IN	A	192.168.254.3
+
+      @	IN	AAAA	fdd0:367a:0cb7::2
+      @	IN	AAAA	fdd0:367a:0cb7::3
+
+      www	IN	CNAME	{{ hcloud_zone_name }}.
+      blog	IN	CNAME	{{ hcloud_zone_name }}.
+
+      anything	IN	TXT	"some value"
+    state: import
+  register: result
+- name: Verify import from zonefile
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_zone.id is not none
+      - result.hcloud_zone.name == hcloud_zone_name
+      - result.hcloud_zone.mode == "primary"
+      - result.hcloud_zone.primary_nameservers | count == 0
+      - result.hcloud_zone.ttl == 3600
+      - result.hcloud_zone.labels | count == 0
+      - result.hcloud_zone.delete_protection == false
+      - result.hcloud_zone.status == "ok"
+      - result.hcloud_zone.registrar == "other"
+
+- name: Test delete primary from zonefile
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    state: absent
+  register: result
+- name: Verify delete primary from zonefile
+  ansible.builtin.assert:
+    that:
+      - result is changed

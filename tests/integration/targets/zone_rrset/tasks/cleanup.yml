@@ -1,0 +1,5 @@
+---
+- name: Cleanup test_zone
+  hetzner.hcloud.zone:
+    name: "{{ hcloud_zone_name }}"
+    state: absent
