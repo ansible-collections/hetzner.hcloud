@@ -4,6 +4,58 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v5.4.0
+======
+
+Release Summary
+---------------
+
+This release adds support for the new `DNS API`_.
+
+The DNS API is currently in **beta**, which will likely end on 10
+November 2025. After the beta ended, it will no longer be possible to
+create new zones in the old DNS system. See the `DNS Beta FAQ`_ for more
+details.
+
+Future minor releases of this project may include breaking changes for
+features that are related to the DNS API.
+
+See the `DNS API Beta changelog`_ for more details.
+
+**Examples**
+
+.. code:: yaml
+
+    - name: Create a primary Zone
+      hetzner.hcloud.zone:
+        name: example.com
+        mode: primary
+        labels:
+          key: value
+        state: present
+
+    - name: Create a Zone RRSet
+      hetzner.hcloud.zone_rrset:
+        zone: example.com
+        name: "@"
+        type: A
+        records:
+          - comment: server1
+            value: 201.118.10.2
+        state: present
+
+.. _DNS Beta FAQ: https://docs.hetzner.com/networking/dns/faq/beta
+.. _DNS API: https://docs.hetzner.cloud/reference/cloud#dns
+.. _DNS API Beta changelog: https://docs.hetzner.cloud/changelog#2025-10-07-dns-beta
+
+Minor Changes
+-------------
+
+- zone - New module to manage DNS Zones in Hetzner Cloud.
+- zone_info - New module to fetch DNS Zones details.
+- zone_rrset - New module to manage DNS Zone RRSets in the Hetzner Cloud.
+- zone_rrset_info - New module to fetch DNS RRSets details.
+
 v5.3.1
 ======
 
