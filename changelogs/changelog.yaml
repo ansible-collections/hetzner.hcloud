@@ -736,3 +736,27 @@ releases:
     fragments:
     - server-type-deprecation.yml
     release_date: '2025-09-29'
+  5.4.0:
+    changes:
+      minor_changes:
+      - zone - New module to manage DNS Zones in Hetzner Cloud.
+      - zone_info - New module to fetch DNS Zones details.
+      - zone_rrset - New module to manage DNS Zone RRSets in the Hetzner Cloud.
+      - zone_rrset_info - New module to fetch DNS RRSets details.
+      release_summary: "This release adds support for the new `DNS API`_.\n\nThe DNS
+        API is currently in **beta**, which will likely end on 10\nNovember 2025.
+        After the beta ended, it will no longer be possible to\ncreate new zones in
+        the old DNS system. See the `DNS Beta FAQ`_ for more\ndetails.\n\nFuture minor
+        releases of this project may include breaking changes for\nfeatures that are
+        related to the DNS API.\n\nSee the `DNS API Beta changelog`_ for more details.\n\n**Examples**\n\n..
+        code:: yaml\n\n    - name: Create a primary Zone\n      hetzner.hcloud.zone:\n
+        \       name: example.com\n        mode: primary\n        labels:\n          key:
+        value\n        state: present\n\n    - name: Create a Zone RRSet\n      hetzner.hcloud.zone_rrset:\n
+        \       zone: example.com\n        name: \"@\"\n        type: A\n        records:\n
+        \         - comment: server1\n            value: 201.118.10.2\n        state:
+        present\n\n.. _DNS Beta FAQ: https://docs.hetzner.com/networking/dns/faq/beta\n..
+        _DNS API: https://docs.hetzner.cloud/reference/cloud#dns\n.. _DNS API Beta
+        changelog: https://docs.hetzner.cloud/changelog#2025-10-07-dns-beta\n"
+    fragments:
+    - new-dns-api.yml
+    release_date: '2025-10-07'

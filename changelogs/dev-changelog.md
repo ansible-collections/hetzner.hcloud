@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.4.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.3.1...5.4.0) (2025-10-07)
+
+
+### Features
+
+* support the new DNS API ([#703](https://github.com/ansible-collections/hetzner.hcloud/issues/703)) ([adddef5](https://github.com/ansible-collections/hetzner.hcloud/commit/adddef5fc07d13fca0b7ff8cf883d84850d9dc14))
+
+
+### Bug Fixes
+
+* add experimental features maturity ([#698](https://github.com/ansible-collections/hetzner.hcloud/issues/698)) ([1251ee0](https://github.com/ansible-collections/hetzner.hcloud/commit/1251ee0e6f2f0b16cc598b328cd4f4662bef6476))
+
 ## [5.3.1](https://github.com/ansible-collections/hetzner.hcloud/compare/5.3.0...5.3.1) (2025-09-29)
 
 
