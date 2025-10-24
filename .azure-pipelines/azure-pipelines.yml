@@ -67,16 +67,6 @@ stages:
             - name: Sanity
               test: 2.18/sanity
 
-  - stage: Sanity_2_17
-    displayName: Sanity 2.17
-    dependsOn: []
-    jobs:
-      - template: templates/matrix.yml
-        parameters:
-          targets:
-            - name: Sanity
-              test: 2.17/sanity
-
   ### Units
   - stage: Units_devel
     displayName: Units devel
@@ -107,16 +97,6 @@ stages:
           targets:
             - name: (py3.11)
               test: 2.18/units/3.11
-
-  - stage: Units_2_17
-    displayName: Units 2.17
-    dependsOn: []
-    jobs:
-      - template: templates/matrix.yml
-        parameters:
-          targets:
-            - name: (py3.10)
-              test: 2.17/units/3.10
 
   ## Integration
   - stage: Integration_devel
@@ -152,17 +132,6 @@ stages:
             - name: (py3.11)
               test: 2.18/integration/3.11
 
-  - stage: Integration_2_17
-    displayName: Integration 2.17
-    dependsOn: []
-    jobs:
-      - template: templates/matrix.yml
-        parameters:
-          groups: [1, 2, 3]
-          targets:
-            - name: (py3.10)
-              test: 2.17/integration/3.10
-
   ### Finally
   - stage: Summary
     condition: succeededOrFailed()
@@ -170,14 +139,11 @@ stages:
       - Sanity_devel
       - Sanity_2_19
       - Sanity_2_18
-      - Sanity_2_17
       - Units_devel
       - Units_2_19
       - Units_2_18
-      - Units_2_17
       - Integration_devel
       - Integration_2_19
       - Integration_2_18
-      - Integration_2_17
     jobs:
       - template: templates/coverage.yml
