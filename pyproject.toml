@@ -7,7 +7,7 @@ combine_as_imports = true
 add_imports = ["from __future__ import annotations"]
 
 [tool.pylint.main]
-py-version = "3.9"
+py-version = "3.10"
 recursive = true
 jobs = 0
 

@@ -22,7 +22,7 @@ For more information about communication, see the [Ansible communication guide](
 
 ## Python version compatibility
 
-This collection depends on the [hcloud](https://github.com/hetznercloud/hcloud-python) library. Due to the [hcloud](https://github.com/hetznercloud/hcloud-python) Python Support Policy this collection requires Python 3.9 or greater.
+This collection depends on the [hcloud](https://github.com/hetznercloud/hcloud-python) library. Due to the [hcloud](https://github.com/hetznercloud/hcloud-python) Python Support Policy this collection requires Python 3.10 or greater.
 
 ## Release notes
 
