@@ -67,8 +67,8 @@
       - result.hcloud_server_type_info[0].deprecation is not none
       - result.hcloud_server_type_info[0].deprecation.announced == '2024-06-06T08:00:00+00:00'
       - result.hcloud_server_type_info[0].deprecation.unavailable_after == '2024-09-06T00:00:00+00:00'
-      - result.hcloud_server_type_info[0].locations[0].id == 2
-      - result.hcloud_server_type_info[0].locations[0].name == "nbg1"
+      - result.hcloud_server_type_info[0].locations[0].id == 1
+      - result.hcloud_server_type_info[0].locations[0].name == "fsn1"
       - result.hcloud_server_type_info[0].locations[0].deprecation is not none
       - result.hcloud_server_type_info[0].locations[0].deprecation.announced == '2024-06-06T08:00:00+00:00'
       - result.hcloud_server_type_info[0].locations[0].deprecation.unavailable_after == '2024-09-06T00:00:00+00:00'
