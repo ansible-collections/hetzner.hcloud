@@ -760,3 +760,12 @@ releases:
     fragments:
     - new-dns-api.yml
     release_date: '2025-10-07'
+  6.0.0:
+    changes:
+      breaking_changes:
+      - Drop support for Python 3.9
+      - Drop support for ansible-core 2.17
+    fragments:
+    - drop-ansible-core-2.17.yml
+    - drop-python-3.9.yml
+    release_date: '2025-10-28'
