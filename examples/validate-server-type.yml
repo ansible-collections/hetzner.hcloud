@@ -10,7 +10,7 @@
 
     - name: Fetch server type info
       hetzner.hcloud.server_type_info:
-        name: cx22
+        name: cpx22
       register: server_type
 
     - name: Ensure server type exists

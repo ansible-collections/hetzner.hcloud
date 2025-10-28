@@ -38,7 +38,7 @@
     - name: Create servers
       hetzner.hcloud.server:
         name: "{{ item.name }}"
-        server_type: cx22
+        server_type: cpx22
         image: debian-12
         state: present
       loop: "{{ servers }}"

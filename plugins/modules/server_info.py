@@ -78,7 +78,7 @@ hcloud_server_info:
             description: Name of the server type of the server
             returned: always
             type: str
-            sample: cx22
+            sample: cpx22
         ipv4_address:
             description: Public IPv4 address of the server
             returned: always

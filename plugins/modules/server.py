@@ -161,14 +161,14 @@ EXAMPLES = """
 - name: Create a basic server
   hetzner.hcloud.server:
     name: my-server
-    server_type: cx22
+    server_type: cpx22
     image: ubuntu-22.04
     state: present
 
 - name: Create a basic server with ssh key
   hetzner.hcloud.server:
     name: my-server
-    server_type: cx22
+    server_type: cpx22
     image: ubuntu-22.04
     location: fsn1
     ssh_keys:
@@ -178,7 +178,7 @@ EXAMPLES = """
 - name: Resize an existing server
   hetzner.hcloud.server:
     name: my-server
-    server_type: cx32
+    server_type: cpx22
     upgrade_disk: true
     state: present
 
@@ -268,7 +268,7 @@ hcloud_server:
             description: Name of the server type of the server
             returned: always
             type: str
-            sample: cx22
+            sample: cpx22
         ipv4_address:
             description: Public IPv4 address of the server
             returned: always
