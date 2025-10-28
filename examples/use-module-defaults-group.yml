@@ -11,7 +11,7 @@
     - name: Create a volume
       hetzner.hcloud.volume:
         name: my-volume
-        location: hel1
+        location: fsn1
         size: 100
         state: present
       register: volume
