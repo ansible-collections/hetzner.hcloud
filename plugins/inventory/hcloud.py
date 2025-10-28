@@ -135,7 +135,7 @@ plugin: hetzner.hcloud.hcloud
 locations:
   - nbg1
 types:
-  - cx22
+  - cpx22
 status:
   - running
 
@@ -164,8 +164,8 @@ plugin: hetzner.hcloud.hcloud
 #     foo: "bar"
 #   hcloud_status: "running"
 ## Server Type
-#   hcloud_type: "cx22"
-#   hcloud_server_type: "cx22"
+#   hcloud_type: "cpx22"
+#   hcloud_server_type: "cpx22"
 #   hcloud_architecture: "x86"
 ## Image
 #   hcloud_image_id: 114690387

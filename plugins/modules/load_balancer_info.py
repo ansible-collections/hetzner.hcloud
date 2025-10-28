@@ -68,7 +68,7 @@ hcloud_load_balancer_info:
             description: Name of the Load Balancer type of the Load Balancer
             returned: always
             type: str
-            sample: cx22
+            sample: lb11
         ipv4_address:
             description: Public IPv4 address of the Load Balancer
             returned: always
