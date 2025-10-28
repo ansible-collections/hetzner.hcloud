@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.0.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.4.0...6.0.0) (2025-10-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for ansible-core 2.17 ([#713](https://github.com/ansible-collections/hetzner.hcloud/issues/713))
+* drop support for Python 3.9 ([#712](https://github.com/ansible-collections/hetzner.hcloud/issues/712))
+
+### Features
+
+* drop support for ansible-core 2.17 ([#713](https://github.com/ansible-collections/hetzner.hcloud/issues/713)) ([27d3250](https://github.com/ansible-collections/hetzner.hcloud/commit/27d32506890792ceb1e8af112c82db4a8ae942f8))
+* drop support for Python 3.9 ([#712](https://github.com/ansible-collections/hetzner.hcloud/issues/712)) ([7009617](https://github.com/ansible-collections/hetzner.hcloud/commit/700961762f35678b049f7787c1aa66c324f100bb))
+
 ## [5.4.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.3.1...5.4.0) (2025-10-07)
 
 
