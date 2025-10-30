@@ -93,6 +93,15 @@ EXAMPLES = """
         comment: web server 2
     state: present
 
+- name: Create a TXT record
+  hetzner.hcloud.zone_rrset:
+    zone: example.com
+    name: "@"
+    type: "TXT"
+    records:
+      - value: "{{ 'v=spf1 include:_spf.example.net ~all' | hetzner.hcloud.text_record }}"
+    state: present
+
 - name: Delete a Zone RRSet
   hetzner.hcloud.zone_rrset:
     zone: 42

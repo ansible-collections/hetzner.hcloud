@@ -47,6 +47,25 @@ def load_balancer_status(load_balancer: dict, *args, **kwargs) -> Literal["unkno
         raise AnsibleFilterError(f"load_balancer_status - {to_native(exc)}", orig_exc=exc) from exc
 
 
+# pylint: disable=unused-argument
+def txt_record(record: str, *args, **kwargs) -> str:
+    """
+    Return the status of a Load Balancer based on its targets.
+    """
+    try:
+        record = record.replace('"', '\\"')
+
+        parts = []
+        for start in range(0, len(record), 255):
+            end = min(start + 255, len(record))
+            parts.append('"' + record[start:end] + '"')
+        record = " ".join(parts)
+
+        return record
+    except Exception as exc:
+        raise AnsibleFilterError(f"txt_record - {to_native(exc)}", orig_exc=exc) from exc
+
+
 class FilterModule:
     """
     Hetzner Cloud filters.
@@ -55,4 +74,5 @@ class FilterModule:
     def filters(self):
         return {
             "load_balancer_status": load_balancer_status,
+            "txt_record": txt_record,
         }
