@@ -99,7 +99,7 @@ EXAMPLES = """
     name: "@"
     type: "TXT"
     records:
-      - value: "{{ 'v=spf1 include:_spf.example.net ~all' | hetzner.hcloud.text_record }}"
+      - value: "{{ 'v=spf1 include:_spf.example.net ~all' | hetzner.hcloud.txt_record }}"
     state: present
 
 - name: Delete a Zone RRSet

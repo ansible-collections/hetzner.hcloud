@@ -11,7 +11,7 @@ DOCUMENTATION:
       required: true
 EXAMPLES: |
   # Format a TXT record
-  {{ 'v=spf1 include:_spf.example.net ~all' | hetzner.hcloud.text_record }}
+  {{ 'v=spf1 include:_spf.example.net ~all' | hetzner.hcloud.txt_record }}
 
 RETURN:
   _value:
