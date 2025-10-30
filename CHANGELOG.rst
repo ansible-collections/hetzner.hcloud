@@ -4,6 +4,15 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.0.0
+======
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- Drop support for Python 3.9
+- Drop support for ansible-core 2.17
+
 v5.4.0
 ======
 
