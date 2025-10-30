@@ -12,6 +12,14 @@
       - result is failed
       - 'result.msg == "one of the following is required: id, name"'
 
+- name: Save allowed ssh sources
+  ansible.builtin.set_fact:
+    allowed_ssh_source_ips:
+      - "201.10.10.0/24" # ipv4 network
+      - "201.11.11.2/32" # ipv4 host
+      - "2a02:1234:10:0100::/64" # ipv6 network (non canonical representation)
+      - "2a02:1234:11:10::1/128" # ipv6 host
+
 - name: Test create with check mode
   hetzner.hcloud.firewall:
     name: "{{ hcloud_firewall_name }}"
@@ -20,6 +28,11 @@
         direction: in
         protocol: icmp
         source_ips: ["0.0.0.0/0", "::/0"]
+      - description: allow ssh in
+        direction: in
+        protocol: tcp
+        port: 22
+        source_ips: "{{ allowed_ssh_source_ips }}"
     labels:
       key: value
   check_mode: true
@@ -37,6 +50,11 @@
         direction: in
         protocol: icmp
         source_ips: ["0.0.0.0/0", "::/0"]
+      - description: allow ssh in
+        direction: in
+        protocol: tcp
+        port: 22
+        source_ips: "{{ allowed_ssh_source_ips }}"
     labels:
       key: value
   register: result
@@ -45,11 +63,22 @@
     that:
       - result is changed
       - result.hcloud_firewall.name == hcloud_firewall_name
-      - result.hcloud_firewall.rules | list | count == 1
+      - result.hcloud_firewall.rules | list | count == 2
       - result.hcloud_firewall.rules[0].description == "allow icmp in"
       - result.hcloud_firewall.rules[0].direction == "in"
       - result.hcloud_firewall.rules[0].protocol == "icmp"
-      - result.hcloud_firewall.rules[0].source_ips == ["0.0.0.0/0", "::/0"]
+      - result.hcloud_firewall.rules[0].source_ips | count == 2
+      - result.hcloud_firewall.rules[0].source_ips[0] == "0.0.0.0/0"
+      - result.hcloud_firewall.rules[0].source_ips[1] == "::/0"
+      - result.hcloud_firewall.rules[1].description == "allow ssh in"
+      - result.hcloud_firewall.rules[1].direction == "in"
+      - result.hcloud_firewall.rules[1].protocol == "tcp"
+      - result.hcloud_firewall.rules[1].port == "22"
+      - result.hcloud_firewall.rules[1].source_ips | count == 4
+      - result.hcloud_firewall.rules[1].source_ips[0] == "201.10.10.0/24"
+      - result.hcloud_firewall.rules[1].source_ips[1] == "201.11.11.2/32"
+      - result.hcloud_firewall.rules[1].source_ips[2] == "2a02:1234:10:100::/64" # canonical representation
+      - result.hcloud_firewall.rules[1].source_ips[3] == "2a02:1234:11:10::1/128"
       - result.hcloud_firewall.labels.key == "value"
       - result.hcloud_firewall.applied_to | list | count == 0
 
@@ -61,6 +90,11 @@
         direction: in
         protocol: icmp
         source_ips: ["0.0.0.0/0", "::/0"]
+      - description: allow ssh in
+        direction: in
+        protocol: tcp
+        port: 22
+        source_ips: "{{ allowed_ssh_source_ips }}"
     labels:
       key: value
   register: result

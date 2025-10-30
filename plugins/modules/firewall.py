@@ -221,12 +221,21 @@ import time
 from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils.hcloud import AnsibleHCloud
+from ..module_utils.ipaddress import normalize_ip
 from ..module_utils.vendor.hcloud import APIException, HCloudException
 from ..module_utils.vendor.hcloud.firewalls import (
     BoundFirewall,
     FirewallResource,
     FirewallRule,
 )
+
+
+def normalize_rules(rules: list[dict]) -> list[dict]:
+    for rule in rules:
+        # Ensure ip addresses canonical representation
+        rule["source_ips"] = [normalize_ip(o) for o in rule["source_ips"]]
+        rule["destination_ips"] = [normalize_ip(o) for o in rule["destination_ips"]]
+    return rules
 
 
 class AnsibleHCloudFirewall(AnsibleHCloud):
@@ -287,6 +296,7 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
         }
         rules = self.module.params.get("rules")
         if rules is not None:
+            rules = normalize_rules(rules)
             params["rules"] = [
                 FirewallRule(
                     direction=rule["direction"],
@@ -323,21 +333,24 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
             self._mark_as_changed()
 
         rules = self.module.params.get("rules")
-        if rules is not None and rules != [self._prepare_result_rule(rule) for rule in self.hcloud_firewall.rules]:
-            if not self.module.check_mode:
-                new_rules = [
-                    FirewallRule(
-                        direction=rule["direction"],
-                        protocol=rule["protocol"],
-                        source_ips=rule["source_ips"] if rule["source_ips"] is not None else [],
-                        destination_ips=rule["destination_ips"] if rule["destination_ips"] is not None else [],
-                        port=rule["port"],
-                        description=rule["description"],
-                    )
-                    for rule in rules
-                ]
-                self.hcloud_firewall.set_rules(new_rules)
-            self._mark_as_changed()
+        if rules is not None:
+            rules = normalize_rules(rules)
+
+            if rules != [self._prepare_result_rule(rule) for rule in self.hcloud_firewall.rules]:
+                if not self.module.check_mode:
+                    new_rules = [
+                        FirewallRule(
+                            direction=rule["direction"],
+                            protocol=rule["protocol"],
+                            source_ips=rule["source_ips"] if rule["source_ips"] is not None else [],
+                            destination_ips=rule["destination_ips"] if rule["destination_ips"] is not None else [],
+                            port=rule["port"],
+                            description=rule["description"],
+                        )
+                        for rule in rules
+                    ]
+                    self.hcloud_firewall.set_rules(new_rules)
+                self._mark_as_changed()
 
         self._get_firewall()
 
