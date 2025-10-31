@@ -4,6 +4,19 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.1.0
+======
+
+Minor Changes
+-------------
+
+- txt_record - Add new txt_record filter to help format TXT , e.g. ``"{{ 'v=spf1 include:_spf.example.net ~all' | hetzner.hcloud.txt_record }}"``.
+
+Bugfixes
+--------
+
+- firewall - Ensure idempotency when using non canonical ipv6 representation in Firewall rules.
+
 v6.0.0
 ======
 
