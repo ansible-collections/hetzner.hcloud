@@ -1,5 +1,17 @@
 # Changelog
 
+## [6.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.0.0...6.1.0) (2025-10-31)
+
+
+### Features
+
+* add `txt_record` filter to format TXT records ([#721](https://github.com/ansible-collections/hetzner.hcloud/issues/721)) ([7ac361a](https://github.com/ansible-collections/hetzner.hcloud/commit/7ac361a9cc35b39b166e5f3afaef4971c43ba013))
+
+
+### Bug Fixes
+
+* firewall idempotency with ipv6 addresses ([#722](https://github.com/ansible-collections/hetzner.hcloud/issues/722)) ([907a7fd](https://github.com/ansible-collections/hetzner.hcloud/commit/907a7fd73c19fe543be98c69987fd33cd4b465de)), closes [#708](https://github.com/ansible-collections/hetzner.hcloud/issues/708)
+
 ## [6.0.0](https://github.com/ansible-collections/hetzner.hcloud/compare/5.4.0...6.0.0) (2025-10-28)
 
 
