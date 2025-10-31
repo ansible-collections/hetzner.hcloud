@@ -1,0 +1,19 @@
+DOCUMENTATION:
+  name: txt_record
+  version_added: 6.1.0
+  short_description: Format a TXT record
+  description:
+    - Format a TXT record by splitting it in quoted strings of 255 characters.
+  options:
+    _input:
+      description: Record value to format.
+      type: string
+      required: true
+EXAMPLES: |
+  # Format a TXT record
+  {{ 'v=spf1 include:_spf.example.net ~all' | hetzner.hcloud.txt_record }}
+
+RETURN:
+  _value:
+    description: The formatted TXT record.
+    type: string

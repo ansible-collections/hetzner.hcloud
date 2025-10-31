@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from plugins.filter.all import load_balancer_status
+from plugins.filter.all import load_balancer_status, txt_record
 
 
 def _lb_target_server(status: str) -> dict:
@@ -43,3 +43,18 @@ LOAD_BALANCER_STATUS_TEST_CASES = (
 @pytest.mark.parametrize(("value", "expected"), LOAD_BALANCER_STATUS_TEST_CASES)
 def test_load_balancer_status(value, expected):
     assert expected == load_balancer_status(value)
+
+
+manyA = "a" * 255
+someB = "b" * 10
+
+TXT_RECORD_TEST_CASES = (
+    ("hello world", '"hello world"'),
+    ('hello "world"', '"hello \\"world\\""'),
+    (manyA + someB, f'"{manyA}" "{someB}"'),
+)
+
+
+@pytest.mark.parametrize(("value", "expected"), TXT_RECORD_TEST_CASES)
+def test_txt_record(value, expected):
+    assert expected == txt_record(value)

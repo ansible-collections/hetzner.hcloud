@@ -1,0 +1,2 @@
+minor_changes:
+  - txt_record - Add new txt_record filter to help format TXT , e.g. ``"{{ 'v=spf1 include:_spf.example.net ~all' | hetzner.hcloud.txt_record }}"``.
