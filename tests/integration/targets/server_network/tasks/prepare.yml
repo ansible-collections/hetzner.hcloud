@@ -7,13 +7,21 @@
       key: value
   register: test_network
 
-- name: Create test_subnetwork
+- name: Create test_subnetwork1
   hetzner.hcloud.subnetwork:
     network: "{{ hcloud_network_name }}"
     type: server
     network_zone: "{{ hcloud_network_zone_name }}"
     ip_range: 10.0.1.0/24
-  register: test_subnetwork
+  register: test_subnetwork1
+
+- name: Create test_subnetwork2
+  hetzner.hcloud.subnetwork:
+    network: "{{ hcloud_network_name }}"
+    type: server
+    network_zone: "{{ hcloud_network_zone_name }}"
+    ip_range: 10.0.2.0/24
+  register: test_subnetwork2
 
 - name: Create test_server
   hetzner.hcloud.server:

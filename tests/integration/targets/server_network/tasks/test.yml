@@ -85,6 +85,62 @@
     that:
       - result is changed
 
+- name: Test create with ip_range
+  hetzner.hcloud.server_network:
+    network: "{{ hcloud_network_name }}"
+    server: "{{ hcloud_server_name }}"
+    ip_range: "10.0.1.0/24"
+    state: present
+  register: result
+- name: Verify create with ip_range
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_server_network.network == hcloud_network_name
+      - result.hcloud_server_network.server == hcloud_server_name
+      - >
+        "10.0.1.0/24" | ansible.utils.network_in_usable(result.hcloud_server_network.ip)
+
+- name: Test update with ip_range
+  hetzner.hcloud.server_network:
+    network: "{{ hcloud_network_name }}"
+    server: "{{ hcloud_server_name }}"
+    ip_range: "10.0.2.0/24"
+    state: present
+  register: result
+- name: Verify update with ip_range
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_server_network.network == hcloud_network_name
+      - result.hcloud_server_network.server == hcloud_server_name
+      - >
+        "10.0.2.0/24" | ansible.utils.network_in_usable(result.hcloud_server_network.ip)
+
+- name: Test update with ip_range idempotency
+  hetzner.hcloud.server_network:
+    network: "{{ hcloud_network_name }}"
+    server: "{{ hcloud_server_name }}"
+    ip_range: "10.0.2.0/24"
+    state: present
+  register: result
+- name: Verify update with ip_range idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test delete with ip_range
+  hetzner.hcloud.server_network:
+    network: "{{ hcloud_network_name }}"
+    server: "{{ hcloud_server_name }}"
+    ip_range: "10.0.2.0/24"
+    state: absent
+  register: result
+- name: Verify delete with ip_range
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
 - name: Test create with alias ips
   hetzner.hcloud.server_network:
     network: "{{ hcloud_network_name }}"
