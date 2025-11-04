@@ -101,6 +101,7 @@ hcloud_load_balancer_network:
 """
 
 from ipaddress import ip_address, ip_network
+from time import sleep
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -140,6 +141,7 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
             self.fail_json_hcloud(exception)
 
     def _get_load_balancer_network(self):
+        self.hcloud_load_balancer_network = None
         for private_net in self.hcloud_load_balancer.private_net:
             if private_net.network.id == self.hcloud_network.id:
                 self.hcloud_load_balancer_network = private_net
@@ -158,6 +160,9 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
             try:
                 action = self.hcloud_load_balancer.attach_to_network(**params)
                 action.wait_until_finished()
+
+                # Workaround to handle flakiness from the API
+                self._wait_for_attachment(True)
             except HCloudException as exception:
                 self.fail_json_hcloud(exception)
 
@@ -168,6 +173,9 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
             try:
                 action = self.hcloud_load_balancer.detach_from_network(self.hcloud_load_balancer_network.network)
                 action.wait_until_finished()
+
+                # Workaround to handle flakiness from the API
+                self._wait_for_attachment(False)
             except HCloudException as exception:
                 self.fail_json_hcloud(exception)
 
@@ -209,6 +217,23 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
         if self.hcloud_load_balancer_network is not None and self.hcloud_load_balancer is not None:
             self._detach()
         self.hcloud_load_balancer_network = None
+
+    # Workaround to handle flakiness from the API
+    def _wait_for_attachment(self, present: bool):
+        def done(x: PrivateNet | None):
+            if present:
+                return x is not None
+            return x is None
+
+        # pylint: disable=disallowed-name
+        for _ in range(10):
+            self.hcloud_load_balancer.reload()
+            self._get_load_balancer_network()
+
+            if done(self.hcloud_load_balancer_network):
+                break
+
+            sleep(2)
 
     @classmethod
     def define_module(cls):
