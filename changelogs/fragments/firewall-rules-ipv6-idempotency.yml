@@ -1,2 +1,0 @@
-bugfixes:
-  - firewall - Ensure idempotency when using non canonical ipv6 representation in Firewall rules.

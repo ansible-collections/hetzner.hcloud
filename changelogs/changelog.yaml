@@ -769,3 +769,20 @@ releases:
     - drop-ansible-core-2.17.yml
     - drop-python-3.9.yml
     release_date: '2025-10-28'
+  6.1.0:
+    changes:
+      bugfixes:
+      - firewall - Ensure idempotency when using non canonical ipv6 representation
+        in Firewall rules.
+      minor_changes:
+      - load_balancer_network - Add ``ip_range`` argument to attach a load balancer
+        to a specific subnet.
+      - server_network - Add ``ip_range`` argument to attach a load balancer to a
+        specific subnet.
+      - txt_record - Add new txt_record filter to help format TXT , e.g. ``"{{ 'v=spf1
+        include:_spf.example.net ~all' | hetzner.hcloud.txt_record }}"``.
+    fragments:
+    - attach-to-network-ip-range.yml
+    - firewall-rules-ipv6-idempotency.yml
+    - txt-record-filter.yml
+    release_date: '2025-11-05'
