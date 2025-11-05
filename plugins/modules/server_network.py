@@ -206,6 +206,8 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
         if ip_range is not None:
             ip_range_network = ip_network(ip_range)
             if ip_range_network not in [ip_network(o.ip_range) for o in self.hcloud_network.subnets]:
+                # Validate before "detach" instead of relying on the "attach" API
+                # validation, leaving the resource in a half applied state.
                 self.module.fail_json(msg=f"ip_range '{ip_range}' was not found in the network subnets")
 
             if ip_address(self.hcloud_server_network.ip) not in ip_range_network:
