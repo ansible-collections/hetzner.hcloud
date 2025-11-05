@@ -1,0 +1,3 @@
+minor_changes:
+  - load_balancer_network - Add ``ip_range`` argument to attach a load balancer to a specific subnet.
+  - server_network - Add ``ip_range`` argument to attach a load balancer to a specific subnet.

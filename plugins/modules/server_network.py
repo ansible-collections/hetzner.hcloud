@@ -20,16 +20,20 @@ author:
     - Lukas Kaemmerling (@lkaemmerling)
 
 options:
-    network:
-        description:
-            - Name or ID of the Hetzner Cloud Networks.
-        type: str
-        required: true
     server:
         description:
             - Name or ID of the Hetzner Cloud server.
         type: str
         required: true
+    network:
+        description:
+            - Name or ID of the Hetzner Cloud Networks.
+        type: str
+        required: true
+    ip_range:
+        description:
+            - IP range in CIDR block notation of the subnet to attach to.
+        type: str
     ip:
         description:
             - The IP the server should have.
@@ -62,6 +66,13 @@ EXAMPLES = """
     network: my-network
     server: my-server
     ip: 10.0.0.1
+    state: present
+
+- name: Create a server network and specify the subnet
+  hetzner.hcloud.server_network:
+    network: my-network
+    server: my-server
+    ip_range: 10.1.0.0/24
     state: present
 
 - name: Create a server network and add alias ips
@@ -110,6 +121,8 @@ hcloud_server_network:
             sample: [10.1.0.1, ...]
 """
 
+from ipaddress import ip_address, ip_network
+
 from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils.hcloud import AnsibleHCloud
@@ -152,11 +165,13 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
             if private_net.network.id == self.hcloud_network.id:
                 self.hcloud_server_network = private_net
 
-    def _create_server_network(self):
+    def _attach(self):
         params = {
             "network": self.hcloud_network,
         }
 
+        if self.module.params.get("ip_range") is not None:
+            params["ip_range"] = self.module.params.get("ip_range")
         if self.module.params.get("ip") is not None:
             params["ip"] = self.module.params.get("ip")
         if self.module.params.get("alias_ips") is not None:
@@ -170,10 +185,40 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
                 self.fail_json_hcloud(exception)
 
         self._mark_as_changed()
+
+    def _detach(self):
+        if not self.module.check_mode:
+            try:
+                action = self.hcloud_server.detach_from_network(self.hcloud_network)
+                action.wait_until_finished()
+            except HCloudException as exception:
+                self.fail_json_hcloud(exception)
+
+        self._mark_as_changed()
+
+    def _create_server_network(self):
+        self._attach()
         self._get_server_and_network()
         self._get_server_network()
 
     def _update_server_network(self):
+        ip_range = self.module.params.get("ip_range")
+        if ip_range is not None:
+            ip_range_network = ip_network(ip_range)
+            if ip_range_network not in [ip_network(o.ip_range) for o in self.hcloud_network.subnets]:
+                # Validate before "detach" instead of relying on the "attach" API
+                # validation, leaving the resource in a half applied state.
+                self.module.fail_json(msg=f"ip_range '{ip_range}' was not found in the network subnets")
+
+            if ip_address(self.hcloud_server_network.ip) not in ip_range_network:
+                self._detach()
+                self._attach()
+
+            # No further updates needed, exit
+            self._get_server_and_network()
+            self._get_server_network()
+            return
+
         params = {
             "network": self.hcloud_network,
         }
@@ -189,6 +234,7 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
                     self.fail_json_hcloud(exception)
 
             self._mark_as_changed()
+
         self._get_server_and_network()
         self._get_server_network()
 
@@ -204,21 +250,16 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
         self._get_server_and_network()
         self._get_server_network()
         if self.hcloud_server_network is not None and self.hcloud_server is not None:
-            if not self.module.check_mode:
-                try:
-                    action = self.hcloud_server.detach_from_network(self.hcloud_server_network.network)
-                    action.wait_until_finished()
-                except HCloudException as exception:
-                    self.fail_json_hcloud(exception)
-            self._mark_as_changed()
+            self._detach()
         self.hcloud_server_network = None
 
     @classmethod
     def define_module(cls):
         return AnsibleModule(
             argument_spec=dict(
-                network={"type": "str", "required": True},
                 server={"type": "str", "required": True},
+                network={"type": "str", "required": True},
+                ip_range={"type": "str"},
                 ip={"type": "str"},
                 alias_ips={"type": "list", "elements": "str"},
                 state={
