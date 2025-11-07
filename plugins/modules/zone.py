@@ -15,8 +15,6 @@ short_description: Create and manage DNS Zone on the Hetzner Cloud.
 description:
   - Create, update and delete DNS Zone on the Hetzner Cloud.
   - See the L(Zones API documentation,https://docs.hetzner.cloud/reference/cloud#zones) for more details.
-  - B(Experimental:) DNS API is in beta, breaking changes may occur within minor releases.
-    See https://docs.hetzner.cloud/changelog#2025-10-07-dns-beta for more details.
 
 author:
   - Jonas Lammler (@jooola)
@@ -259,7 +257,6 @@ hcloud_zone:
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.experimental import dns_experimental_warning
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import APIException, HCloudException
 from ..module_utils.vendor.hcloud.actions import BoundAction
@@ -270,10 +267,6 @@ class AnsibleHCloudZone(AnsibleHCloud):
     represent = "hcloud_zone"
 
     hcloud_zone: BoundZone | None = None
-
-    def __init__(self, module: AnsibleModule):
-        dns_experimental_warning(module)
-        super().__init__(module)
 
     def _prepare_result(self):
         return {
