@@ -148,6 +148,8 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
 
     def _get_server_and_network(self):
         try:
+            self.hcloud_server_network = None
+
             self.hcloud_network = self._client_get_by_name_or_id(
                 "networks",
                 self.module.params.get("network"),
@@ -156,14 +158,9 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
                 "servers",
                 self.module.params.get("server"),
             )
-            self.hcloud_server_network = None
+            self.hcloud_server_network = self.hcloud_server.private_net_for(self.hcloud_network)
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
-
-    def _get_server_network(self):
-        for private_net in self.hcloud_server.private_net:
-            if private_net.network.id == self.hcloud_network.id:
-                self.hcloud_server_network = private_net
 
     def _attach(self):
         params = {
@@ -199,7 +196,6 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
     def _create_server_network(self):
         self._attach()
         self._get_server_and_network()
-        self._get_server_network()
 
     def _update_server_network(self):
         ip_range = self.module.params.get("ip_range")
@@ -216,7 +212,6 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
 
             # No further updates needed, exit
             self._get_server_and_network()
-            self._get_server_network()
             return
 
         params = {
@@ -236,11 +231,9 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
             self._mark_as_changed()
 
         self._get_server_and_network()
-        self._get_server_network()
 
     def present_server_network(self):
         self._get_server_and_network()
-        self._get_server_network()
         if self.hcloud_server_network is None:
             self._create_server_network()
         else:
@@ -248,7 +241,6 @@ class AnsibleHCloudServerNetwork(AnsibleHCloud):
 
     def delete_server_network(self):
         self._get_server_and_network()
-        self._get_server_network()
         if self.hcloud_server_network is not None and self.hcloud_server is not None:
             self._detach()
         self.hcloud_server_network = None

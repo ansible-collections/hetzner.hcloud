@@ -127,6 +127,8 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
 
     def _get_load_balancer_and_network(self):
         try:
+            self.hcloud_load_balancer_network = None
+
             self.hcloud_network = self._client_get_by_name_or_id(
                 "networks",
                 self.module.params.get("network"),
@@ -135,16 +137,9 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
                 "load_balancers",
                 self.module.params.get("load_balancer"),
             )
-
-            self.hcloud_load_balancer_network = None
+            self.hcloud_load_balancer_network = self.hcloud_load_balancer.private_net_for(self.hcloud_network)
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
-
-    def _get_load_balancer_network(self):
-        self.hcloud_load_balancer_network = None
-        for private_net in self.hcloud_load_balancer.private_net:
-            if private_net.network.id == self.hcloud_network.id:
-                self.hcloud_load_balancer_network = private_net
 
     def _attach(self):
         params = {
@@ -185,7 +180,6 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
         self._attach()
 
         self._get_load_balancer_and_network()
-        self._get_load_balancer_network()
 
     def _update_load_balancer_network(self):
         ip_range = self.module.params.get("ip_range")
@@ -202,12 +196,10 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
 
             # No further updates needed, exit
             self._get_load_balancer_and_network()
-            self._get_load_balancer_network()
             return
 
     def present_load_balancer_network(self):
         self._get_load_balancer_and_network()
-        self._get_load_balancer_network()
         if self.hcloud_load_balancer_network is None:
             self._create_load_balancer_network()
         else:
@@ -215,7 +207,6 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
 
     def delete_load_balancer_network(self):
         self._get_load_balancer_and_network()
-        self._get_load_balancer_network()
         if self.hcloud_load_balancer_network is not None and self.hcloud_load_balancer is not None:
             self._detach()
         self.hcloud_load_balancer_network = None
@@ -230,7 +221,7 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
         # pylint: disable=disallowed-name
         for _ in range(10):
             self.hcloud_load_balancer.reload()
-            self._get_load_balancer_network()
+            self.hcloud_load_balancer_network = self.hcloud_load_balancer.private_net_for(self.hcloud_network)
 
             if done(self.hcloud_load_balancer_network):
                 break
