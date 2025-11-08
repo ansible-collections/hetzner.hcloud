@@ -46,7 +46,7 @@ Ansible documentation: https://docs.ansible.com/ansible/latest/collections/hetzn
 ## Requirements
 
 You should place the collection (clone the repository) into the Ansible collection path. Normally this
-is `~/.ansible/collections/ansible_collections/<namespace>/<collection`, so for our collection it would
+is `~/.ansible/collections/ansible_collections/<namespace>/<collection>`, so for our collection it would
 be: `~/.ansible/collections/ansible_collections/hetzner/hcloud`.
 
 ```
