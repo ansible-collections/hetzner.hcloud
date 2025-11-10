@@ -1,3 +1,3 @@
 from __future__ import annotations
 
-version = "6.1.0"  # x-release-please-version
+version = "6.2.0"  # x-release-please-version
