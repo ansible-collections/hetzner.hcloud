@@ -15,8 +15,6 @@ short_description: Gather infos about your Hetzner Cloud Zone RRSets.
 description:
     - Gather infos about your Hetzner Cloud Zone RRSets.
     - See the L(Zone RRSets API documentation,https://docs.hetzner.cloud/reference/cloud#zone-rrsets) for more details.
-    - B(Experimental:) DNS API is in beta, breaking changes may occur within minor releases.
-      See https://docs.hetzner.cloud/changelog#2025-10-07-dns-beta for more details.
 
 author:
     - Jonas Lammler (@jooola)
@@ -120,7 +118,6 @@ hcloud_zone_rrset_info:
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.experimental import dns_experimental_warning
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import APIException, HCloudException
 from ..module_utils.vendor.hcloud.zones import BoundZoneRRSet, Zone, ZoneRecord
@@ -130,10 +127,6 @@ class AnsibleHCloudZoneRRSetInfo(AnsibleHCloud):
     represent = "hcloud_zone_rrset_info"
 
     hcloud_zone_rrset_info: list[BoundZoneRRSet] | None = None
-
-    def __init__(self, module: AnsibleModule):
-        dns_experimental_warning(module)
-        super().__init__(module)
 
     def _prepare_result(self):
         tmp = []
