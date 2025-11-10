@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.1.0...6.2.0) (2025-11-10)
+
+
+### Features
+
+* DNS support is now generally available ([#727](https://github.com/ansible-collections/hetzner.hcloud/issues/727)) ([337067d](https://github.com/ansible-collections/hetzner.hcloud/commit/337067d9dee6acfe8281aee3373d5cb9e724ffb1))
+
 ## [6.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.0.0...6.1.0) (2025-11-05)
 
 
