@@ -5,6 +5,8 @@ from typing import Literal
 from ansible.errors import AnsibleFilterError
 from ansible.module_utils.common.text.converters import to_native
 
+from ..module_utils.vendor.hcloud.exp.zone import format_txt_record
+
 
 # pylint: disable=unused-argument
 def load_balancer_status(load_balancer: dict, *args, **kwargs) -> Literal["unknown", "unhealthy", "healthy"]:
@@ -50,18 +52,11 @@ def load_balancer_status(load_balancer: dict, *args, **kwargs) -> Literal["unkno
 # pylint: disable=unused-argument
 def txt_record(record: str, *args, **kwargs) -> str:
     """
-    Return the status of a Load Balancer based on its targets.
+    Format a TXT record by splitting it in quoted strings of 255 characters.
+    Existing quotes will be escaped.
     """
     try:
-        record = record.replace('"', '\\"')
-
-        parts = []
-        for start in range(0, len(record), 255):
-            end = min(start + 255, len(record))
-            parts.append('"' + record[start:end] + '"')
-        record = " ".join(parts)
-
-        return record
+        return format_txt_record(record)
     except Exception as exc:
         raise AnsibleFilterError(f"txt_record - {to_native(exc)}", orig_exc=exc) from exc
 
