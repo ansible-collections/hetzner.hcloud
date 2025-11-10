@@ -4,6 +4,29 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.2.0
+======
+
+Release Summary
+---------------
+
+**DNS API is now generally available**
+
+The DNS API is now generally available, as well as support for features
+in this project that are related to the DNS API.
+
+To migrate existing zones to the new DNS API, see the `DNS migration
+guide <https://docs.hetzner.com/networking/dns/migration-to-hetzner-console/process/>`__.
+
+See the
+`changelog <https://docs.hetzner.cloud/changelog#2025-11-10-dns-ga>`__
+for more details.
+
+Minor Changes
+-------------
+
+- DNS support is now generally available.
+
 v6.1.0
 ======
 
