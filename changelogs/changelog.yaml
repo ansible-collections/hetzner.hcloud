@@ -786,3 +786,10 @@ releases:
     - firewall-rules-ipv6-idempotency.yml
     - txt-record-filter.yml
     release_date: '2025-11-05'
+  6.2.0:
+    changes:
+      minor_changes:
+      - DNS support is now generally available.
+    fragments:
+    - dns-support-generally-available.yml
+    release_date: '2025-11-10'

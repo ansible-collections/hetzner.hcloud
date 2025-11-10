@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.2.0
+======
+
+Minor Changes
+-------------
+
+- DNS support is now generally available.
+
 v6.1.0
 ======
 
