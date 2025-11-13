@@ -123,10 +123,11 @@
       key: changed
       new: value
     records:
-      - value: 201.118.10.11
-        comment: web server 1
+      # Order is not guaranteed, should still be idempotent
       - value: 201.118.10.13
         comment: web server 3
+      - value: 201.118.10.11
+        comment: web server 1
     change_protection: true
   register: result
 - name: Verify update idempotency

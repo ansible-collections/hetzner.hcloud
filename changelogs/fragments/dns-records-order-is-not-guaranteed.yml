@@ -1,0 +1,2 @@
+bugfixes:
+  - zone_rrset - Records order is not guaranteed, the module will not generate a diff if the order of records changes.

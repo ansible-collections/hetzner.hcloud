@@ -321,6 +321,9 @@ class AnsibleHCloudZoneRRSet(AnsibleHCloud):
         current = [self._prepare_result_record(o) for o in self.hcloud_zone_rrset.records]
         wanted = [self._prepare_result_record(ZoneRecord.from_dict(o)) for o in self.module.params.get("records")]
 
+        current = sorted(current, key=lambda x: x["value"])
+        wanted = sorted(wanted, key=lambda x: x["value"])
+
         return current != wanted
 
     def present(self):
