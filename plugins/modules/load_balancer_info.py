@@ -305,7 +305,7 @@ class AnsibleHCloudLoadBalancerInfo(AnsibleHCloud):
                     "location": load_balancer.location.name,
                     "labels": load_balancer.labels,
                     "delete_protection": load_balancer.protection["delete"],
-                    "disable_public_interface": False if load_balancer.public_net.enabled else True,
+                    "disable_public_interface": not load_balancer.public_net.enabled,
                     "targets": [self._prepare_target_result(target) for target in load_balancer.targets],
                     "services": [self._prepare_service_result(service) for service in load_balancer.services],
                 }

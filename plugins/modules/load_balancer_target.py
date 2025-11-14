@@ -227,7 +227,7 @@ class AnsibleHCloudLoadBalancerTarget(AnsibleHCloud):
                 action = self.hcloud_load_balancer.add_target(**params)
                 action.wait_until_finished()
             except APIException as exception:
-                if exception.code == "locked" or exception.code == "conflict":
+                if exception.code in ("locked", "conflict"):
                     self._create_load_balancer_target()
                 else:
                     self.fail_json_hcloud(exception)

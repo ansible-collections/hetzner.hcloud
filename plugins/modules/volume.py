@@ -212,7 +212,9 @@ class AnsibleHCloudVolume(AnsibleHCloud):
             try:
                 resp = self.client.volumes.create(**params)
                 resp.action.wait_until_finished()
-                [action.wait_until_finished() for action in resp.next_actions]
+                for action in resp.next_actions:
+                    action.wait_until_finished()
+
                 delete_protection = self.module.params.get("delete_protection")
                 if delete_protection is not None:
                     self._get_volume()

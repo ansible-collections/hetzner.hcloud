@@ -91,6 +91,7 @@ class AnsibleHCloud:
             poll_max_retries=25,
         )
 
+    # pylint: disable=inconsistent-return-statements
     def _client_get_by_name_or_id(self, resource: str, param: str | int):
         """
         Get a resource by name, and if not found by its ID.

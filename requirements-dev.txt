@@ -6,6 +6,7 @@ cryptography
 
 # Development requirements
 antsibull-docs>=2.22,<2.23
+ansible-lint>=25.11.0,<25.12
 pylint
 pytest
 pytest-xdist
