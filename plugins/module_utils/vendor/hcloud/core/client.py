@@ -46,10 +46,8 @@ class ResourceClientBase:
 
         return results
 
-    def _get_first_by(self, **kwargs):  # type: ignore[no-untyped-def]
-        assert hasattr(self, "get_list")
-        # pylint: disable=no-member
-        entities, _ = self.get_list(**kwargs)
+    def _get_first_by(self, list_function: Callable, *args, **kwargs):  # type: ignore[no-untyped-def]
+        entities, _ = list_function(*args, **kwargs)
         return entities[0] if entities else None
 
 
@@ -105,10 +103,13 @@ class BoundModelBase:
             value = getattr(self.data_model, name)
         return value
 
-    def reload(self) -> None:
-        """Reloads the model and tries to get all data from the APIx"""
+    def _get_self(self) -> BoundModelBase:
         assert hasattr(self._client, "get_by_id")
-        bound_model = self._client.get_by_id(self.data_model.id)
+        return self._client.get_by_id(self.data_model.id)
+
+    def reload(self) -> None:
+        """Reloads the model and tries to get all data from the API"""
+        bound_model = self._get_self()
         self.data_model = bound_model.data_model
         self.complete = True
 
