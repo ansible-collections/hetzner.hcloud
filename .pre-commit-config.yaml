@@ -50,17 +50,6 @@ repos:
       - id: antsibull-changelog-lint-changelog-yaml
         args: [--strict]
 
-  - repo: https://github.com/ansible/ansible-lint
-    rev: v25.11.0
-    hooks:
-      - id: ansible-lint
-        name: ansible-lint
-        entry: env HCLOUD_TOKEN= python3 -m ansiblelint -v --force-color
-        args: [--offline]
-        additional_dependencies:
-          - ansible-core>=2.18
-          - netaddr
-
   - repo: local
     hooks:
       - id: shfmt
@@ -72,7 +61,7 @@ repos:
         types: [shell]
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.6
+    rev: v0.11.0.1
     hooks:
       - id: shellcheck
 

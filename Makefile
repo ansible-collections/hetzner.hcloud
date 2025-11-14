@@ -15,6 +15,7 @@ venv:
 	venv/bin/pip install -r requirements.txt -r requirements-dev.txt
 
 lint: venv
+	env HCLOUD_TOKEN= venv/bin/ansible-lint -v --force-color --offline
 	venv/bin/pylint plugins
 
 lint-docs: venv
