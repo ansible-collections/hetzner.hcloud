@@ -30,4 +30,10 @@ disable = [
   "missing-function-docstring",
   "duplicate-code",
   "use-dict-literal",
+  "too-few-public-methods",
+  "too-many-ancestors",
+  "too-many-branches",
+  "too-many-lines",
+  "too-many-locals",
+  "too-many-statements",
 ]

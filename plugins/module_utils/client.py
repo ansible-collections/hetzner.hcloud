@@ -8,18 +8,18 @@ from ansible.module_utils.basic import missing_required_lib
 
 from .vendor.hcloud import APIException, Client as ClientBase
 
-HAS_REQUESTS = True
-HAS_DATEUTIL = True
+has_requests = True
+has_dateutil = True
 
 try:
     import requests  # pylint: disable=unused-import
 except ImportError:
-    HAS_REQUESTS = False
+    has_requests = False
 
 try:
     import dateutil  # pylint: disable=unused-import
 except ImportError:
-    HAS_DATEUTIL = False
+    has_dateutil = False
 
 
 class ClientException(Exception):
@@ -27,9 +27,9 @@ class ClientException(Exception):
 
 
 def client_check_required_lib():
-    if not HAS_REQUESTS:
+    if not has_requests:
         raise ClientException(missing_required_lib("requests"))
-    if not HAS_DATEUTIL:
+    if not has_dateutil:
         raise ClientException(missing_required_lib("python-dateutil"))
 
 
@@ -65,7 +65,7 @@ def client_get_by_name_or_id(client: Client, resource: str, param: str | int):
         raise exception
 
 
-if HAS_REQUESTS:
+if has_requests:
 
     class CachedSession(requests.Session):
         cache: dict[str, requests.Response]
@@ -74,7 +74,8 @@ if HAS_REQUESTS:
             super().__init__()
             self.cache = {}
 
-        def send(self, request: requests.PreparedRequest, **kwargs) -> requests.Response:  # type: ignore[no-untyped-def]
+        # type: ignore[no-untyped-def]
+        def send(self, request: requests.PreparedRequest, **kwargs) -> requests.Response:
             """
             Send a given PreparedRequest.
             """
@@ -101,8 +102,10 @@ class Client(ClientBase):
         Cached response will not expire, therefore the cached client must not be used
         for long living scopes.
         """
+        # pylint: disable=possibly-used-before-assignment,protected-access
         self._client._session = CachedSession()
         try:
             yield
         finally:
+            # pylint: disable=protected-access
             self._client._session = requests.Session()

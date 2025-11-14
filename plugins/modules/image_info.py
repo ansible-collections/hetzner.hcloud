@@ -158,7 +158,8 @@ class AnsibleHCloudImageInfo(AnsibleHCloud):
                 ]
             elif self.module.params.get("name") is not None:
                 self.module.warn(
-                    "This module only returns x86 images by default. Please set architecture:x86|arm to hide this message."
+                    "This module only returns x86 images by default. Please set "
+                    "architecture:x86|arm to hide this message."
                 )
                 self.hcloud_image_info = [self.client.images.get_by_name(self.module.params.get("name"))]
             else:

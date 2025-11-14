@@ -411,12 +411,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         if self.get_option("connect_with") == "private_ipv4":
             if self.get_option("network"):
-                for private_net in server.private_net:
-                    if private_net.network.id == self.network.id:
-                        return private_net.ip
-
+                if (attachment := server.private_net_for(self.network)) is not None:
+                    return attachment.ip
             else:
                 raise AnsibleError("You can only connect via private IPv4 if you specify a network")
+        return None
 
     def verify_file(self, path):
         """Return the possibly of a file being consumable by this plugin."""

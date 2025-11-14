@@ -196,7 +196,6 @@ class AnsibleHCloudLoadBalancerNetwork(AnsibleHCloud):
 
             # No further updates needed, exit
             self._get_load_balancer_and_network()
-            return
 
     def present_load_balancer_network(self):
         self._get_load_balancer_and_network()

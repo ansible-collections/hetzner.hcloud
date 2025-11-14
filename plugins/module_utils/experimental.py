@@ -26,7 +26,10 @@ def experimental_warning_function(product: str, maturity: str, url: str):
     :param maturity: Maturity of the product.
     :param url: Changelog URL announcing the product.
     """
-    message = f"Experimental: {product} is {maturity}, breaking changes may occur within minor releases. See {url} for more details."
+    message = (
+        f"Experimental: {product} is {maturity}, breaking changes may occur "
+        f"within minor releases. See {url} for more details."
+    )
 
     def fn(module: AnsibleModule):
         module.warn(message)

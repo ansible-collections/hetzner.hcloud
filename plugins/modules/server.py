@@ -665,6 +665,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
         # Assign new
         self.stop_server_if_forced()
         if not self.module.check_mode:
+            # pylint: disable=possibly-used-before-assignment
             action = self.hcloud_server.add_to_placement_group(placement_group)
             action.wait_until_finished()
         self._mark_as_changed()
@@ -736,6 +737,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
         # Assign new
         self.stop_server_if_forced()
         if not self.module.check_mode:
+            # pylint: disable=possibly-used-before-assignment
             action = self.client.primary_ips.assign(
                 primary_ip,
                 assignee_id=self.hcloud_server.id,
