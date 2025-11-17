@@ -23,3 +23,12 @@ jobs:
 
       - name: Lint docs
         run: make lint-docs
+
+  ansible-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ansible/ansible-lint@v25.11.0
+        env:
+          HCLOUD_TOKEN: ""
