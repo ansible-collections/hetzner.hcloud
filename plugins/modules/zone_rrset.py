@@ -199,7 +199,7 @@ class AnsibleHCloudZoneRRSet(AnsibleHCloud):
     def _prepare_result_record(self, record: ZoneRecord):
         return {
             "value": record.value,
-            "comment": record.comment,
+            "comment": record.comment or "",  # API defaults to "", this ensure idempotency
         }
 
     def _get(self):
@@ -320,6 +320,9 @@ class AnsibleHCloudZoneRRSet(AnsibleHCloud):
     def _diff_records(self) -> bool:
         current = [self._prepare_result_record(o) for o in self.hcloud_zone_rrset.records]
         wanted = [self._prepare_result_record(ZoneRecord.from_dict(o)) for o in self.module.params.get("records")]
+
+        current = sorted(current, key=lambda x: x["value"])
+        wanted = sorted(wanted, key=lambda x: x["value"])
 
         return current != wanted
 

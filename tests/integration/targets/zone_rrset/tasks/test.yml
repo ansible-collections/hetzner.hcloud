@@ -91,6 +91,7 @@
       key: changed
       new: value
     records:
+      - value: 201.118.10.10 # No comment
       - value: 201.118.10.11
         comment: web server 1
       - value: 201.118.10.13
@@ -107,11 +108,13 @@
       - result.hcloud_zone_rrset.labels.key == "changed"
       - result.hcloud_zone_rrset.labels.new == "value"
       - result.hcloud_zone_rrset.change_protection == true
-      - result.hcloud_zone_rrset.records | count == 2
-      - result.hcloud_zone_rrset.records[0].value == "201.118.10.11"
-      - result.hcloud_zone_rrset.records[0].comment == "web server 1"
-      - result.hcloud_zone_rrset.records[1].value == "201.118.10.13"
-      - result.hcloud_zone_rrset.records[1].comment == "web server 3"
+      - result.hcloud_zone_rrset.records | count == 3
+      - result.hcloud_zone_rrset.records[0].value == "201.118.10.10"
+      - result.hcloud_zone_rrset.records[0].comment == ""
+      - result.hcloud_zone_rrset.records[1].value == "201.118.10.11"
+      - result.hcloud_zone_rrset.records[1].comment == "web server 1"
+      - result.hcloud_zone_rrset.records[2].value == "201.118.10.13"
+      - result.hcloud_zone_rrset.records[2].comment == "web server 3"
 
 - name: Test update idempotency
   hetzner.hcloud.zone_rrset:
@@ -123,10 +126,12 @@
       key: changed
       new: value
     records:
-      - value: 201.118.10.11
-        comment: web server 1
+      - value: 201.118.10.10 # No comment
+      # Order is not guaranteed, should still be idempotent
       - value: 201.118.10.13
         comment: web server 3
+      - value: 201.118.10.11
+        comment: web server 1
     change_protection: true
   register: result
 - name: Verify update idempotency

@@ -154,7 +154,7 @@ class AnsibleHCloudZoneRRSetInfo(AnsibleHCloud):
     def _prepare_result_record(self, record: ZoneRecord):
         return {
             "value": record.value,
-            "comment": record.comment,
+            "comment": record.comment or "",
         }
 
     def get_zone_rrsets(self):
