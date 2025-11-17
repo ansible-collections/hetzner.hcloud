@@ -1,2 +1,3 @@
 bugfixes:
   - zone_rrset - Records order is not guaranteed, the module will not generate a diff if the order of records changes.
+  - zone_rrset - Records without comments will not generate a diff anymore.

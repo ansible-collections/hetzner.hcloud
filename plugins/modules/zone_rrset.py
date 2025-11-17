@@ -199,7 +199,7 @@ class AnsibleHCloudZoneRRSet(AnsibleHCloud):
     def _prepare_result_record(self, record: ZoneRecord):
         return {
             "value": record.value,
-            "comment": record.comment,
+            "comment": record.comment or "",  # API defaults to "", this ensure idempotency
         }
 
     def _get(self):
