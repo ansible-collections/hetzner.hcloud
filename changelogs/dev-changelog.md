@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.1](https://github.com/ansible-collections/hetzner.hcloud/compare/6.2.0...6.2.1) (2025-11-17)
+
+
+### Bug Fixes
+
+* zone rrset idempotency ([#737](https://github.com/ansible-collections/hetzner.hcloud/issues/737)) ([79f78fa](https://github.com/ansible-collections/hetzner.hcloud/commit/79f78fae282e7bd4a27722ff82404b35c1756a0f)), closes [#740](https://github.com/ansible-collections/hetzner.hcloud/issues/740)
+
 ## [6.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.1.0...6.2.0) (2025-11-10)
 
 
