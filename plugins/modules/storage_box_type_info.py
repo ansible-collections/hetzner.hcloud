@@ -21,12 +21,12 @@ author:
 options:
     id:
         description:
-            - The ID of the Storage Box Type you want to get.
-            - The module will fail if the provided ID is invalid.
+            - ID of the Storage Box Type to get.
+            - If the ID is invalid, the module will fail.
         type: int
     name:
         description:
-            - The name of the Storage Box Type you want to get.
+            - Name of the Storage Box Type to get.
         type: str
 
 extends_documentation_fragment:
@@ -45,7 +45,7 @@ EXAMPLES = """
 
 RETURN = """
 hcloud_storage_box_type_info:
-    description: The Storage Box Types infos as list
+    description: List of Storage Box Types.
     returned: always
     type: list
     contains:
