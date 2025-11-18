@@ -47,7 +47,7 @@ RETURN = """
 hcloud_storage_box_type_info:
     description: The Storage Box Types infos as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: ID of the Storage Box Type.
