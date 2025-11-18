@@ -51,47 +51,47 @@ hcloud_storage_box_type_info:
     contains:
         id:
             description: ID of the Storage Box Type.
-            returned: always
+            returned: success
             type: int
             sample: 1937415
         name:
             description: Name of the Storage Box Type.
-            returned: always
+            returned: success
             type: str
             sample: bx21
         description:
             description: Description of the Storage Box Type.
-            returned: always
+            returned: success
             type: str
             sample: BX21
         snapshot_limit:
             description: Maximum number of allowed manual snapshots.
-            returned: always
+            returned: success
             type: int
             sample: 10
         automatic_snapshot_limit:
             description: Maximum number of snapshots created automatically by a snapshot plan.
-            returned: always
+            returned: success
             type: int
             sample: 10
         subaccounts_limit:
             description: Maximum number of subaccounts.
-            returned: always
+            returned: success
             type: int
             sample: 200
         size:
             description: Available storage in bytes.
-            returned: always
+            returned: success
             type: int
             sample: 1099511627776
         deprecation:
             description: Deprecation details about the Storage Box Type.
-            returned: only when deprecated
+            returned: when deprecated
             type: dict
             contains:
                 announced:
                     description: Date when the deprecation was announced.
-                    returned: always
+                    returned: success
                     type: str
                     sample: "2025-06-02T00:00:00Z"
                 unavailable_after:
@@ -100,7 +100,7 @@ hcloud_storage_box_type_info:
 
                       The resource will be removed from the list endpoint, but details
                       about the resource can be fetched using its ID.
-                    returned: always
+                    returned: success
                     type: str
                     sample: "2025-09-02T00:00:00Z"
 """
