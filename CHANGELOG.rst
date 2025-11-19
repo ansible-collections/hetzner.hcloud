@@ -4,6 +4,15 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.2.1
+======
+
+Bugfixes
+--------
+
+- zone_rrset - Records order is not guaranteed, the module will not generate a diff if the order of records changes.
+- zone_rrset - Records without comments will not generate a diff anymore.
+
 v6.2.0
 ======
 
