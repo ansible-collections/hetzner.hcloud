@@ -109,7 +109,7 @@ EXAMPLES = """
     location: fsn1
     password: my-secret
     labels:
-        env: prod
+      env: prod
     state: present
 
 - name: Create a Storage Box with access settings
@@ -119,11 +119,11 @@ EXAMPLES = """
     location: fsn1
     password: my-secret
     access_settings:
-        reachable_externally: true
-        ssh_enabled: true
-        samba_enabled: false
-        webdav_enabled: false
-        zfs_enabled: false
+      reachable_externally: true
+      ssh_enabled: true
+      samba_enabled: false
+      webdav_enabled: false
+      zfs_enabled: false
     state: present
 
 - name: Delete a Storage Box
@@ -225,9 +225,10 @@ hcloud_storage_box:
 
 from ansible.module_utils.basic import AnsibleModule
 
+from ..module_utils import storage_box
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.actions import BoundAction
+from ..module_utils.vendor.hcloud.locations import Location
 from ..module_utils.vendor.hcloud.storage_box_types import StorageBoxType
 from ..module_utils.vendor.hcloud.storage_boxes import (
     BoundStorageBox,
@@ -239,43 +240,15 @@ class AnsibleStorageBox(AnsibleHCloud):
     represent = "storage_box"
 
     storage_box: BoundStorageBox | None = None
-    actions: list[BoundAction]
 
     def _prepare_result(self):
-        o = self.storage_box
-        if o is None:
-            return {}
-
-        return {
-            "id": o.id,
-            "name": o.name,
-            "storage_box_type": o.storage_box_type.name,
-            "location": o.location.name,
-            "labels": o.labels,
-            "delete_protection": o.protection["delete"],
-            "access_settings": {
-                "reachable_externally": o.access_settings.reachable_externally,
-                "samba_enabled": o.access_settings.samba_enabled,
-                "ssh_enabled": o.access_settings.ssh_enabled,
-                "webdav_enabled": o.access_settings.webdav_enabled,
-                "zfs_enabled": o.access_settings.zfs_enabled,
-            },
-            "username": o.username,
-            "server": o.server,
-            "system": o.system,
-            "status": o.status,
-        }
-
-    def _wait_actions(self):
-        for a in self.actions:
-            a.wait_until_finished()
-        self.actions = []
+        return storage_box.prepare_result(self.storage_box)
 
     def _fetch(self):
         if self.module.params.get("id") is not None:
-            self.storage_box = self.client.servers.get_by_id(self.module.params.get("id"))
+            self.storage_box = self.client.storage_boxes.get_by_id(self.module.params.get("id"))
         else:
-            self.storage_box = self.client.servers.get_by_name(self.module.params.get("name"))
+            self.storage_box = self.client.storage_boxes.get_by_name(self.module.params.get("name"))
 
     def _create(self):
         self.fail_on_invalid_params(
@@ -283,8 +256,8 @@ class AnsibleStorageBox(AnsibleHCloud):
         )
         params = {
             "name": self.module.params.get("name"),
-            "storage_box_type": self.module.params.get("storage_box_type"),
-            "location": self.module.params.get("location"),
+            "storage_box_type": StorageBoxType(self.module.params.get("storage_box_type")),
+            "location": Location(self.module.params.get("location")),
             "password": self.module.params.get("password"),
         }
 
@@ -348,10 +321,13 @@ class AnsibleStorageBox(AnsibleHCloud):
             params["labels"] = value
             self._mark_as_changed()
 
-        if not self.module.check_mode:
-            self._wait_actions()
+        # Update only if params holds changes or the data must be refreshed (actions
+        # were triggered)
+        if params or self.actions:
+            if not self.module.check_mode:
+                self._wait_actions()
 
-            self.storage_box = self.storage_box.update(**params)
+                self.storage_box = self.storage_box.update(**params)
 
     def _delete(self):
         if not self.module.check_mode:
@@ -396,11 +372,11 @@ class AnsibleStorageBox(AnsibleHCloud):
                 access_settings={
                     "type": "dict",
                     "options": dict(
-                        reachable_externally={"type": "bool"},
-                        samba_enabled={"type": "bool"},
-                        ssh_enabled={"type": "bool"},
-                        webdav_enabled={"type": "bool"},
-                        zfs_enabled={"type": "bool"},
+                        reachable_externally={"type": "bool", "default": False},
+                        samba_enabled={"type": "bool", "default": False},
+                        ssh_enabled={"type": "bool", "default": False},
+                        webdav_enabled={"type": "bool", "default": False},
+                        zfs_enabled={"type": "bool", "default": False},
                     ),
                 },
                 delete_protection={"type": "bool"},
@@ -427,9 +403,10 @@ def main():
 
     result = o.get_result()
 
-    module.exit_json(
-        hcloud_storage_box=result["storage_box"],
-    )
+    # Legacy return value naming pattern
+    result["hcloud_storage_box"] = result.pop("storage_box")
+
+    module.exit_json(**result)
 
 
 if __name__ == "__main__":
