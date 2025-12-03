@@ -61,6 +61,9 @@
       - result.hcloud_storage_box.server is not none
       - result.hcloud_storage_box.system is not none
       - result.hcloud_storage_box.username is not none
+      - result.hcloud_storage_box.stats.size >= 0
+      - result.hcloud_storage_box.stats.size_data >= 0
+      - result.hcloud_storage_box.stats.size_snapshots >= 0
 
 - name: Test create idempotency
   hetzner.hcloud.storage_box:

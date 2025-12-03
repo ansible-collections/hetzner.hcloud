@@ -159,8 +159,27 @@ hcloud_storage_box_info:
             returned: always
             type: str
             sample: active
+        stats:
+            description: Statistics of the Storage Box.
+            returned: always
+            type: dict
+            contains:
+                size:
+                    description: Current disk usage in bytes.
+                    returned: always
+                    type: int
+                    sample: 10485760
+                size_data:
+                    description: Current disk usage for data in bytes.
+                    returned: always
+                    type: int
+                    sample: 10485760
+                size_snapshots:
+                    description: Current disk usage for snapshots in bytes.
+                    returned: always
+                    type: int
+                    sample: 10485760
 """
-# TODO: stats
 
 from ansible.module_utils.basic import AnsibleModule
 
