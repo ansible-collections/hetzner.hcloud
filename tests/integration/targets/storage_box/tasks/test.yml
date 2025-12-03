@@ -207,6 +207,17 @@
       - result is changed
       - result.hcloud_storage_box.snapshot_plan is none
 
+- name: Test reset password
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    password: "{{ hcloud_storage_box_password }}"
+    state: reset_password
+  register: result
+- name: Verify reset password
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
 - name: Test delete
   hetzner.hcloud.storage_box:
     name: "{{ hcloud_storage_box_name }}"
