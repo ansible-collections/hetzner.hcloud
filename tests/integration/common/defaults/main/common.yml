@@ -24,3 +24,9 @@ hcloud_datacenter_name: hel1-dc2
 hcloud_datacenter_id: 3
 
 hcloud_network_zone_name: eu-central
+
+hcloud_storage_box_type_name: bx11
+hcloud_storage_box_type_id: 1333
+
+hcloud_storage_box_type_upgrade_name: bx21
+hcloud_storage_box_type_upgrade_id: 1334

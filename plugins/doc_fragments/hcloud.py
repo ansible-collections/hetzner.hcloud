@@ -10,24 +10,30 @@ class ModuleDocFragment:
 options:
   api_token:
     description:
-      - The API Token for the Hetzner Cloud.
+      - The token for the Hetzner Cloud API.
       - You can also set this option by using the C(HCLOUD_TOKEN) environment variable.
     required: True
     type: str
   api_endpoint:
     description:
-      - The API Endpoint for the Hetzner Cloud.
+      - The endpoint for the Hetzner Cloud API.
       - You can also set this option by using the C(HCLOUD_ENDPOINT) environment variable.
     default: https://api.hetzner.cloud/v1
     type: str
     aliases: [endpoint]
+  api_endpoint_hetzner:
+    description:
+      - The endpoint for the Hetzner API.
+      - You can also set this option by using the C(HETZNER_ENDPOINT) environment variable.
+    default: https://api.hetzner.com/v1
+    type: str
 
 requirements:
   - python-dateutil >= 2.7.5
   - requests >=2.20
 
 seealso:
-  - name: Documentation for Hetzner Cloud API
-    description: Complete reference for the Hetzner Cloud API.
+  - name: Documentation for Hetzner APIs
+    description: Complete reference for the Hetzner APIs.
     link: https://docs.hetzner.cloud
 """
