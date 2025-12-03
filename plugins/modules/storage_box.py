@@ -123,8 +123,9 @@ options:
     state:
         description:
             - State of the Storage Box.
+            - C(reset_password) is not idempotent.
         default: present
-        choices: [absent, present]
+        choices: [absent, present, reset_password]
         type: str
 
 extends_documentation_fragment:
@@ -432,8 +433,6 @@ class AnsibleStorageBox(AnsibleHCloud):
                         self.actions.append(action)
                     self._mark_as_changed()
 
-        # self.storage_box.reset_password
-
         params = {}
         if (value := self.module.params.get("name")) is not None and value != self.storage_box.name:
             self.fail_on_invalid_params(required=["id"])
@@ -481,6 +480,24 @@ class AnsibleStorageBox(AnsibleHCloud):
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
 
+    def reset_password(self):
+        self.fail_on_invalid_params(
+            required=["password"],
+        )
+        try:
+            self._fetch()
+            if self.storage_box is None:
+                self._create()
+            else:
+                if not self.module.check_mode:
+                    action = self.storage_box.reset_password(self.module.params.get("password"))
+                    self.actions.append(action)
+                self._mark_as_changed()
+                self._update()
+
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
+
     @classmethod
     def define_module(cls):
         return AnsibleModule(
@@ -514,7 +531,7 @@ class AnsibleStorageBox(AnsibleHCloud):
                 },
                 delete_protection={"type": "bool"},
                 state={
-                    "choices": ["absent", "present"],
+                    "choices": ["absent", "present", "reset_password"],
                     "default": "present",
                 },
                 **super().base_module_arguments(),
@@ -531,6 +548,8 @@ def main():
     state = module.params.get("state")
     if state == "absent":
         o.absent()
+    elif state == "reset_password":
+        o.reset_password()
     else:
         o.present()
 
