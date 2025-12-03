@@ -7,7 +7,7 @@ pr:
   autoCancel: true
   drafts: false
   branches:
-    include: [main, stable-1]
+    include: [main, stable-1, storage-boxes]
 
 schedules:
   - cron: 0 9 * * *
