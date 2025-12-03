@@ -24,4 +24,9 @@ def prepare_result(o: BoundStorageBox):
         "server": o.server,
         "system": o.system,
         "status": o.status,
+        "stats": {
+            "size": o.stats.size,
+            "size_data": o.stats.size_data,
+            "size_snapshots": o.stats.size_snapshots,
+        },
     }
