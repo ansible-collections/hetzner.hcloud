@@ -29,4 +29,15 @@ def prepare_result(o: BoundStorageBox):
             "size_data": o.stats.size_data,
             "size_snapshots": o.stats.size_snapshots,
         },
+        "snapshot_plan": (
+            None
+            if o.snapshot_plan is None
+            else {
+                "max_snapshots": o.snapshot_plan.max_snapshots,
+                "hour": o.snapshot_plan.hour,
+                "minute": o.snapshot_plan.minute,
+                "day_of_week": o.snapshot_plan.day_of_week,
+                "day_of_month": o.snapshot_plan.day_of_month,
+            }
+        ),
     }

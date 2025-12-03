@@ -39,6 +39,10 @@
     access_settings:
       ssh_enabled: true
       zfs_enabled: false
+    snapshot_plan:
+      max_snapshots: 10
+      hour: 3
+      minute: 30
     labels:
       key: value
   register: result
@@ -57,6 +61,9 @@
       - result.hcloud_storage_box.access_settings.ssh_enabled == true
       - result.hcloud_storage_box.access_settings.webdav_enabled == false
       - result.hcloud_storage_box.access_settings.zfs_enabled == false
+      - result.hcloud_storage_box.snapshot_plan.max_snapshots == 10
+      - result.hcloud_storage_box.snapshot_plan.hour == 3
+      - result.hcloud_storage_box.snapshot_plan.minute == 30
       - result.hcloud_storage_box.status == "active"
       - result.hcloud_storage_box.server is not none
       - result.hcloud_storage_box.system is not none
@@ -76,6 +83,10 @@
     access_settings:
       ssh_enabled: true
       zfs_enabled: false
+    snapshot_plan:
+      max_snapshots: 10
+      hour: 3
+      minute: 30
     labels:
       key: value
   register: result
@@ -95,6 +106,11 @@
       - result is changed
       - result.hcloud_storage_box.name == hcloud_storage_box_name + "-changed"
 
+      # Ensure snapshot plan was not changed
+      - result.hcloud_storage_box.snapshot_plan.max_snapshots == 10
+      - result.hcloud_storage_box.snapshot_plan.hour == 3
+      - result.hcloud_storage_box.snapshot_plan.minute == 30
+
 - name: Test update
   hetzner.hcloud.storage_box:
     id: "{{ result.hcloud_storage_box.id }}"
@@ -106,6 +122,10 @@
     access_settings: # Update
       ssh_enabled: false
       reachable_externally: true
+    snapshot_plan:
+      max_snapshots: 10
+      hour: 4 # Update
+      minute: 30
     labels:
       key: changed # Update
     delete_protection: true # Update
@@ -125,6 +145,9 @@
       - result.hcloud_storage_box.access_settings.ssh_enabled == false
       - result.hcloud_storage_box.access_settings.webdav_enabled == false
       - result.hcloud_storage_box.access_settings.zfs_enabled == false
+      - result.hcloud_storage_box.snapshot_plan.max_snapshots == 10
+      - result.hcloud_storage_box.snapshot_plan.hour == 4
+      - result.hcloud_storage_box.snapshot_plan.minute == 30
 
 - name: Test update idempotency
   hetzner.hcloud.storage_box:
@@ -137,6 +160,10 @@
     access_settings: # Update
       ssh_enabled: false
       reachable_externally: true
+    snapshot_plan:
+      max_snapshots: 10
+      hour: 4 # Update
+      minute: 30
     labels:
       key: changed # Update
     delete_protection: true # Update
@@ -163,11 +190,22 @@
     name: "{{ hcloud_storage_box_name }}"
     delete_protection: false
   register: result
-- name: Verify update primary delete protection
+- name: Verify update delete protection
   ansible.builtin.assert:
     that:
       - result is changed
       - result.hcloud_storage_box.delete_protection == false
+
+- name: Test update snapshot plan
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    snapshot_plan: null
+  register: result
+- name: Verify update snapshot plan
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box.snapshot_plan is none
 
 - name: Test delete
   hetzner.hcloud.storage_box:

@@ -85,6 +85,36 @@ options:
                     - Whether the ZFS snapshot folder is visible.
                 type: bool
                 default: false
+    snapshot_plan:
+        description:
+            - Snapshot plan of the Storage Box.
+            - Use null to disabled the snapshot plan.
+        type: dict
+        suboptions:
+            max_snapshots:
+                description:
+                    - Maximum amount of Snapshots that will be created by this Snapshot Plan.
+                    - Older Snapshots will be deleted.
+                type: int
+            hour:
+                description:
+                    - Hour when the Snapshot Plan is executed (UTC).
+                type: int
+            minute:
+                description:
+                    - Minute when the Snapshot Plan is executed (UTC).
+                type: int
+            day_of_week:
+                description:
+                    - Day of the week when the Snapshot Plan is executed.
+                    - Starts at 1 for Monday til 7 for Sunday.
+                    - Null means every day.
+                type: int
+            day_of_month:
+                description:
+                    - Day of the month when the Snapshot Plan is executed.
+                    - Null means every day.
+                type: int
     delete_protection:
         description:
             - Protect the Storage Box from deletion.
@@ -124,6 +154,24 @@ EXAMPLES = """
       samba_enabled: false
       webdav_enabled: false
       zfs_enabled: false
+    state: present
+
+- name: Create a Storage Box with snapshot plan
+  hetzner.hcloud.storage_box:
+    name: my-storage-box
+    storage_box_type: bx11
+    location: fsn1
+    password: my-secret
+    snapshot_plan:
+      max_snapshots: 10
+      hour: 3
+      minute: 30
+    state: present
+
+- name: Disable a Storage Box snapshot plan
+  hetzner.hcloud.storage_box:
+    name: my-storage-box
+    snapshot_plan: null
     state: present
 
 - name: Delete a Storage Box
@@ -199,6 +247,36 @@ hcloud_storage_box:
                     returned: always
                     type: bool
                     sample: false
+        snapshot_plan:
+            description: Snapshot plan of the Storage Box.
+            returned: when enabled
+            type: dict
+            contains:
+                max_snapshots:
+                    description: Maximum amount of Snapshots that will be created by this Snapshot Plan.
+                    returned: always
+                    type: int
+                    sample: 10
+                hour:
+                    description: Hour when the Snapshot Plan is executed (UTC).
+                    returned: always
+                    type: int
+                    sample: 3
+                minute:
+                    description: Minute when the Snapshot Plan is executed (UTC).
+                    returned: always
+                    type: int
+                    sample: 30
+                day_of_week:
+                    description: Day of the week when the Snapshot Plan is executed. Null means every day.
+                    returned: always
+                    type: int
+                    sample: 1
+                day_of_month:
+                    description: Day of the month when the Snapshot Plan is executed. Null means every day.
+                    returned: always
+                    type: int
+                    sample: 30
         username:
             description: User name of the Storage Box.
             returned: always
@@ -241,16 +319,15 @@ hcloud_storage_box:
                     sample: 10485760
 """
 
-from ansible.module_utils.basic import AnsibleModule
-
 from ..module_utils import storage_box
-from ..module_utils.hcloud import AnsibleHCloud
+from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
 from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.locations import Location
 from ..module_utils.vendor.hcloud.storage_box_types import StorageBoxType
 from ..module_utils.vendor.hcloud.storage_boxes import (
     BoundStorageBox,
     StorageBoxAccessSettings,
+    StorageBoxSnapshotPlan,
 )
 
 
@@ -294,9 +371,19 @@ class AnsibleStorageBox(AnsibleHCloud):
 
             self.storage_box = resp.storage_box
 
+        if not self.module.check_mode:
+            self._wait_actions()
+
         if (value := self.module.params.get("delete_protection")) is not None:
-            action = self.storage_box.change_protection(delete=value)
-            self.actions.append(action)
+            if not self.module.check_mode:
+                action = self.storage_box.change_protection(delete=value)
+                self.actions.append(action)
+
+        if self.module.param_is_defined("snapshot_plan"):
+            if (value := self.module.params.get("snapshot_plan")) is not None:
+                if not self.module.check_mode:
+                    action = self.storage_box.enable_snapshot_plan(StorageBoxSnapshotPlan.from_dict(value))
+                    self.actions.append(action)
 
         if not self.module.check_mode:
             self._wait_actions()
@@ -326,6 +413,24 @@ class AnsibleStorageBox(AnsibleHCloud):
                     action = self.storage_box.change_protection(delete=value)
                     self.actions.append(action)
                 self._mark_as_changed()
+
+        if self.module.param_is_defined("snapshot_plan"):
+            if (value := self.module.params.get("snapshot_plan")) is not None:
+                snapshot_plan = StorageBoxSnapshotPlan.from_dict(value)
+                if (
+                    self.storage_box.snapshot_plan is None
+                    or self.storage_box.snapshot_plan.to_payload() != snapshot_plan.to_payload()
+                ):
+                    if not self.module.check_mode:
+                        action = self.storage_box.enable_snapshot_plan(snapshot_plan)
+                        self.actions.append(action)
+                    self._mark_as_changed()
+            else:
+                if self.storage_box.snapshot_plan is not None:
+                    if not self.module.check_mode:
+                        action = self.storage_box.disable_snapshot_plan()
+                        self.actions.append(action)
+                    self._mark_as_changed()
 
         # self.storage_box.reset_password
 
@@ -395,6 +500,16 @@ class AnsibleStorageBox(AnsibleHCloud):
                         ssh_enabled={"type": "bool", "default": False},
                         webdav_enabled={"type": "bool", "default": False},
                         zfs_enabled={"type": "bool", "default": False},
+                    ),
+                },
+                snapshot_plan={
+                    "type": "dict",
+                    "options": dict(
+                        max_snapshots={"type": "int", "required": True},
+                        hour={"type": "int", "required": True},
+                        minute={"type": "int", "required": True},
+                        day_of_week={"type": "int"},
+                        day_of_month={"type": "int"},
                     ),
                 },
                 delete_protection={"type": "bool"},
