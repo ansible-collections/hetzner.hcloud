@@ -175,6 +175,12 @@ EXAMPLES = """
     snapshot_plan: null
     state: present
 
+- name: Reset a Storage Box password
+  hetzner.hcloud.storage_box:
+    name: my-storage-box
+    password: my-secret
+    state: reset_password
+
 - name: Delete a Storage Box
   hetzner.hcloud.storage_box:
     name: my-storage-box
@@ -321,6 +327,7 @@ hcloud_storage_box:
 """
 
 from ..module_utils import storage_box
+from ..module_utils.client import client_resource_not_found
 from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
 from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.locations import Location
@@ -487,13 +494,15 @@ class AnsibleStorageBox(AnsibleHCloud):
         try:
             self._fetch()
             if self.storage_box is None:
-                self._create()
-            else:
-                if not self.module.check_mode:
-                    action = self.storage_box.reset_password(self.module.params.get("password"))
-                    self.actions.append(action)
-                self._mark_as_changed()
-                self._update()
+                raise client_resource_not_found(
+                    "storage box",
+                    self.module.params.get("id") or self.module.params.get("name"),
+                )
+            if not self.module.check_mode:
+                action = self.storage_box.reset_password(self.module.params.get("password"))
+                self.actions.append(action)
+            self._wait_actions()
+            self._mark_as_changed()
 
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
