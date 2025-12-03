@@ -120,12 +120,18 @@ options:
             - Protect the Storage Box from deletion.
         type: bool
         default: false
+    snapshot:
+        description:
+            - Snapshot ID or name to rollback to.
+            - Only used when O(state=rollback_snapshot)
+        type: bool
+        default: false
     state:
         description:
             - State of the Storage Box.
-            - C(reset_password) is not idempotent.
+            - C(reset_password) and C(rollback_snapshot) are not idempotent.
         default: present
-        choices: [absent, present, reset_password]
+        choices: [absent, present, reset_password, rollback_snapshot]
         type: str
 
 extends_documentation_fragment:
@@ -180,6 +186,12 @@ EXAMPLES = """
     name: my-storage-box
     password: my-secret
     state: reset_password
+
+- name: Rollback a Storage Box to a Snapshot
+  hetzner.hcloud.storage_box:
+    name: my-storage-box
+    snapshot: 2025-12-03T13-47-47
+    state: rollback_snapshot
 
 - name: Delete a Storage Box
   hetzner.hcloud.storage_box:
@@ -335,6 +347,7 @@ from ..module_utils.vendor.hcloud.storage_box_types import StorageBoxType
 from ..module_utils.vendor.hcloud.storage_boxes import (
     BoundStorageBox,
     StorageBoxAccessSettings,
+    StorageBoxSnapshot,
     StorageBoxSnapshotPlan,
 )
 
@@ -507,6 +520,27 @@ class AnsibleStorageBox(AnsibleHCloud):
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
 
+    def rollback_snapshot(self):
+        self.fail_on_invalid_params(
+            required=["snapshot"],
+        )
+        try:
+            self._fetch()
+            if self.storage_box is None:
+                raise client_resource_not_found(
+                    "storage box",
+                    self.module.params.get("id") or self.module.params.get("name"),
+                )
+
+            if not self.module.check_mode:
+                action = self.storage_box.rollback_snapshot(StorageBoxSnapshot(self.module.params.get("snapshot")))
+                self.actions.append(action)
+            self._wait_actions()
+            self._mark_as_changed()
+
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
+
     @classmethod
     def define_module(cls):
         return AnsibleModule(
@@ -539,8 +573,9 @@ class AnsibleStorageBox(AnsibleHCloud):
                     ),
                 },
                 delete_protection={"type": "bool"},
+                snapshot={"type": "str"},
                 state={
-                    "choices": ["absent", "present", "reset_password"],
+                    "choices": ["absent", "present", "reset_password", "rollback_snapshot"],
                     "default": "present",
                 },
                 **super().base_module_arguments(),
