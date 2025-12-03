@@ -1,0 +1,5 @@
+---
+- name: Cleanup test_storage_box
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    state: absent
