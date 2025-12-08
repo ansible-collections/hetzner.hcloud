@@ -1,8 +1,25 @@
 from __future__ import annotations
 
+from ..module_utils.client import client_resource_not_found
 from ..module_utils.vendor.hcloud.storage_boxes import (
     BoundStorageBox,
+    StorageBoxesClient,
 )
+
+
+def get(client: StorageBoxesClient, param: str | int):
+    try:
+        return BoundStorageBox(
+            client,
+            data={"id": int(param)},
+            complete=False,
+        )
+    except ValueError:  # param is not an id
+        result = client.get_by_name(param)
+        if result is None:
+            # pylint: disable=raise-missing-from
+            raise client_resource_not_found("storage box", param)
+        return result
 
 
 def prepare_result(o: BoundStorageBox):
