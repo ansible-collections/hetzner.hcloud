@@ -36,6 +36,7 @@ options:
             - Name or ID of the Storage Box Type for the Storage Box.
             - Required if the Storage Box does not exist.
         type: str
+        aliases: [type]
     location:
         description:
             - Name or ID of the Location for the Storage Box.
@@ -96,14 +97,17 @@ options:
                     - Maximum amount of Snapshots that will be created by this Snapshot Plan.
                     - Older Snapshots will be deleted.
                 type: int
+                required: true
             hour:
                 description:
                     - Hour when the Snapshot Plan is executed (UTC).
                 type: int
+                required: true
             minute:
                 description:
                     - Minute when the Snapshot Plan is executed (UTC).
                 type: int
+                required: true
             day_of_week:
                 description:
                     - Day of the week when the Snapshot Plan is executed.
@@ -119,13 +123,11 @@ options:
         description:
             - Protect the Storage Box from deletion.
         type: bool
-        default: false
     snapshot:
         description:
-            - Snapshot ID or name to rollback to.
+            - Snapshot ID or Name to rollback to.
             - Only used when O(state=rollback_snapshot)
-        type: bool
-        default: false
+        type: str
     state:
         description:
             - State of the Storage Box.
@@ -358,7 +360,9 @@ class AnsibleStorageBox(AnsibleHCloud):
     storage_box: BoundStorageBox | None = None
 
     def _prepare_result(self):
-        return storage_box.prepare_result(self.storage_box)
+        if self.storage_box is not None:
+            return storage_box.prepare_result(self.storage_box)
+        return {}
 
     def _fetch(self):
         if self.module.params.get("id") is not None:
