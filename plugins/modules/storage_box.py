@@ -513,7 +513,8 @@ class AnsibleStorageBox(AnsibleHCloud):
             if not self.module.check_mode:
                 action = self.storage_box.reset_password(self.module.params.get("password"))
                 self.actions.append(action)
-            self._wait_actions()
+                self._wait_actions()
+
             self._mark_as_changed()
 
         except HCloudException as exception:
@@ -534,7 +535,8 @@ class AnsibleStorageBox(AnsibleHCloud):
             if not self.module.check_mode:
                 action = self.storage_box.rollback_snapshot(StorageBoxSnapshot(self.module.params.get("snapshot")))
                 self.actions.append(action)
-            self._wait_actions()
+                self._wait_actions()
+
             self._mark_as_changed()
 
         except HCloudException as exception:
