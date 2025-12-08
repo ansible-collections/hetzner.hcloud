@@ -589,13 +589,15 @@ def main():
     module = AnsibleStorageBox.define_module()
     o = AnsibleStorageBox(module)
 
-    state = module.params.get("state")
-    if state == "absent":
-        o.absent()
-    elif state == "reset_password":
-        o.reset_password()
-    else:
-        o.present()
+    match module.params.get("state"):
+        case "reset_password":
+            o.reset_password()
+        case "rollback_snapshot":
+            o.rollback_snapshot()
+        case "absent":
+            o.absent()
+        case _:
+            o.present()
 
     result = o.get_result()
 
