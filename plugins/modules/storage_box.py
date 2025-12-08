@@ -392,7 +392,6 @@ class AnsibleStorageBox(AnsibleHCloud):
 
             self.storage_box = resp.storage_box
 
-        if not self.module.check_mode:
             self._wait_actions()
 
         if (value := self.module.params.get("delete_protection")) is not None:
