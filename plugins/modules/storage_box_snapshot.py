@@ -22,7 +22,8 @@ author:
 options:
     storage_box:
         description:
-            - ID or Name of the Storage Box to manage.
+            - ID or Name of the parent Storage Box.
+            - Using the ID is preferred, to reduce the amount of API requests.
         type: int
         required: true
     id:
