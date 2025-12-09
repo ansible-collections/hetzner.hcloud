@@ -44,7 +44,7 @@ options:
     password:
         description:
             - Password for the Storage Box Subaccount.
-            - Required if the Storage Box Subaccount does not exist.
+            - Required if the Storage Box Subaccount does not exist or when O(state=reset_password).
         type: str
     home_directory:
         description:
@@ -92,8 +92,9 @@ options:
     state:
         description:
             - State of the Storage Box Subaccount.
+            - C(reset_password) is not idempotent.
         default: present
-        choices: [absent, present]
+        choices: [absent, present, reset_password]
         type: str
 
 extends_documentation_fragment:
