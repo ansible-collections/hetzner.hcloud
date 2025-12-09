@@ -57,7 +57,7 @@ EXAMPLES = """
 - name: Gather Storage Box Snapshot by id
   hetzner.hcloud.storage_box_snapshot_info:
     storage_box: 497436
-    name: 405920
+    id: 405920
   register: output
 
 - name: Gather Storage Box Snapshot by name

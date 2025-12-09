@@ -14,7 +14,7 @@ short_description: Create and manage Storage Box Snapshots in Hetzner.
 
 description:
     - Create, update and delete Storage Box Snapshots in Hetzner.
-    - See the L(Storage Boxes API documentation,https://docs.hetzner.cloud/reference/hetzner#storage-boxes) for more details.
+    - See the L(Storage Box Snapshots API documentation,https://docs.hetzner.cloud/reference/hetzner#storage-box-snapshots) for more details.
 
 author:
     - Jonas Lammler (@jooola)
@@ -28,14 +28,14 @@ options:
     id:
         description:
             - ID of the Storage Box Snapshot to manage.
-            - Required if no Storage Box O(name) is given.
+            - Required if no Storage Box Snapshot O(name) is given.
             - Only used when updating or deleting a Storage Box Snapshot.
         type: int
     name:
         description:
-            - Name of the Storage Box to manage.
-            - Required if no Storage Box O(id) is given.
-            - Only used when updating or deleting a Storage Box Snapshot.
+            - Name of the Storage Box Snapshot to manage.
+            - Required if no Storage Box Snapshot O(id) is given.
+            - Only used when updating or deleting a Storage Box Snapshot. It is not possible to set a custom name for a Snapshot.
         type: str
     description:
         description:
@@ -66,13 +66,13 @@ EXAMPLES = """
     state: present
 
 - name: Delete a Storage Box Snapshot by name
-  hetzner.hcloud.storage_box:
+  hetzner.hcloud.storage_box_snapshot:
     storage_box: my-storage-box
     name: 2025-12-03T13-47-47
     state: absent
 
 - name: Delete a Storage Box Snapshot by id
-  hetzner.hcloud.storage_box:
+  hetzner.hcloud.storage_box_snapshot:
     storage_box: 497436
     id: 405920
     state: absent
@@ -180,7 +180,7 @@ class AnsibleStorageBoxSnapshot(AnsibleHCloud):
             self.actions.append(resp.action)
 
             self._wait_actions()
-            self.storage_box.reload()
+            self.storage_box_snapshot.reload()
 
         self._mark_as_changed()
 
