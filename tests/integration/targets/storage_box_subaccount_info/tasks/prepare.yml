@@ -1,0 +1,37 @@
+---
+- name: Create test_storage_box
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    type: "{{ hcloud_storage_box_type_name }}"
+    location: "{{ hcloud_location_name }}"
+    password: "{{ hcloud_storage_box_password }}"
+    ssh_keys:
+      - "{{ test_ssh_keypair.public_key }}"
+    access_settings:
+      ssh_enabled: true
+      reachable_externally: false
+    labels:
+      key: "{{ hcloud_ns }}"
+  register: test_storage_box
+
+- name: Create test_storage_box_subaccount1
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    name: subaccount1
+    description: backups from subaccount1
+    home_directory: backups/subaccount1
+    password: "{{ hcloud_storage_box_password }}"
+    access_settings:
+      ssh_enabled: true
+      readonly: false
+    labels:
+      key: "{{ hcloud_ns }}"
+  register: test_storage_box_subaccount1
+
+- name: Create test_storage_box_subaccount2
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    name: subaccount2
+    home_directory: backups/subaccount2
+    password: "{{ hcloud_storage_box_password }}"
+  register: test_storage_box_subaccount2
