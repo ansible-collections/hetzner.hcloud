@@ -1,5 +1,5 @@
 ---
-- name: Test missing required parameters
+- name: Test missing required parameters # noqa: args[module]
   hetzner.hcloud.storage_box_snapshot:
   ignore_errors: true
   register: result
