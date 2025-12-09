@@ -7,7 +7,13 @@ from ..module_utils.vendor.hcloud.storage_boxes import (
 )
 
 
-def get(client: StorageBoxesClient, param: str | int):
+def get(client: StorageBoxesClient, param: str | int) -> BoundStorageBox:
+    """
+    Get a Bound Storage Box either by ID or name.
+
+    If the given parameter is an ID, return a partial Bound Storage Box to reduce the amount
+    of API requests.
+    """
     try:
         return BoundStorageBox(
             client,

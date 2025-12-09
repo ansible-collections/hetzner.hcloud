@@ -160,10 +160,10 @@ class AnsibleStorageBoxSnapshot(AnsibleHCloud):
     def _fetch(self):
         self.storage_box = storage_box.get(self.client.storage_boxes, self.module.params.get("storage_box"))
 
-        if self.module.params.get("id") is not None:
-            self.storage_box_snapshot = self.storage_box.get_snapshot_by_id(self.module.params.get("id"))
-        else:
-            self.storage_box_snapshot = self.storage_box.get_snapshot_by_name(self.module.params.get("name"))
+        if (value := self.module.params.get("id")) is not None:
+            self.storage_box_snapshot = self.storage_box.get_snapshot_by_id(value)
+        elif (value := self.module.params.get("name")) is not None:
+            self.storage_box_snapshot = self.storage_box.get_snapshot_by_name(value)
 
     def _create(self):
         params = {}
