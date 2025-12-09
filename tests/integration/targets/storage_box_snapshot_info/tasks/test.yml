@@ -8,7 +8,7 @@
 - name: Verify hcloud_storage_box_snapshot_info
   ansible.builtin.assert:
     that:
-      - result.hcloud_storage_box_snapshot_info | list | count >= 2
+      - result.hcloud_storage_box_snapshot_info | list | count == 2
 
 - name: Gather hcloud_storage_box_snapshot_info in check mode
   hetzner.hcloud.storage_box_snapshot_info:
@@ -18,7 +18,7 @@
 - name: Verify hcloud_storage_box_snapshot_info in check mode
   ansible.builtin.assert:
     that:
-      - result.hcloud_storage_box_snapshot_info | list | count >= 1
+      - result.hcloud_storage_box_snapshot_info | list | count == 1
 
 - name: Gather hcloud_storage_box_snapshot_info with label
   hetzner.hcloud.storage_box_snapshot_info:
