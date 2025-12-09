@@ -204,11 +204,11 @@ class AnsibleStorageBoxSnapshot(AnsibleHCloud):
         # Update only if params holds changes
         if params:
             if not self.module.check_mode:
-                self.storage_box_snapshot = self.storage_box_snapshot.update_snapshot(**params)
+                self.storage_box_snapshot = self.storage_box_snapshot.update(**params)
 
     def _delete(self):
         if not self.module.check_mode:
-            resp = self.storage_box_snapshot.delete_snapshot()
+            resp = self.storage_box_snapshot.delete()
             resp.action.wait_until_finished()
 
         self.storage_box_snapshot = None
