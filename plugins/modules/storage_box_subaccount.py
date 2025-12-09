@@ -36,11 +36,6 @@ options:
             - Name of the Storage Box Subaccount to manage.
             - Required if no Storage Box Subaccount O(id) is given.
         type: str
-    username:
-        description:
-            - Username of the Storage Box Subaccount to manage.
-            - Usernames are defined by the API and cannot be changed.
-        type: str
     password:
         description:
             - Password for the Storage Box Subaccount.
