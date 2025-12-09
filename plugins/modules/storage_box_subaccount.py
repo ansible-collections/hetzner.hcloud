@@ -185,6 +185,7 @@ hcloud_storage_box_subaccount:
 """
 
 from ..module_utils import storage_box, storage_box_subaccount
+from ..module_utils.client import client_resource_not_found
 from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
 from ..module_utils.storage_box_subaccount import NAME_LABEL_KEY
 from ..module_utils.vendor.hcloud import HCloudException
@@ -338,6 +339,27 @@ class AnsibleStorageBoxSnapshot(AnsibleHCloud):
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
 
+    def reset_password(self):
+        self.fail_on_invalid_params(
+            required=["password"],
+        )
+        try:
+            self._fetch()
+            if self.storage_box_subaccount is None:
+                raise client_resource_not_found(
+                    "storage box",
+                    self.module.params.get("id") or self.module.params.get("name"),
+                )
+            if not self.module.check_mode:
+                action = self.storage_box_subaccount.reset_password(self.module.params.get("password"))
+                self.actions.append(action)
+                self._wait_actions()
+
+            self._mark_as_changed()
+
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
+
     @classmethod
     def define_module(cls):
         return AnsibleModule(
@@ -375,7 +397,8 @@ def main():
     o = AnsibleStorageBoxSnapshot(module)
 
     match module.params.get("state"):
-        # TODO: reset password
+        case "reset_password":
+            o.reset_password()
         case "absent":
             o.absent()
         case _:

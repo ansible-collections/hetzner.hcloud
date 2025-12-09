@@ -154,6 +154,18 @@
       - result.hcloud_storage_box_subaccount.access_settings.readonly == true
       - result.hcloud_storage_box_subaccount.created is not none
 
+- name: Test reset password
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    name: team2
+    password: "{{ hcloud_storage_box_password }}"
+    state: reset_password
+  register: result
+- name: Verify reset password
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
 - name: Test delete
   hetzner.hcloud.storage_box_subaccount:
     storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
