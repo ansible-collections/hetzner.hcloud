@@ -34,8 +34,9 @@ options:
     name:
         description:
             - Name of the Storage Box Snapshot to manage.
+            - Storage Box Snapshot names are defined by the API and cannot be changed.
             - Required if no Storage Box Snapshot O(id) is given.
-            - Only used when updating or deleting a Storage Box Snapshot. It is not possible to set a custom name for a Snapshot.
+            - Only used when updating or deleting a Storage Box Snapshot.
         type: str
     description:
         description:
