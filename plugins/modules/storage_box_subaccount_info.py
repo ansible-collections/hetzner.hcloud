@@ -15,6 +15,8 @@ short_description: Gather infos about Hetzner Storage Box Subaccounts.
 description:
     - Gather infos about Hetzner Storage Box Subaccounts.
     - See the L(Storage Box Subaccounts API documentation,https://docs.hetzner.cloud/reference/hetzner#storage-box-subaccounts) for more details.
+    - B(Experimental:) Storage Box support is experimental, breaking changes may occur within minor releases.
+      See https://github.com/ansible-collections/hetzner.hcloud/issues/756 for more details.
 
 author:
     - Jonas Lammler (@jooola)
@@ -156,6 +158,7 @@ hcloud_storage_box_subaccount_info:
 from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils import storage_box, storage_box_subaccount
+from ..module_utils.experimental import storage_box_experimental_warning
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.storage_box_subaccount import NAME_LABEL_KEY
 from ..module_utils.vendor.hcloud import HCloudException
@@ -170,6 +173,10 @@ class AnsibleStorageBoxSubaccountInfo(AnsibleHCloud):
 
     storage_box: BoundStorageBox | None = None
     storage_box_subaccounts: list[BoundStorageBoxSubaccount] | None = None
+
+    def __init__(self, module: AnsibleModule):
+        storage_box_experimental_warning(module)
+        super().__init__(module)
 
     def _prepare_result(self):
         result = []
