@@ -1,0 +1,393 @@
+#!/usr/bin/python
+
+# Copyright: (c) 2025, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+
+from __future__ import annotations
+
+DOCUMENTATION = """
+---
+module: storage_box_subaccount
+
+short_description: Create and manage Storage Box Subaccounts in Hetzner.
+
+description:
+    - Create, update and delete Storage Box Subaccounts in Hetzner.
+    - See the L(Storage Box Subaccounts API documentation,https://docs.hetzner.cloud/reference/hetzner#storage-box-subaccounts) for more details.
+
+author:
+    - Jonas Lammler (@jooola)
+
+options:
+    storage_box:
+        description:
+            - ID or Name of the parent Storage Box.
+            - Using the ID is preferred, to reduce the amount of API requests.
+        type: str
+        required: true
+    id:
+        description:
+            - ID of the Storage Box Subaccount to manage.
+            - Required if no Storage Box Subaccount O(name) is given.
+        type: int
+    name:
+        description:
+            - Name of the Storage Box Subaccount to manage.
+            - Required if no Storage Box Subaccount O(id) is given.
+        type: str
+    username:
+        description:
+            - Username of the Storage Box Subaccount to manage.
+            - Usernames are defined by the API and cannot be changed.
+        type: str
+    password:
+        description:
+            - Password for the Storage Box Subaccount.
+            - Required if the Storage Box Subaccount does not exist.
+        type: str
+    home_directory:
+        description:
+            - Home directory of the Storage Box Subaccount.
+            - Required if the Storage Box Subaccount does not exist.
+        type: str
+    access_settings:
+        description:
+            - Access settings of the Storage Box Subaccount.
+        type: dict
+        suboptions:
+            reachable_externally:
+                description:
+                    - Whether access from outside the Hetzner network is allowed.
+                type: bool
+                default: false
+            samba_enabled:
+                description:
+                    - Whether the Samba subsystem is enabled.
+                type: bool
+                default: false
+            ssh_enabled:
+                description:
+                    - Whether the SSH subsystem is enabled.
+                type: bool
+                default: false
+            webdav_enabled:
+                description:
+                    - Whether the WebDAV subsystem is enabled.
+                type: bool
+                default: false
+            readonly:
+                description:
+                    - Whether the Subaccount is read-only.
+                type: bool
+                default: false
+    description:
+        description:
+            - Description of the Storage Box Subaccount.
+        type: str
+    labels:
+        description:
+            - User-defined labels (key-value pairs) for the Storage Box Subaccount.
+        type: dict
+    state:
+        description:
+            - State of the Storage Box Subaccount.
+        default: present
+        choices: [absent, present]
+        type: str
+
+extends_documentation_fragment:
+  - hetzner.hcloud.hcloud
+"""
+
+EXAMPLES = """
+- name: Create a Storage Box Subaccount
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: my-storage-box
+    name: team1
+    home_directory: backups/team1
+    password: secret
+    access_settings:
+      reachable_externally: false
+      ssh_enabled: true
+      samba_enabled: false
+      webdav_enabled: false
+      readonly: false
+    labels:
+      env: prod
+    state: present
+
+- name: Delete a Storage Box Subaccount by name
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: my-storage-box
+    name: team1
+    state: absent
+
+- name: Delete a Storage Box Subaccount by id
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: 497436
+    id: 158045
+    state: absent
+"""
+
+RETURN = """
+hcloud_storage_box_subaccount:
+    description: Details about the Storage Box Subaccount.
+    returned: always
+    type: dict
+    contains:
+        storage_box:
+            description: ID of the parent Storage Box.
+            returned: always
+            type: int
+            sample: 514605
+        id:
+            description: ID of the Storage Box Subaccount.
+            returned: always
+            type: int
+            sample: 158045
+        name:
+            description: Name of the Storage Box Subaccount.
+            returned: always
+            type: str
+            sample: team1
+        description:
+            description: Description of the Storage Box Subaccount.
+            returned: always
+            type: str
+            sample: backups from team1
+        home_directory:
+            description: Home directory of the Storage Box Subaccount.
+            returned: always
+            type: str
+            sample: backups/team1
+        username:
+            description: Username of the Storage Box Subaccount.
+            returned: always
+            type: str
+            sample: u514605-sub1
+        server:
+            description: FQDN of the Storage Box Subaccount.
+            returned: always
+            type: str
+            sample: u514605-sub1.your-storagebox.de
+        labels:
+            description: User-defined labels (key-value pairs) of the Storage Box Subaccount.
+            returned: always
+            type: dict
+            sample:
+                env: prod
+        created:
+            description: Point in time when the Storage Box Subaccount was created (in RFC3339 format).
+            returned: always
+            type: str
+            sample: "2025-12-03T13:47:47Z"
+"""
+
+from ..module_utils import storage_box, storage_box_subaccount
+from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
+from ..module_utils.storage_box_subaccount import NAME_LABEL_KEY
+from ..module_utils.vendor.hcloud import HCloudException
+from ..module_utils.vendor.hcloud.storage_boxes import (
+    BoundStorageBox,
+    BoundStorageBoxSubaccount,
+    StorageBoxSubaccountAccessSettings,
+)
+
+
+class AnsibleStorageBoxSnapshot(AnsibleHCloud):
+    represent = "storage_box_subaccount"
+
+    storage_box: BoundStorageBox | None = None
+    storage_box_subaccount: BoundStorageBoxSubaccount | None = None
+    storage_box_subaccount_name: str | None = None
+
+    def _prepare_result(self):
+        if self.storage_box_subaccount is None:
+            return {}
+        return storage_box_subaccount.prepare_result(self.storage_box_subaccount, self.storage_box_subaccount_name)
+
+    def _fetch(self):
+        self.storage_box = storage_box.get(self.client.storage_boxes, self.module.params.get("storage_box"))
+
+        if (value := self.module.params.get("id")) is not None:
+            self.storage_box_subaccount = self.storage_box.get_subaccount_by_id(value)
+        elif (value := self.module.params.get("name")) is not None:
+            self.storage_box_subaccount = storage_box_subaccount.get_by_name(self.storage_box, value)
+
+        # Workaround the missing name property
+        # Get the name of the resource from the labels
+        if self.storage_box_subaccount is not None:
+            self.storage_box_subaccount_name = self.storage_box_subaccount.labels.pop(NAME_LABEL_KEY)
+
+    def _create(self):
+        self.fail_on_invalid_params(
+            required=["name", "home_directory", "password"],
+        )
+        params = {
+            "home_directory": self.module.params.get("home_directory"),
+            "password": self.module.params.get("password"),
+        }
+
+        if (value := self.module.params.get("description")) is not None:
+            params["description"] = value
+
+        if (value := self.module.params.get("labels")) is not None:
+            params["labels"] = value
+
+        if (value := self.module.params.get("access_settings")) is not None:
+            params["access_settings"] = StorageBoxSubaccountAccessSettings.from_dict(value)
+
+        # Workaround the missing name property
+        # Save the name of the resource in the labels
+        if "labels" not in params:
+            params["labels"] = {}
+        params["labels"][NAME_LABEL_KEY] = self.module.params.get("name")
+
+        if not self.module.check_mode:
+            resp = self.storage_box.create_subaccount(**params)
+            self.storage_box_subaccount = resp.subaccount
+            self.actions.append(resp.action)
+
+            self._wait_actions()
+            self.storage_box_subaccount.reload()
+            self.storage_box_subaccount_name = self.storage_box_subaccount.labels.pop(NAME_LABEL_KEY)
+
+        self._mark_as_changed()
+
+    def _update(self):
+        if (value := self.module.params.get("home_directory")) is not None:
+            if self.storage_box_subaccount.home_directory != value:
+                if not self.module.check_mode:
+                    action = self.storage_box_subaccount.change_home_directory(value)
+                    self.actions.append(action)
+                self._mark_as_changed()
+
+        if (value := self.module.params.get("access_settings")) is not None:
+            access_settings = StorageBoxSubaccountAccessSettings.from_dict(value)
+            if self.storage_box_subaccount.access_settings.to_payload() != access_settings.to_payload():
+                if not self.module.check_mode:
+                    action = self.storage_box_subaccount.update_access_settings(access_settings)
+                    self.actions.append(action)
+                self._mark_as_changed()
+
+        if not self.module.check_mode:
+            self._wait_actions()
+
+        params = {}
+        if (value := self.module.params.get("description")) is not None:
+            if value != self.storage_box_subaccount.description:
+                params["description"] = value
+                self._mark_as_changed()
+
+        if (value := self.module.params.get("labels")) is not None:
+            if value != self.storage_box_subaccount.labels:
+                params["labels"] = value
+                self._mark_as_changed()
+
+                # Workaround the missing name property
+                # Preserve resource name in the labels, name update happen below
+                params["labels"][NAME_LABEL_KEY] = self.storage_box_subaccount_name
+
+        # Workaround the missing name property
+        # Update resource name in the labels
+        if (value := self.module.params.get("name")) is not None:
+            if value != self.storage_box_subaccount_name:
+                self.fail_on_invalid_params(required=["id"])
+                if "labels" in params:
+                    params["labels"][NAME_LABEL_KEY] = value
+                else:
+                    params["labels"] = self.storage_box_subaccount.labels
+                    params["labels"][NAME_LABEL_KEY] = value
+                self._mark_as_changed()
+
+        # Update only if params holds changes or the data must be refreshed (actions
+        # were triggered)
+        if params or self.actions:
+            if not self.module.check_mode:
+                self._wait_actions()
+                self.storage_box_subaccount = self.storage_box_subaccount.update(**params)
+                self.storage_box_subaccount_name = self.storage_box_subaccount.labels.pop(NAME_LABEL_KEY)
+
+    def _delete(self):
+        if not self.module.check_mode:
+            resp = self.storage_box_subaccount.delete()
+            resp.action.wait_until_finished()
+
+        self.storage_box_subaccount = None
+        self._mark_as_changed()
+
+    def present(self):
+        try:
+            self._fetch()
+            if self.storage_box_subaccount is None:
+                self._create()
+            else:
+                self._update()
+
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
+
+    def absent(self):
+        try:
+            self._fetch()
+            if self.storage_box_subaccount is None:
+                return
+            self._delete()
+
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
+
+    @classmethod
+    def define_module(cls):
+        return AnsibleModule(
+            argument_spec=dict(
+                storage_box={"type": "str", "required": True},
+                id={"type": "int"},
+                name={"type": "str"},
+                home_directory={"type": "str"},
+                password={"type": "str", "no_log": True},
+                description={"type": "str"},
+                labels={"type": "dict"},
+                access_settings={
+                    "type": "dict",
+                    "options": dict(
+                        reachable_externally={"type": "bool", "default": False},
+                        samba_enabled={"type": "bool", "default": False},
+                        ssh_enabled={"type": "bool", "default": False},
+                        webdav_enabled={"type": "bool", "default": False},
+                        readonly={"type": "bool", "default": False},
+                    ),
+                },
+                state={
+                    "choices": ["absent", "present", "reset_password"],
+                    "default": "present",
+                },
+                **super().base_module_arguments(),
+            ),
+            required_one_of=[["id", "name"]],
+            supports_check_mode=True,
+        )
+
+
+def main():
+    module = AnsibleStorageBoxSnapshot.define_module()
+    o = AnsibleStorageBoxSnapshot(module)
+
+    match module.params.get("state"):
+        # TODO: reset password
+        case "absent":
+            o.absent()
+        case _:
+            o.present()
+
+    result = o.get_result()
+
+    # Legacy return value naming pattern
+    result["hcloud_storage_box_subaccount"] = result.pop("storage_box_subaccount")
+
+    module.exit_json(**result)
+
+
+if __name__ == "__main__":
+    main()
