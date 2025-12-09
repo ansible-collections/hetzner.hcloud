@@ -184,6 +184,8 @@ hcloud_storage_box_subaccount:
             sample: "2025-12-03T13:47:47Z"
 """
 
+import string
+
 from ..module_utils import storage_box, storage_box_subaccount
 from ..module_utils.client import client_resource_not_found
 from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
@@ -395,6 +397,20 @@ class AnsibleStorageBoxSnapshot(AnsibleHCloud):
 def main():
     module = AnsibleStorageBoxSnapshot.define_module()
     o = AnsibleStorageBoxSnapshot(module)
+
+    # Workaround the missing name property
+    # Validate name
+    if (value := module.params.get("name")) is not None:
+        allowed_chars = string.ascii_letters + string.digits + "-"
+        has_letters = False
+        for c in value:
+            if c in string.ascii_letters:
+                has_letters = True
+            if c in allowed_chars:
+                continue
+            module.fail_json(f"name '{value}' must only have allowed characters: {allowed_chars}")
+        if not has_letters:
+            module.fail_json(f"name '{value}' must contain at least one letter")
 
     match module.params.get("state"):
         case "reset_password":
