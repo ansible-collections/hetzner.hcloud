@@ -106,3 +106,14 @@
     that:
       - result is changed
       - result.hcloud_storage_box_snapshot is none
+
+- name: Test delete idempotency
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.name }}"
+    name: "{{ _storage_box_snapshot.name }}"
+    state: absent
+  register: result
+- name: Verify delete idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
