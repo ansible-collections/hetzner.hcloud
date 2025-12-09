@@ -24,7 +24,7 @@ options:
         description:
             - ID or Name of the parent Storage Box.
             - Using the ID is preferred, to reduce the amount of API requests.
-        type: int
+        type: str
         required: true
     id:
         description:
@@ -134,7 +134,7 @@ hcloud_storage_box_snapshot:
             description: Point in time when the Storage Box Snapshot was created (in RFC3339 format).
             returned: always
             type: str
-            sample: 2025-12-03T13:47:47Z
+            sample: "2025-12-03T13:47:47Z"
 """
 
 from ..module_utils import storage_box, storage_box_snapshot
