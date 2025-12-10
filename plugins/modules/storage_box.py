@@ -15,6 +15,8 @@ short_description: Create and manage Storage Boxes in Hetzner.
 description:
     - Create, update and delete Storage Boxes in Hetzner.
     - See the L(Storage Boxes API documentation,https://docs.hetzner.cloud/reference/hetzner#storage-boxes) for more details.
+    - B(Experimental:) Storage Box support is experimental, breaking changes may occur within minor releases.
+      See https://github.com/ansible-collections/hetzner.hcloud/issues/756 for more details.
 
 author:
     - Jonas Lammler (@jooola)
@@ -342,6 +344,7 @@ hcloud_storage_box:
 
 from ..module_utils import storage_box
 from ..module_utils.client import client_resource_not_found
+from ..module_utils.experimental import storage_box_experimental_warning
 from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
 from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.locations import Location
@@ -358,6 +361,10 @@ class AnsibleStorageBox(AnsibleHCloud):
     represent = "storage_box"
 
     storage_box: BoundStorageBox | None = None
+
+    def __init__(self, module: AnsibleModule):
+        storage_box_experimental_warning(module)
+        super().__init__(module)
 
     def _prepare_result(self):
         if self.storage_box is not None:

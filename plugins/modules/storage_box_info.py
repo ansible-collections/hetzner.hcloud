@@ -15,6 +15,8 @@ short_description: Gather infos about Hetzner Storage Boxes.
 description:
     - Gather infos about Hetzner Storage Boxes.
     - See the L(Storage Boxes API documentation,https://docs.hetzner.cloud/reference/hetzner#storage-boxes) for more details.
+    - B(Experimental:) Storage Box support is experimental, breaking changes may occur within minor releases.
+      See https://github.com/ansible-collections/hetzner.hcloud/issues/756 for more details.
 
 author:
     - Jonas Lammler (@jooola)
@@ -184,6 +186,7 @@ hcloud_storage_box_info:
 from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils import storage_box
+from ..module_utils.experimental import storage_box_experimental_warning
 from ..module_utils.hcloud import AnsibleHCloud
 from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.storage_boxes import (
@@ -195,6 +198,10 @@ class AnsibleStorageBox(AnsibleHCloud):
     represent = "storage_box"
 
     storage_box: list[BoundStorageBox] | None = None
+
+    def __init__(self, module: AnsibleModule):
+        storage_box_experimental_warning(module)
+        super().__init__(module)
 
     def _prepare_result(self):
         result = []
