@@ -40,14 +40,14 @@ extends_documentation_fragment:
 
 EXAMPLES = """
 - name: Gather all Storage Boxes
-  hetzner.hcloud.ssh_key_info:
+  hetzner.hcloud.storage_box_info:
   register: output
 - name: Print the gathered infos
   debug:
     var: output.hcloud_storage_box_info
 
 - name: Gather Storage Boxes by label
-  hetzner.hcloud.ssh_key_info:
+  hetzner.hcloud.storage_box_info:
     label_selector: env=prod
   register: output
 - name: Print the gathered infos
@@ -55,7 +55,7 @@ EXAMPLES = """
     var: output.hcloud_storage_box_info
 
 - name: Gather a Storage Box by name
-  hetzner.hcloud.ssh_key_info:
+  hetzner.hcloud.storage_box_info:
     name: backups
   register: output
 - name: Print the gathered infos
@@ -63,7 +63,7 @@ EXAMPLES = """
     var: output.hcloud_storage_box_info[0]
 
 - name: Gather a Storage Box by id
-  hetzner.hcloud.ssh_key_info:
+  hetzner.hcloud.storage_box_info:
     name: 12345
   register: output
 - name: Print the gathered infos
