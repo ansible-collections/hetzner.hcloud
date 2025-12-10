@@ -333,11 +333,9 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
         if (value := self.module.params.get("name")) is not None:
             if value != self.storage_box_subaccount_name:
                 self.fail_on_invalid_params(required=["id"])
-                if "labels" in params:
-                    params["labels"][NAME_LABEL_KEY] = value
-                else:
+                if "labels" not in params:
                     params["labels"] = self.storage_box_subaccount.labels
-                    params["labels"][NAME_LABEL_KEY] = value
+                params["labels"][NAME_LABEL_KEY] = value
                 self._mark_as_changed()
 
         # Update only if params holds changes or the data must be refreshed (actions
