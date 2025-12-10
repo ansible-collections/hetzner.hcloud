@@ -32,6 +32,7 @@ options:
         description:
             - ID of the Storage Box Subaccount to manage.
             - Required if no Storage Box Subaccount O(name) is given.
+            - If the ID is invalid, the module will fail.
         type: int
     name:
         description:
@@ -150,7 +151,7 @@ hcloud_storage_box_subaccount:
             description: ID of the parent Storage Box.
             returned: always
             type: int
-            sample: 514605
+            sample: 497436
         id:
             description: ID of the Storage Box Subaccount.
             returned: always

@@ -10,10 +10,11 @@ DOCUMENTATION = """
 ---
 module: storage_box_type_info
 
-short_description: Gather infos about the Hetzner Storage Box Types.
+short_description: Gather infos about Hetzner Storage Box Types.
 
 description:
     - Gather infos about available Hetzner Storage Box Types.
+    - See the L(Storage Box Types documentation,https://docs.hetzner.cloud/reference/hetzner#storage-box-types) for more details.
     - B(Experimental:) Storage Box support is experimental, breaking changes may occur within minor releases.
       See https://github.com/ansible-collections/hetzner.hcloud/issues/756 for more details.
 
@@ -116,9 +117,9 @@ from ..module_utils.vendor.hcloud.storage_box_types import BoundStorageBoxType
 
 
 class AnsibleStorageBoxTypeInfo(AnsibleHCloud):
-    represent = "storage_box_type"
+    represent = "storage_box_types"
 
-    storage_box_type: list[BoundStorageBoxType] | None = None
+    storage_box_types: list[BoundStorageBoxType] | None = None
 
     def __init__(self, module: AnsibleModule):
         storage_box_experimental_warning(module)
@@ -127,7 +128,7 @@ class AnsibleStorageBoxTypeInfo(AnsibleHCloud):
     def _prepare_result(self):
         result = []
 
-        for o in self.storage_box_type or []:
+        for o in self.storage_box_types or []:
             if o is None:
                 continue
 
@@ -155,11 +156,11 @@ class AnsibleStorageBoxTypeInfo(AnsibleHCloud):
     def fetch(self):
         try:
             if (id_ := self.module.params.get("id")) is not None:
-                self.storage_box_type = [self.client.storage_box_types.get_by_id(id_)]
+                self.storage_box_types = [self.client.storage_box_types.get_by_id(id_)]
             elif (name := self.module.params.get("name")) is not None:
-                self.storage_box_type = [self.client.storage_box_types.get_by_name(name)]
+                self.storage_box_types = [self.client.storage_box_types.get_by_name(name)]
             else:
-                self.storage_box_type = self.client.storage_box_types.get_all()
+                self.storage_box_types = self.client.storage_box_types.get_all()
 
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
@@ -183,9 +184,10 @@ def main():
     o.fetch()
     result = o.get_result()
 
-    module.exit_json(
-        hcloud_storage_box_type_info=result["storage_box_type"],
-    )
+    # Legacy return value naming pattern
+    result["hcloud_storage_box_type_info"] = result.pop(o.represent)
+
+    module.exit_json(**result)
 
 
 if __name__ == "__main__":

@@ -32,6 +32,7 @@ options:
         description:
             - ID of the Storage Box Snapshot to manage.
             - Required when updating or deleting and if no Storage Box Snapshot O(name) is given.
+            - If the ID is invalid, the module will fail.
         type: int
     name:
         description:
@@ -87,7 +88,7 @@ hcloud_storage_box_snapshot:
     type: dict
     contains:
         storage_box:
-            description: ID of the Storage Box.
+            description: ID of the parent Storage Box.
             returned: always
             type: int
             sample: 497436
@@ -273,7 +274,7 @@ def main():
     result = o.get_result()
 
     # Legacy return value naming pattern
-    result["hcloud_storage_box_snapshot"] = result.pop("storage_box_snapshot")
+    result["hcloud_storage_box_snapshot"] = result.pop(o.represent)
 
     module.exit_json(**result)
 

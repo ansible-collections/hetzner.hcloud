@@ -10,10 +10,10 @@ DOCUMENTATION = """
 ---
 module: storage_box_snapshot_info
 
-short_description: Gather infos about the Hetzner Storage Box Snapshots.
+short_description: Gather infos about Hetzner Storage Box Snapshots.
 
 description:
-    - Gather infos about available Hetzner Storage Box Snapshots.
+    - Gather infos about Hetzner Storage Box Snapshots.
     - See the L(Storage Boxes API documentation,https://docs.hetzner.cloud/reference/hetzner#storage-boxes) for more details.
     - B(Experimental:) Storage Box support is experimental, breaking changes may occur within minor releases.
       See https://github.com/ansible-collections/hetzner.hcloud/issues/756 for more details.
@@ -31,6 +31,7 @@ options:
     id:
         description:
             - ID of the Storage Box Snapshot to get.
+            - If the ID is invalid, the module will fail.
         type: int
     name:
         description:
@@ -203,7 +204,7 @@ def main():
     result = o.get_result()
 
     # Legacy return value naming pattern
-    result["hcloud_storage_box_snapshot_info"] = result.pop("storage_box_snapshots")
+    result["hcloud_storage_box_snapshot_info"] = result.pop(o.represent)
 
     module.exit_json(**result)
 

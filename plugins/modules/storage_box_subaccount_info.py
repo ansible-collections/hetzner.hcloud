@@ -31,6 +31,7 @@ options:
     id:
         description:
             - ID of the Storage Box Subaccount to get.
+            - If the ID is invalid, the module will fail.
         type: int
     name:
         description:
