@@ -55,7 +55,7 @@ EXAMPLES = """
 
 - name: Gather a Storage Box Subaccount by name
   hetzner.hcloud.storage_box_subaccount_info:
-    name: backups
+    name: subaccount1
   register: output
 
 - name: Gather a Storage Box Subaccount by id
@@ -75,22 +75,41 @@ hcloud_storage_box_subaccount_info:
     type: list
     elements: dict
     contains:
-        id:
+        storage_box:
             description: ID of the parent Storage Box.
             returned: always
             type: int
-            sample: 1937415
+            sample: 514605
+        id:
+            description: ID of the Storage Box Subaccount.
+            returned: always
+            type: int
+            sample: 158045
         name:
             description: Name of the Storage Box Subaccount.
             returned: always
             type: str
-            sample: my-storage-box
-        labels:
-            description: User-defined labels (key-value pairs) of the Storage Box Subaccount.
+            sample: subaccount1
+        description:
+            description: Description of the Storage Box Subaccount.
             returned: always
-            type: dict
-            sample:
-                env: prod
+            type: str
+            sample: backups from subaccount1
+        home_directory:
+            description: Home directory of the Storage Box Subaccount.
+            returned: always
+            type: str
+            sample: backups/subaccount1
+        username:
+            description: Username of the Storage Box Subaccount.
+            returned: always
+            type: str
+            sample: u514605-sub1
+        server:
+            description: FQDN of the Storage Box Subaccount.
+            returned: always
+            type: str
+            sample: u514605-sub1.your-storagebox.de
         access_settings:
             description: Access settings of the Storage Box Subaccount.
             returned: always
@@ -121,16 +140,12 @@ hcloud_storage_box_subaccount_info:
                     returned: always
                     type: bool
                     sample: false
-        username:
-            description: User name of the Storage Box Subaccount.
+        labels:
+            description: User-defined labels (key-value pairs) of the Storage Box Subaccount.
             returned: always
-            type: str
-            sample: u505337
-        server:
-            description: FQDN of the Storage Box Subaccount.
-            returned: always
-            type: str
-            sample: u505337.your-storagebox.de
+            type: dict
+            sample:
+                env: prod
         created:
             description: Point in time when the Storage Box Subaccount was created (in RFC3339 format).
             returned: always
@@ -175,10 +190,10 @@ class AnsibleStorageBoxSubaccountInfo(AnsibleHCloud):
                 self.module.params.get("storage_box"),
             )
 
-            if (id_ := self.module.params.get("id")) is not None:
-                self.storage_box_subaccounts = [self.storage_box.get_subaccount_by_id(id_)]
-            elif (name := self.module.params.get("name")) is not None:
-                self.storage_box_subaccounts = [storage_box_subaccount.get_by_name(self.storage_box, name)]
+            if (value := self.module.params.get("id")) is not None:
+                self.storage_box_subaccounts = [self.storage_box.get_subaccount_by_id(value)]
+            elif (value := self.module.params.get("name")) is not None:
+                self.storage_box_subaccounts = [storage_box_subaccount.get_by_name(self.storage_box, value)]
             else:
                 params = {}
                 if (value := self.module.params.get("label_selector")) is not None:

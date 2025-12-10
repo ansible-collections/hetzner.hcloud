@@ -35,6 +35,9 @@ options:
         description:
             - Name of the Storage Box Subaccount to manage.
             - Required if no Storage Box Subaccount O(id) is given.
+            - Required if the Storage Box Subaccount does not exist.
+            - Because the API does not support this property, the name is stored in the
+              Storage Box Subaccount labels.
         type: str
     password:
         description:
@@ -100,8 +103,8 @@ EXAMPLES = """
 - name: Create a Storage Box Subaccount
   hetzner.hcloud.storage_box_subaccount:
     storage_box: my-storage-box
-    name: team1
-    home_directory: backups/team1
+    name: subaccount1
+    home_directory: backups/subaccount1
     password: secret
     access_settings:
       reachable_externally: false
@@ -113,10 +116,17 @@ EXAMPLES = """
       env: prod
     state: present
 
+- name: Reset a Storage Box Subaccount password
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: my-storage-box
+    name: subaccount1
+    password: secret
+    state: reset_password
+
 - name: Delete a Storage Box Subaccount by name
   hetzner.hcloud.storage_box_subaccount:
     storage_box: my-storage-box
-    name: team1
+    name: subaccount1
     state: absent
 
 - name: Delete a Storage Box Subaccount by id
@@ -146,17 +156,17 @@ hcloud_storage_box_subaccount:
             description: Name of the Storage Box Subaccount.
             returned: always
             type: str
-            sample: team1
+            sample: subaccount1
         description:
             description: Description of the Storage Box Subaccount.
             returned: always
             type: str
-            sample: backups from team1
+            sample: backups from subaccount1
         home_directory:
             description: Home directory of the Storage Box Subaccount.
             returned: always
             type: str
-            sample: backups/team1
+            sample: backups/subaccount1
         username:
             description: Username of the Storage Box Subaccount.
             returned: always
@@ -167,6 +177,36 @@ hcloud_storage_box_subaccount:
             returned: always
             type: str
             sample: u514605-sub1.your-storagebox.de
+        access_settings:
+            description: Access settings of the Storage Box Subaccount.
+            returned: always
+            type: dict
+            contains:
+                reachable_externally:
+                    description: Whether access from outside the Hetzner network is allowed.
+                    returned: always
+                    type: bool
+                    sample: false
+                samba_enabled:
+                    description: Whether the Samba subsystem is enabled.
+                    returned: always
+                    type: bool
+                    sample: false
+                ssh_enabled:
+                    description: Whether the SSH subsystem is enabled.
+                    returned: always
+                    type: bool
+                    sample: true
+                webdav_enabled:
+                    description: Whether the WebDAV subsystem is enabled.
+                    returned: always
+                    type: bool
+                    sample: false
+                readonly:
+                    description: Whether the Subaccount is read-only.
+                    returned: always
+                    type: bool
+                    sample: false
         labels:
             description: User-defined labels (key-value pairs) of the Storage Box Subaccount.
             returned: always
@@ -194,7 +234,7 @@ from ..module_utils.vendor.hcloud.storage_boxes import (
 )
 
 
-class AnsibleStorageBoxSnapshot(AnsibleHCloud):
+class AnsibleStorageBoxSubaccount(AnsibleHCloud):
     represent = "storage_box_subaccount"
 
     storage_box: BoundStorageBox | None = None
@@ -285,7 +325,7 @@ class AnsibleStorageBoxSnapshot(AnsibleHCloud):
                 self._mark_as_changed()
 
                 # Workaround the missing name property
-                # Preserve resource name in the labels, name update happen below
+                # Preserve resource name in the labels, name update happens below
                 params["labels"][NAME_LABEL_KEY] = self.storage_box_subaccount_name
 
         # Workaround the missing name property
@@ -391,8 +431,8 @@ class AnsibleStorageBoxSnapshot(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleStorageBoxSnapshot.define_module()
-    o = AnsibleStorageBoxSnapshot(module)
+    module = AnsibleStorageBoxSubaccount.define_module()
+    o = AnsibleStorageBoxSubaccount(module)
 
     # Workaround the missing name property
     # Validate name
@@ -419,7 +459,7 @@ def main():
     result = o.get_result()
 
     # Legacy return value naming pattern
-    result["hcloud_storage_box_subaccount"] = result.pop("storage_box_subaccount")
+    result["hcloud_storage_box_subaccount"] = result.pop(o.represent)
 
     module.exit_json(**result)
 
