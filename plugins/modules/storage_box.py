@@ -400,35 +400,34 @@ class AnsibleStorageBox(AnsibleHCloud):
 
         if not self.module.check_mode:
             resp = self.client.storage_boxes.create(**params)
-            self.actions.append(resp.action)
-
             self.storage_box = resp.storage_box
-
-            self._wait_actions()
+            resp.action.wait_until_finished()
 
         if (value := self.module.params.get("delete_protection")) is not None:
             if not self.module.check_mode:
                 action = self.storage_box.change_protection(delete=value)
-                self.actions.append(action)
+                action.wait_until_finished()
 
         if self.module.param_is_defined("snapshot_plan"):
             if (value := self.module.params.get("snapshot_plan")) is not None:
                 if not self.module.check_mode:
                     action = self.storage_box.enable_snapshot_plan(StorageBoxSnapshotPlan.from_dict(value))
-                    self.actions.append(action)
+                    action.wait_until_finished()
 
         if not self.module.check_mode:
-            self._wait_actions()
             self.storage_box.reload()
 
         self._mark_as_changed()
 
     def _update(self):
+        need_reload = False
+
         if (value := self.module.params.get("storage_box_type")) is not None:
             if not self.storage_box.storage_box_type.has_id_or_name(value):
                 if not self.module.check_mode:
                     action = self.storage_box.change_type(StorageBoxType(value))
-                    self.actions.append(action)
+                    action.wait_until_finished()
+                    need_reload = True
                 self._mark_as_changed()
 
         if (value := self.module.params.get("access_settings")) is not None:
@@ -436,14 +435,16 @@ class AnsibleStorageBox(AnsibleHCloud):
             if self.storage_box.access_settings.to_payload() != access_settings.to_payload():
                 if not self.module.check_mode:
                     action = self.storage_box.update_access_settings(access_settings)
-                    self.actions.append(action)
+                    action.wait_until_finished()
+                    need_reload = True
                 self._mark_as_changed()
 
         if (value := self.module.params.get("delete_protection")) is not None:
             if self.storage_box.protection["delete"] != value:
                 if not self.module.check_mode:
                     action = self.storage_box.change_protection(delete=value)
-                    self.actions.append(action)
+                    action.wait_until_finished()
+                    need_reload = True
                 self._mark_as_changed()
 
         if self.module.param_is_defined("snapshot_plan"):
@@ -455,13 +456,15 @@ class AnsibleStorageBox(AnsibleHCloud):
                 ):
                     if not self.module.check_mode:
                         action = self.storage_box.enable_snapshot_plan(snapshot_plan)
-                        self.actions.append(action)
+                        action.wait_until_finished()
+                        need_reload = True
                     self._mark_as_changed()
             else:
                 if self.storage_box.snapshot_plan is not None:
                     if not self.module.check_mode:
                         action = self.storage_box.disable_snapshot_plan()
-                        self.actions.append(action)
+                        action.wait_until_finished()
+                        need_reload = True
                     self._mark_as_changed()
 
         params = {}
@@ -476,10 +479,8 @@ class AnsibleStorageBox(AnsibleHCloud):
 
         # Update only if params holds changes or the data must be refreshed (actions
         # were triggered)
-        if params or self.actions:
+        if params or need_reload:
             if not self.module.check_mode:
-                self._wait_actions()
-
                 self.storage_box = self.storage_box.update(**params)
 
     def _delete(self):
@@ -524,8 +525,7 @@ class AnsibleStorageBox(AnsibleHCloud):
                 )
             if not self.module.check_mode:
                 action = self.storage_box.reset_password(self.module.params.get("password"))
-                self.actions.append(action)
-                self._wait_actions()
+                action.wait_until_finished()
 
             self._mark_as_changed()
 
@@ -546,8 +546,7 @@ class AnsibleStorageBox(AnsibleHCloud):
 
             if not self.module.check_mode:
                 action = self.storage_box.rollback_snapshot(StorageBoxSnapshot(self.module.params.get("snapshot")))
-                self.actions.append(action)
-                self._wait_actions()
+                action.wait_until_finished()
 
             self._mark_as_changed()
 

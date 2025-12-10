@@ -296,9 +296,8 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
         if not self.module.check_mode:
             resp = self.storage_box.create_subaccount(**params)
             self.storage_box_subaccount = resp.subaccount
-            self.actions.append(resp.action)
+            resp.action.wait_until_finished()
 
-            self._wait_actions()
             self.storage_box_subaccount.reload()
             self.storage_box_subaccount_name = self.storage_box_subaccount.labels.pop(NAME_LABEL_KEY)
 
@@ -311,7 +310,7 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
             if self.storage_box_subaccount.home_directory != value:
                 if not self.module.check_mode:
                     action = self.storage_box_subaccount.change_home_directory(value)
-                    self.actions.append(action)
+                    action.wait_until_finished()
                     need_reload = True
                 self._mark_as_changed()
 
@@ -320,12 +319,9 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
             if self.storage_box_subaccount.access_settings.to_payload() != access_settings.to_payload():
                 if not self.module.check_mode:
                     action = self.storage_box_subaccount.update_access_settings(access_settings)
-                    self.actions.append(action)
+                    action.wait_until_finished()
                     need_reload = True
                 self._mark_as_changed()
-
-        if not self.module.check_mode:
-            self._wait_actions()
 
         params = {}
         if (value := self.module.params.get("description")) is not None:
@@ -400,8 +396,7 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
                 )
             if not self.module.check_mode:
                 action = self.storage_box_subaccount.reset_password(self.module.params.get("password"))
-                self.actions.append(action)
-                self._wait_actions()
+                action.wait_until_finished()
 
             self._mark_as_changed()
 

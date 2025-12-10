@@ -185,9 +185,8 @@ class AnsibleStorageBoxSnapshot(AnsibleHCloud):
         if not self.module.check_mode:
             resp = self.storage_box.create_snapshot(**params)
             self.storage_box_snapshot = resp.snapshot
-            self.actions.append(resp.action)
+            resp.action.wait_until_finished()
 
-            self._wait_actions()
             self.storage_box_snapshot.reload()
 
         self._mark_as_changed()

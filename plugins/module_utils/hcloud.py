@@ -23,7 +23,7 @@ from .vendor.hcloud import (
     HCloudException,
     exponential_backoff_function,
 )
-from .vendor.hcloud.actions import ActionException, BoundAction
+from .vendor.hcloud.actions import ActionException
 from .version import version
 
 
@@ -54,7 +54,6 @@ class AnsibleHCloud:
     module: AnsibleModule
 
     client: Client
-    actions: list[BoundAction]
 
     def __init__(self, module: AnsibleModule):
         if not self.represent:
@@ -69,9 +68,6 @@ class AnsibleHCloud:
             module.fail_json(msg=to_native(exception))
 
         self._build_client()
-
-        # Save actions and wait for them using self._wait_actions()
-        self.actions = []
 
     def fail_json_hcloud(
         self,
@@ -126,14 +122,6 @@ class AnsibleHCloud:
             return client_get_by_name_or_id(self.client, resource, param)
         except ClientException as exception:
             self.module.fail_json(msg=to_native(exception))
-
-    def _wait_actions(self):
-        """
-        Wait for all pending actions and flush the list once completed.
-        """
-        for a in self.actions:
-            a.wait_until_finished()
-        self.actions = []
 
     def _mark_as_changed(self) -> None:
         self.result["changed"] = True
