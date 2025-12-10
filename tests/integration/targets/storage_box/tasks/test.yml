@@ -218,17 +218,22 @@
     that:
       - result is changed
 
-# TODO: take snapshot and rollback
-# - name: Test rollback snapshot
-#   hetzner.hcloud.storage_box:
-#     name: "{{ hcloud_storage_box_name }}"
-#     snapshot: "TODO"
-#     state: rollback_snapshot
-#   register: result
-# - name: Verify rollback snapshot
-#   ansible.builtin.assert:
-#     that:
-#       - result is changed
+- name: Create snapshot
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ hcloud_storage_box_name }}"
+    description: test-rollback
+  register: _rollback_snapshot
+
+- name: Test rollback snapshot
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    snapshot: "{{ _rollback_snapshot.hcloud_storage_box_snapshot.id }}"
+    state: rollback_snapshot
+  register: result
+- name: Verify rollback snapshot
+  ansible.builtin.assert:
+    that:
+      - result is changed
 
 - name: Test delete
   hetzner.hcloud.storage_box:
