@@ -297,11 +297,14 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
         self._mark_as_changed()
 
     def _update(self):
+        need_reload = False
+
         if (value := self.module.params.get("home_directory")) is not None:
             if self.storage_box_subaccount.home_directory != value:
                 if not self.module.check_mode:
                     action = self.storage_box_subaccount.change_home_directory(value)
                     self.actions.append(action)
+                    need_reload = True
                 self._mark_as_changed()
 
         if (value := self.module.params.get("access_settings")) is not None:
@@ -310,6 +313,7 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
                 if not self.module.check_mode:
                     action = self.storage_box_subaccount.update_access_settings(access_settings)
                     self.actions.append(action)
+                    need_reload = True
                 self._mark_as_changed()
 
         if not self.module.check_mode:
@@ -341,7 +345,7 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
                 self._mark_as_changed()
 
         # Update only if params holds changes
-        if params:
+        if params or need_reload:
             if not self.module.check_mode:
                 self.storage_box_subaccount = self.storage_box_subaccount.update(**params)
                 self.storage_box_subaccount_name = self.storage_box_subaccount.labels.pop(NAME_LABEL_KEY)
