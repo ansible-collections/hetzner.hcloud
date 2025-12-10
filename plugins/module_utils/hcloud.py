@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import traceback
+from copy import deepcopy
 from typing import Any, NoReturn
 
 from ansible.module_utils.basic import AnsibleModule as AnsibleModuleBase, env_fallback
@@ -26,15 +27,33 @@ from .vendor.hcloud.actions import ActionException
 from .version import version
 
 
-# Provide typing definitions to the AnsibleModule class
 class AnsibleModule(AnsibleModuleBase):
     params: dict
+    params_raw: dict
+
+    def _load_params(self):
+        """
+        Copy the params before validation, to keep track whether a value was defined by the user.
+
+        Validation will modify the params dict by adding missing keys.
+        """
+        # https://github.com/ansible/ansible/blob/7b4d4ed672415f31689e7f25bc0b40c0697c0c88/lib/ansible/module_utils/basic.py#L1244-L1251
+        super()._load_params()
+        self.params_raw = deepcopy(self.params)
+
+    def param_is_defined(self, key: str):
+        """
+        Check if a parameter was defined by the user.
+        """
+        return key in self.params_raw
 
 
 class AnsibleHCloud:
     represent: str
 
     module: AnsibleModule
+
+    client: Client
 
     def __init__(self, module: AnsibleModule):
         if not self.represent:
