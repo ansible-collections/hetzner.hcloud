@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.3.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.2.1...6.3.0) (2025-12-10)
+
+
+### Features
+
+* add support for Storage Boxes ([#676](https://github.com/ansible-collections/hetzner.hcloud/issues/676)) ([5394c6f](https://github.com/ansible-collections/hetzner.hcloud/commit/5394c6f2466d1d30193df643367918dada18be72))
+
 ## [6.2.1](https://github.com/ansible-collections/hetzner.hcloud/compare/6.2.0...6.2.1) (2025-11-17)
 
 

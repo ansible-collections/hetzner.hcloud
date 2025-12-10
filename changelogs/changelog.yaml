@@ -822,3 +822,37 @@ releases:
     fragments:
     - zone-rrsets-idempotency.yml
     release_date: '2025-11-17'
+  6.3.0:
+    changes:
+      minor_changes:
+      - storage_box - New module to create and manage Storage Boxes in Hetzner.
+      - storage_box_info - New module to gather infos about Hetzner Storage Boxes.
+      - storage_box_snapshot - New module to create and manage Storage Box Snapshots
+        in Hetzner.
+      - storage_box_snapshot_info - New module to gather infos about Hetzner Storage
+        Box Snapshots.
+      - storage_box_subaccount - New module to create and manage Storage Box Subaccounts
+        in Hetzner.
+      - storage_box_subaccount_info - New module to gather infos about Hetzner Storage
+        Box Subaccounts.
+      - storage_box_type_info - New module to gather infos about Hetzner Storage Box
+        Types.
+      release_summary: "This release adds support for the new `Storage Box API`_.\n\nStorage
+        Box support is **experimental**, breaking changes may occur within minor releases.\n\nSee
+        the `experimental tracking issue`_ for more details.\n\n**Examples**\n\n..
+        code:: yaml\n\n    - name: Create a Storage Box\n      hetzner.hcloud.storage_box:\n
+        \       name: backups\n        storage_box_type: bx11\n        location: fsn1\n
+        \       password: my-secret\n        access_settings:\n          reachable_externally:
+        true\n          ssh_enabled: true\n        state: present\n\n    - name: Create
+        a Storage Box Subaccount\n      hetzner.hcloud.storage_box_subaccount:\n        storage_box:
+        backups\n        name: subaccount1\n        home_directory: backups/subaccount1\n
+        \       password: secret\n        access_settings:\n          readonly: true\n
+        \       labels:\n          env: prod\n        state: present\n\n    - name:
+        Take a Storage Box Snapshot\n      hetzner.hcloud.storage_box_snapshot:\n
+        \       storage_box: backups\n        description: before app migration\n
+        \       labels:\n          env: prod\n        state: present\n\n.. _Storage
+        Box API: https://docs.hetzner.cloud/reference/hetzner#storage-boxes\n.. _experimental
+        tracking issue: https://github.com/ansible-collections/hetzner.hcloud/issues/756\n"
+    fragments:
+    - storage-boxes.yml
+    release_date: '2025-12-10'

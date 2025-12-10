@@ -4,6 +4,67 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.3.0
+======
+
+Release Summary
+---------------
+
+This release adds support for the new `Storage Box API`_.
+
+Storage Box support is **experimental**, breaking changes may occur within minor releases.
+
+See the `experimental tracking issue`_ for more details.
+
+**Examples**
+
+.. code:: yaml
+
+    - name: Create a Storage Box
+      hetzner.hcloud.storage_box:
+        name: backups
+        storage_box_type: bx11
+        location: fsn1
+        password: my-secret
+        access_settings:
+          reachable_externally: true
+          ssh_enabled: true
+        state: present
+
+    - name: Create a Storage Box Subaccount
+      hetzner.hcloud.storage_box_subaccount:
+        storage_box: backups
+        name: subaccount1
+        home_directory: backups/subaccount1
+        password: secret
+        access_settings:
+          readonly: true
+        labels:
+          env: prod
+        state: present
+
+    - name: Take a Storage Box Snapshot
+      hetzner.hcloud.storage_box_snapshot:
+        storage_box: backups
+        description: before app migration
+        labels:
+          env: prod
+        state: present
+
+.. _Storage Box API: https://docs.hetzner.cloud/reference/hetzner#storage-boxes
+.. _experimental tracking issue: https://github.com/ansible-collections/hetzner.hcloud/issues/756
+
+Minor Changes
+-------------
+
+- storage_box - New module to create and manage Storage Boxes in Hetzner.
+- storage_box_info - New module to gather infos about Hetzner Storage Boxes.
+- storage_box_snapshot - New module to create and manage Storage Box Snapshots in Hetzner.
+- storage_box_snapshot_info - New module to gather infos about Hetzner Storage Box Snapshots.
+- storage_box_subaccount - New module to create and manage Storage Box Subaccounts in Hetzner.
+- storage_box_subaccount_info - New module to gather infos about Hetzner Storage Box Subaccounts.
+- storage_box_type_info - New module to gather infos about Hetzner Storage Box Types.
+
 v6.2.1
 ======
 
