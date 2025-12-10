@@ -103,6 +103,7 @@ class AnsibleHCloud:
         self.client = Client(
             token=self.module.params["api_token"],
             api_endpoint=self.module.params["api_endpoint"],
+            api_endpoint_hetzner=self.module.params["api_endpoint_hetzner"],
             application_name="ansible-module",
             application_version=version,
             # Total waiting time before timeout is > 117.0
@@ -162,6 +163,11 @@ class AnsibleHCloud:
                 "fallback": (env_fallback, ["HCLOUD_ENDPOINT"]),
                 "default": "https://api.hetzner.cloud/v1",
                 "aliases": ["endpoint"],
+            },
+            "api_endpoint_hetzner": {
+                "type": "str",
+                "fallback": (env_fallback, ["HETZNER_ENDPOINT"]),
+                "default": "https://api.hetzner.com/v1",
             },
         }
 

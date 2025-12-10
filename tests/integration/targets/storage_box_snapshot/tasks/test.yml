@@ -1,0 +1,119 @@
+---
+- name: Test missing required parameters # noqa: args[module]
+  hetzner.hcloud.storage_box_snapshot:
+  ignore_errors: true
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "missing required arguments: storage_box"'
+
+- name: Test create with check mode
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ hcloud_storage_box_name }}"
+    description: migration-1
+    labels:
+      key: value
+  check_mode: true
+  register: result
+- name: Verify create with check mode
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test create
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ hcloud_storage_box_name }}"
+    description: migration-1
+    labels:
+      key: value
+  register: result
+- name: Verify create
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box_snapshot.storage_box == test_storage_box.hcloud_storage_box.id
+      - result.hcloud_storage_box_snapshot.id is not none
+      - result.hcloud_storage_box_snapshot.name is not none
+      - result.hcloud_storage_box_snapshot.description == "migration-1"
+      - result.hcloud_storage_box_snapshot.labels.key == "value"
+      - result.hcloud_storage_box_snapshot.is_automatic is false
+      - result.hcloud_storage_box_snapshot.stats.size >= 0
+      - result.hcloud_storage_box_snapshot.stats.size_filesystem >= 0
+      - result.hcloud_storage_box_snapshot.created is not none
+
+- name: Save Storage Box Snapshot
+  ansible.builtin.set_fact:
+    _storage_box_snapshot: "{{ result.hcloud_storage_box_snapshot }}"
+
+- name: Test create idempotency
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    id: "{{ _storage_box_snapshot.id }}" # Create is not idempotent, only with id or name
+    description: migration-1
+    labels:
+      key: value
+  register: result
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    id: "{{ _storage_box_snapshot.id }}"
+    description: migration-changed # Update
+    labels:
+      key: changed # Update
+  register: result
+- name: Verify update
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box_snapshot.storage_box == test_storage_box.hcloud_storage_box.id
+      - result.hcloud_storage_box_snapshot.id is not none
+      - result.hcloud_storage_box_snapshot.name is not none
+      - result.hcloud_storage_box_snapshot.description == "migration-changed"
+      - result.hcloud_storage_box_snapshot.labels.key == "changed"
+      - result.hcloud_storage_box_snapshot.is_automatic is false
+      - result.hcloud_storage_box_snapshot.stats.size >= 0
+      - result.hcloud_storage_box_snapshot.stats.size_filesystem >= 0
+      - result.hcloud_storage_box_snapshot.created is not none
+
+- name: Test update idempotency
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.name }}"
+    name: "{{ _storage_box_snapshot.name }}"
+    description: migration-changed # Update
+    labels:
+      key: changed # Update
+  register: result
+- name: Verify update idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test delete
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.name }}"
+    name: "{{ _storage_box_snapshot.name }}"
+    state: absent
+  register: result
+- name: Verify delete
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box_snapshot is none
+
+- name: Test delete idempotency
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.name }}"
+    name: "{{ _storage_box_snapshot.name }}"
+    state: absent
+  register: result
+- name: Verify delete idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed

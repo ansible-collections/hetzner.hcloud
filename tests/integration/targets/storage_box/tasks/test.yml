@@ -1,0 +1,247 @@
+---
+- name: Test missing required parameters
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    state: present
+  ignore_errors: true
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "missing required arguments: storage_box_type, location, password"'
+
+- name: Test create with check mode
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    type: "{{ hcloud_storage_box_type_name }}"
+    location: "{{ hcloud_location_name }}"
+    password: "{{ hcloud_storage_box_password }}"
+    ssh_keys:
+      - "{{ test_ssh_keypair.public_key }}"
+    labels:
+      key: value
+  check_mode: true
+  register: result
+- name: Verify create with check mode
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test create
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    type: "{{ hcloud_storage_box_type_name }}"
+    location: "{{ hcloud_location_name }}"
+    password: "{{ hcloud_storage_box_password }}"
+    ssh_keys:
+      - "{{ test_ssh_keypair.public_key }}"
+    access_settings:
+      ssh_enabled: true
+      zfs_enabled: false
+    snapshot_plan:
+      max_snapshots: 10
+      hour: 3
+      minute: 30
+    labels:
+      key: value
+  register: result
+- name: Verify create
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box.id is not none
+      - result.hcloud_storage_box.name == hcloud_storage_box_name
+      - result.hcloud_storage_box.storage_box_type == hcloud_storage_box_type_name
+      - result.hcloud_storage_box.location == hcloud_location_name
+      - result.hcloud_storage_box.labels.key == "value"
+      - result.hcloud_storage_box.delete_protection == false
+      - result.hcloud_storage_box.access_settings.reachable_externally == false
+      - result.hcloud_storage_box.access_settings.samba_enabled == false
+      - result.hcloud_storage_box.access_settings.ssh_enabled == true
+      - result.hcloud_storage_box.access_settings.webdav_enabled == false
+      - result.hcloud_storage_box.access_settings.zfs_enabled == false
+      - result.hcloud_storage_box.snapshot_plan.max_snapshots == 10
+      - result.hcloud_storage_box.snapshot_plan.hour == 3
+      - result.hcloud_storage_box.snapshot_plan.minute == 30
+      - result.hcloud_storage_box.status == "active"
+      - result.hcloud_storage_box.server is not none
+      - result.hcloud_storage_box.system is not none
+      - result.hcloud_storage_box.username is not none
+      - result.hcloud_storage_box.stats.size >= 0
+      - result.hcloud_storage_box.stats.size_data >= 0
+      - result.hcloud_storage_box.stats.size_snapshots >= 0
+
+- name: Test create idempotency
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    type: "{{ hcloud_storage_box_type_name }}"
+    location: "{{ hcloud_location_name }}"
+    password: "{{ hcloud_storage_box_password }}"
+    ssh_keys:
+      - "{{ test_ssh_keypair.public_key }}"
+    access_settings:
+      ssh_enabled: true
+      zfs_enabled: false
+    snapshot_plan:
+      max_snapshots: 10
+      hour: 3
+      minute: 30
+    labels:
+      key: value
+  register: result
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update name
+  hetzner.hcloud.storage_box:
+    id: "{{ result.hcloud_storage_box.id }}"
+    name: "{{ hcloud_storage_box_name }}-changed" # Update
+  register: result
+- name: Verify update name
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box.name == hcloud_storage_box_name + "-changed"
+
+      # Ensure snapshot plan was not changed
+      - result.hcloud_storage_box.snapshot_plan.max_snapshots == 10
+      - result.hcloud_storage_box.snapshot_plan.hour == 3
+      - result.hcloud_storage_box.snapshot_plan.minute == 30
+
+- name: Test update
+  hetzner.hcloud.storage_box:
+    id: "{{ result.hcloud_storage_box.id }}"
+    name: "{{ hcloud_storage_box_name }}" # Update
+    type: "{{ hcloud_storage_box_type_upgrade_name }}" # Update
+    location: "{{ hcloud_location_name }}"
+    ssh_keys:
+      - "{{ test_ssh_keypair.public_key }}"
+    access_settings: # Update
+      ssh_enabled: false
+      reachable_externally: true
+    snapshot_plan:
+      max_snapshots: 10
+      hour: 4 # Update
+      minute: 30
+    labels:
+      key: changed # Update
+    delete_protection: true # Update
+  register: result
+- name: Verify update
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box.id is not none
+      - result.hcloud_storage_box.name == hcloud_storage_box_name
+      - result.hcloud_storage_box.storage_box_type == hcloud_storage_box_type_upgrade_name
+      - result.hcloud_storage_box.location == hcloud_location_name
+      - result.hcloud_storage_box.labels.key == "changed"
+      - result.hcloud_storage_box.delete_protection == true
+      - result.hcloud_storage_box.access_settings.reachable_externally == true
+      - result.hcloud_storage_box.access_settings.samba_enabled == false
+      - result.hcloud_storage_box.access_settings.ssh_enabled == false
+      - result.hcloud_storage_box.access_settings.webdav_enabled == false
+      - result.hcloud_storage_box.access_settings.zfs_enabled == false
+      - result.hcloud_storage_box.snapshot_plan.max_snapshots == 10
+      - result.hcloud_storage_box.snapshot_plan.hour == 4
+      - result.hcloud_storage_box.snapshot_plan.minute == 30
+
+- name: Test update idempotency
+  hetzner.hcloud.storage_box:
+    id: "{{ result.hcloud_storage_box.id }}"
+    name: "{{ hcloud_storage_box_name }}" # Update
+    type: "{{ hcloud_storage_box_type_upgrade_name }}" # Update
+    location: "{{ hcloud_location_name }}"
+    ssh_keys:
+      - "{{ test_ssh_keypair.public_key }}"
+    access_settings: # Update
+      ssh_enabled: false
+      reachable_externally: true
+    snapshot_plan:
+      max_snapshots: 10
+      hour: 4 # Update
+      minute: 30
+    labels:
+      key: changed # Update
+    delete_protection: true # Update
+  register: result
+- name: Verify update idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test delete with delete protection
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    state: absent
+  ignore_errors: true
+  register: result
+- name: Verify delete with delete protection
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - result.failure.code == "protected"
+
+- name: Test update delete protection
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    delete_protection: false
+  register: result
+- name: Verify update delete protection
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box.delete_protection == false
+
+- name: Test update snapshot plan
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    snapshot_plan: null
+  register: result
+- name: Verify update snapshot plan
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box.snapshot_plan is none
+
+- name: Test reset password
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    password: "{{ hcloud_storage_box_password }}"
+    state: reset_password
+  register: result
+- name: Verify reset password
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Create snapshot
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ hcloud_storage_box_name }}"
+    description: test-rollback
+  register: _rollback_snapshot
+
+- name: Test rollback snapshot
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    snapshot: "{{ _rollback_snapshot.hcloud_storage_box_snapshot.id }}"
+    state: rollback_snapshot
+  register: result
+- name: Verify rollback snapshot
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test delete
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    state: absent
+  register: result
+- name: Verify delete
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box is none

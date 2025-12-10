@@ -1,0 +1,28 @@
+---
+- name: Create test_storage_box
+  hetzner.hcloud.storage_box:
+    name: "{{ hcloud_storage_box_name }}"
+    type: "{{ hcloud_storage_box_type_name }}"
+    location: "{{ hcloud_location_name }}"
+    password: "{{ hcloud_storage_box_password }}"
+    ssh_keys:
+      - "{{ test_ssh_keypair.public_key }}"
+    access_settings:
+      ssh_enabled: true
+      reachable_externally: false
+    labels:
+      key: "{{ hcloud_ns }}"
+  register: test_storage_box
+
+- name: Create test_storage_box_snapshot1
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    description: snapshot1
+    labels:
+      key: "{{ hcloud_ns }}"
+  register: test_storage_box_snapshot1
+
+- name: Create test_storage_box_snapshot2
+  hetzner.hcloud.storage_box_snapshot:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+  register: test_storage_box_snapshot2
