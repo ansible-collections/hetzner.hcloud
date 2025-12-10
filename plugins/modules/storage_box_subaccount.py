@@ -36,8 +36,10 @@ options:
             - Name of the Storage Box Subaccount to manage.
             - Required if no Storage Box Subaccount O(id) is given.
             - Required if the Storage Box Subaccount does not exist.
-            - Because the API does not support this property, the name is stored in the
-              Storage Box Subaccount labels.
+            - Because the API resource does not have this property, the name is stored
+              in the Storage Box Subaccount labels. This ensures that the module is
+              idempotent, and removes the need to use different module arguments for
+              create and update.
         type: str
     password:
         description:
