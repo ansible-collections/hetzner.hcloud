@@ -27,7 +27,6 @@ from .vendor.hcloud.actions import ActionException
 from .version import version
 
 
-# Provide typing definitions to the AnsibleModule class
 class AnsibleModule(AnsibleModuleBase):
     params: dict
     params_raw: dict
