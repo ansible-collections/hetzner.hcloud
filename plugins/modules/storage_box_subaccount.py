@@ -352,7 +352,7 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
                 params["labels"][NAME_LABEL_KEY] = value
                 self._mark_as_changed()
 
-        # Update only if params holds changes
+        # Update only if params holds changes or actions were triggered
         if params or need_reload:
             if not self.module.check_mode:
                 self.storage_box_subaccount = self.storage_box_subaccount.update(**params)
