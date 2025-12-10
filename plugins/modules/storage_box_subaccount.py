@@ -15,6 +15,8 @@ short_description: Create and manage Storage Box Subaccounts in Hetzner.
 description:
     - Create, update and delete Storage Box Subaccounts in Hetzner.
     - See the L(Storage Box Subaccounts API documentation,https://docs.hetzner.cloud/reference/hetzner#storage-box-subaccounts) for more details.
+    - B(Experimental:) Storage Box support is experimental, breaking changes may occur within minor releases.
+      See https://github.com/ansible-collections/hetzner.hcloud/issues/756 for more details.
 
 author:
     - Jonas Lammler (@jooola)
@@ -226,6 +228,7 @@ import string
 
 from ..module_utils import storage_box, storage_box_subaccount
 from ..module_utils.client import client_resource_not_found
+from ..module_utils.experimental import storage_box_experimental_warning
 from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
 from ..module_utils.storage_box_subaccount import NAME_LABEL_KEY
 from ..module_utils.vendor.hcloud import HCloudException
@@ -242,6 +245,10 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
     storage_box: BoundStorageBox | None = None
     storage_box_subaccount: BoundStorageBoxSubaccount | None = None
     storage_box_subaccount_name: str | None = None
+
+    def __init__(self, module: AnsibleModule):
+        storage_box_experimental_warning(module)
+        super().__init__(module)
 
     def _prepare_result(self):
         if self.storage_box_subaccount is None:
