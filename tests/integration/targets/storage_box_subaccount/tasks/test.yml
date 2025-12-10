@@ -1,0 +1,190 @@
+---
+- name: Test missing required parameters # noqa: args[module]
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ hcloud_storage_box_name }}"
+  ignore_errors: true
+  register: result
+- name: Verify missing required parameters
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - 'result.msg == "one of the following is required: id, name"'
+
+- name: Test create with check mode
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ hcloud_storage_box_name }}"
+    name: subaccount1
+    description: backups from subaccount1
+    home_directory: backups/subaccount1
+    password: "{{ hcloud_storage_box_password }}"
+    labels:
+      key: value
+    access_settings:
+      ssh_enabled: true
+      readonly: false
+  check_mode: true
+  register: result
+- name: Verify create with check mode
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test create
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ hcloud_storage_box_name }}"
+    name: subaccount1
+    description: backups from subaccount1
+    home_directory: backups/subaccount1
+    password: "{{ hcloud_storage_box_password }}"
+    labels:
+      key: value
+    access_settings:
+      ssh_enabled: true
+      readonly: false
+  register: result
+- name: Verify create
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box_subaccount.storage_box == test_storage_box.hcloud_storage_box.id
+      - result.hcloud_storage_box_subaccount.id is not none
+      - result.hcloud_storage_box_subaccount.name == "subaccount1"
+      - result.hcloud_storage_box_subaccount.description == "backups from subaccount1"
+      - result.hcloud_storage_box_subaccount.home_directory == "backups/subaccount1"
+      - result.hcloud_storage_box_subaccount.username is not none
+      - result.hcloud_storage_box_subaccount.server is not none
+      - result.hcloud_storage_box_subaccount.labels.key == "value"
+      - result.hcloud_storage_box_subaccount.access_settings.reachable_externally == false
+      - result.hcloud_storage_box_subaccount.access_settings.samba_enabled == false
+      - result.hcloud_storage_box_subaccount.access_settings.ssh_enabled == true
+      - result.hcloud_storage_box_subaccount.access_settings.webdav_enabled == false
+      - result.hcloud_storage_box_subaccount.access_settings.readonly == false
+      - result.hcloud_storage_box_subaccount.created is not none
+
+- name: Test create idempotency
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    name: subaccount1
+    description: backups from subaccount1
+    home_directory: backups/subaccount1
+    password: "{{ hcloud_storage_box_password }}"
+    labels:
+      key: value
+    access_settings:
+      ssh_enabled: true
+      readonly: false
+  register: result
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    name: subaccount1
+    description: backups from subaccount2 # Update
+    home_directory: backups/subaccount2 # Update
+    password: "{{ hcloud_storage_box_password }}"
+    labels:
+      key: changed # Update
+    access_settings:
+      ssh_enabled: true
+      readonly: true # Update
+  register: result
+- name: Verify update
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box_subaccount.storage_box == test_storage_box.hcloud_storage_box.id
+      - result.hcloud_storage_box_subaccount.id is not none
+      - result.hcloud_storage_box_subaccount.name == "subaccount1"
+      - result.hcloud_storage_box_subaccount.description == "backups from subaccount2"
+      - result.hcloud_storage_box_subaccount.home_directory == "backups/subaccount2"
+      - result.hcloud_storage_box_subaccount.username is not none
+      - result.hcloud_storage_box_subaccount.server is not none
+      - result.hcloud_storage_box_subaccount.labels.key == "changed"
+      - result.hcloud_storage_box_subaccount.access_settings.reachable_externally == false
+      - result.hcloud_storage_box_subaccount.access_settings.samba_enabled == false
+      - result.hcloud_storage_box_subaccount.access_settings.ssh_enabled == true
+      - result.hcloud_storage_box_subaccount.access_settings.webdav_enabled == false
+      - result.hcloud_storage_box_subaccount.access_settings.readonly == true
+      - result.hcloud_storage_box_subaccount.created is not none
+
+- name: Test update idempotency
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    name: subaccount1
+    description: backups from subaccount2 # Update
+    home_directory: backups/subaccount2 # Update
+    password: "{{ hcloud_storage_box_password }}"
+    labels:
+      key: changed # Update
+    access_settings:
+      ssh_enabled: true
+      readonly: true # Update
+  register: result
+- name: Verify update idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update name
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    id: "{{ result.hcloud_storage_box_subaccount.id }}"
+    name: subaccount2
+  register: result
+- name: Verify update
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box_subaccount.storage_box == test_storage_box.hcloud_storage_box.id
+      - result.hcloud_storage_box_subaccount.id is not none
+      - result.hcloud_storage_box_subaccount.name == "subaccount2" # Update
+      - result.hcloud_storage_box_subaccount.description == "backups from subaccount2"
+      - result.hcloud_storage_box_subaccount.home_directory == "backups/subaccount2"
+      - result.hcloud_storage_box_subaccount.username is not none
+      - result.hcloud_storage_box_subaccount.server is not none
+      - result.hcloud_storage_box_subaccount.labels.key == "changed"
+      - result.hcloud_storage_box_subaccount.access_settings.reachable_externally == false
+      - result.hcloud_storage_box_subaccount.access_settings.samba_enabled == false
+      - result.hcloud_storage_box_subaccount.access_settings.ssh_enabled == true
+      - result.hcloud_storage_box_subaccount.access_settings.webdav_enabled == false
+      - result.hcloud_storage_box_subaccount.access_settings.readonly == true
+      - result.hcloud_storage_box_subaccount.created is not none
+
+- name: Test reset password
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    name: subaccount2
+    password: "{{ hcloud_storage_box_password }}"
+    state: reset_password
+  register: result
+- name: Verify reset password
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Test delete
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    name: subaccount2
+    state: absent
+  register: result
+- name: Verify delete
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_storage_box_subaccount is none
+
+- name: Test delete idempotency
+  hetzner.hcloud.storage_box_subaccount:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    name: subaccount2
+    state: absent
+  register: result
+- name: Verify delete idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed

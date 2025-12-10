@@ -1,0 +1,86 @@
+# Copyright: (c) 2025, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Gather hcloud_storage_box_subaccount_info
+  hetzner.hcloud.storage_box_subaccount_info:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+  register: result
+- name: Verify hcloud_storage_box_subaccount_info
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_storage_box_subaccount_info | list | count == 2
+
+- name: Gather hcloud_storage_box_subaccount_info in check mode
+  hetzner.hcloud.storage_box_subaccount_info:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+  check_mode: true
+  register: result
+- name: Verify hcloud_storage_box_subaccount_info in check mode
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_storage_box_subaccount_info | list | count == 2
+
+- name: Gather hcloud_storage_box_subaccount_info with label
+  hetzner.hcloud.storage_box_subaccount_info:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    label_selector: "key={{ hcloud_ns }}"
+  register: result
+- name: Verify hcloud_storage_box_subaccount_info
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_storage_box_subaccount_info | list | count == 1
+
+- name: Gather hcloud_storage_box_subaccount_info with correct id
+  hetzner.hcloud.storage_box_subaccount_info:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    id: "{{ test_storage_box_subaccount1.hcloud_storage_box_subaccount.id }}"
+  register: result
+- name: Verify hcloud_storage_box_subaccount_info with correct id
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_storage_box_subaccount_info | list | count == 1
+      - result.hcloud_storage_box_subaccount_info[0].storage_box == test_storage_box.hcloud_storage_box.id
+      - result.hcloud_storage_box_subaccount_info[0].id is not none
+      - result.hcloud_storage_box_subaccount_info[0].name == "subaccount1"
+      - result.hcloud_storage_box_subaccount_info[0].home_directory == "backups/subaccount1"
+      - result.hcloud_storage_box_subaccount_info[0].username is not none
+      - result.hcloud_storage_box_subaccount_info[0].server is not none
+      - result.hcloud_storage_box_subaccount_info[0].description == "backups from subaccount1"
+      - result.hcloud_storage_box_subaccount_info[0].labels.key == hcloud_ns
+      - result.hcloud_storage_box_subaccount_info[0].access_settings.reachable_externally == false
+      - result.hcloud_storage_box_subaccount_info[0].access_settings.samba_enabled == false
+      - result.hcloud_storage_box_subaccount_info[0].access_settings.ssh_enabled == true
+      - result.hcloud_storage_box_subaccount_info[0].access_settings.webdav_enabled == false
+      - result.hcloud_storage_box_subaccount_info[0].access_settings.readonly == false
+      - result.hcloud_storage_box_subaccount_info[0].created is not none
+
+- name: Gather hcloud_storage_box_subaccount_info with wrong id
+  hetzner.hcloud.storage_box_subaccount_info:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    id: "{{ test_storage_box_subaccount1.hcloud_storage_box_subaccount.id }}4321"
+  ignore_errors: true
+  register: result
+- name: Verify hcloud_storage_box_subaccount_info with wrong id
+  ansible.builtin.assert:
+    that:
+      - result is failed
+
+- name: Gather hcloud_storage_box_subaccount_info with correct name
+  hetzner.hcloud.storage_box_subaccount_info:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    name: "{{ test_storage_box_subaccount1.hcloud_storage_box_subaccount.name }}"
+  register: result
+- name: Verify hcloud_storage_box_subaccount_info with correct name
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_storage_box_subaccount_info | list | count == 1
+
+- name: Gather hcloud_storage_box_subaccount_info with wrong name
+  hetzner.hcloud.storage_box_subaccount_info:
+    storage_box: "{{ test_storage_box.hcloud_storage_box.id }}"
+    name: "{{ test_storage_box_subaccount1.hcloud_storage_box_subaccount.name }}-invalid"
+  register: result
+- name: Verify hcloud_storage_box_subaccount_info with wrong name
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_storage_box_subaccount_info | list | count == 0
