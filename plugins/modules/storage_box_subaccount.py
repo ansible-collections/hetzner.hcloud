@@ -437,6 +437,9 @@ def main():
     # Workaround the missing name property
     # Validate name
     if (value := module.params.get("name")) is not None:
+        if len(value) < 1:
+            module.fail_json(f"name '{value}' must be at least 1 character long")
+
         allowed_chars = string.ascii_letters + string.digits + "-"
         has_letters = False
         for c in value:
