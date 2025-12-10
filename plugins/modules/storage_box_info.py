@@ -247,7 +247,7 @@ def main():
     result = o.get_result()
 
     # Legacy return value naming pattern
-    result["hcloud_storage_box_info"] = result.pop("storage_box")
+    result["hcloud_storage_box_info"] = result.pop(o.represent)
 
     module.exit_json(**result)
 

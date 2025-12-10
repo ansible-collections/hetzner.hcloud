@@ -26,6 +26,7 @@ options:
         description:
             - ID of the Storage Box to manage.
             - Required if no Storage Box O(name) is given.
+            - If the ID is invalid, the module will fail.
         type: int
     name:
         description:
@@ -614,7 +615,7 @@ def main():
     result = o.get_result()
 
     # Legacy return value naming pattern
-    result["hcloud_storage_box"] = result.pop("storage_box")
+    result["hcloud_storage_box"] = result.pop(o.represent)
 
     module.exit_json(**result)
 
