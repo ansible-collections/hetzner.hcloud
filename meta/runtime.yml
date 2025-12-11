@@ -111,19 +111,19 @@ plugin_routing:
     hcloud_ssh_key:
       redirect: hetzner.hcloud.ssh_key
     hcloud_storage_box:
-      redirect: storage_box
+      redirect: hetzner.hcloud.storage_box
     hcloud_storage_box_info:
-      redirect: storage_box_info
+      redirect: hetzner.hcloud.storage_box_info
     hcloud_storage_box_snapshot:
-      redirect: storage_box_snapshot
+      redirect: hetzner.hcloud.storage_box_snapshot
     hcloud_storage_box_snapshot_info:
-      redirect: storage_box_snapshot_info
+      redirect: hetzner.hcloud.storage_box_snapshot_info
     hcloud_storage_box_subaccount:
-      redirect: storage_box_subaccount
+      redirect: hetzner.hcloud.storage_box_subaccount
     hcloud_storage_box_subaccount_info:
-      redirect: storage_box_subaccount_info
+      redirect: hetzner.hcloud.storage_box_subaccount_info
     hcloud_storage_box_type_info:
-      redirect: storage_box_type_info
+      redirect: hetzner.hcloud.storage_box_type_info
     hcloud_subnetwork:
       redirect: hetzner.hcloud.subnetwork
     hcloud_volume_info:
