@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.3.1
+======
+
+Bugfixes
+--------
+
+- Invalid redirects for Storage Box modules are now fixed by using fully qualified module names.
+
 v6.3.0
 ======
 
