@@ -1,0 +1,40 @@
+---
+- name: Demonstrate the usage of 'user_data'
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Create host ssh keys
+      community.crypto.openssh_keypair:
+        path: "ssh_host_{{ item }}_key"
+        type: "{{ item }}"
+      loop: [ed25519, ecdsa, rsa]
+      register: host_ssh_keys
+
+    - name: Print host ssh keys fingerprint
+      ansible.builtin.debug:
+        msg: "{{ item.fingerprint }}"
+      loop: "{{ host_ssh_keys.results }}"
+      loop_control:
+        label: "{{ item.type }}"
+
+    - name: Create server
+      hetzner.hcloud.server:
+        name: my-server
+        server_type: cx23
+        image: debian-13
+        user_data: |
+          #cloud-config
+          ssh_deletekeys: true
+          ssh_keys:
+            ed25519_private: |
+              {{ lookup('file', 'ssh_host_ed25519_key') | indent(4) }}
+            ed25519_public: "{{ lookup('file', 'ssh_host_ed25519_key.pub') }}"
+
+            ecdsa_private: |
+              {{ lookup('file', 'ssh_host_ecdsa_key') | indent(4) }}
+            ecdsa_public: "{{ lookup('file', 'ssh_host_ecdsa_key.pub') }}"
+
+            rsa_private: |
+              {{ lookup('file', 'ssh_host_rsa_key') | indent(4) }}
+            rsa_public: "{{ lookup('file', 'ssh_host_rsa_key.pub') }}"
