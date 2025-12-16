@@ -234,7 +234,7 @@ class AnsiblePrimaryIP(AnsibleHCloud):
             self.primary_ip.reload()
 
     def _update(self):
-        need_reload = True
+        need_reload = False
 
         if (value := self.module.params.get("delete_protection")) is not None:
             if value != self.primary_ip.protection["delete"]:
