@@ -305,8 +305,7 @@ class AnsiblePrimaryIP(AnsibleHCloud):
 
 
 def main():
-    module = AnsiblePrimaryIP.define_module()
-    o = AnsiblePrimaryIP(module)
+    o = AnsiblePrimaryIP(AnsiblePrimaryIP.define_module())
 
     match o.module.params["state"]:
         case "absent":
@@ -317,7 +316,7 @@ def main():
     result = o.get_result()
     result["hcloud_primary_ip"] = result.pop(o.represent)
 
-    module.exit_json(**result)
+    o.module.exit_json(**result)
 
 
 if __name__ == "__main__":

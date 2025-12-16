@@ -338,8 +338,7 @@ class AnsibleFloatingIP(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleFloatingIP.define_module()
-    o = AnsibleFloatingIP(module)
+    o = AnsibleFloatingIP(AnsibleFloatingIP.define_module())
 
     match o.module.params["state"]:
         case "absent":
@@ -350,7 +349,7 @@ def main():
     result = o.get_result()
     result["hcloud_floating_ip"] = result.pop(o.represent)
 
-    module.exit_json(**result)
+    o.module.exit_json(**result)
 
 
 if __name__ == "__main__":
