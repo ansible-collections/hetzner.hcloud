@@ -168,120 +168,116 @@ hcloud_primary_ip:
             sample: false
 """
 
-from ansible.module_utils.basic import AnsibleModule
+from typing import TYPE_CHECKING
 
-from ..module_utils.hcloud import AnsibleHCloud
+from ..module_utils import primary_ip
+from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
 from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.primary_ips import BoundPrimaryIP
 
+if TYPE_CHECKING:
+    from ..module_utils.vendor.hcloud.servers import BoundServer
 
-class AnsibleHCloudPrimaryIP(AnsibleHCloud):
-    represent = "hcloud_primary_ip"
 
-    hcloud_primary_ip: BoundPrimaryIP | None = None
+class AnsiblePrimaryIP(AnsibleHCloud):
+    represent = "primary_ip"
+
+    primary_ip: BoundPrimaryIP | None = None
 
     def _prepare_result(self):
-        return {
-            "id": self.hcloud_primary_ip.id,
-            "name": self.hcloud_primary_ip.name,
-            "ip": self.hcloud_primary_ip.ip,
-            "type": self.hcloud_primary_ip.type,
-            "datacenter": self.hcloud_primary_ip.datacenter.name,
-            "labels": self.hcloud_primary_ip.labels,
-            "delete_protection": self.hcloud_primary_ip.protection["delete"],
-            "assignee_id": (
-                self.hcloud_primary_ip.assignee_id if self.hcloud_primary_ip.assignee_id is not None else None
-            ),
-            "assignee_type": self.hcloud_primary_ip.assignee_type,
-            "auto_delete": self.hcloud_primary_ip.auto_delete,
-        }
+        if self.primary_ip is None:
+            return {}
+        return primary_ip.prepare_result(self.primary_ip)
 
-    def _get_primary_ip(self):
-        try:
-            if self.module.params.get("id") is not None:
-                self.hcloud_primary_ip = self.client.primary_ips.get_by_id(self.module.params.get("id"))
-            else:
-                self.hcloud_primary_ip = self.client.primary_ips.get_by_name(self.module.params.get("name"))
-        except HCloudException as exception:
-            self.fail_json_hcloud(exception)
+    def _get(self):
+        if (value := self.module.params.get("id")) is not None:
+            self.primary_ip = self.client.primary_ips.get_by_id(value)
+        elif (value := self.module.params.get("name")) is not None:
+            self.primary_ip = self.client.primary_ips.get_by_name(value)
 
-    def _create_primary_ip(self):
+    def _create(self):
         self.fail_on_invalid_params(
-            required=["type", "name"],
+            required=["name", "type"],
             required_one_of=[["server", "datacenter"]],
         )
-        try:
-            params = {
-                "type": self.module.params.get("type"),
-                "name": self.module.params.get("name"),
-                "auto_delete": self.module.params.get("auto_delete"),
-            }
+        params = {
+            "name": self.module.params.get("name"),
+            "type": self.module.params.get("type"),
+        }
 
-            if self.module.params.get("datacenter") is not None:
-                params["datacenter"] = self.client.datacenters.get_by_name(self.module.params.get("datacenter"))
-            elif self.module.params.get("server") is not None:
-                params["assignee_id"] = self._client_get_by_name_or_id("servers", self.module.params.get("server")).id
+        if (value := self.module.params.get("datacenter")) is not None:
+            params["datacenter"] = self.client.datacenters.get_by_name(value)
+        elif (value := self.module.params.get("server")) is not None:
+            server: BoundServer = self._client_get_by_name_or_id("servers", value)
+            params["assignee_id"] = server.id
 
-            if self.module.params.get("labels") is not None:
-                params["labels"] = self.module.params.get("labels")
-            if not self.module.check_mode:
-                resp = self.client.primary_ips.create(**params)
-                if resp.action is not None:
-                    resp.action.wait_until_finished()
-                self.hcloud_primary_ip = resp.primary_ip
+        if (value := self.module.params.get("auto_delete")) is not None:
+            params["auto_delete"] = value
 
-                delete_protection = self.module.params.get("delete_protection")
-                if delete_protection is not None:
-                    action = self.hcloud_primary_ip.change_protection(delete=delete_protection)
-                    action.wait_until_finished()
-        except HCloudException as exception:
-            self.fail_json_hcloud(exception)
+        if (value := self.module.params.get("labels")) is not None:
+            params["labels"] = value
+
+        if not self.module.check_mode:
+            resp = self.client.primary_ips.create(**params)
+            if resp.action is not None:
+                resp.action.wait_until_finished()
+            self.primary_ip = resp.primary_ip
         self._mark_as_changed()
-        self._get_primary_ip()
 
-    def _update_primary_ip(self):
-        try:
-            changes = {}
+        if (value := self.module.params.get("delete_protection")) is not None:
+            if not self.module.check_mode:
+                action = self.primary_ip.change_protection(delete=value)
+                action.wait_until_finished()
+            self._mark_as_changed()
 
-            auto_delete = self.module.params.get("auto_delete")
-            if auto_delete is not None and auto_delete != self.hcloud_primary_ip.auto_delete:
-                changes["auto_delete"] = auto_delete
+        if not self.module.check_mode:
+            self.primary_ip.reload()
 
-            labels = self.module.params.get("labels")
-            if labels is not None and labels != self.hcloud_primary_ip.labels:
-                changes["labels"] = labels
+    def _update(self):
+        need_reload = True
 
-            if changes:
+        if (value := self.module.params.get("delete_protection")) is not None:
+            if value != self.primary_ip.protection["delete"]:
                 if not self.module.check_mode:
-                    self.hcloud_primary_ip.update(**changes)
-                self._mark_as_changed()
-
-            delete_protection = self.module.params.get("delete_protection")
-            if delete_protection is not None and delete_protection != self.hcloud_primary_ip.protection["delete"]:
-                if not self.module.check_mode:
-                    action = self.hcloud_primary_ip.change_protection(delete=delete_protection)
+                    action = self.primary_ip.change_protection(delete=value)
                     action.wait_until_finished()
+                    need_reload = True
                 self._mark_as_changed()
 
-            self._get_primary_ip()
+        params = {}
+
+        if (value := self.module.params.get("auto_delete")) is not None:
+            if value != self.primary_ip.auto_delete:
+                params["auto_delete"] = value
+                self._mark_as_changed()
+
+        if (value := self.module.params.get("labels")) is not None:
+            if value != self.primary_ip.labels:
+                params["labels"] = value
+                self._mark_as_changed()
+
+        if params or need_reload:
+            if not self.module.check_mode:
+                self.primary_ip = self.primary_ip.update(**params)
+
+    def present(self):
+        try:
+            self._get()
+            if self.primary_ip is None:
+                self._create()
+            else:
+                self._update()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
 
-    def present_primary_ip(self):
-        self._get_primary_ip()
-        if self.hcloud_primary_ip is None:
-            self._create_primary_ip()
-        else:
-            self._update_primary_ip()
-
-    def delete_primary_ip(self):
+    def delete(self):
         try:
-            self._get_primary_ip()
-            if self.hcloud_primary_ip is not None:
+            self._get()
+            if self.primary_ip is not None:
                 if not self.module.check_mode:
-                    self.client.primary_ips.delete(self.hcloud_primary_ip)
+                    self.primary_ip.delete()
                 self._mark_as_changed()
-            self.hcloud_primary_ip = None
+            self.primary_ip = None
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
 
@@ -309,16 +305,18 @@ class AnsibleHCloudPrimaryIP(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHCloudPrimaryIP.define_module()
+    o = AnsiblePrimaryIP(AnsiblePrimaryIP.define_module())
 
-    hcloud = AnsibleHCloudPrimaryIP(module)
-    state = module.params["state"]
-    if state == "absent":
-        hcloud.delete_primary_ip()
-    elif state == "present":
-        hcloud.present_primary_ip()
+    match o.module.params["state"]:
+        case "absent":
+            o.delete()
+        case "present":
+            o.present()
 
-    module.exit_json(**hcloud.get_result())
+    result = o.get_result()
+    result["hcloud_primary_ip"] = result.pop(o.represent)
+
+    o.module.exit_json(**result)
 
 
 if __name__ == "__main__":
