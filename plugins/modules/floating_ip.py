@@ -160,142 +160,155 @@ hcloud_floating_ip:
                 mylabel: 123
 """
 
-from ansible.module_utils.basic import AnsibleModule
-
-from ..module_utils.hcloud import AnsibleHCloud
+from ..module_utils import floating_ip
+from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
 from ..module_utils.vendor.hcloud import HCloudException
 from ..module_utils.vendor.hcloud.floating_ips import BoundFloatingIP
 
 
-class AnsibleHCloudFloatingIP(AnsibleHCloud):
-    represent = "hcloud_floating_ip"
+class AnsibleFloatingIP(AnsibleHCloud):
+    represent = "floating_ip"
 
-    hcloud_floating_ip: BoundFloatingIP | None = None
+    floating_ip: BoundFloatingIP | None = None
 
     def _prepare_result(self):
-        return {
-            "id": self.hcloud_floating_ip.id,
-            "name": self.hcloud_floating_ip.name,
-            "description": self.hcloud_floating_ip.description,
-            "ip": self.hcloud_floating_ip.ip,
-            "type": self.hcloud_floating_ip.type,
-            "home_location": self.hcloud_floating_ip.home_location.name,
-            "labels": self.hcloud_floating_ip.labels,
-            "server": self.hcloud_floating_ip.server.name if self.hcloud_floating_ip.server is not None else None,
-            "delete_protection": self.hcloud_floating_ip.protection["delete"],
+        if self.floating_ip is None:
+            return {}
+        return floating_ip.prepare_result(self.floating_ip)
+
+    def _get(self):
+        if (value := self.module.params.get("id")) is not None:
+            self.floating_ip = self.client.floating_ips.get_by_id(value)
+        elif (value := self.module.params.get("name")) is not None:
+            self.floating_ip = self.client.floating_ips.get_by_name(value)
+
+    def _create(self):
+        self.fail_on_invalid_params(
+            required=["name", "type"],
+            required_one_of=[["home_location", "server"]],
+        )
+
+        params = {
+            "name": self.module.params.get("name"),
+            "type": self.module.params.get("type"),
         }
 
-    def _get_floating_ip(self):
-        try:
-            if self.module.params.get("id") is not None:
-                self.hcloud_floating_ip = self.client.floating_ips.get_by_id(self.module.params.get("id"))
-            else:
-                self.hcloud_floating_ip = self.client.floating_ips.get_by_name(self.module.params.get("name"))
-        except HCloudException as exception:
-            self.fail_json_hcloud(exception)
-
-    def _create_floating_ip(self):
-        self.module.fail_on_missing_params(required_params=["type"])
-        try:
-            params = {
-                "description": self.module.params.get("description"),
-                "type": self.module.params.get("type"),
-                "name": self.module.params.get("name"),
-            }
-            if self.module.params.get("home_location") is not None:
-                params["home_location"] = self.client.locations.get_by_name(self.module.params.get("home_location"))
-            elif self.module.params.get("server") is not None:
-                params["server"] = self.client.servers.get_by_name(self.module.params.get("server"))
-            else:
-                self.module.fail_json(msg="one of the following is required: home_location, server")
-
-            if self.module.params.get("labels") is not None:
-                params["labels"] = self.module.params.get("labels")
-            if not self.module.check_mode:
-                resp = self.client.floating_ips.create(**params)
-                self.hcloud_floating_ip = resp.floating_ip
-
-                delete_protection = self.module.params.get("delete_protection")
-                if delete_protection is not None:
-                    action = self.hcloud_floating_ip.change_protection(delete=delete_protection)
-                    action.wait_until_finished()
-        except HCloudException as exception:
-            self.fail_json_hcloud(exception)
-        self._mark_as_changed()
-        self._get_floating_ip()
-
-    def _update_floating_ip(self):
-        try:
-            labels = self.module.params.get("labels")
-            if labels is not None and labels != self.hcloud_floating_ip.labels:
-                if not self.module.check_mode:
-                    self.hcloud_floating_ip.update(labels=labels)
-                self._mark_as_changed()
-
-            description = self.module.params.get("description")
-            if description is not None and description != self.hcloud_floating_ip.description:
-                if not self.module.check_mode:
-                    self.hcloud_floating_ip.update(description=description)
-                self._mark_as_changed()
-
-            server = self.module.params.get("server")
-            if server is not None and self.hcloud_floating_ip.server is not None:
-                if self.module.params.get("force") and server != self.hcloud_floating_ip.server.name:
-                    if not self.module.check_mode:
-                        action = self.hcloud_floating_ip.assign(self.client.servers.get_by_name(server))
-                        action.wait_until_finished()
-                        self._mark_as_changed()
-                elif server != self.hcloud_floating_ip.server.name:
-                    self.module.warn(
-                        "Floating IP is already assigned to another server "
-                        f"{self.hcloud_floating_ip.server.name}. You need to "
-                        "unassign the Floating IP or use force=true."
-                    )
-                    self._mark_as_changed()
-            elif server is not None and self.hcloud_floating_ip.server is None:
-                if not self.module.check_mode:
-                    action = self.hcloud_floating_ip.assign(self.client.servers.get_by_name(server))
-                    action.wait_until_finished()
-                self._mark_as_changed()
-            elif server is None and self.hcloud_floating_ip.server is not None:
-                if not self.module.check_mode:
-                    action = self.hcloud_floating_ip.unassign()
-                    action.wait_until_finished()
-                self._mark_as_changed()
-
-            delete_protection = self.module.params.get("delete_protection")
-            if delete_protection is not None and delete_protection != self.hcloud_floating_ip.protection["delete"]:
-                if not self.module.check_mode:
-                    action = self.hcloud_floating_ip.change_protection(delete=delete_protection)
-                    action.wait_until_finished()
-                self._mark_as_changed()
-
-            self._get_floating_ip()
-        except HCloudException as exception:
-            self.fail_json_hcloud(exception)
-
-    def present_floating_ip(self):
-        self._get_floating_ip()
-        if self.hcloud_floating_ip is None:
-            self._create_floating_ip()
+        if (value := self.module.params.get("home_location")) is not None:
+            params["home_location"] = self.client.locations.get_by_name(value)
+        elif (value := self.module.params.get("server")) is not None:
+            params["server"] = self.client.servers.get_by_name(value)
         else:
-            self._update_floating_ip()
+            self.module.fail_json(msg="one of the following is required: home_location, server")
 
-    def delete_floating_ip(self):
-        try:
-            self._get_floating_ip()
-            if self.hcloud_floating_ip is not None:
-                if self.module.params.get("force") or self.hcloud_floating_ip.server is None:
-                    if not self.module.check_mode:
-                        self.client.floating_ips.delete(self.hcloud_floating_ip)
-                else:
-                    self.module.warn(
-                        "Floating IP is currently assigned to server "
-                        f"{self.hcloud_floating_ip.server.name}. You need to "
-                        "unassign the Floating IP or use force=true."
-                    )
+        if (value := self.module.params.get("description")) is not None:
+            params["description"] = value
+
+        if (value := self.module.params.get("labels")) is not None:
+            params["labels"] = value
+
+        if not self.module.check_mode:
+            resp = self.client.floating_ips.create(**params)
+            self.floating_ip = resp.floating_ip
+            if resp.action is not None:
+                resp.action.wait_until_finished()
+        self._mark_as_changed()
+
+        if (value := self.module.params.get("delete_protection")) is not None:
+            if not self.module.check_mode:
+                action = self.floating_ip.change_protection(delete=value)
+                action.wait_until_finished()
+            self._mark_as_changed()
+
+        if not self.module.check_mode:
+            self.floating_ip.reload()
+
+    def _update(self):
+        need_reload = False
+
+        if (value := self.module.params.get("delete_protection")) is not None:
+            if value != self.floating_ip.protection["delete"]:
+                if not self.module.check_mode:
+                    action = self.floating_ip.change_protection(delete=value)
+                    action.wait_until_finished()
+                    need_reload = True
                 self._mark_as_changed()
-            self.hcloud_floating_ip = None
+
+        if (value := self.module.params.get("server")) is not None:
+            if self.floating_ip.server is not None:
+                if value != self.floating_ip.server.name:
+                    if self.module.params.get("force"):
+                        if not self.module.check_mode:
+                            action = self.floating_ip.assign(self.client.servers.get_by_name(value))
+                            action.wait_until_finished()
+                            need_reload = True
+                        self._mark_as_changed()
+                    else:
+                        self.module.warn(
+                            "Floating IP is already assigned to another server "
+                            f"{self.floating_ip.server.name}. You need to "
+                            "unassign the Floating IP or use force=true."
+                        )
+
+            else:  # self.floating_ip.server is None
+                if not self.module.check_mode:
+                    action = self.floating_ip.assign(self.client.servers.get_by_name(value))
+                    action.wait_until_finished()
+                    need_reload = True
+                self._mark_as_changed()
+
+        else:  # value is None
+            if self.floating_ip.server is not None:
+                if not self.module.check_mode:
+                    action = self.floating_ip.unassign()
+                    action.wait_until_finished()
+                    need_reload = True
+                self._mark_as_changed()
+
+        params = {}
+
+        if (value := self.module.params.get("labels")) is not None:
+            if value != self.floating_ip.labels:
+                params["labels"] = value
+                self._mark_as_changed()
+
+        if (value := self.module.params.get("description")) is not None:
+            if value != self.floating_ip.description:
+                params["description"] = value
+                self._mark_as_changed()
+
+        if params or need_reload:
+            if not self.module.check_mode:
+                self.floating_ip = self.floating_ip.update(**params)
+
+    def _delete(self):
+        if self.module.params.get("force") or self.floating_ip.server is None:
+            if not self.module.check_mode:
+                self.floating_ip.delete()
+            self._mark_as_changed()
+        else:
+            self.module.warn(
+                "Floating IP is currently assigned to server "
+                f"{self.floating_ip.server.name}. You need to "
+                "unassign the Floating IP or use force=true."
+            )
+
+        self.floating_ip = None
+
+    def present(self):
+        try:
+            self._get()
+            if self.floating_ip is None:
+                self._create()
+            else:
+                self._update()
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
+
+    def delete(self):
+        try:
+            self._get()
+            if self.floating_ip is not None:
+                self._delete()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
 
@@ -325,16 +338,19 @@ class AnsibleHCloudFloatingIP(AnsibleHCloud):
 
 
 def main():
-    module = AnsibleHCloudFloatingIP.define_module()
+    module = AnsibleFloatingIP.define_module()
+    o = AnsibleFloatingIP(module)
 
-    hcloud = AnsibleHCloudFloatingIP(module)
-    state = module.params["state"]
-    if state == "absent":
-        hcloud.delete_floating_ip()
-    elif state == "present":
-        hcloud.present_floating_ip()
+    match o.module.params["state"]:
+        case "absent":
+            o.delete()
+        case "present":
+            o.present()
 
-    module.exit_json(**hcloud.get_result())
+    result = o.get_result()
+    result["hcloud_floating_ip"] = result.pop(o.represent)
+
+    module.exit_json(**result)
 
 
 if __name__ == "__main__":
