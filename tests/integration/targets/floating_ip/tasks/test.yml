@@ -312,7 +312,7 @@
 - name: verify test already assigned Floating IP assign without force
   assert:
     that:
-      - floatingIP is changed
+      - floatingIP is not changed
       - floatingIP.hcloud_floating_ip.server == main_server.hcloud_server.name
 
 - name: test already assigned Floating IP assign with force
