@@ -309,8 +309,8 @@ hcloud_server:
             description: |
                 Name of the datacenter of the server.
 
-                B(Deprecated:) The R(hcloud_server.datacenter) value is deprecated and will be removed
-                after 1 July 2026. Please use the R(hcloud_server.location) value instead.
+                B(Deprecated:) The RV(hcloud_server.datacenter) value is deprecated and will be removed
+                after 1 July 2026. Please use the RV(hcloud_server.location) value instead.
                 See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
             returned: always
             type: str
@@ -949,7 +949,11 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 image_allow_deprecated={"type": "bool", "default": False, "aliases": ["allow_deprecated_image"]},
                 server_type={"type": "str"},
                 location={"type": "str"},
-                datacenter={"type": "str", "removed_at_date": "2026-07-01"},
+                datacenter={
+                    "type": "str",
+                    "removed_at_date": "2026-07-01",
+                    "removed_from_collection": "hetzner.hcloud",
+                },
                 user_data={"type": "str"},
                 ssh_keys={"type": "list", "elements": "str", "no_log": False},
                 volumes={"type": "list", "elements": "str"},
