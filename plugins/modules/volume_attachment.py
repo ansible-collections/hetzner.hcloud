@@ -68,7 +68,7 @@ RETURN = """
 hcloud_volume_attachment:
     description: The relationship between a Server and a Volume
     returned: always
-    type: complex
+    type: dict
     contains:
         volume:
             description: Name of the Volume

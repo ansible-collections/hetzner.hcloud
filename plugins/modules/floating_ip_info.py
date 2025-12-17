@@ -50,7 +50,7 @@ RETURN = """
 hcloud_floating_ip_info:
     description: The Floating ip infos as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the Floating IP

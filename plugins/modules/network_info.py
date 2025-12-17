@@ -52,7 +52,7 @@ RETURN = """
 hcloud_network_info:
     description: The network info as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the network
@@ -72,7 +72,7 @@ hcloud_network_info:
         subnetworks:
             description: Subnetworks belonging to the network
             returned: always
-            type: complex
+            type: list
             contains:
                 type:
                     description: Type of the subnetwork.
@@ -97,7 +97,7 @@ hcloud_network_info:
         routes:
             description: Routes belonging to the network
             returned: always
-            type: complex
+            type: list
             contains:
                 ip_range:
                     description: Destination network or host of this route.
@@ -117,7 +117,7 @@ hcloud_network_info:
         servers:
             description: Servers attached to the network
             returned: always
-            type: complex
+            type: list
             contains:
                 id:
                     description: Numeric identifier of the server

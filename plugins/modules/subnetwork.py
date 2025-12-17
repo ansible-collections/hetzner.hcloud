@@ -88,7 +88,7 @@ RETURN = """
 hcloud_subnetwork:
     description: One Subnet of a Network
     returned: always
-    type: complex
+    type: dict
     contains:
         network:
             description: Name of the Network

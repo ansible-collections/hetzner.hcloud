@@ -98,7 +98,7 @@ RETURN = """
 hcloud_rdns:
     description: The reverse DNS entry
     returned: always
-    type: complex
+    type: dict
     contains:
         server:
             description: Name of the server

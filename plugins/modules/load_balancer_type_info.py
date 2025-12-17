@@ -48,7 +48,7 @@ RETURN = """
 hcloud_load_balancer_type_info:
     description: The Load Balancer type infos as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the Load Balancer type

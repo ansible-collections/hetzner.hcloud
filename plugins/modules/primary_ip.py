@@ -112,7 +112,7 @@ RETURN = """
 hcloud_primary_ip:
     description: The Primary IP instance
     returned: Always
-    type: complex
+    type: dict
     contains:
         id:
             description: ID of the Primary IP

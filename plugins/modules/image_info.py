@@ -63,7 +63,7 @@ RETURN = """
 hcloud_image_info:
     description: The image infos as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the image

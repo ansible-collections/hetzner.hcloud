@@ -93,7 +93,7 @@ RETURN = """
 hcloud_load_balancer:
     description: The Load Balancer instance
     returned: Always
-    type: complex
+    type: dict
     contains:
         id:
             description: Numeric identifier of the Load Balancer

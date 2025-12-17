@@ -96,7 +96,7 @@ RETURN = """
 hcloud_server_network:
     description: The relationship between a server and a network
     returned: always
-    type: complex
+    type: dict
     contains:
         network:
             description: Name of the Network

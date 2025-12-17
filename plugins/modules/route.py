@@ -66,7 +66,7 @@ RETURN = """
 hcloud_route:
     description: One Route of a Network
     returned: always
-    type: complex
+    type: dict
     contains:
         network:
             description: Name of the Network

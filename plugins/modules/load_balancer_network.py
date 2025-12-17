@@ -81,7 +81,7 @@ RETURN = """
 hcloud_load_balancer_network:
     description: The relationship between a Load Balancer and a network
     returned: always
-    type: complex
+    type: dict
     contains:
         network:
             description: Name of the Network

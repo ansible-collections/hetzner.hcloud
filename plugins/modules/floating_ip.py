@@ -108,7 +108,7 @@ RETURN = """
 hcloud_floating_ip:
     description: The Floating IP instance
     returned: Always
-    type: complex
+    type: dict
     contains:
         id:
             description: ID of the Floating IP
