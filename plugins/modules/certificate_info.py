@@ -46,7 +46,7 @@ RETURN = """
 hcloud_certificate_info:
     description: The certificate instances
     returned: Always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the certificate

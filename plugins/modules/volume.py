@@ -111,7 +111,7 @@ RETURN = """
 hcloud_volume:
     description: The block Volume
     returned: Always
-    type: complex
+    type: dict
     contains:
         id:
             description: ID of the Volume

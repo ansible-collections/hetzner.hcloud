@@ -50,7 +50,7 @@ RETURN = """
 hcloud_ssh_key_info:
     description: The ssh key instances
     returned: Always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the ssh_key

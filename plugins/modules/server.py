@@ -242,7 +242,7 @@ RETURN = """
 hcloud_server:
     description: The server instance
     returned: Always
-    type: complex
+    type: dict
     contains:
         id:
             description: Numeric identifier of the server

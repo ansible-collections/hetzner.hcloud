@@ -97,7 +97,7 @@ RETURN = """
 hcloud_load_balancer_target:
     description: The relationship between a Load Balancer and a network
     returned: always
-    type: complex
+    type: dict
     contains:
         type:
             description: Type of the Load Balancer Target

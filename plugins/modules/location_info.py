@@ -48,7 +48,7 @@ RETURN = """
 hcloud_location_info:
     description: The location infos as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the location

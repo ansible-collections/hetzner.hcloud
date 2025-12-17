@@ -157,7 +157,7 @@ RETURN = """
 hcloud_load_balancer_service:
     description: The Load Balancer service instance
     returned: Always
-    type: complex
+    type: dict
     contains:
         load_balancer:
             description: The name of the Load Balancer where the service belongs to
@@ -189,7 +189,7 @@ hcloud_load_balancer_service:
         http:
             description: Configuration for HTTP and HTTPS services
             returned: always
-            type: complex
+            type: dict
             contains:
                 cookie_name:
                     description: Name of the cookie which will be set when you enable sticky sessions
@@ -219,7 +219,7 @@ hcloud_load_balancer_service:
         health_check:
             description: Configuration for health checks
             returned: always
-            type: complex
+            type: dict
             contains:
                 protocol:
                     description: Protocol the health checks will be performed over
@@ -249,7 +249,7 @@ hcloud_load_balancer_service:
                 http:
                     description: Additional Configuration of health checks with protocol http/https
                     returned: always
-                    type: complex
+                    type: dict
                     contains:
                         domain:
                             description: Domain we will set within the HTTP HOST header

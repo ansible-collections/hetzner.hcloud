@@ -67,7 +67,7 @@ RETURN = """
 hcloud_primary_ip_info:
     description: The Primary IP infos as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the Primary IP

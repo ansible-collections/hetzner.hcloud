@@ -52,7 +52,7 @@ RETURN = """
 hcloud_server_info:
     description: The server infos as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the server

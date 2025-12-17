@@ -59,7 +59,7 @@ RETURN = """
 hcloud_iso_info:
     description: The ISO type infos as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: ID of the ISO

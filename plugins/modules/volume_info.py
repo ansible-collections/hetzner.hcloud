@@ -50,7 +50,7 @@ RETURN = """
 hcloud_volume_info:
     description: The Volume infos as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the Volume

@@ -65,7 +65,7 @@ hcloud_datacenter_info:
     description:
       - The datacenter info as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the datacenter

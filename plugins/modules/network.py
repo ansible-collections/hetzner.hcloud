@@ -77,7 +77,7 @@ RETURN = """
 hcloud_network:
     description: The Network
     returned: always
-    type: complex
+    type: dict
     contains:
         id:
             description: ID of the Network

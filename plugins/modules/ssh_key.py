@@ -86,7 +86,7 @@ RETURN = """
 hcloud_ssh_key:
     description: The ssh_key instance
     returned: Always
-    type: complex
+    type: dict
     contains:
         id:
             description: ID of the ssh_key

@@ -75,7 +75,7 @@ RETURN = """
 hcloud_placement_group:
     description: The placement group instance
     returned: Always
-    type: complex
+    type: dict
     contains:
         id:
             description: Numeric identifier of the placement group

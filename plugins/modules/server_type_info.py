@@ -48,7 +48,7 @@ RETURN = """
 hcloud_server_type_info:
     description: The server type infos as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the server type

@@ -105,7 +105,7 @@ RETURN = """
 hcloud_certificate:
     description: The certificate instance
     returned: Always
-    type: complex
+    type: dict
     contains:
         id:
             description: Numeric identifier of the certificate

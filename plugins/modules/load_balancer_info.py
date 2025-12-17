@@ -52,7 +52,7 @@ RETURN = """
 hcloud_load_balancer_info:
     description: The load_balancer infos as list
     returned: always
-    type: complex
+    type: list
     contains:
         id:
             description: Numeric identifier of the Load Balancer
@@ -101,7 +101,7 @@ hcloud_load_balancer_info:
         targets:
             description: The targets of the Load Balancer
             returned: always
-            type: complex
+            type: list
             contains:
                 type:
                     description: Type of the Load Balancer Target
@@ -155,7 +155,7 @@ hcloud_load_balancer_info:
         services:
             description: all services from this Load Balancer
             returned: Always
-            type: complex
+            type: list
             contains:
                 listen_port:
                     description: The port the service listens on, i.e. the port users can connect to.
@@ -182,7 +182,7 @@ hcloud_load_balancer_info:
                 http:
                     description: Configuration for HTTP and HTTPS services
                     returned: always
-                    type: complex
+                    type: dict
                     contains:
                         cookie_name:
                             description: Name of the cookie which will be set when you enable sticky sessions
@@ -212,7 +212,7 @@ hcloud_load_balancer_info:
                 health_check:
                     description: Configuration for health checks
                     returned: always
-                    type: complex
+                    type: dict
                     contains:
                         protocol:
                             description: Protocol the health checks will be performed over
@@ -242,7 +242,7 @@ hcloud_load_balancer_info:
                         http:
                             description: Additional Configuration of health checks with protocol http/https
                             returned: always
-                            type: complex
+                            type: dict
                             contains:
                                 domain:
                                     description: Domain we will set within the HTTP HOST header
