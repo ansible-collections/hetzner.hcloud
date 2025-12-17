@@ -116,8 +116,8 @@ hcloud_server_info:
             description: |
                 Name of the datacenter of the server.
 
-                B(Deprecated:) The R(hcloud_server_info.datacenter) value is deprecated and will be removed
-                after 1 July 2026. Please use the R(hcloud_server_info.location) value instead.
+                B(Deprecated:) The RV(hcloud_server_info[].datacenter) value is deprecated and will be removed
+                after 1 July 2026. Please use the RV(hcloud_server_info[].location) value instead.
                 See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
             returned: always
             type: str

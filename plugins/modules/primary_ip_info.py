@@ -108,8 +108,8 @@ hcloud_primary_ip_info:
             description: |
                 Datacenter where the Primary IP was created in.
 
-                B(Deprecated:) The R(hcloud_primary_ip_info.home_location) value is deprecated and will be removed
-                after 1 July 2026. Please use the R(hcloud_primary_ip_info.location) value instead.
+                B(Deprecated:) The RV(hcloud_primary_ip_info[].home_location) value is deprecated and will be removed
+                after 1 July 2026. Please use the RV(hcloud_primary_ip_info[].location) value instead.
                 See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
             returned: always
             type: str

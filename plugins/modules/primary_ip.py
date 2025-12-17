@@ -151,8 +151,8 @@ hcloud_primary_ip:
             description: |
                 Name of the datacenter of the Primary IP
 
-                B(Deprecated:) The R(hcloud_primary_ip.datacenter) value is deprecated and will be removed
-                after 1 July 2026. Please use the R(hcloud_primary_ip.location) value instead.
+                B(Deprecated:) The RV(hcloud_primary_ip.datacenter) value is deprecated and will be removed
+                after 1 July 2026. Please use the RV(hcloud_primary_ip.location) value instead.
                 See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
             type: str
             returned: Always
@@ -313,7 +313,11 @@ class AnsiblePrimaryIP(AnsibleHCloud):
                 id={"type": "int"},
                 name={"type": "str"},
                 location={"type": "str"},
-                datacenter={"type": "str", "removed_at_date": "2026-07-01"},
+                datacenter={
+                    "type": "str",
+                    "removed_at_date": "2026-07-01",
+                    "removed_from_collection": "hetzner.hcloud",
+                },
                 server={"type": "str"},
                 auto_delete={"type": "bool", "default": False},
                 type={"choices": ["ipv4", "ipv6"]},
