@@ -289,6 +289,18 @@ class AnsiblePrimaryIP(AnsibleHCloud):
             if not self.module.check_mode:
                 self.primary_ip = self.primary_ip.update(**params)
 
+    def _delete(self):
+        if self.primary_ip.assignee_id is not None:
+            if not self.module.check_mode:
+                action = self.primary_ip.unassign()
+                action.wait_until_finished()
+            self._mark_as_changed()
+
+        if not self.module.check_mode:
+            self.primary_ip.delete()
+        self.primary_ip = None
+        self._mark_as_changed()
+
     def present(self):
         try:
             self._get()
@@ -303,10 +315,7 @@ class AnsiblePrimaryIP(AnsibleHCloud):
         try:
             self._get()
             if self.primary_ip is not None:
-                if not self.module.check_mode:
-                    self.primary_ip.delete()
-                self._mark_as_changed()
-            self.primary_ip = None
+                self._delete()
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
 
