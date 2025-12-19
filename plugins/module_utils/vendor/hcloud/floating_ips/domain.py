@@ -1,19 +1,22 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    isoparse = None
+from typing import TYPE_CHECKING, TypedDict
 
 from ..core import BaseDomain, DomainIdentityMixin
 
 if TYPE_CHECKING:
     from ..actions import BoundAction
     from ..locations import BoundLocation
+    from ..rdns import DNSPtr
     from ..servers import BoundServer
     from .client import BoundFloatingIP
+
+
+__all__ = [
+    "FloatingIP",
+    "FloatingIPProtection",
+    "CreateFloatingIPResponse",
+]
 
 
 class FloatingIP(BaseDomain, DomainIdentityMixin):
@@ -68,10 +71,10 @@ class FloatingIP(BaseDomain, DomainIdentityMixin):
         description: str | None = None,
         ip: str | None = None,
         server: BoundServer | None = None,
-        dns_ptr: list[dict] | None = None,
+        dns_ptr: list[DNSPtr] | None = None,
         home_location: BoundLocation | None = None,
         blocked: bool | None = None,
-        protection: dict | None = None,
+        protection: FloatingIPProtection | None = None,
         labels: dict[str, str] | None = None,
         created: str | None = None,
         name: str | None = None,
@@ -86,8 +89,12 @@ class FloatingIP(BaseDomain, DomainIdentityMixin):
         self.blocked = blocked
         self.protection = protection
         self.labels = labels
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)
         self.name = name
+
+
+class FloatingIPProtection(TypedDict):
+    delete: bool
 
 
 class CreateFloatingIPResponse(BaseDomain):

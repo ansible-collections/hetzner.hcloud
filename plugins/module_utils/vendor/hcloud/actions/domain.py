@@ -1,17 +1,28 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    isoparse = None
+from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
 from .._exceptions import HCloudException
 from ..core import BaseDomain
 
 if TYPE_CHECKING:
     from .client import BoundAction
+
+__all__ = [
+    "ActionStatus",
+    "Action",
+    "ActionResource",
+    "ActionError",
+    "ActionException",
+    "ActionFailedException",
+    "ActionTimeoutException",
+]
+
+ActionStatus = Literal[
+    "running",
+    "success",
+    "error",
+]
 
 
 class Action(BaseDomain):
@@ -50,22 +61,33 @@ class Action(BaseDomain):
         self,
         id: int,
         command: str | None = None,
-        status: str | None = None,
+        status: ActionStatus | None = None,
         progress: int | None = None,
         started: str | None = None,
         finished: str | None = None,
-        resources: list[dict] | None = None,
-        error: dict | None = None,
+        resources: list[ActionResource] | None = None,
+        error: ActionError | None = None,
     ):
         self.id = id
         self.command = command
 
         self.status = status
         self.progress = progress
-        self.started = isoparse(started) if started else None
-        self.finished = isoparse(finished) if finished else None
+        self.started = self._parse_datetime(started)
+        self.finished = self._parse_datetime(finished)
         self.resources = resources
         self.error = error
+
+
+class ActionResource(TypedDict):
+    id: int
+    type: str
+
+
+class ActionError(TypedDict):
+    code: str
+    message: str
+    details: dict[str, Any]
 
 
 class ActionException(HCloudException):
@@ -85,7 +107,8 @@ class ActionException(HCloudException):
 
             extras.append(action.error["code"])
         else:
-            extras.append(action.command)
+            if action.command is not None:
+                extras.append(action.command)
 
         extras.append(str(action.id))
         message += f" ({', '.join(extras)})"

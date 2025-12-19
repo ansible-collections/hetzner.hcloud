@@ -2,16 +2,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    isoparse = None
-
 from ..core import BaseDomain, DomainIdentityMixin
 
 if TYPE_CHECKING:
     from ..actions import BoundAction
     from .client import BoundPlacementGroup
+
+__all__ = [
+    "PlacementGroup",
+    "CreatePlacementGroupResponse",
+]
 
 
 class PlacementGroup(BaseDomain, DomainIdentityMixin):
@@ -53,7 +53,7 @@ class PlacementGroup(BaseDomain, DomainIdentityMixin):
         self.labels = labels
         self.servers = servers
         self.type = type
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)
 
 
 class CreatePlacementGroupResponse(BaseDomain):

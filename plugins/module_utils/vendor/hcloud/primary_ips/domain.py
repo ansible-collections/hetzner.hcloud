@@ -1,18 +1,22 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    isoparse = None
+import warnings
+from typing import TYPE_CHECKING, TypedDict
 
 from ..core import BaseDomain, DomainIdentityMixin
 
 if TYPE_CHECKING:
     from ..actions import BoundAction
     from ..datacenters import BoundDatacenter
+    from ..locations import BoundLocation
+    from ..rdns import DNSPtr
     from .client import BoundPrimaryIP
+
+__all__ = [
+    "PrimaryIP",
+    "PrimaryIPProtection",
+    "CreatePrimaryIPResponse",
+]
 
 
 class PrimaryIP(BaseDomain, DomainIdentityMixin):
@@ -27,7 +31,15 @@ class PrimaryIP(BaseDomain, DomainIdentityMixin):
     :param dns_ptr: List[Dict]
            Array of reverse DNS entries
     :param datacenter: :class:`Datacenter <hcloud.datacenters.client.BoundDatacenter>`
-           Datacenter the Primary IP was created in.
+        Datacenter the Primary IP was created in.
+
+        This property is deprecated and will be removed after 1 July 2026.
+        Please use the ``location`` property instead.
+
+        See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
+
+    :param location: :class:`Location <hcloud.locations.client.BoundLocation>`
+           Location the Primary IP was created in.
     :param blocked: boolean
            Whether the IP is blocked
     :param protection: dict
@@ -46,12 +58,12 @@ class PrimaryIP(BaseDomain, DomainIdentityMixin):
            Delete the Primary IP when the Assignee it is assigned to is deleted.
     """
 
-    __api_properties__ = (
+    __properties__ = (
         "id",
         "ip",
         "type",
         "dns_ptr",
-        "datacenter",
+        "location",
         "blocked",
         "protection",
         "labels",
@@ -61,18 +73,26 @@ class PrimaryIP(BaseDomain, DomainIdentityMixin):
         "assignee_type",
         "auto_delete",
     )
-    __slots__ = __api_properties__
+    __api_properties__ = (
+        *__properties__,
+        "datacenter",
+    )
+    __slots__ = (
+        *__properties__,
+        "_datacenter",
+    )
 
     def __init__(
         self,
         id: int | None = None,
         type: str | None = None,
         ip: str | None = None,
-        dns_ptr: list[dict] | None = None,
+        dns_ptr: list[DNSPtr] | None = None,
         datacenter: BoundDatacenter | None = None,
+        location: BoundLocation | None = None,
         blocked: bool | None = None,
-        protection: dict | None = None,
-        labels: dict[str, dict] | None = None,
+        protection: PrimaryIPProtection | None = None,
+        labels: dict[str, str] | None = None,
         created: str | None = None,
         name: str | None = None,
         assignee_id: int | None = None,
@@ -84,14 +104,37 @@ class PrimaryIP(BaseDomain, DomainIdentityMixin):
         self.ip = ip
         self.dns_ptr = dns_ptr
         self.datacenter = datacenter
+        self.location = location
         self.blocked = blocked
         self.protection = protection
         self.labels = labels
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)
         self.name = name
         self.assignee_id = assignee_id
         self.assignee_type = assignee_type
         self.auto_delete = auto_delete
+
+    @property
+    def datacenter(self) -> BoundDatacenter | None:
+        """
+        :meta private:
+        """
+        warnings.warn(
+            "The 'datacenter' property is deprecated and will be removed after 1 July 2026. "
+            "Please use the 'location' property instead. "
+            "See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._datacenter
+
+    @datacenter.setter
+    def datacenter(self, value: BoundDatacenter | None) -> None:
+        self._datacenter = value
+
+
+class PrimaryIPProtection(TypedDict):
+    delete: bool
 
 
 class CreatePrimaryIPResponse(BaseDomain):

@@ -2,17 +2,30 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    isoparse = None
-
 from ..core import BaseDomain, DomainIdentityMixin
 
 if TYPE_CHECKING:
     from ..actions import BoundAction
     from .client import BoundZone, BoundZoneRRSet
 
+
+__all__ = [
+    "ZoneMode",
+    "ZoneStatus",
+    "ZoneRegistrar",
+    "Zone",
+    "ZonePrimaryNameserver",
+    "ZoneAuthoritativeNameservers",
+    "ZoneProtection",
+    "CreateZoneResponse",
+    "DeleteZoneResponse",
+    "ExportZonefileResponse",
+    "ZoneRRSet",
+    "ZoneRRSetProtection",
+    "ZoneRecord",
+    "CreateZoneRRSetResponse",
+    "DeleteZoneRRSetResponse",
+]
 
 ZoneMode = Literal["primary", "secondary"]
 ZoneStatus = Literal["ok", "updating", "error"]
@@ -81,7 +94,7 @@ class Zone(BaseDomain, DomainIdentityMixin):
     ):
         self.id = id
         self.name = name
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)
         self.mode = mode
         self.ttl = ttl
         self.labels = labels
@@ -188,11 +201,7 @@ class ZoneAuthoritativeNameservers(BaseDomain):
     ):
         self.assigned = assigned
         self.delegated = delegated
-        self.delegation_last_check = (
-            isoparse(delegation_last_check)
-            if delegation_last_check is not None
-            else None
-        )
+        self.delegation_last_check = self._parse_datetime(delegation_last_check)
         self.delegation_status = delegation_status
 
 

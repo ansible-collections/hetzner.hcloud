@@ -1,7 +1,13 @@
 from __future__ import annotations
 
+from typing import Any
+
 from ..core import BaseDomain, DomainIdentityMixin
 from ..deprecation import DeprecationInfo
+
+__all__ = [
+    "StorageBoxType",
+]
 
 
 class StorageBoxType(BaseDomain, DomainIdentityMixin):
@@ -33,8 +39,8 @@ class StorageBoxType(BaseDomain, DomainIdentityMixin):
         automatic_snapshot_limit: int | None = None,
         subaccounts_limit: int | None = None,
         size: int | None = None,
-        prices: list[dict] | None = None,
-        deprecation: dict | None = None,
+        prices: list[dict[str, Any]] | None = None,
+        deprecation: dict[str, Any] | None = None,
     ):
         self.id = id
         self.name = name

@@ -1,12 +1,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import TYPE_CHECKING
-
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    isoparse = None
+from typing import TYPE_CHECKING, TypedDict
 
 from ..core import BaseDomain, DomainIdentityMixin
 
@@ -14,6 +9,14 @@ if TYPE_CHECKING:
     from ..actions import BoundAction
     from ..servers import BoundServer
     from .client import BoundNetwork
+
+__all__ = [
+    "Network",
+    "NetworkProtection",
+    "NetworkSubnet",
+    "NetworkRoute",
+    "CreateNetworkResponse",
+]
 
 
 class Network(BaseDomain, DomainIdentityMixin):
@@ -63,12 +66,12 @@ class Network(BaseDomain, DomainIdentityMixin):
         routes: list[NetworkRoute] | None = None,
         expose_routes_to_vswitch: bool | None = None,
         servers: list[BoundServer] | None = None,
-        protection: dict | None = None,
+        protection: NetworkProtection | None = None,
         labels: dict[str, str] | None = None,
     ):
         self.id = id
         self.name = name
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)
         self.ip_range = ip_range
         self.subnets = subnets
         self.routes = routes
@@ -76,6 +79,10 @@ class Network(BaseDomain, DomainIdentityMixin):
         self.servers = servers
         self.protection = protection
         self.labels = labels
+
+
+class NetworkProtection(TypedDict):
+    delete: bool
 
 
 class NetworkSubnet(BaseDomain):
@@ -116,7 +123,7 @@ class NetworkSubnet(BaseDomain):
     """
     Used to connect cloud servers and load balancers with dedicated servers.
 
-    See https://docs.hetzner.com/cloud/networks/connect-dedi-vswitch/
+    See https://docs.hetzner.com/networking/networks/connect-dedi-vswitch/
     """
 
     __api_properties__ = ("type", "ip_range", "network_zone", "gateway", "vswitch_id")
