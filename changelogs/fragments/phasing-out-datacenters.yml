@@ -1,0 +1,32 @@
+release_summary: |
+  This release is phasing out datacenters in ``Primary IPs`` and ``Servers``.
+
+  We added a new ``location`` property to the request body and response of ``Servers`` and ``Primary IPs``.
+  The same data was previously present under ``datacenter.location``.
+
+  We deprecated the ``datacenter`` property in the request body and response of ``Servers`` and ``Primary IPs``.
+  The removal will happen after 1 July 2026.
+
+  See our `changelog`_ for more details.
+
+  .. _changelog: https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters
+
+minor_changes:
+  - primary_ip - Added the ``location`` argument to create a Primary IP in a specific location.
+  - primary_ip - Added the Primary IP ``location`` name to the return values (``hcloud_primary_ip.location``).
+  - primary_ip_info - Added the Primary IPs ``location`` name to the return values (``hcloud_primary_ip_info[].location``).
+
+deprecated_features:
+  - hcloud inventory - The ``hcloud_datacenter`` host variable is deprecated and will be removed after 1 July 2026. Please use the ``hcloud_location`` host variable instead.
+
+  - primary_ip - The ``datacenter`` argument is deprecated and will be removed after 1 July 2026. Please use the ``location`` argument instead.
+  - primary_ip - The ``hcloud_primary_ip.datacenter`` return value is deprecated and will be removed after 1 July 2026. Please use the ``hcloud_primary_ip.location`` return value instead.
+
+  - primary_ip_info - The ``hcloud_primary_ip_info[].datacenter`` return value is deprecated and will be removed after 1 July 2026. Please use the ``hcloud_primary_ip_info[].location`` return value instead.
+
+  - server - The ``datacenter`` argument is deprecated and will be removed after 1 July 2026. Please use the ``location`` argument instead.
+  - server - The ``hcloud_server.datacenter`` return value is deprecated and will be removed after 1 July 2026. Please use the ``hcloud_server.location`` return value instead.
+
+  - server_info - The ``hcloud_server_info[].datacenter`` return value is deprecated and will be removed after 1 July 2026. Please use the ``hcloud_server_info[].location`` return value instead.
+
+  - network_info - The ``hcloud_network_info[].servers[].datacenter`` return value is deprecated and will be removed after 1 July 2026. Please use the ``hcloud_network_info[].servers[].location`` return value instead.
