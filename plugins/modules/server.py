@@ -482,8 +482,16 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 "after 1 July 2026. Please use the `location` argument instead. "
                 "See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters."
             )
-            params["datacenter"] = self._client_get_by_name_or_id("datacenters", self.module.params.get("datacenter"))
-            server_type_location = params["datacenter"].location
+            value: str = self.module.params.get("datacenter")
+            # Backward compatible datacenter argument.
+            # datacenter hel1-dc2 => location hel1
+            if value and not value.isdigit():
+                part1, _, _ = value.partition("-")
+                params["location"] = self.client.locations.get_by_name(part1)
+                server_type_location = params["location"]
+            else:
+                params["datacenter"] = self._client_get_by_name_or_id("datacenters", value)
+                server_type_location = params["datacenter"].location
 
         if self.module.params.get("state") == "stopped" or self.module.params.get("state") == "created":
             params["start_after_create"] = False

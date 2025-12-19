@@ -231,7 +231,10 @@ class AnsiblePrimaryIP(AnsibleHCloud):
                 "after 1 July 2026. Please use the `location` argument instead. "
                 "See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters."
             )
-            params["datacenter"] = self.client.datacenters.get_by_name(value)
+            # Backward compatible datacenter argument.
+            # datacenter hel1-dc2 => location hel1
+            part1, _, _ = str(value).partition("-")
+            params["location"] = self.client.locations.get_by_name(part1)
         elif (value := self.module.params.get("server")) is not None:
             server: BoundServer = self._client_get_by_name_or_id("servers", value)
             params["assignee_id"] = server.id
