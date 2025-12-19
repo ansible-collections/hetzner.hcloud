@@ -1,11 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal
-
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    isoparse = None
+import warnings
+from typing import TYPE_CHECKING, Literal, TypedDict
 
 from ..core import BaseDomain, DomainIdentityMixin
 
@@ -16,13 +12,34 @@ if TYPE_CHECKING:
     from ..floating_ips import BoundFloatingIP
     from ..images import BoundImage
     from ..isos import BoundIso
+    from ..locations import BoundLocation
     from ..metrics import Metrics
     from ..networks import BoundNetwork, Network
     from ..placement_groups import BoundPlacementGroup
     from ..primary_ips import BoundPrimaryIP, PrimaryIP
+    from ..rdns import DNSPtr
     from ..server_types import BoundServerType
     from ..volumes import BoundVolume
     from .client import BoundServer
+
+
+__all__ = [
+    "Server",
+    "ServerProtection",
+    "CreateServerResponse",
+    "ResetPasswordResponse",
+    "EnableRescueResponse",
+    "RequestConsoleResponse",
+    "RebuildResponse",
+    "PublicNetwork",
+    "PublicNetworkFirewall",
+    "IPv4Address",
+    "IPv6Network",
+    "PrivateNet",
+    "ServerCreatePublicNetwork",
+    "GetMetricsResponse",
+    "MetricsType",
+]
 
 
 class Server(BaseDomain, DomainIdentityMixin):
@@ -40,6 +57,12 @@ class Server(BaseDomain, DomainIdentityMixin):
            Public network information.
     :param server_type: :class:`BoundServerType <hcloud.server_types.client.BoundServerType>`
     :param datacenter: :class:`BoundDatacenter <hcloud.datacenters.client.BoundDatacenter>`
+
+        This property is deprecated and will be removed after 1 July 2026.
+        Please use the ``location`` property instead.
+
+        See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
+    :param location: :class:`BoundLocation <hcloud.locations.client.BoundLocation>`
     :param image: :class:`BoundImage <hcloud.images.client.BoundImage>`, None
     :param iso: :class:`BoundIso <hcloud.isos.client.BoundIso>`, None
     :param rescue_enabled: bool
@@ -85,13 +108,13 @@ class Server(BaseDomain, DomainIdentityMixin):
     STATUS_UNKNOWN = "unknown"
     """Server Status unknown"""
 
-    __api_properties__ = (
+    __properties__ = (
         "id",
         "name",
         "status",
         "public_net",
         "server_type",
-        "datacenter",
+        "location",
         "image",
         "iso",
         "rescue_enabled",
@@ -108,7 +131,14 @@ class Server(BaseDomain, DomainIdentityMixin):
         "primary_disk_size",
         "placement_group",
     )
-    __slots__ = __api_properties__
+    __api_properties__ = (
+        *__properties__,
+        "datacenter",
+    )
+    __slots__ = (
+        *__properties__,
+        "_datacenter",
+    )
 
     # pylint: disable=too-many-locals
     def __init__(
@@ -120,6 +150,7 @@ class Server(BaseDomain, DomainIdentityMixin):
         public_net: PublicNetwork | None = None,
         server_type: BoundServerType | None = None,
         datacenter: BoundDatacenter | None = None,
+        location: BoundLocation | None = None,
         image: BoundImage | None = None,
         iso: BoundIso | None = None,
         rescue_enabled: bool | None = None,
@@ -128,7 +159,7 @@ class Server(BaseDomain, DomainIdentityMixin):
         outgoing_traffic: int | None = None,
         ingoing_traffic: int | None = None,
         included_traffic: int | None = None,
-        protection: dict | None = None,
+        protection: ServerProtection | None = None,
         labels: dict[str, str] | None = None,
         volumes: list[BoundVolume] | None = None,
         private_net: list[PrivateNet] | None = None,
@@ -138,10 +169,11 @@ class Server(BaseDomain, DomainIdentityMixin):
         self.id = id
         self.name = name
         self.status = status
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)
         self.public_net = public_net
         self.server_type = server_type
         self.datacenter = datacenter
+        self.location = location
         self.image = image
         self.iso = iso
         self.rescue_enabled = rescue_enabled
@@ -166,6 +198,29 @@ class Server(BaseDomain, DomainIdentityMixin):
             if o.network.id == network.id:
                 return o
         return None
+
+    @property
+    def datacenter(self) -> BoundDatacenter | None:
+        """
+        :meta private:
+        """
+        warnings.warn(
+            "The 'datacenter' property is deprecated and will be removed after 1 July 2026. "
+            "Please use the 'location' property instead. "
+            "See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._datacenter
+
+    @datacenter.setter
+    def datacenter(self, value: BoundDatacenter | None) -> None:
+        self._datacenter = value
+
+
+class ServerProtection(TypedDict):
+    rebuild: bool
+    delete: bool
 
 
 class CreateServerResponse(BaseDomain):
@@ -392,7 +447,7 @@ class IPv6Network(BaseDomain):
         self,
         ip: str,
         blocked: bool,
-        dns_ptr: list,
+        dns_ptr: list[DNSPtr],
     ):
         self.ip = ip
         self.blocked = blocked

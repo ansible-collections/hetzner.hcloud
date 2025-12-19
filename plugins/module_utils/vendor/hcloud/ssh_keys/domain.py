@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    isoparse = None
-
 from ..core import BaseDomain, DomainIdentityMixin
+
+__all__ = [
+    "SSHKey",
+]
 
 
 class SSHKey(BaseDomain, DomainIdentityMixin):
@@ -49,4 +48,4 @@ class SSHKey(BaseDomain, DomainIdentityMixin):
         self.fingerprint = fingerprint
         self.public_key = public_key
         self.labels = labels
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)

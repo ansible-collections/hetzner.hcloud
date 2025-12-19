@@ -5,8 +5,14 @@ from typing import Any, NamedTuple
 from ..core import BoundModelBase, Meta, ResourceClientBase
 from .domain import SSHKey
 
+__all__ = [
+    "BoundSSHKey",
+    "SSHKeysPageResult",
+    "SSHKeysClient",
+]
 
-class BoundSSHKey(BoundModelBase, SSHKey):
+
+class BoundSSHKey(BoundModelBase[SSHKey], SSHKey):
     _client: SSHKeysClient
 
     model = SSHKey

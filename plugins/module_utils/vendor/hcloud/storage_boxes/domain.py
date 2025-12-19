@@ -2,11 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Literal
 
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    isoparse = None
-
 from ..actions import BoundAction
 from ..core import BaseDomain, DomainIdentityMixin
 from ..locations import BoundLocation, Location
@@ -18,6 +13,26 @@ if TYPE_CHECKING:
         BoundStorageBoxSnapshot,
         BoundStorageBoxSubaccount,
     )
+
+__all__ = [
+    "StorageBox",
+    "StorageBoxAccessSettings",
+    "StorageBoxStats",
+    "StorageBoxSnapshotPlan",
+    "CreateStorageBoxResponse",
+    "DeleteStorageBoxResponse",
+    "StorageBoxFoldersResponse",
+    "StorageBoxSnapshot",
+    "StorageBoxSnapshotStats",
+    "CreateStorageBoxSnapshotResponse",
+    "DeleteStorageBoxSnapshotResponse",
+    "StorageBoxSubaccount",
+    "StorageBoxSubaccountAccessSettings",
+    "CreateStorageBoxSubaccountResponse",
+    "DeleteStorageBoxSubaccountResponse",
+    "StorageBoxStatus",
+]
+
 
 StorageBoxStatus = Literal[
     "active",
@@ -85,7 +100,7 @@ class StorageBox(BaseDomain, DomainIdentityMixin):
         self.access_settings = access_settings
         self.stats = stats
         self.status = status
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)
 
 
 class StorageBoxAccessSettings(BaseDomain):
@@ -288,7 +303,7 @@ class StorageBoxSnapshot(BaseDomain, DomainIdentityMixin):
         self.is_automatic = is_automatic
         self.labels = labels
         self.storage_box = storage_box
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)
         self.stats = stats
 
 
@@ -389,7 +404,7 @@ class StorageBoxSubaccount(BaseDomain, DomainIdentityMixin):
         self.access_settings = access_settings
         self.labels = labels
         self.storage_box = storage_box
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)
 
 
 class StorageBoxSubaccountAccessSettings(BaseDomain):

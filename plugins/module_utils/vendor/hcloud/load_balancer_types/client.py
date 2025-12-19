@@ -5,8 +5,14 @@ from typing import Any, NamedTuple
 from ..core import BoundModelBase, Meta, ResourceClientBase
 from .domain import LoadBalancerType
 
+__all__ = [
+    "BoundLoadBalancerType",
+    "LoadBalancerTypesPageResult",
+    "LoadBalancerTypesClient",
+]
 
-class BoundLoadBalancerType(BoundModelBase, LoadBalancerType):
+
+class BoundLoadBalancerType(BoundModelBase[LoadBalancerType], LoadBalancerType):
     _client: LoadBalancerTypesClient
 
     model = LoadBalancerType

@@ -6,8 +6,14 @@ from ..core import BoundModelBase, Meta, ResourceClientBase
 from ..locations import BoundLocation
 from .domain import ServerType, ServerTypeLocation
 
+__all__ = [
+    "BoundServerType",
+    "ServerTypesPageResult",
+    "ServerTypesClient",
+]
 
-class BoundServerType(BoundModelBase, ServerType):
+
+class BoundServerType(BoundModelBase[ServerType], ServerType):
     _client: ServerTypesClient
 
     model = ServerType
@@ -15,7 +21,7 @@ class BoundServerType(BoundModelBase, ServerType):
     def __init__(
         self,
         client: ServerTypesClient,
-        data: dict,
+        data: dict[str, Any],
         complete: bool = True,
     ):
         raw = data.get("locations")

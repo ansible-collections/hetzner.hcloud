@@ -1,12 +1,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import TYPE_CHECKING, Any, Literal
-
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    isoparse = None
+from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
 from ..core import BaseDomain, DomainIdentityMixin
 
@@ -19,6 +14,29 @@ if TYPE_CHECKING:
     from ..networks import BoundNetwork, Network
     from ..servers import BoundServer
     from .client import BoundLoadBalancer
+
+
+__all__ = [
+    "LoadBalancer",
+    "LoadBalancerProtection",
+    "LoadBalancerService",
+    "LoadBalancerServiceHttp",
+    "LoadBalancerHealthCheck",
+    "LoadBalancerHealthCheckHttp",
+    "LoadBalancerHealtCheckHttp",
+    "LoadBalancerTarget",
+    "LoadBalancerTargetHealthStatus",
+    "LoadBalancerTargetLabelSelector",
+    "LoadBalancerTargetIP",
+    "LoadBalancerAlgorithm",
+    "PublicNetwork",
+    "IPv4Address",
+    "IPv6Network",
+    "PrivateNet",
+    "CreateLoadBalancerResponse",
+    "GetMetricsResponse",
+    "MetricsType",
+]
 
 
 class LoadBalancer(BaseDomain, DomainIdentityMixin):
@@ -86,7 +104,7 @@ class LoadBalancer(BaseDomain, DomainIdentityMixin):
         algorithm: LoadBalancerAlgorithm | None = None,
         services: list[LoadBalancerService] | None = None,
         load_balancer_type: BoundLoadBalancerType | None = None,
-        protection: dict | None = None,
+        protection: LoadBalancerProtection | None = None,
         labels: dict[str, str] | None = None,
         targets: list[LoadBalancerTarget] | None = None,
         created: str | None = None,
@@ -96,7 +114,7 @@ class LoadBalancer(BaseDomain, DomainIdentityMixin):
     ):
         self.id = id
         self.name = name
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)
         self.public_net = public_net
         self.private_net = private_net
         self.location = location
@@ -119,6 +137,10 @@ class LoadBalancer(BaseDomain, DomainIdentityMixin):
             if o.network.id == network.id:
                 return o
         return None
+
+
+class LoadBalancerProtection(TypedDict):
+    delete: bool
 
 
 class LoadBalancerService(BaseDomain):
@@ -339,7 +361,7 @@ class LoadBalancerHealthCheckHttp(BaseDomain):
         domain: str | None = None,
         path: str | None = None,
         response: str | None = None,
-        status_codes: list | None = None,
+        status_codes: list[str] | None = None,
         tls: bool | None = None,
     ):
         self.domain = domain
@@ -362,7 +384,7 @@ class LoadBalancerHealtCheckHttp(LoadBalancerHealthCheckHttp):
         domain: str | None = None,
         path: str | None = None,
         response: str | None = None,
-        status_codes: list | None = None,
+        status_codes: list[str] | None = None,
         tls: bool | None = None,
     ):
         warnings.warn(

@@ -1,13 +1,26 @@
 from __future__ import annotations
 
-from typing import Any
+from datetime import datetime
+from typing import Any, overload
+
+try:
+    from dateutil.parser import isoparse
+except ImportError:
+    isoparse = None
+
+__all__ = [
+    "BaseDomain",
+    "DomainIdentityMixin",
+    "Pagination",
+    "Meta",
+]
 
 
 class BaseDomain:
-    __api_properties__: tuple
+    __api_properties__: tuple[str, ...]
 
     @classmethod
-    def from_dict(cls, data: dict):  # type: ignore[no-untyped-def]
+    def from_dict(cls, data: dict[str, Any]):  # type: ignore[no-untyped-def]
         """
         Build the domain object from the data dict.
         """
@@ -15,7 +28,7 @@ class BaseDomain:
         return cls(**supported_data)
 
     def __repr__(self) -> str:
-        kwargs = [f"{key}={getattr(self, key)!r}" for key in self.__api_properties__]  # type: ignore[var-annotated]
+        kwargs = [f"{key}={getattr(self, key)!r}" for key in self.__api_properties__]
         return f"{self.__class__.__qualname__}({', '.join(kwargs)})"
 
     def __eq__(self, other: Any) -> bool:
@@ -26,6 +39,16 @@ class BaseDomain:
             if getattr(self, key) != getattr(other, key):
                 return False
         return True
+
+    @overload
+    def _parse_datetime(self, value: str) -> datetime: ...
+    @overload
+    def _parse_datetime(self, value: None) -> None: ...
+
+    def _parse_datetime(self, value: str | None) -> datetime | None:
+        if value is None:
+            return None
+        return isoparse(value)
 
 
 class DomainIdentityMixin:
@@ -106,7 +129,7 @@ class Meta(BaseDomain):
         self.pagination = pagination
 
     @classmethod
-    def parse_meta(cls, response: dict) -> Meta:
+    def parse_meta(cls, response: dict[str, Any]) -> Meta:
         """
         If present, extract the meta details from the response and return a meta object.
         """

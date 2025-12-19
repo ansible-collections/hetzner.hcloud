@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, NamedTuple
 
@@ -8,13 +9,21 @@ try:
 except ImportError:
     isoparse = None
 
-from ..actions import ActionsPageResult, BoundAction, ResourceActionsClient
+from ..actions import (
+    ActionSort,
+    ActionsPageResult,
+    ActionStatus,
+    BoundAction,
+    ResourceActionsClient,
+)
+from ..actions.client import ResourceClientBaseActionsMixin
 from ..core import BoundModelBase, Meta, ResourceClientBase
 from ..datacenters import BoundDatacenter
 from ..firewalls import BoundFirewall
 from ..floating_ips import BoundFloatingIP
 from ..images import BoundImage, CreateImageResponse
 from ..isos import BoundIso
+from ..locations import BoundLocation, Location
 from ..metrics import Metrics
 from ..placement_groups import BoundPlacementGroup
 from ..primary_ips import BoundPrimaryIP
@@ -42,7 +51,6 @@ if TYPE_CHECKING:
     from ..firewalls import Firewall
     from ..images import Image
     from ..isos import Iso
-    from ..locations import BoundLocation, Location
     from ..networks import BoundNetwork, Network
     from ..placement_groups import PlacementGroup
     from ..server_types import ServerType
@@ -51,16 +59,32 @@ if TYPE_CHECKING:
     from .domain import ServerCreatePublicNetwork
 
 
-class BoundServer(BoundModelBase, Server):
+__all__ = [
+    "BoundServer",
+    "ServersPageResult",
+    "ServersClient",
+]
+
+
+class BoundServer(BoundModelBase[Server], Server):
     _client: ServersClient
 
     model = Server
 
     # pylint: disable=too-many-locals
-    def __init__(self, client: ServersClient, data: dict, complete: bool = True):
-        datacenter = data.get("datacenter")
-        if datacenter is not None:
-            data["datacenter"] = BoundDatacenter(client._parent.datacenters, datacenter)
+    def __init__(
+        self,
+        client: ServersClient,
+        data: dict[str, Any],
+        complete: bool = True,
+    ):
+        raw = data.get("datacenter")
+        if raw:
+            data["datacenter"] = BoundDatacenter(client._parent.datacenters, raw)
+
+        raw = data.get("location")
+        if raw:
+            data["location"] = BoundLocation(client._parent.locations, raw)
 
         volumes = data.get("volumes", [])
         if volumes:
@@ -169,22 +193,18 @@ class BoundServer(BoundModelBase, Server):
 
     def get_actions_list(
         self,
-        status: list[str] | None = None,
-        sort: list[str] | None = None,
+        status: list[ActionStatus] | None = None,
+        sort: list[ActionSort] | None = None,
         page: int | None = None,
         per_page: int | None = None,
     ) -> ActionsPageResult:
-        """Returns all action objects for a server.
+        """
+        Returns a paginated list of Actions for a Server.
 
-        :param status: List[str] (optional)
-               Response will have only actions with specified statuses. Choices: `running` `success` `error`
-        :param sort: List[str] (optional)
-               Specify how the results are sorted. Choices: `id` `id:asc` `id:desc` `command` `command:asc` `command:desc` `status` `status:asc` `status:desc` `progress` `progress:asc` `progress:desc` `started` `started:asc` `started:desc` `finished` `finished:asc` `finished:desc`
-        :param page: int (optional)
-               Specifies the page to fetch
-        :param per_page: int (optional)
-               Specifies how many results are returned by page
-        :return: (List[:class:`BoundAction <hcloud.actions.client.BoundAction>`], :class:`Meta <hcloud.core.domain.Meta>`)
+        :param status: Filter the Actions by status.
+        :param sort: Sort Actions by field and direction.
+        :param page: Page number to get.
+        :param per_page: Maximum number of Actions returned per page.
         """
         return self._client.get_actions_list(
             self,
@@ -196,16 +216,14 @@ class BoundServer(BoundModelBase, Server):
 
     def get_actions(
         self,
-        status: list[str] | None = None,
-        sort: list[str] | None = None,
+        status: list[ActionStatus] | None = None,
+        sort: list[ActionSort] | None = None,
     ) -> list[BoundAction]:
-        """Returns all action objects for a server.
+        """
+        Returns all Actions for a Server.
 
-        :param status: List[str] (optional)
-               Response will have only actions with specified statuses. Choices: `running` `success` `error`
-        :param sort: List[str] (optional)
-               Specify how the results are sorted. Choices: `id` `id:asc` `id:desc` `command` `command:asc` `command:desc` `status` `status:asc` `status:desc` `progress` `progress:asc` `progress:desc` `started` `started:asc` `started:desc` `finished` `finished:asc` `finished:desc`
-        :return: List[:class:`BoundAction <hcloud.actions.client.BoundAction>`]
+        :param status: Filter the Actions by status.
+        :param sort: Sort Actions by field and direction.
         """
         return self._client.get_actions(self, status=status, sort=sort)
 
@@ -506,7 +524,10 @@ class ServersPageResult(NamedTuple):
     meta: Meta
 
 
-class ServersClient(ResourceClientBase):
+class ServersClient(
+    ResourceClientBaseActionsMixin,
+    ResourceClientBase,
+):
     _base_url = "/servers"
 
     actions: ResourceActionsClient
@@ -660,6 +681,13 @@ class ServersClient(ResourceClientBase):
         if location is not None:
             data["location"] = location.id_or_name
         if datacenter is not None:
+            warnings.warn(
+                "The 'datacenter' argument is deprecated and will be removed after 1 July 2026. "
+                "Please use the 'location' argument instead. "
+                "See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             data["datacenter"] = datacenter.id_or_name
         if ssh_keys is not None:
             data["ssh_keys"] = [ssh_key.id_or_name for ssh_key in ssh_keys]
@@ -705,59 +733,40 @@ class ServersClient(ResourceClientBase):
     def get_actions_list(
         self,
         server: Server | BoundServer,
-        status: list[str] | None = None,
-        sort: list[str] | None = None,
+        status: list[ActionStatus] | None = None,
+        sort: list[ActionSort] | None = None,
         page: int | None = None,
         per_page: int | None = None,
     ) -> ActionsPageResult:
-        """Returns all action objects for a server.
-
-        :param server: :class:`BoundServer <hcloud.servers.client.BoundServer>` or :class:`Server <hcloud.servers.domain.Server>`
-        :param status: List[str] (optional)
-               Response will have only actions with specified statuses. Choices: `running` `success` `error`
-        :param sort: List[str] (optional)
-               Specify how the results are sorted. Choices: `id` `id:asc` `id:desc` `command` `command:asc` `command:desc` `status` `status:asc` `status:desc` `progress` `progress:asc` `progress:desc` `started` `started:asc` `started:desc` `finished` `finished:asc` `finished:desc`
-        :param page: int (optional)
-               Specifies the page to fetch
-        :param per_page: int (optional)
-               Specifies how many results are returned by page
-        :return: (List[:class:`BoundAction <hcloud.actions.client.BoundAction>`], :class:`Meta <hcloud.core.domain.Meta>`)
         """
-        params: dict[str, Any] = {}
-        if status is not None:
-            params["status"] = status
-        if sort is not None:
-            params["sort"] = sort
-        if page is not None:
-            params["page"] = page
-        if per_page is not None:
-            params["per_page"] = per_page
+        Returns a paginated list of Actions for a Server.
 
-        response = self._client.request(
-            url=f"{self._base_url}/{server.id}/actions",
-            method="GET",
-            params=params,
+        :param server: Server to get the Actions for.
+        :param status: Filter the Actions by status.
+        :param sort: Sort Actions by field and direction.
+        :param page: Page number to get.
+        :param per_page: Maximum number of Actions returned per page.
+        """
+        return self._get_actions_list(
+            f"{self._base_url}/{server.id}",
+            status=status,
+            sort=sort,
+            page=page,
+            per_page=per_page,
         )
-        actions = [
-            BoundAction(self._parent.actions, action_data)
-            for action_data in response["actions"]
-        ]
-        return ActionsPageResult(actions, Meta.parse_meta(response))
 
     def get_actions(
         self,
         server: Server | BoundServer,
-        status: list[str] | None = None,
-        sort: list[str] | None = None,
+        status: list[ActionStatus] | None = None,
+        sort: list[ActionSort] | None = None,
     ) -> list[BoundAction]:
-        """Returns all action objects for a server.
+        """
+        Returns all Actions for a Server.
 
-        :param server: :class:`BoundServer <hcloud.servers.client.BoundServer>` or :class:`Server <hcloud.servers.domain.Server>`
-        :param status: List[str] (optional)
-               Response will have only actions with specified statuses. Choices: `running` `success` `error`
-        :param sort: List[str] (optional)
-               Specify how the results are sorted. Choices: `id` `id:asc` `id:desc` `command` `command:asc` `command:desc` `status` `status:asc` `status:desc` `progress` `progress:asc` `progress:desc` `started` `started:asc` `started:desc` `finished` `finished:asc` `finished:desc`
-        :return: List[:class:`BoundAction <hcloud.actions.client.BoundAction>`]
+        :param server: Server to get the Actions for.
+        :param status: Filter the Actions by status.
+        :param sort: Sort Actions by field and direction.
         """
         return self._iter_pages(
             self.get_actions_list,

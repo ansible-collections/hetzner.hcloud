@@ -1,11 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    isoparse = None
+from typing import TYPE_CHECKING, TypedDict
 
 from ..core import BaseDomain, DomainIdentityMixin
 
@@ -13,6 +8,13 @@ if TYPE_CHECKING:
     from ..actions import BoundAction
     from ..servers import BoundServer, Server
     from .client import BoundImage
+
+
+__all__ = [
+    "Image",
+    "ImageProtection",
+    "CreateImageResponse",
+]
 
 
 class Image(BaseDomain, DomainIdentityMixin):
@@ -92,18 +94,18 @@ class Image(BaseDomain, DomainIdentityMixin):
         architecture: str | None = None,
         rapid_deploy: bool | None = None,
         created_from: Server | BoundServer | None = None,
-        protection: dict | None = None,
+        protection: ImageProtection | None = None,
         labels: dict[str, str] | None = None,
         status: str | None = None,
     ):
         self.id = id
         self.name = name
         self.type = type
-        self.created = isoparse(created) if created else None
+        self.created = self._parse_datetime(created)
         self.description = description
         self.image_size = image_size
         self.disk_size = disk_size
-        self.deprecated = isoparse(deprecated) if deprecated else None
+        self.deprecated = self._parse_datetime(deprecated)
         self.bound_to = bound_to
         self.os_flavor = os_flavor
         self.os_version = os_version
@@ -113,6 +115,10 @@ class Image(BaseDomain, DomainIdentityMixin):
         self.protection = protection
         self.labels = labels
         self.status = status
+
+
+class ImageProtection(TypedDict):
+    delete: bool
 
 
 class CreateImageResponse(BaseDomain):
