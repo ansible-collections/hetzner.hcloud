@@ -95,7 +95,7 @@ To publish experimental features as part of regular releases:
   """
   ```
 
-- a `Experimental` warning, including a link to a changelog entry, must be logged when experimental plugins are being used:
+- an `Experimental` warning, including a link to a changelog entry, must be logged when experimental plugins are being used:
 
   ```py
   product_experimental_warning = experimental_warning_function(
