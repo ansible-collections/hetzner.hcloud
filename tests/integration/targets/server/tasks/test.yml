@@ -3,6 +3,7 @@
 ---
 #- ansible.builtin.include_tasks: test_validation.yml
 - ansible.builtin.include_tasks: test_basic.yml
+- ansible.builtin.include_tasks: test_datacenter.yml
 #- ansible.builtin.include_tasks: test_firewalls.yml
 - ansible.builtin.include_tasks: test_primary_ips.yml
 - ansible.builtin.include_tasks: test_private_network_only.yml

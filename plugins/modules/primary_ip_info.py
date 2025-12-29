@@ -99,8 +99,18 @@ hcloud_primary_ip_info:
             returned: always
             type: str
             sample: server
+        location:
+            description: Location where the Primary IP was created in.
+            returned: always
+            type: str
+            sample: fsn1
         home_location:
-            description: Location with datacenter where the Primary IP was created in
+            description: |
+                Datacenter where the Primary IP was created in.
+
+                B(Deprecated:) The RV(hcloud_primary_ip_info[].home_location) value is deprecated and will be removed
+                after 1 July 2026. Please use the RV(hcloud_primary_ip_info[].location) value instead.
+                See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
             returned: always
             type: str
             sample: fsn1-dc1
@@ -152,7 +162,8 @@ class AnsibleHCloudPrimaryIPInfo(AnsibleHCloud):
                     "assignee_id": primary_ip.assignee_id if primary_ip.assignee_id is not None else None,
                     "assignee_type": primary_ip.assignee_type,
                     "auto_delete": primary_ip.auto_delete,
-                    "home_location": primary_ip.datacenter.name,
+                    "location": primary_ip.location.name,
+                    "home_location": primary_ip.datacenter and primary_ip.datacenter.name,
                     "dns_ptr": primary_ip.dns_ptr[0]["dns_ptr"] if len(primary_ip.dns_ptr) else None,
                     "labels": primary_ip.labels,
                     "delete_protection": primary_ip.protection["delete"],
