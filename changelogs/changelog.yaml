@@ -856,3 +856,11 @@ releases:
     fragments:
     - storage-boxes.yml
     release_date: '2025-12-10'
+  6.3.1:
+    changes:
+      bugfixes:
+      - Invalid redirects for Storage Box modules are now fixed by using fully qualified
+        module names.
+    fragments:
+    - storage-box-redirects-fqcr.yml
+    release_date: '2025-12-29'
