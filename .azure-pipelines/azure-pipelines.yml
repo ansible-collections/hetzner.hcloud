@@ -125,7 +125,7 @@ stages:
     jobs:
       - template: templates/matrix.yml
         parameters:
-          groups: [1, 2, 3]
+          groups: [1, 2, 3, 4, 5]
           targets:
             - name: (py3.14)
               test: devel/integration/3.14
@@ -136,7 +136,7 @@ stages:
     jobs:
       - template: templates/matrix.yml
         parameters:
-          groups: [1, 2, 3]
+          groups: [1, 2, 3, 4, 5]
           targets:
             - name: (py3.12)
               test: 2.20/integration/3.12
@@ -147,7 +147,7 @@ stages:
     jobs:
       - template: templates/matrix.yml
         parameters:
-          groups: [1, 2, 3]
+          groups: [1, 2, 3, 4, 5]
           targets:
             - name: (py3.11)
               test: 2.19/integration/3.11
@@ -158,7 +158,7 @@ stages:
     jobs:
       - template: templates/matrix.yml
         parameters:
-          groups: [1, 2, 3]
+          groups: [1, 2, 3, 4, 5]
           targets:
             - name: (py3.11)
               test: 2.18/integration/3.11
