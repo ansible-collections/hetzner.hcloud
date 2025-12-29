@@ -34,7 +34,7 @@ options:
     location:
         description:
             - ID or name of the Location the Hetzner Cloud Primary IP will be bound to.
-            - Required if no O(server) is given and Primary IP does not exist.
+            - Required if no O(server) or O(datacenter) is given and Primary IP does not exist.
         type: str
     datacenter:
         description:
@@ -42,7 +42,7 @@ options:
               after 1 July 2026. Please use the O(location) argument instead.
               See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
             - Home Location of the Hetzner Cloud Primary IP.
-            - Required if no O(server) is given and Primary IP does not exist.
+            - Required if no O(server) or O(location) is given and Primary IP does not exist.
         type: str
     server:
         description:
