@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.3.1](https://github.com/ansible-collections/hetzner.hcloud/compare/6.3.0...6.3.1) (2025-12-29)
+
+
+### Bug Fixes
+
+* redirect for storage box module must use a fully qualified name ([#767](https://github.com/ansible-collections/hetzner.hcloud/issues/767)) ([55cc1fa](https://github.com/ansible-collections/hetzner.hcloud/commit/55cc1fa3a90c2791d6f3e01163e901ff9836191e))
+
 ## [6.3.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.2.1...6.3.0) (2025-12-10)
 
 
