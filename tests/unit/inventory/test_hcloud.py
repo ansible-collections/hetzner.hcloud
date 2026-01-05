@@ -4,7 +4,7 @@ import json
 from unittest.mock import MagicMock
 
 from plugins.inventory.hcloud import InventoryModule, first_ipv6_address
-from plugins.module_utils.vendor.hcloud.servers import BoundServer
+from plugins.module_utils._vendor.hcloud.servers import BoundServer
 
 
 def test_first_ipv6_address():

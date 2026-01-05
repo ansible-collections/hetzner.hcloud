@@ -4,13 +4,14 @@ from datetime import datetime, timedelta, timezone
 from unittest import mock
 
 import pytest
-from ansible_collections.hetzner.hcloud.plugins.module_utils.deprecation import (
+
+from plugins.module_utils._deprecation import (
     deprecated_server_type_warning,
 )
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.locations import (
+from plugins.module_utils._vendor.hcloud.locations import (
     BoundLocation,
 )
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.server_types import (
+from plugins.module_utils._vendor.hcloud.server_types import (
     BoundServerType,
 )
 

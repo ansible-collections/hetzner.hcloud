@@ -4,11 +4,12 @@ import traceback
 from datetime import datetime, timezone
 
 import pytest
-from ansible_collections.hetzner.hcloud.plugins.module_utils.hcloud import AnsibleHCloud
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud import (
+
+from plugins.module_utils._base import AnsibleHCloud
+from plugins.module_utils._vendor.hcloud import (
     APIException,
 )
-from ansible_collections.hetzner.hcloud.plugins.module_utils.vendor.hcloud.actions import (
+from plugins.module_utils._vendor.hcloud.actions import (
     Action,
     ActionException,
     ActionFailedException,
