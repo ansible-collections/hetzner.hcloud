@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..module_utils.vendor.hcloud.floating_ips import (
+from ._vendor.hcloud.floating_ips import (
     BoundFloatingIP,
 )
 

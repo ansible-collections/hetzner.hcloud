@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..module_utils.vendor.hcloud.primary_ips import (
+from ._vendor.hcloud.primary_ips import (
     BoundPrimaryIP,
 )
 

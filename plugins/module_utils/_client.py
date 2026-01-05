@@ -6,7 +6,7 @@ from contextlib import contextmanager
 
 from ansible.module_utils.basic import missing_required_lib
 
-from .vendor.hcloud import APIException, Client as ClientBase
+from ._vendor.hcloud import APIException, Client as ClientBase
 
 HAS_REQUESTS = True
 HAS_DATEUTIL = True

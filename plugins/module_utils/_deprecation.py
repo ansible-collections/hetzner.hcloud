@@ -5,8 +5,8 @@ from datetime import datetime, timezone
 
 from ansible.module_utils.basic import AnsibleModule
 
-from .vendor.hcloud.locations import BoundLocation
-from .vendor.hcloud.server_types import BoundServerType, ServerTypeLocation
+from ._vendor.hcloud.locations import BoundLocation
+from ._vendor.hcloud.server_types import BoundServerType, ServerTypeLocation
 
 DEPRECATED_EXISTING_SERVERS = """
 Existing servers of that type will continue to work as before and no action is \

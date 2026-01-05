@@ -88,9 +88,9 @@ hcloud_certificate_info:
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.certificates import BoundCertificate
+from ..module_utils._base import AnsibleHCloud
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.certificates import BoundCertificate
 
 
 class AnsibleHCloudCertificateInfo(AnsibleHCloud):

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .hcloud import AnsibleModule
+from ._base import AnsibleModule
 
 
 def experimental_warning_function(product: str, maturity: str, url: str):

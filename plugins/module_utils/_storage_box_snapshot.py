@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..module_utils.vendor.hcloud.storage_boxes import (
+from ._vendor.hcloud.storage_boxes import (
     BoundStorageBoxSnapshot,
 )
 

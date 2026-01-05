@@ -104,14 +104,14 @@ hcloud_firewall_resource:
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.firewalls import (
+from ..module_utils._base import AnsibleHCloud
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.firewalls import (
     BoundFirewall,
     FirewallResource,
     FirewallResourceLabelSelector,
 )
-from ..module_utils.vendor.hcloud.servers import BoundServer
+from ..module_utils._vendor.hcloud.servers import BoundServer
 
 
 class AnsibleHCloudFirewallResource(AnsibleHCloud):

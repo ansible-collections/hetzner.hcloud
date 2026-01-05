@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from ..module_utils.client import client_resource_not_found
-from ..module_utils.vendor.hcloud.storage_boxes import (
+from ._client import client_resource_not_found
+from ._vendor.hcloud.storage_boxes import (
     BoundStorageBox,
     StorageBoxesClient,
 )

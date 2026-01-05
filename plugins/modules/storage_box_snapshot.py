@@ -140,11 +140,11 @@ hcloud_storage_box_snapshot:
             sample: "2025-12-03T13:47:47Z"
 """
 
-from ..module_utils import storage_box, storage_box_snapshot
-from ..module_utils.experimental import storage_box_experimental_warning
-from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.storage_boxes import (
+from ..module_utils import _storage_box, _storage_box_snapshot
+from ..module_utils._base import AnsibleHCloud, AnsibleModule
+from ..module_utils._experimental import storage_box_experimental_warning
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.storage_boxes import (
     BoundStorageBox,
     BoundStorageBoxSnapshot,
 )
@@ -163,10 +163,10 @@ class AnsibleStorageBoxSnapshot(AnsibleHCloud):
     def _prepare_result(self):
         if self.storage_box_snapshot is None:
             return {}
-        return storage_box_snapshot.prepare_result(self.storage_box_snapshot)
+        return _storage_box_snapshot.prepare_result(self.storage_box_snapshot)
 
     def _fetch(self):
-        self.storage_box = storage_box.get(self.client.storage_boxes, self.module.params.get("storage_box"))
+        self.storage_box = _storage_box.get(self.client.storage_boxes, self.module.params.get("storage_box"))
 
         if (value := self.module.params.get("id")) is not None:
             self.storage_box_snapshot = self.storage_box.get_snapshot_by_id(value)

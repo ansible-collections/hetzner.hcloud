@@ -13,7 +13,7 @@ jobs = 0
 
 max-line-length = 120
 ignore-paths = [
-  "plugins/module_utils/vendor",
+  "plugins/module_utils/_vendor",
 ]
 
 [tool.pylint.reports]

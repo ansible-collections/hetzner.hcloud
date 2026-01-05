@@ -124,9 +124,9 @@ hcloud_subnetwork:
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.networks import BoundNetwork, NetworkSubnet
+from ..module_utils._base import AnsibleHCloud
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.networks import BoundNetwork, NetworkSubnet
 
 
 class AnsibleHCloudSubnetwork(AnsibleHCloud):

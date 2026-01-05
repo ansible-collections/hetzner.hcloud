@@ -220,10 +220,10 @@ import time
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.ipaddress import normalize_ip
-from ..module_utils.vendor.hcloud import APIException, HCloudException
-from ..module_utils.vendor.hcloud.firewalls import (
+from ..module_utils._base import AnsibleHCloud
+from ..module_utils._ipaddress import normalize_ip
+from ..module_utils._vendor.hcloud import APIException, HCloudException
+from ..module_utils._vendor.hcloud.firewalls import (
     BoundFirewall,
     FirewallResource,
     FirewallRule,

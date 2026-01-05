@@ -160,10 +160,10 @@ hcloud_floating_ip:
                 mylabel: 123
 """
 
-from ..module_utils import floating_ip
-from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.floating_ips import BoundFloatingIP
+from ..module_utils import _floating_ip
+from ..module_utils._base import AnsibleHCloud, AnsibleModule
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.floating_ips import BoundFloatingIP
 
 
 class AnsibleFloatingIP(AnsibleHCloud):
@@ -174,7 +174,7 @@ class AnsibleFloatingIP(AnsibleHCloud):
     def _prepare_result(self):
         if self.floating_ip is None:
             return {}
-        return floating_ip.prepare_result(self.floating_ip)
+        return _floating_ip.prepare_result(self.floating_ip)
 
     def _get(self):
         if (value := self.module.params.get("id")) is not None:

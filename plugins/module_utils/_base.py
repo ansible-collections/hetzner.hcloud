@@ -16,15 +16,19 @@ from ansible.module_utils.common.validation import (
     check_required_one_of,
 )
 
-from .client import ClientException, client_check_required_lib, client_get_by_name_or_id
-from .vendor.hcloud import (
+from ._client import (
+    ClientException,
+    client_check_required_lib,
+    client_get_by_name_or_id,
+)
+from ._vendor.hcloud import (
     APIException,
     Client,
     HCloudException,
     exponential_backoff_function,
 )
-from .vendor.hcloud.actions import ActionException
-from .version import version
+from ._vendor.hcloud.actions import ActionException
+from ._version import version
 
 
 class AnsibleModule(AnsibleModuleBase):

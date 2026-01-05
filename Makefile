@@ -29,7 +29,7 @@ clean:
 
 sanity:
 	ansible-test sanity --color --truncate 0 -v \
-		--exclude plugins/module_utils/vendor/ \
+		--exclude plugins/module_utils/_vendor/ \
 		--exclude scripts/ \
 		--exclude tests/utils/ \
 		--docker default \
