@@ -233,6 +233,7 @@ class AnsiblePrimaryIP(AnsibleHCloud):
             )
             # Backward compatible datacenter argument.
             # datacenter hel1-dc2 => location hel1
+            # pylint: disable=disallowed-name
             part1, _, _ = str(value).partition("-")
             params["location"] = self.client.locations.get_by_name(part1)
         elif (value := self.module.params.get("server")) is not None:

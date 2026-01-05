@@ -486,6 +486,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
             # Backward compatible datacenter argument.
             # datacenter hel1-dc2 => location hel1
             if value and not value.isdigit():
+                # pylint: disable=disallowed-name
                 part1, _, _ = value.partition("-")
                 params["location"] = self.client.locations.get_by_name(part1)
                 server_type_location = params["location"]
