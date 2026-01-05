@@ -1,2 +1,0 @@
-bugfixes:
-  - Invalid redirects for Storage Box modules are now fixed by using fully qualified module names.
