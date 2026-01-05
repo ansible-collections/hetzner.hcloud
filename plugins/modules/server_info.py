@@ -113,7 +113,12 @@ hcloud_server_info:
             sample: 4711
             version_added: "1.5.0"
         datacenter:
-            description: Name of the datacenter of the server
+            description: |
+                Name of the datacenter of the server.
+
+                B(Deprecated:) The RV(hcloud_server_info[].datacenter) value is deprecated and will be removed
+                after 1 July 2026. Please use the RV(hcloud_server_info[].location) value instead.
+                See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
             returned: always
             type: str
             sample: fsn1-dc14
@@ -175,8 +180,8 @@ class AnsibleHCloudServerInfo(AnsibleHCloud):
                     "private_networks_info": [{"name": net.network.name, "ip": net.ip} for net in server.private_net],
                     "image": server.image.name if server.image is not None else None,
                     "server_type": server.server_type.name,
-                    "datacenter": server.datacenter.name,
-                    "location": server.datacenter.location.name,
+                    "datacenter": server.datacenter and server.datacenter.name,
+                    "location": server.location.name,
                     "placement_group": server.placement_group.name if server.placement_group is not None else None,
                     "rescue_enabled": server.rescue_enabled,
                     "backup_window": server.backup_window,

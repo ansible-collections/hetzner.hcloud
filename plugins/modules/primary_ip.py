@@ -24,17 +24,25 @@ options:
     id:
         description:
             - The ID of the Hetzner Cloud Primary IPs to manage.
-            - Only required if no Primary IP I(name) is given.
+            - Only required if no Primary IP O(name) is given.
         type: int
     name:
         description:
             - The Name of the Hetzner Cloud Primary IPs to manage.
-            - Only required if no Primary IP I(id) is given or a Primary IP does not exist.
+            - Only required if no Primary IP O(id) is given or a Primary IP does not exist.
+        type: str
+    location:
+        description:
+            - ID or name of the Location the Hetzner Cloud Primary IP will be bound to.
+            - Required if no O(server) or O(datacenter) is given and Primary IP does not exist.
         type: str
     datacenter:
         description:
+            - B(Deprecated:) The O(datacenter) argument is deprecated and will be removed
+              after 1 July 2026. Please use the O(location) argument instead.
+              See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
             - Home Location of the Hetzner Cloud Primary IP.
-            - Required if no I(server) is given and Primary IP does not exist.
+            - Required if no O(server) or O(location) is given and Primary IP does not exist.
         type: str
     server:
         description:
@@ -76,14 +84,14 @@ EXAMPLES = """
 - name: Create a IPv4 Primary IP
   hetzner.hcloud.primary_ip:
     name: my-primary-ip
-    datacenter: fsn1-dc14
+    location: fsn1
     type: ipv4
     state: present
 
 - name: Create a IPv6 Primary IP
   hetzner.hcloud.primary_ip:
     name: my-primary-ip
-    datacenter: fsn1-dc14
+    location: fsn1
     type: ipv6
     state: present
 
@@ -134,8 +142,18 @@ hcloud_primary_ip:
             type: str
             returned: Always
             sample: ipv4
+        location:
+            description: Name of the Location of the Primary IP
+            type: str
+            returned: Always
+            sample: fsn1
         datacenter:
-            description: Name of the datacenter of the Primary IP
+            description: |
+                Name of the datacenter of the Primary IP
+
+                B(Deprecated:) The RV(hcloud_primary_ip.datacenter) value is deprecated and will be removed
+                after 1 July 2026. Please use the RV(hcloud_primary_ip.location) value instead.
+                See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
             type: str
             returned: Always
             sample: fsn1-dc14
@@ -198,15 +216,26 @@ class AnsiblePrimaryIP(AnsibleHCloud):
     def _create(self):
         self.fail_on_invalid_params(
             required=["name", "type"],
-            required_one_of=[["server", "datacenter"]],
+            required_one_of=[["server", "location", "datacenter"]],
         )
         params = {
             "name": self.module.params.get("name"),
             "type": self.module.params.get("type"),
         }
 
-        if (value := self.module.params.get("datacenter")) is not None:
-            params["datacenter"] = self.client.datacenters.get_by_name(value)
+        if (value := self.module.params.get("location")) is not None:
+            params["location"] = self._client_get_by_name_or_id("locations", value)
+        elif (value := self.module.params.get("datacenter")) is not None:
+            self.module.warn(
+                "The `datacenter` argument is deprecated and will be removed "
+                "after 1 July 2026. Please use the `location` argument instead. "
+                "See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters."
+            )
+            # Backward compatible datacenter argument.
+            # datacenter hel1-dc2 => location hel1
+            # pylint: disable=disallowed-name
+            part1, _, _ = str(value).partition("-")
+            params["location"] = self.client.locations.get_by_name(part1)
         elif (value := self.module.params.get("server")) is not None:
             server: BoundServer = self._client_get_by_name_or_id("servers", value)
             params["assignee_id"] = server.id
@@ -287,7 +316,12 @@ class AnsiblePrimaryIP(AnsibleHCloud):
             argument_spec=dict(
                 id={"type": "int"},
                 name={"type": "str"},
-                datacenter={"type": "str"},
+                location={"type": "str"},
+                datacenter={
+                    "type": "str",
+                    "removed_at_date": "2026-07-01",
+                    "removed_from_collection": "hetzner.hcloud",
+                },
                 server={"type": "str"},
                 auto_delete={"type": "bool", "default": False},
                 type={"choices": ["ipv4", "ipv6"]},
