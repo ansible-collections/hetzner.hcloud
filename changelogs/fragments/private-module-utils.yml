@@ -1,0 +1,2 @@
+minor_changes:
+  - All ``module_utils`` are now marked as **private**. None of the modules were intended for public use.

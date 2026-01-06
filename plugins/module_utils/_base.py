@@ -1,7 +1,7 @@
 # Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 
-# Simplified BSD License (see licenses/simplified_bsd.txt or https://opensource.org/licenses/BSD-2-Clause)
-
+# Note that this module util is **PRIVATE** to the collection. It can have breaking changes at any time.
+# Do not use this from other collections or standalone plugins/modules!
 
 from __future__ import annotations
 
@@ -16,15 +16,19 @@ from ansible.module_utils.common.validation import (
     check_required_one_of,
 )
 
-from .client import ClientException, client_check_required_lib, client_get_by_name_or_id
-from .vendor.hcloud import (
+from ._client import (
+    ClientException,
+    client_check_required_lib,
+    client_get_by_name_or_id,
+)
+from ._vendor.hcloud import (
     APIException,
     Client,
     HCloudException,
     exponential_backoff_function,
 )
-from .vendor.hcloud.actions import ActionException
-from .version import version
+from ._vendor.hcloud.actions import ActionException
+from ._version import version
 
 
 class AnsibleModule(AnsibleModuleBase):

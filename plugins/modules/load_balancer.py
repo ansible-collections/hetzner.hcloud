@@ -149,9 +149,9 @@ hcloud_load_balancer:
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.load_balancers import (
+from ..module_utils._base import AnsibleHCloud
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.load_balancers import (
     BoundLoadBalancer,
     LoadBalancerAlgorithm,
 )

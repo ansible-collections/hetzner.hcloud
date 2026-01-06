@@ -4,11 +4,11 @@ on:
   push:
     branches: [main, stable-1]
     paths:
-      - plugins/module_utils/vendor/**
+      - plugins/module_utils/_vendor/**
       - scripts/vendor.py
   pull_request:
     paths:
-      - plugins/module_utils/vendor/**
+      - plugins/module_utils/_vendor/**
       - scripts/vendor.py
 
 jobs:

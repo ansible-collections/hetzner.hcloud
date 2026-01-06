@@ -172,10 +172,10 @@ from typing import Literal
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.vendor.hcloud import APIException, HCloudException
-from ..module_utils.vendor.hcloud.actions import BoundAction
-from ..module_utils.vendor.hcloud.zones import BoundZoneRRSet, Zone, ZoneRecord
+from ..module_utils._base import AnsibleHCloud
+from ..module_utils._vendor.hcloud import APIException, HCloudException
+from ..module_utils._vendor.hcloud.actions import BoundAction
+from ..module_utils._vendor.hcloud.zones import BoundZoneRRSet, Zone, ZoneRecord
 
 
 class AnsibleHCloudZoneRRSet(AnsibleHCloud):

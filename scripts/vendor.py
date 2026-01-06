@@ -23,7 +23,7 @@ logger = logging.getLogger("vendor")
 
 HCLOUD_SOURCE_URL = "https://github.com/hetznercloud/hcloud-python"
 HCLOUD_VERSION = "v2.13.0"
-HCLOUD_VENDOR_PATH = "plugins/module_utils/vendor/hcloud"
+HCLOUD_VENDOR_PATH = "plugins/module_utils/_vendor/hcloud"
 
 
 def apply_code_modifications(source_path: Path):

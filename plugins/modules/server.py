@@ -353,23 +353,23 @@ from typing import TYPE_CHECKING, Literal
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.deprecation import deprecated_server_type_warning
-from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.firewalls import FirewallResource
-from ..module_utils.vendor.hcloud.servers import (
+from ..module_utils._base import AnsibleHCloud
+from ..module_utils._deprecation import deprecated_server_type_warning
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.firewalls import FirewallResource
+from ..module_utils._vendor.hcloud.servers import (
     BoundServer,
     Server,
     ServerCreatePublicNetwork,
 )
 
 if TYPE_CHECKING:
-    from ..module_utils.vendor.hcloud.actions import BoundAction
-    from ..module_utils.vendor.hcloud.firewalls import BoundFirewall
-    from ..module_utils.vendor.hcloud.networks import BoundNetwork
-    from ..module_utils.vendor.hcloud.placement_groups import BoundPlacementGroup
-    from ..module_utils.vendor.hcloud.primary_ips import PrimaryIP
-    from ..module_utils.vendor.hcloud.server_types import ServerType
+    from ..module_utils._vendor.hcloud.actions import BoundAction
+    from ..module_utils._vendor.hcloud.firewalls import BoundFirewall
+    from ..module_utils._vendor.hcloud.networks import BoundNetwork
+    from ..module_utils._vendor.hcloud.placement_groups import BoundPlacementGroup
+    from ..module_utils._vendor.hcloud.primary_ips import PrimaryIP
+    from ..module_utils._vendor.hcloud.server_types import ServerType
 
 
 class AnsibleHCloudServer(AnsibleHCloud):

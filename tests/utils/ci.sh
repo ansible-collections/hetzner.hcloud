@@ -100,7 +100,7 @@ case "$test_name" in
   sanity)
     # shellcheck disable=SC2086
     ansible-test sanity --color -v \
-      --exclude plugins/module_utils/vendor/ \
+      --exclude plugins/module_utils/_vendor/ \
       --exclude scripts/ \
       --exclude tests/utils/ \
       --docker default \

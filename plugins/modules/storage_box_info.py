@@ -185,11 +185,11 @@ hcloud_storage_box_info:
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils import storage_box
-from ..module_utils.experimental import storage_box_experimental_warning
-from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.storage_boxes import (
+from ..module_utils import _storage_box
+from ..module_utils._base import AnsibleHCloud
+from ..module_utils._experimental import storage_box_experimental_warning
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.storage_boxes import (
     BoundStorageBox,
 )
 
@@ -207,7 +207,7 @@ class AnsibleStorageBox(AnsibleHCloud):
         result = []
         for o in self.storage_box or []:
             if o is not None:
-                result.append(storage_box.prepare_result(o))
+                result.append(_storage_box.prepare_result(o))
 
         return result
 

@@ -202,16 +202,16 @@ from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, Constructa
 from ansible.utils.display import Display
 from ansible.utils.vars import combine_vars
 
-from ..module_utils.client import (
+from ..module_utils._client import (
     Client,
     ClientException,
     client_check_required_lib,
     client_get_by_name_or_id,
 )
-from ..module_utils.vendor.hcloud import APIException
-from ..module_utils.vendor.hcloud.networks import Network
-from ..module_utils.vendor.hcloud.servers import Server
-from ..module_utils.version import version
+from ..module_utils._vendor.hcloud import APIException
+from ..module_utils._vendor.hcloud.networks import Network
+from ..module_utils._vendor.hcloud.servers import Server
+from ..module_utils._version import version
 
 if sys.version_info >= (3, 11):
     # The typed dicts are only used to help development and we prefer not requiring

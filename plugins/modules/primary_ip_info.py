@@ -136,9 +136,9 @@ hcloud_primary_ip_info:
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.primary_ips import BoundPrimaryIP
+from ..module_utils._base import AnsibleHCloud
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.primary_ips import BoundPrimaryIP
 
 
 class AnsibleHCloudPrimaryIPInfo(AnsibleHCloud):

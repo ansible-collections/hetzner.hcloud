@@ -108,9 +108,9 @@ hcloud_placement_group:
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.placement_groups import BoundPlacementGroup
+from ..module_utils._base import AnsibleHCloud
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.placement_groups import BoundPlacementGroup
 
 
 class AnsibleHCloudPlacementGroup(AnsibleHCloud):

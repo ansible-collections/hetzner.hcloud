@@ -5,7 +5,7 @@ from typing import Literal
 from ansible.errors import AnsibleFilterError
 from ansible.module_utils.common.text.converters import to_native
 
-from ..module_utils.vendor.hcloud.exp.zone import format_txt_record
+from ..module_utils._vendor.hcloud.exp.zone import format_txt_record
 
 
 # pylint: disable=unused-argument

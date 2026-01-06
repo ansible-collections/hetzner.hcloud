@@ -1,12 +1,15 @@
 # Copyright: (c) 2023, Hetzner Cloud GmbH <info@hetzner-cloud.de>
 
+# Note that this module util is **PRIVATE** to the collection. It can have breaking changes at any time.
+# Do not use this from other collections or standalone plugins/modules!
+
 from __future__ import annotations
 
 from contextlib import contextmanager
 
 from ansible.module_utils.basic import missing_required_lib
 
-from .vendor.hcloud import APIException, Client as ClientBase
+from ._vendor.hcloud import APIException, Client as ClientBase
 
 HAS_REQUESTS = True
 HAS_DATEUTIL = True

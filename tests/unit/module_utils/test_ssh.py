@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import pytest
-from ansible_collections.hetzner.hcloud.plugins.module_utils.ssh import (
+
+from plugins.module_utils._ssh import (
     ssh_public_key_md5_fingerprint,
 )
 

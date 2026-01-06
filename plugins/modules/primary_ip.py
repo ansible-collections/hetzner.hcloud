@@ -188,13 +188,13 @@ hcloud_primary_ip:
 
 from typing import TYPE_CHECKING
 
-from ..module_utils import primary_ip
-from ..module_utils.hcloud import AnsibleHCloud, AnsibleModule
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.primary_ips import BoundPrimaryIP
+from ..module_utils import _primary_ip
+from ..module_utils._base import AnsibleHCloud, AnsibleModule
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.primary_ips import BoundPrimaryIP
 
 if TYPE_CHECKING:
-    from ..module_utils.vendor.hcloud.servers import BoundServer
+    from ..module_utils._vendor.hcloud.servers import BoundServer
 
 
 class AnsiblePrimaryIP(AnsibleHCloud):
@@ -205,7 +205,7 @@ class AnsiblePrimaryIP(AnsibleHCloud):
     def _prepare_result(self):
         if self.primary_ip is None:
             return {}
-        return primary_ip.prepare_result(self.primary_ip)
+        return _primary_ip.prepare_result(self.primary_ip)
 
     def _get(self):
         if (value := self.module.params.get("id")) is not None:

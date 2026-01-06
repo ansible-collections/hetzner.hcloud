@@ -119,10 +119,10 @@ hcloud_ssh_key:
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ..module_utils.hcloud import AnsibleHCloud
-from ..module_utils.ssh import ssh_public_key_md5_fingerprint
-from ..module_utils.vendor.hcloud import HCloudException
-from ..module_utils.vendor.hcloud.ssh_keys import BoundSSHKey
+from ..module_utils._base import AnsibleHCloud
+from ..module_utils._ssh import ssh_public_key_md5_fingerprint
+from ..module_utils._vendor.hcloud import HCloudException
+from ..module_utils._vendor.hcloud.ssh_keys import BoundSSHKey
 
 
 class AnsibleHCloudSSHKey(AnsibleHCloud):
