@@ -124,7 +124,7 @@ options:
         default: false
     user_data:
         description:
-            - User Data to be passed to the server on creation.
+            - cloud-init user data to be passed to the server on creation.
             - Only used during the server creation.
         type: str
     rescue_mode:
