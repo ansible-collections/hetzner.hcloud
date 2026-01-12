@@ -178,6 +178,16 @@ EXAMPLES = """
       - me@myorganisation
     state: present
 
+- name: Create a basic server with additional cloud-init data disabling SSH password authentication
+  hetzner.hcloud.server:
+    name: my-server
+    server_type: cpx22
+    image: ubuntu-22.04
+    user_data: |
+      #cloud-config
+      ssh_pwauth: false
+    state: present
+
 - name: Resize an existing server
   hetzner.hcloud.server:
     name: my-server
