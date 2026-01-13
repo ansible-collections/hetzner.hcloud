@@ -124,7 +124,8 @@ options:
         default: false
     user_data:
         description:
-            - cloud-init user data to be passed to the server on creation.
+            - User Data to be passed to the server on creation.
+            - C(cloud-init), C(ignition) or similar provisioning tools may retrieve user configuration from the Server's C(user_data).
             - Only used during the server creation.
         type: str
     rescue_mode:
