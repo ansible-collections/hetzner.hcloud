@@ -39,10 +39,6 @@ options:
             - Name of the Storage Box Subaccount to manage.
             - Required if no Storage Box Subaccount O(id) is given.
             - Required if the Storage Box Subaccount does not exist.
-            - Because the API resource does not have this property, the name is stored
-              in the Storage Box Subaccount labels. This ensures that the module is
-              idempotent, and removes the need to use different module arguments for
-              create and update.
         type: str
     password:
         description:
@@ -225,13 +221,11 @@ hcloud_storage_box_subaccount:
             sample: "2025-12-03T13:47:47Z"
 """
 
-import string
 
 from ..module_utils import _storage_box, _storage_box_subaccount
 from ..module_utils._base import AnsibleHCloud, AnsibleModule
 from ..module_utils._client import client_resource_not_found
 from ..module_utils._experimental import storage_box_experimental_warning
-from ..module_utils._storage_box_subaccount import NAME_LABEL_KEY
 from ..module_utils._vendor.hcloud import HCloudException
 from ..module_utils._vendor.hcloud.storage_boxes import (
     BoundStorageBox,
@@ -245,7 +239,6 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
 
     storage_box: BoundStorageBox | None = None
     storage_box_subaccount: BoundStorageBoxSubaccount | None = None
-    storage_box_subaccount_name: str | None = None
 
     def __init__(self, module: AnsibleModule):
         storage_box_experimental_warning(module)
@@ -254,7 +247,7 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
     def _prepare_result(self):
         if self.storage_box_subaccount is None:
             return {}
-        return _storage_box_subaccount.prepare_result(self.storage_box_subaccount, self.storage_box_subaccount_name)
+        return _storage_box_subaccount.prepare_result(self.storage_box_subaccount)
 
     def _fetch(self):
         self.storage_box = _storage_box.get(self.client.storage_boxes, self.module.params.get("storage_box"))
@@ -262,18 +255,18 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
         if (value := self.module.params.get("id")) is not None:
             self.storage_box_subaccount = self.storage_box.get_subaccount_by_id(value)
         elif (value := self.module.params.get("name")) is not None:
-            self.storage_box_subaccount = _storage_box_subaccount.get_by_name(self.storage_box, value)
+            self.storage_box_subaccount = self.storage_box.get_subaccount_by_name(value)
 
-        # Workaround the missing name property
-        # Get the name of the resource from the labels
-        if self.storage_box_subaccount is not None:
-            self.storage_box_subaccount_name = self.storage_box_subaccount.labels.pop(NAME_LABEL_KEY)
+            # Backward compatible upgrade from label based name
+            if self.storage_box_subaccount is None:
+                self.storage_box_subaccount = _storage_box_subaccount.get_by_label_name(self.storage_box, value)
 
     def _create(self):
         self.fail_on_invalid_params(
             required=["name", "home_directory", "password"],
         )
         params = {
+            "name": self.module.params.get("name"),
             "home_directory": self.module.params.get("home_directory"),
             "password": self.module.params.get("password"),
         }
@@ -287,19 +280,12 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
         if (value := self.module.params.get("access_settings")) is not None:
             params["access_settings"] = StorageBoxSubaccountAccessSettings.from_dict(value)
 
-        # Workaround the missing name property
-        # Save the name of the resource in the labels
-        if "labels" not in params:
-            params["labels"] = {}
-        params["labels"][NAME_LABEL_KEY] = self.module.params.get("name")
-
         if not self.module.check_mode:
             resp = self.storage_box.create_subaccount(**params)
             self.storage_box_subaccount = resp.subaccount
             resp.action.wait_until_finished()
 
             self.storage_box_subaccount.reload()
-            self.storage_box_subaccount_name = self.storage_box_subaccount.labels.pop(NAME_LABEL_KEY)
 
         self._mark_as_changed()
 
@@ -324,6 +310,11 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
                 self._mark_as_changed()
 
         params = {}
+        if (value := self.module.params.get("name")) is not None:
+            if value != self.storage_box_subaccount.name:
+                params["name"] = value
+                self._mark_as_changed()
+
         if (value := self.module.params.get("description")) is not None:
             if value != self.storage_box_subaccount.description:
                 params["description"] = value
@@ -334,25 +325,10 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
                 params["labels"] = value
                 self._mark_as_changed()
 
-                # Workaround the missing name property
-                # Preserve resource name in the labels, name update happens below
-                params["labels"][NAME_LABEL_KEY] = self.storage_box_subaccount_name
-
-        # Workaround the missing name property
-        # Update resource name in the labels
-        if (value := self.module.params.get("name")) is not None:
-            if value != self.storage_box_subaccount_name:
-                self.fail_on_invalid_params(required=["id"])
-                if "labels" not in params:
-                    params["labels"] = self.storage_box_subaccount.labels
-                params["labels"][NAME_LABEL_KEY] = value
-                self._mark_as_changed()
-
         # Update only if params holds changes or actions were triggered
         if params or need_reload:
             if not self.module.check_mode:
                 self.storage_box_subaccount = self.storage_box_subaccount.update(**params)
-                self.storage_box_subaccount_name = self.storage_box_subaccount.labels.pop(NAME_LABEL_KEY)
 
     def _delete(self):
         if not self.module.check_mode:
@@ -438,23 +414,6 @@ class AnsibleStorageBoxSubaccount(AnsibleHCloud):
 def main():
     module = AnsibleStorageBoxSubaccount.define_module()
     o = AnsibleStorageBoxSubaccount(module)
-
-    # Workaround the missing name property
-    # Validate name
-    if (value := module.params.get("name")) is not None:
-        if len(value) < 1:
-            module.fail_json(f"name '{value}' must be at least 1 character long")
-
-        allowed_chars = string.ascii_letters + string.digits + "-"
-        has_letters = False
-        for c in value:
-            if c in string.ascii_letters:
-                has_letters = True
-            if c in allowed_chars:
-                continue
-            module.fail_json(f"name '{value}' must only have allowed characters: {allowed_chars}")
-        if not has_letters:
-            module.fail_json(f"name '{value}' must contain at least one letter")
 
     match module.params.get("state"):
         case "reset_password":
