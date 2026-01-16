@@ -916,3 +916,16 @@ releases:
     - phasing-out-datacenters.yml
     - storage-box-redirects-fqcr.yml
     release_date: '2026-01-05'
+  6.5.0:
+    changes:
+      minor_changes:
+      - All ``module_utils`` are now marked as **private**. None of the modules were
+        intended for public use.
+      - storage_box_subaccount - Replace the label based name workaround, with the
+        new Storage Box Subaccount name property in the API.
+      - storage_box_subaccount_info - Replace the label based name workaround, with
+        the new Storage Box Subaccount name property in the API.
+    fragments:
+    - private-module-utils.yml
+    - storage-box-subaccount-api-name.yml
+    release_date: '2026-01-16'
