@@ -132,6 +132,7 @@ class Client:
 
         - ``conflict``
         - ``rate_limit_exceeded``
+        - ``timeout``
 
     Changes to the retry policy might occur between releases, and will not be considered
     breaking changes.
@@ -422,6 +423,7 @@ class ClientBase:
             return exception.code in (
                 "rate_limit_exceeded",
                 "conflict",
+                "timeout",
             )
 
         if isinstance(exception.code, int):
