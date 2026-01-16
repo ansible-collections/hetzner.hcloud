@@ -1,3 +1,0 @@
-minor_changes:
-  - storage_box_subaccount - Replace the label based name workaround, with the new Storage Box Subaccount name property in the API.
-  - storage_box_subaccount_info - Replace the label based name workaround, with the new Storage Box Subaccount name property in the API.

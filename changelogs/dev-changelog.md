@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.5.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.4.0...6.5.0) (2026-01-16)
+
+
+### Features
+
+* add name to Storage Box Subaccount ([#787](https://github.com/ansible-collections/hetzner.hcloud/issues/787)) ([2c6dbed](https://github.com/ansible-collections/hetzner.hcloud/commit/2c6dbedec11101a8b034d40f0b3025ce047ed952))
+
 ## [6.4.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.3.0...6.4.0) (2026-01-05)
 
 

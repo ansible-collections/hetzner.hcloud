@@ -4,6 +4,16 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.5.0
+======
+
+Minor Changes
+-------------
+
+- All ``module_utils`` are now marked as **private**. None of the modules were intended for public use.
+- storage_box_subaccount - Replace the label based name workaround, with the new Storage Box Subaccount name property in the API.
+- storage_box_subaccount_info - Replace the label based name workaround, with the new Storage Box Subaccount name property in the API.
+
 v6.4.0
 ======
 
