@@ -34,28 +34,24 @@ def apply_code_modifications(source_path: Path):
         # Wrap requests imports
         content = re.sub(
             r"import requests",
-            dedent(
-                r"""
+            dedent(r"""
                 try:
                     import requests
                 except ImportError:
                     requests = None
-                """
-            ).strip(),
+                """).strip(),
             content,
         )
 
         # Wrap dateutil imports
         content = re.sub(
             r"from dateutil.parser import isoparse",
-            dedent(
-                r"""
+            dedent(r"""
                 try:
                     from dateutil.parser import isoparse
                 except ImportError:
                     isoparse = None
-                """
-            ).strip(),
+                """).strip(),
             content,
         )
 
