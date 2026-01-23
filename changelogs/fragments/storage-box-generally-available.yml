@@ -1,12 +1,12 @@
 release_summary: |
-  This release marks Storage Box support as generally available. 
+  This release marks Storage Box support as generally available.
   The experimental phase is over and the warnings have been removed.
 
 minor_changes:
-- storage_box - Storage Box support is now generally available and warnings have been removed.
-- storage_box_info - Storage Box support is now generally available and warnings have been removed.
-- storage_box_snapshot - Storage Box support is now generally available and warnings have been removed.
-- storage_box_snapshot_info - Storage Box support is now generally available and warnings have been removed.
-- storage_box_subaccount - Storage Box support is now generally available and warnings have been removed.
-- storage_box_subaccount_info - Storage Box support is now generally available and warnings have been removed.
-- storage_box_type_info - Storage Box support is now generally available and warnings have been removed.
+  - storage_box - Storage Box support is now generally available and warnings have been removed.
+  - storage_box_info - Storage Box support is now generally available and warnings have been removed.
+  - storage_box_snapshot - Storage Box support is now generally available and warnings have been removed.
+  - storage_box_snapshot_info - Storage Box support is now generally available and warnings have been removed.
+  - storage_box_subaccount - Storage Box support is now generally available and warnings have been removed.
+  - storage_box_subaccount_info - Storage Box support is now generally available and warnings have been removed.
+  - storage_box_type_info - Storage Box support is now generally available and warnings have been removed.
