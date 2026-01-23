@@ -126,7 +126,7 @@ options:
         description:
             - User Data to be passed to the server on creation.
             - C(cloud-init), C(ignition) or similar provisioning tools may retrieve user configuration from the Server's C(user_data).
-            - Only used during the server creation.
+            - Used during the server creation or server rebuild.
         type: str
     rescue_mode:
         description:
@@ -931,7 +931,8 @@ class AnsibleHCloudServer(AnsibleHCloud):
             try:
                 if not self.module.check_mode:
                     image = self._get_image(self.hcloud_server.server_type)
-                    resp = self.client.servers.rebuild(self.hcloud_server, image)
+                    user_data = self.module.params.get("user_data")
+                    resp = self.client.servers.rebuild(self.hcloud_server, image, user_data)
                     # When we rebuild the server progress takes some more time.
                     resp.action.wait_until_finished(max_retries=202)  # 202 retries >= 1002 seconds
                 self._mark_as_changed()
