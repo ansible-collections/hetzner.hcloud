@@ -15,8 +15,6 @@ short_description: Gather infos about Hetzner Storage Box Types.
 description:
     - Gather infos about available Hetzner Storage Box Types.
     - See the L(Storage Box Types documentation,https://docs.hetzner.cloud/reference/hetzner#storage-box-types) for more details.
-    - B(Experimental:) Storage Box support is experimental, breaking changes may occur within minor releases.
-      See https://github.com/ansible-collections/hetzner.hcloud/issues/756 for more details.
 
 author:
     - Jonas Lammler (@jooola)
@@ -111,7 +109,6 @@ hcloud_storage_box_type_info:
 from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils._base import AnsibleHCloud
-from ..module_utils._experimental import storage_box_experimental_warning
 from ..module_utils._vendor.hcloud import HCloudException
 from ..module_utils._vendor.hcloud.storage_box_types import BoundStorageBoxType
 
@@ -122,7 +119,6 @@ class AnsibleStorageBoxTypeInfo(AnsibleHCloud):
     storage_box_types: list[BoundStorageBoxType] | None = None
 
     def __init__(self, module: AnsibleModule):
-        storage_box_experimental_warning(module)
         super().__init__(module)
 
     def _prepare_result(self):
