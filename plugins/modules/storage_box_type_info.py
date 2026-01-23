@@ -118,9 +118,6 @@ class AnsibleStorageBoxTypeInfo(AnsibleHCloud):
 
     storage_box_types: list[BoundStorageBoxType] | None = None
 
-    def __init__(self, module: AnsibleModule):
-        super().__init__(module)
-
     def _prepare_result(self):
         result = []
 

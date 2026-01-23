@@ -360,9 +360,6 @@ class AnsibleStorageBox(AnsibleHCloud):
 
     storage_box: BoundStorageBox | None = None
 
-    def __init__(self, module: AnsibleModule):
-        super().__init__(module)
-
     def _prepare_result(self):
         if self.storage_box is not None:
             return _storage_box.prepare_result(self.storage_box)

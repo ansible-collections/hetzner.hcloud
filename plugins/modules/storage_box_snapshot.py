@@ -153,9 +153,6 @@ class AnsibleStorageBoxSnapshot(AnsibleHCloud):
     storage_box: BoundStorageBox | None = None
     storage_box_snapshot: BoundStorageBoxSnapshot | None = None
 
-    def __init__(self, module: AnsibleModule):
-        super().__init__(module)
-
     def _prepare_result(self):
         if self.storage_box_snapshot is None:
             return {}

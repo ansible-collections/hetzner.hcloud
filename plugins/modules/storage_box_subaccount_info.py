@@ -171,9 +171,6 @@ class AnsibleStorageBoxSubaccountInfo(AnsibleHCloud):
     storage_box: BoundStorageBox | None = None
     storage_box_subaccounts: list[BoundStorageBoxSubaccount] | None = None
 
-    def __init__(self, module: AnsibleModule):
-        super().__init__(module)
-
     def _prepare_result(self):
         result = []
 

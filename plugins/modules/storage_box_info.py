@@ -196,9 +196,6 @@ class AnsibleStorageBox(AnsibleHCloud):
 
     storage_box: list[BoundStorageBox] | None = None
 
-    def __init__(self, module: AnsibleModule):
-        super().__init__(module)
-
     def _prepare_result(self):
         result = []
         for o in self.storage_box or []:
