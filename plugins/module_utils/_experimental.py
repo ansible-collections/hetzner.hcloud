@@ -35,10 +35,3 @@ def experimental_warning_function(product: str, maturity: str, url: str):
         module.warn(message)
 
     return fn
-
-
-storage_box_experimental_warning = experimental_warning_function(
-    "Storage Box support",
-    "experimental",
-    "https://github.com/ansible-collections/hetzner.hcloud/issues/756",
-)

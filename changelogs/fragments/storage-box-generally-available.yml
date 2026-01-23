@@ -1,0 +1,11 @@
+release_summary: |
+  The experimental phase for Storage Boxes is over, and Storage Boxes support is now generally available.
+
+minor_changes:
+  - storage_box - The module is no longer marked as experimental.
+  - storage_box_info - The module is no longer marked as experimental.
+  - storage_box_snapshot - The module is no longer marked as experimental.
+  - storage_box_snapshot_info - The module is no longer marked as experimental.
+  - storage_box_subaccount - The module is no longer marked as experimental.
+  - storage_box_subaccount_info - The module is no longer marked as experimental.
+  - storage_box_type_info - The module is no longer marked as experimental.
