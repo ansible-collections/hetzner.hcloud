@@ -931,7 +931,7 @@ class AnsibleHCloudServer(AnsibleHCloud):
             try:
                 if not self.module.check_mode:
                     image = self._get_image(self.hcloud_server.server_type)
-                    user_data = self.module.params.get("user_data")
+                    user_data = self.module.params.get("user_data") if self.module.param_is_defined("user_data") else None
                     resp = self.client.servers.rebuild(self.hcloud_server, image, user_data)
                     # When we rebuild the server progress takes some more time.
                     resp.action.wait_until_finished(max_retries=202)  # 202 retries >= 1002 seconds
