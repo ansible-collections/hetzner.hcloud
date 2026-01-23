@@ -1,12 +1,11 @@
 release_summary: |
-  This release marks Storage Box support as generally available.
-  The experimental phase is over and the warnings have been removed.
+  The experimental phase for Storage Boxes is over, and Storage Boxes support is now generally available.
 
 minor_changes:
-  - storage_box - Storage Box support is now generally available and warnings have been removed.
-  - storage_box_info - Storage Box support is now generally available and warnings have been removed.
-  - storage_box_snapshot - Storage Box support is now generally available and warnings have been removed.
-  - storage_box_snapshot_info - Storage Box support is now generally available and warnings have been removed.
-  - storage_box_subaccount - Storage Box support is now generally available and warnings have been removed.
-  - storage_box_subaccount_info - Storage Box support is now generally available and warnings have been removed.
-  - storage_box_type_info - Storage Box support is now generally available and warnings have been removed.
+  - storage_box - The module is no longer marked as experimental.
+  - storage_box_info - The module is no longer marked as experimental.
+  - storage_box_snapshot - The module is no longer marked as experimental.
+  - storage_box_snapshot_info - The module is no longer marked as experimental.
+  - storage_box_subaccount - The module is no longer marked as experimental.
+  - storage_box_subaccount_info - The module is no longer marked as experimental.
+  - storage_box_type_info - The module is no longer marked as experimental.
