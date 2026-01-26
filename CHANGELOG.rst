@@ -4,6 +4,26 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.6.0
+======
+
+Release Summary
+---------------
+
+The experimental phase for Storage Boxes is over, and Storage Boxes support is now generally available.
+
+Minor Changes
+-------------
+
+- server - Rebuilding a Server now supports the ``user_data`` argument.
+- storage_box - The module is no longer marked as experimental.
+- storage_box_info - The module is no longer marked as experimental.
+- storage_box_snapshot - The module is no longer marked as experimental.
+- storage_box_snapshot_info - The module is no longer marked as experimental.
+- storage_box_subaccount - The module is no longer marked as experimental.
+- storage_box_subaccount_info - The module is no longer marked as experimental.
+- storage_box_type_info - The module is no longer marked as experimental.
+
 v6.5.0
 ======
 
