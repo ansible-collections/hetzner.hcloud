@@ -930,11 +930,13 @@ class AnsibleHCloudServer(AnsibleHCloud):
             self.module.fail_on_missing_params(required_params=["image"])
             try:
                 if not self.module.check_mode:
-                    image = self._get_image(self.hcloud_server.server_type)
-                    user_data = (
-                        self.module.params.get("user_data") if self.module.param_is_defined("user_data") else None
-                    )
-                    resp = self.client.servers.rebuild(self.hcloud_server, image, user_data)
+                    params = {
+                        "image": self._get_image(self.hcloud_server.server_type),
+                    }
+                    if (value := self.module.params.get("user_data")) is not None:
+                        params["user_data"] = value
+
+                    resp = self.client.servers.rebuild(self.hcloud_server, **params)
                     # When we rebuild the server progress takes some more time.
                     resp.action.wait_until_finished(max_retries=202)  # 202 retries >= 1002 seconds
                 self._mark_as_changed()
