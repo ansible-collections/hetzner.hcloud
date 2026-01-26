@@ -929,3 +929,22 @@ releases:
     - private-module-utils.yml
     - storage-box-subaccount-api-name.yml
     release_date: '2026-01-16'
+  6.6.0:
+    changes:
+      minor_changes:
+      - server - Rebuilding a Server now supports the ``user_data`` argument.
+      - storage_box - The module is no longer marked as experimental.
+      - storage_box_info - The module is no longer marked as experimental.
+      - storage_box_snapshot - The module is no longer marked as experimental.
+      - storage_box_snapshot_info - The module is no longer marked as experimental.
+      - storage_box_subaccount - The module is no longer marked as experimental.
+      - storage_box_subaccount_info - The module is no longer marked as experimental.
+      - storage_box_type_info - The module is no longer marked as experimental.
+      release_summary: 'The experimental phase for Storage Boxes is over, and Storage
+        Boxes support is now generally available.
+
+        '
+    fragments:
+    - server-rebuild-user-data.yml
+    - storage-box-generally-available.yml
+    release_date: '2026-01-26'
