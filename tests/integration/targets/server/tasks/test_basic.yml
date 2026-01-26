@@ -257,6 +257,10 @@
   hetzner.hcloud.server:
     name: "{{ hcloud_server_name }}"
     image: "{{ hcloud_image_name }}"
+    user_data: |
+      #cloud-config
+      packages:
+        - curl
     state: rebuild
   register: result_after_test
 - name: verify rebuild server

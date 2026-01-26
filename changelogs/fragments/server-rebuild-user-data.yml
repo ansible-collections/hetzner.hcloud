@@ -1,0 +1,2 @@
+minor_changes:
+  - server - Rebuilding a Server now supports the ``user_data`` argument.
