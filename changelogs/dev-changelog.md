@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.6.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.5.0...6.6.0) (2026-01-26)
+
+
+### Features
+
+* **server:** allow setting user_data for rebuild ([#794](https://github.com/ansible-collections/hetzner.hcloud/issues/794)) ([98ae62a](https://github.com/ansible-collections/hetzner.hcloud/commit/98ae62ac94669bf544143b0c451e57ea093c32bb))
+* Storage Box support no longer experimental ([#793](https://github.com/ansible-collections/hetzner.hcloud/issues/793)) ([d52e86d](https://github.com/ansible-collections/hetzner.hcloud/commit/d52e86d9445ea8bc355e1fff895fce1e07ad5701))
+
 ## [6.5.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.4.0...6.5.0) (2026-01-16)
 
 
