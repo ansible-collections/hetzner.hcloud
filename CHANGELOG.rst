@@ -4,6 +4,15 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.7.0
+======
+
+Minor Changes
+-------------
+
+- floating_ip - Unassign Floating IP before deleting it.
+- primary_ip - Unassign Primary IP before deleting it.
+
 v6.6.0
 ======
 

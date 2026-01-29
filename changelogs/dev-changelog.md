@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.7.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.6.0...6.7.0) (2026-01-29)
+
+
+### Features
+
+* unassign primary ip and floating ip before deletion ([241f613](https://github.com/ansible-collections/hetzner.hcloud/commit/241f61338b8a140a79a43c80a78ad1a91c37b896))
+
 ## [6.6.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.5.0...6.6.0) (2026-01-26)
 
 
