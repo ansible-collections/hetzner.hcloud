@@ -1,3 +1,0 @@
-minor_changes:
-  - floating_ip - Unassign Floating IP before deleting it.
-  - primary_ip - Unassign Primary IP before deleting it.

@@ -948,3 +948,11 @@ releases:
     - server-rebuild-user-data.yml
     - storage-box-generally-available.yml
     release_date: '2026-01-26'
+  6.7.0:
+    changes:
+      minor_changes:
+      - floating_ip - Unassign Floating IP before deleting it.
+      - primary_ip - Unassign Primary IP before deleting it.
+    fragments:
+    - ip-unassign.yaml
+    release_date: '2026-01-29'
