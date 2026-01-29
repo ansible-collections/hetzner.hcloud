@@ -4,6 +4,11 @@
     name: "{{ hcloud_server_name }}"
     state: absent
 
+- name: Cleanup test_server2
+  hetzner.hcloud.server:
+    name: "{{ hcloud_server_name }}2"
+    state: absent
+
 - name: Cleanup test_primary_ip
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}"

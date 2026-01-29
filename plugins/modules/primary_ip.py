@@ -273,6 +273,24 @@ class AnsiblePrimaryIP(AnsibleHCloud):
                     need_reload = True
                 self._mark_as_changed()
 
+        if (value := self.module.params.get("server")) is not None:
+            server: BoundServer = self._client_get_by_name_or_id("servers", value)
+            server_id = server.id
+            if self.primary_ip.assignee_id and server_id == self.primary_ip.assignee_id:
+                return
+            if not self.module.check_mode:
+                action = self.primary_ip.assign(server_id, "server")
+                action.wait_until_finished()
+                self._mark_as_changed()
+                need_reload = True
+        else:
+            if self.primary_ip.assignee_id:
+                if not self.module.check_mode:
+                    action = self.primary_ip.unassign()
+                    action.wait_until_finished()
+                self._mark_as_changed()
+                need_reload = True
+
         params = {}
 
         if (value := self.module.params.get("auto_delete")) is not None:
