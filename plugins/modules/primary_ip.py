@@ -49,6 +49,7 @@ options:
             - Name or ID of the Hetzner Cloud Server the Primary IP should be assigned to.
             - The Primary IP cannot be assigned to a running server.
             - Required if no O(datacenter) is given and the Primary IP does not exist.
+            - Use C(null) to unassign the Primary IP from the server.
         type: str
     type:
         description:
@@ -114,6 +115,13 @@ EXAMPLES = """
   hetzner.hcloud.server:
     name: my-server
     state: started
+
+- name: Unassign a Primary IP from a Server
+  hetzner.hcloud.primary_ip:
+    name: my-primary-ip
+    type: ipv4
+    server: null
+    state: present
 """
 
 RETURN = """
@@ -276,21 +284,20 @@ class AnsiblePrimaryIP(AnsibleHCloud):
         if self.module.param_is_defined("server"):
             if (value := self.module.params.get("server")) is not None:
                 server: BoundServer = self._client_get_by_name_or_id("servers", value)
-                server_id = server.id
-                if self.primary_ip.assignee_id and server_id == self.primary_ip.assignee_id:
-                    return
-                if not self.module.check_mode:
-                    action = self.primary_ip.assign(server_id, "server")
-                    action.wait_until_finished()
+
+                if self.primary_ip.assignee_id is None or self.primary_ip.assignee_id != server.id:
+                    if not self.module.check_mode:
+                        action = self.primary_ip.assign(server.id, "server")
+                        action.wait_until_finished()
+                        need_reload = True
                     self._mark_as_changed()
-                    need_reload = True
             else:
-                if self.primary_ip.assignee_id:
+                if self.primary_ip.assignee_id is not None:
                     if not self.module.check_mode:
                         action = self.primary_ip.unassign()
                         action.wait_until_finished()
+                        need_reload = True
                     self._mark_as_changed()
-                    need_reload = True
 
         params = {}
 
