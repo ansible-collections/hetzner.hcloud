@@ -102,6 +102,7 @@
 - name: Test unassign if server is null
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
+    server: null
   register: result
 - name: Verify unassign if server is null
   ansible.builtin.assert:
@@ -112,6 +113,7 @@
 - name: Test unassign if server is null idempotency
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
+    server: null
   register: result
 - name: Verify unassign if server is null idempotency
   ansible.builtin.assert:
