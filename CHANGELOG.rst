@@ -4,6 +4,15 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.8.0
+======
+
+Minor Changes
+-------------
+
+- primary_ip - Assign to new server if ``server`` is changed.
+- primary_ip - Unassign primary_ip if ``server`` is null.
+
 v6.7.0
 ======
 
