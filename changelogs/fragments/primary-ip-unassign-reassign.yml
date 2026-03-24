@@ -1,3 +1,0 @@
-minor_changes:
-  - primary_ip - Unassign primary_ip if ``server`` is null.
-  - primary_ip - Assign to new server if ``server`` is changed.

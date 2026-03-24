@@ -956,3 +956,11 @@ releases:
     fragments:
     - ip-unassign.yaml
     release_date: '2026-01-29'
+  6.8.0:
+    changes:
+      minor_changes:
+      - primary_ip - Assign to new server if ``server`` is changed.
+      - primary_ip - Unassign primary_ip if ``server`` is null.
+    fragments:
+    - primary-ip-unassign-reassign.yml
+    release_date: '2026-03-24'
