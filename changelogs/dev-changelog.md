@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.8.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.7.0...6.8.0) (2026-03-24)
+
+
+### Features
+
+* **primary_ip:** add reassign/unassign capabilities to primary_ip ([#802](https://github.com/ansible-collections/hetzner.hcloud/issues/802)) ([ac08a3c](https://github.com/ansible-collections/hetzner.hcloud/commit/ac08a3c1dabf0354bd5132e1aa9c8293cfb3cae1))
+
 ## [6.7.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.6.0...6.7.0) (2026-01-29)
 
 
