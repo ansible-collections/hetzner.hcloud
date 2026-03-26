@@ -2,7 +2,7 @@ name: Vendor
 
 on:
   push:
-    branches: [main, stable-1]
+    branches: [main]
     paths:
       - plugins/module_utils/_vendor/**
       - scripts/vendor.py
