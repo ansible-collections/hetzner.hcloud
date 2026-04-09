@@ -1,0 +1,2 @@
+minor_changes:
+  - primary_ip - Support different Primary IP ``assignee_type`` values.

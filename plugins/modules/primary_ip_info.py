@@ -90,12 +90,12 @@ hcloud_primary_ip_info:
             type: str
             sample: ipv4
         assignee_id:
-            description: Numeric identifier of the ressource where the Primary IP is assigned to.
+            description: ID of the resource where the Primary IP is assigned to, none if unassigned.
             returned: always
             type: int
             sample: 19584637
         assignee_type:
-            description: Name of the type where the Primary IP is assigned to.
+            description: Type of the resource where the Primary IP is assigned to.
             returned: always
             type: str
             sample: server
