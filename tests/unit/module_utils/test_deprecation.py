@@ -21,10 +21,14 @@ FUTURE = datetime.now(timezone.utc) + timedelta(days=14)
 LOCATION_FSN = {
     "id": 1,
     "name": "fsn1",
+    "available": False,
+    "recommended": False,
 }
 LOCATION_NBG = {
     "id": 2,
     "name": "nbg1",
+    "available": True,
+    "recommended": True,
 }
 DEPRECATION_NONE = {
     "deprecation": None,
