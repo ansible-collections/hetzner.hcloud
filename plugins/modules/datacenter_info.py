@@ -96,8 +96,8 @@ hcloud_datacenter_info:
             description: |
                 The Server types the Datacenter can handle
 
-                B(Deprecated:) The RV(hcloud_datacenter_info.server_types) value is deprecated and will be removed
-                after 1 October 2026. Please use the RV(server_type_info.locations) value instead.
+                B(Deprecated:) The RV(hcloud_datacenter_info[].server_types) value is deprecated and will be removed
+                after 1 October 2026. Please use the RV(hetzner.hcloud.server_type_info#module:hcloud_server_type_info[].locations) value instead.
                 See https://docs.hetzner.cloud/changelog#2026-04-01-datacenter-deprecations.
             returned: always
             type: dict
