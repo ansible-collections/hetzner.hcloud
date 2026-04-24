@@ -72,5 +72,5 @@
       - result.hcloud_server_type_info[0].locations[0].deprecation is not none
       - result.hcloud_server_type_info[0].locations[0].deprecation.announced == '2024-06-06T08:00:00+00:00'
       - result.hcloud_server_type_info[0].locations[0].deprecation.unavailable_after == '2024-09-06T00:00:00+00:00'
-      - result.hcloud_server_type_info[0].locations[0].available is not None
-      - result.hcloud_server_type_info[0].locations[0].recommended is not None
+      - result.hcloud_server_type_info[0].locations[0].available is not none
+      - result.hcloud_server_type_info[0].locations[0].recommended is not none
