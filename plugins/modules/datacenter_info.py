@@ -94,7 +94,7 @@ hcloud_datacenter_info:
             sample: fsn1
         server_types:
             description: |
-                The Server types the Datacenter can handle
+                The Server types the Datacenter can handle.
 
                 B(Deprecated:) The RV(hcloud_datacenter_info[].server_types) value is deprecated and will be removed
                 after 1 October 2026. Please use the RV(hetzner.hcloud.server_type_info#module:hcloud_server_type_info[].locations) value instead.
