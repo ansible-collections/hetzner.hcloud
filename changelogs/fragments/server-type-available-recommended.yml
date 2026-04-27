@@ -1,0 +1,14 @@
+minor_changes:
+  - server_type_info - Added the Server Type Location ``available`` property to the return values (``hcloud_server_type_info[].locations[].available``).
+  - server_type_info - Added the Server Type Location ``recommended`` property to the return values (``hcloud_server_type_info[].locations[].recommended``).
+deprecated_features:
+  - datacenter_info - The ``hcloud_datacenter_info[].server_types`` return value
+    is deprecated and will be removed after 1 October 2026. Please use the ``hcloud_server_type_info[].locations[].available``
+    return value instead.
+release_summary: |
+  Server Types availability and recommendation details moved from the
+  ``datacenter_info`` module to the ``server_type_info`` module.
+
+  See our `changelog`_ for more details.
+
+  .. _changelog: https://docs.hetzner.cloud/changelog#2026-04-01-datacenter-deprecations

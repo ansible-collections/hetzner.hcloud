@@ -93,7 +93,12 @@ hcloud_datacenter_info:
             type: str
             sample: fsn1
         server_types:
-            description: The Server types the Datacenter can handle
+            description: |
+                The Server types the Datacenter can handle.
+
+                B(Deprecated:) The RV(hcloud_datacenter_info[].server_types) value is deprecated and will be removed
+                after 1 October 2026. Please use the RV(hetzner.hcloud.server_type_info#module:hcloud_server_type_info[].locations) value instead.
+                See https://docs.hetzner.cloud/changelog#2026-04-01-datacenter-deprecations.
             returned: always
             type: dict
             contains:
@@ -136,19 +141,19 @@ class AnsibleHCloudDatacenterInfo(AnsibleHCloud):
             if datacenter is None:
                 continue
 
-            tmp.append(
-                {
-                    "id": datacenter.id,
-                    "name": datacenter.name,
-                    "description": datacenter.description,
-                    "location": datacenter.location.name,
-                    "server_types": {
-                        "available": [o.id for o in datacenter.server_types.available],
-                        "available_for_migration": [o.id for o in datacenter.server_types.available_for_migration],
-                        "supported": [o.id for o in datacenter.server_types.supported],
-                    },
+            result = {
+                "id": datacenter.id,
+                "name": datacenter.name,
+                "description": datacenter.description,
+                "location": datacenter.location.name,
+            }
+            if datacenter.server_types is not None:
+                result["server_types"] = {
+                    "available": [o.id for o in datacenter.server_types.available],
+                    "available_for_migration": [o.id for o in datacenter.server_types.available_for_migration],
+                    "supported": [o.id for o in datacenter.server_types.supported],
                 }
-            )
+            tmp.append(result)
 
         return tmp
 

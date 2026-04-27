@@ -130,6 +130,16 @@ hcloud_server_type_info:
                             returned: when deprecated
                             type: str
                             sample: "2025-12-09T09:00:00Z"
+                available:
+                    description: Whether the Server Type is available in this Location.
+                    returned: always
+                    type: bool
+                    sample: true
+                recommended:
+                    description: Whether the Server Type is recommended in this Location.
+                    returned: always
+                    type: bool
+                    sample: true
         included_traffic:
             description: |
                 Free traffic per month in bytes
@@ -208,6 +218,8 @@ class AnsibleHCloudServerTypeInfo(AnsibleHCloud):
                                 if o.deprecation is not None
                                 else None
                             ),
+                            "available": o.available,
+                            "recommended": o.recommended,
                         }
                         for o in server_type.locations or []
                     ],
