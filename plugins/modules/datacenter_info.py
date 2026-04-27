@@ -141,19 +141,19 @@ class AnsibleHCloudDatacenterInfo(AnsibleHCloud):
             if datacenter is None:
                 continue
 
-            dc: dict[str, object] = {
+            result = {
                 "id": datacenter.id,
                 "name": datacenter.name,
                 "description": datacenter.description,
                 "location": datacenter.location.name,
             }
             if datacenter.server_types is not None:
-                dc["server_types"] = {
+                result["server_types"] = {
                     "available": [o.id for o in datacenter.server_types.available],
                     "available_for_migration": [o.id for o in datacenter.server_types.available_for_migration],
                     "supported": [o.id for o in datacenter.server_types.supported],
                 }
-            tmp.append(dc)
+            tmp.append(result)
 
         return tmp
 
