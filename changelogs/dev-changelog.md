@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.9.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.8.0...6.9.0) (2026-04-28)
+
+
+### Features
+
+* **datacenter, server_type:** move available and recommended to server_type ([#819](https://github.com/ansible-collections/hetzner.hcloud/issues/819)) ([69c9103](https://github.com/ansible-collections/hetzner.hcloud/commit/69c9103089f0ff04c9c35adc6c3836c7c16ff41f))
+* **primary-ip:** assignee_type is optional when creating a primary ip ([#821](https://github.com/ansible-collections/hetzner.hcloud/issues/821)) ([ea34409](https://github.com/ansible-collections/hetzner.hcloud/commit/ea34409fe7b00a7bb29f73164f5b48589b7bc26f))
+
 ## [6.8.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.7.0...6.8.0) (2026-03-24)
 
 
