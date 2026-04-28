@@ -1,2 +1,2 @@
 minor_changes:
-  - primary_ip - Support different Primary IP ``assignee_type`` values.
+  - primary_ip - Primary IP support upcoming ``assignee_type`` behavior change.
