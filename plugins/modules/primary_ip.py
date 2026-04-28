@@ -178,14 +178,14 @@ hcloud_primary_ip:
                 key: value
                 mylabel: 123
         assignee_id:
-            description: ID of the resource the Primary IP is assigned to, null if it is not assigned.
+            description: ID of the resource where the Primary IP is assigned to, none if unassigned.
+            returned: always
             type: int
-            returned: always
-            sample: 1937415
+            sample: 19584637
         assignee_type:
-            description: Resource type the Primary IP can be assigned to.
-            type: str
+            description: Type of the resource where the Primary IP is assigned to.
             returned: always
+            type: str
             sample: server
         auto_delete:
             description: Delete the Primary IP when the resource it is assigned to is deleted.
@@ -247,6 +247,7 @@ class AnsiblePrimaryIP(AnsibleHCloud):
         elif (value := self.module.params.get("server")) is not None:
             server: BoundServer = self._client_get_by_name_or_id("servers", value)
             params["assignee_id"] = server.id
+            params["assignee_type"] = "server"
 
         if (value := self.module.params.get("auto_delete")) is not None:
             params["auto_delete"] = value
@@ -285,7 +286,11 @@ class AnsiblePrimaryIP(AnsibleHCloud):
             if (value := self.module.params.get("server")) is not None:
                 server: BoundServer = self._client_get_by_name_or_id("servers", value)
 
-                if self.primary_ip.assignee_id is None or self.primary_ip.assignee_id != server.id:
+                if (
+                    self.primary_ip.assignee_type != "server"
+                    or self.primary_ip.assignee_id is None
+                    or self.primary_ip.assignee_id != server.id
+                ):
                     if self.primary_ip.assignee_id is not None:
                         if not self.module.check_mode:
                             action = self.primary_ip.unassign()
