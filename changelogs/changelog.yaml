@@ -964,3 +964,65 @@ releases:
     fragments:
     - primary-ip-unassign-reassign.yml
     release_date: '2026-03-24'
+  6.9.0:
+    changes:
+      deprecated_features:
+      - datacenter_info - The ``hcloud_datacenter_info[].server_types`` return value
+        is deprecated and will be removed after 1 October 2026. Please use the ``hcloud_server_type_info[].locations[].available``
+        return value instead.
+      minor_changes:
+      - primary_ip - Primary IP support upcoming ``assignee_type`` behavior change.
+      - server_type_info - Added the Server Type Location ``available`` property to
+        the return values (``hcloud_server_type_info[].locations[].available``).
+      - server_type_info - Added the Server Type Location ``recommended`` property
+        to the return values (``hcloud_server_type_info[].locations[].recommended``).
+      release_summary: '**Server Types availability and recommendation details moved**
+
+
+        Server Types availability and recommendation details moved from the
+
+        ``datacenter_info`` module to the ``server_type_info`` module.
+
+
+        See the `changelog <https://docs.hetzner.cloud/changelog#2026-04-01-datacenter-deprecations>`__
+        for more details.
+
+
+        **Primary IPs ``assignee_type`` behavior change**
+
+
+        As of 1 August 2026, the behavior of the Primary IP ``assignee_type`` property
+
+        will change, and will return ``unassigned`` when the Primary IP is not assigned
+
+        (when ``assignee_id`` is ``null``). The goal is to eventually assign Primary
+        IPs to
+
+        other resource types, not only to ``server``.
+
+
+        See the `changelog <https://docs.hetzner.cloud/changelog#2026-04-27-primary-ips-will-return-unassigned>`__
+        for more details.
+
+
+        In addition, the Primary IP request body ``assignee_type`` property of the
+        operation
+
+        `POST /v1/primary_ips <https://docs.hetzner.cloud/reference/cloud#tag/primary-ips/create_primary_ip>`__
+        is
+
+        now optional. Primary IPs created without ``assignee_type`` return ``server``
+        until 1 August 2026, after this date,
+
+        its value will be ``unassigned``.
+
+
+        See the `changelog <https://docs.hetzner.cloud/changelog#2026-04-27-primary-ips-make-assignee_type-optional>`__
+        for more details.
+
+        '
+    fragments:
+    - primary-ip-assignee-type.yml
+    - release-summary.yml
+    - server-type-available-recommended.yml
+    release_date: '2026-04-28'
