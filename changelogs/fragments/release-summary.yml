@@ -1,0 +1,8 @@
+release_summary: |
+  **Load Balancers HTTP idle timeout can now be configured**
+
+  The previously fixed 50-second idle timeout for HTTP and HTTPS Load Balancer services
+  can now be configured per service to a value between 30 and 300 seconds via the new
+  ``timeout_idle`` property on the ``load_balancer_service`` module.
+
+  See the `changelog <https://docs.hetzner.cloud/changelog#2026-04-30-load-balancers-http-idle-timeout-can-now-be-configured>`__ for more details.

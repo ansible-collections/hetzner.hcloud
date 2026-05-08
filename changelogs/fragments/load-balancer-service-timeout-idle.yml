@@ -1,0 +1,2 @@
+minor_changes:
+  - load_balancer_service - Add support for the ``timeout_idle`` field on HTTP services to configure the idle timeout in seconds for HTTP connections.
