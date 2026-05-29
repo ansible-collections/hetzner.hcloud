@@ -1,2 +1,3 @@
 minor_changes:
-  - load_balancer_service - Add support for the ``timeout_idle`` field on HTTP services to configure the idle timeout in seconds for HTTP connections.
+  - load_balancer_service - Added the ``http.timeout_idle`` argument to configure the idle timeout in seconds for HTTP services.
+  - load_balancer_info - Added the HTTP idle timeout property to the services return values (``hcloud_load_balancer_info[].services[].http.timeout_idle``).
