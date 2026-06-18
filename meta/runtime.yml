@@ -54,8 +54,6 @@ plugin_routing:
       redirect: hetzner.hcloud.certificate_info
     hcloud_certificate:
       redirect: hetzner.hcloud.certificate
-    hcloud_datacenter_info:
-      redirect: hetzner.hcloud.datacenter_info
     hcloud_firewall:
       redirect: hetzner.hcloud.firewall
     hcloud_firewall_info:
@@ -140,3 +138,17 @@ plugin_routing:
       redirect: hetzner.hcloud.zone_rrset
     hcloud_zone_rrset_info:
       redirect: hetzner.hcloud.zone_rrset_info
+
+    hcloud_datacenter_info:
+      redirect: hetzner.hcloud.datacenter_info
+      deprecation:
+        removal_date: 2026-10-01
+        warning_text: >-
+          The ``datacenter_info`` module is deprecated and will be removed after 1 Oct. 2026.
+          See https://docs.hetzner.cloud/changelog#2026-06-02-datacenters-deprecated for more details.
+    datacenter_info:
+      deprecation:
+        removal_date: 2026-10-01
+        warning_text: >-
+          The ``datacenter_info`` module is deprecated and will be removed after 1 Oct. 2026.
+          See https://docs.hetzner.cloud/changelog#2026-06-02-datacenters-deprecated for more details.
