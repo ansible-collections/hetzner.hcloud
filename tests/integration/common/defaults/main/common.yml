@@ -9,8 +9,8 @@ hcloud_role_ns: "{{ role_name | split('_') | map('batch', 2) | map('first') | fl
 hcloud_ns: "ansible-{{ hcloud_run_ns }}-{{ hcloud_role_ns }}"
 
 # Used to easily update the server types and images across all our tests.
-hcloud_server_type_name: cax11
-hcloud_server_type_id: 45
+hcloud_server_type_name: cpx22
+hcloud_server_type_id: 109
 
 hcloud_server_type_upgrade_name: cax21
 hcloud_server_type_upgrade_id: 93
