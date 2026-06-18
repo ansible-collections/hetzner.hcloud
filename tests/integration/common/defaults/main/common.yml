@@ -12,8 +12,8 @@ hcloud_ns: "ansible-{{ hcloud_run_ns }}-{{ hcloud_role_ns }}"
 hcloud_server_type_name: cpx22
 hcloud_server_type_id: 109
 
-hcloud_server_type_upgrade_name: cax21
-hcloud_server_type_upgrade_id: 93
+hcloud_server_type_upgrade_name: cpx32
+hcloud_server_type_upgrade_id: 110
 
 hcloud_image_name: debian-12
 hcloud_image_id: 114690389 # architecture=arm
