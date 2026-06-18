@@ -1,2 +1,0 @@
-deprecated_features:
-  - datacenter_info - The ``datacenter_info`` module is deprecated and will be removed after 1 Oct. 2026. Please use the ``location_info`` module instead.
