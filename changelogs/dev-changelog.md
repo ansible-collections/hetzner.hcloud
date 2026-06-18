@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.10.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.9.0...6.10.0) (2026-06-18)
+
+
+### Features
+
+* deprecate `datacenter_info` module ([#837](https://github.com/ansible-collections/hetzner.hcloud/issues/837)) ([723b76f](https://github.com/ansible-collections/hetzner.hcloud/commit/723b76fca45cf18a6e5ead235b7d4a3fef87ed83))
+* **load_balancer:** support `timeout_idle` ([#829](https://github.com/ansible-collections/hetzner.hcloud/issues/829)) ([b965f5e](https://github.com/ansible-collections/hetzner.hcloud/commit/b965f5e54592902fc0b85bf36616ccbb663eb5d4))
+
+
+### Bug Fixes
+
+* do not duplicate ansible own deprecation texts ([#838](https://github.com/ansible-collections/hetzner.hcloud/issues/838)) ([ac85b25](https://github.com/ansible-collections/hetzner.hcloud/commit/ac85b258bc239235c8a42601ec7035d387fe3663))
+
 ## [6.9.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.8.0...6.9.0) (2026-04-28)
 
 
