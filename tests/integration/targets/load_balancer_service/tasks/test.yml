@@ -153,6 +153,7 @@
       - result.hcloud_load_balancer_service.http.cookie_lifetime == 300
       - result.hcloud_load_balancer_service.http.redirect_http == false
       - result.hcloud_load_balancer_service.http.sticky_sessions == true
+      - result.hcloud_load_balancer_service.http.timeout_idle == 50
       - result.hcloud_load_balancer_service.health_check.protocol == "http"
       - result.hcloud_load_balancer_service.health_check.port == 80
       - result.hcloud_load_balancer_service.health_check.interval == 15
@@ -161,6 +162,23 @@
       - result.hcloud_load_balancer_service.health_check.http.domain == ""
       - result.hcloud_load_balancer_service.health_check.http.path == "/"
       - result.hcloud_load_balancer_service.health_check.http.status_codes | sort == ["2??", "3??"]
+
+- name: Test update with timeout_idle
+  hetzner.hcloud.load_balancer_service:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    protocol: http
+    listen_port: 80
+    http:
+      cookie_name: keks
+      sticky_sessions: true
+      timeout_idle: 60
+    state: present
+  register: result
+- name: Verify update with timeout_idle
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_load_balancer_service.http.timeout_idle == 60
 
 - name: Test delete with http
   hetzner.hcloud.load_balancer_service:
