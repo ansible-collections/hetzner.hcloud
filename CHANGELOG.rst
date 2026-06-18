@@ -4,6 +4,39 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.10.0
+=======
+
+Release Summary
+---------------
+
+**Load Balancers HTTP idle timeout can now be configured**
+
+The previously fixed 50-second idle timeout for HTTP and HTTPS Load Balancer services
+can now be configured per service to a value between 30 and 300 seconds via the new
+``http.timeout_idle`` argument on the ``load_balancer_service`` module.
+
+See the `changelog <https://docs.hetzner.cloud/changelog#2026-04-30-load-balancers-http-idle-timeout-can-now-be-configured>`__ for more details.
+
+**Datacenters are deprecated**
+
+The ``datacenter_info`` module is deprecated and will be removed after 1 Oct. 2026. After this date, requests to the datacenters API endpoints will return HTTP 410 Gone.
+
+Please use the ``location_info`` module instead.
+
+See the `changelog <https://docs.hetzner.cloud/changelog#2026-06-02-datacenters-deprecated>`__ for more details.
+
+Minor Changes
+-------------
+
+- load_balancer_info - Added the HTTP idle timeout property to the services return values (``hcloud_load_balancer_info[].services[].http.timeout_idle``).
+- load_balancer_service - Added the ``http.timeout_idle`` argument to configure the idle timeout in seconds for HTTP services.
+
+Deprecated Features
+-------------------
+
+- datacenter_info - The ``datacenter_info`` module is deprecated and will be removed after 1 Oct. 2026. Please use the ``location_info`` module instead.
+
 v6.9.0
 ======
 
