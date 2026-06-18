@@ -10,6 +10,15 @@ DOCUMENTATION = """
 ---
 module: datacenter_info
 
+deprecated:
+    removed_at_date: 2026-10-01
+    why: >-
+      The API endpoints ``GET /v1/datacenters`` and ``GET /v1/datacenters/{id}`` are now deprecated and
+      will be removed after 1 Oct. 2026. After this date, requests to these endpoints will return ``HTTP 410 Gone``.
+
+      See https://docs.hetzner.cloud/changelog#2026-06-02-datacenters-deprecated for more details.
+    alternative: Use M(hetzner.cloud.location_info) instead.
+
 short_description: Gather info about the Hetzner Cloud datacenters.
 
 description:
