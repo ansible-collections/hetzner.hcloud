@@ -12,7 +12,7 @@
   hetzner.hcloud.primary_ip:
     name: "{{ hcloud_primary_ip_name }}"
     type: ipv4
-    datacenter: "{{ hcloud_datacenter_name }}"
+    location: "{{ hcloud_location_name }}"
     state: present
   register: test_primary_ip
 
