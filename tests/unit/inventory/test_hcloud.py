@@ -52,14 +52,6 @@ def test_build_inventory_server():
                 "id": 3,
                 "name": "hel1",
             },
-            "datacenter": {
-                "id": 3,
-                "name": "hel1-dc2",
-                "location": {
-                    "id": 3,
-                    "name": "hel1",
-                },
-            },
             "image": {
                 "id": 114690387,
                 "name": "debian-12",
@@ -82,7 +74,6 @@ def test_build_inventory_server():
         "server_type": "cpx22",
         "architecture": "x86",
         "location": "hel1",
-        "datacenter": "hel1-dc2",
         "labels": {},
         "ipv4": "127.0.0.1",
         "ipv6": "2001:db8::1",

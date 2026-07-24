@@ -70,15 +70,6 @@ options:
             - Required if the server does not exist.
             - Only used during the server creation.
         type: str
-    datacenter:
-        description:
-            - B(Deprecated:) The O(datacenter) argument is deprecated and will be removed
-              after 1 July 2026. Please use the O(location) argument instead.
-              See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
-            - Hetzner Cloud Datacenter (name or ID) to create the server in.
-            - Required if no O(location) is given and the server does not exist.
-            - Only used during the server creation.
-        type: str
     backups:
         description:
             - Enable or disable Backups for the given Server.
@@ -316,16 +307,6 @@ hcloud_server:
             returned: always
             sample: 4711
             version_added: "1.5.0"
-        datacenter:
-            description: |
-                Name of the datacenter of the server.
-
-                B(Deprecated:) The RV(hcloud_server.datacenter) value is deprecated and will be removed
-                after 1 July 2026. Please use the RV(hcloud_server.location) value instead.
-                See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
-            returned: always
-            type: str
-            sample: fsn1-dc14
         rescue_enabled:
             description: True if rescue mode is enabled, Server will then boot into rescue system on next reboot
             returned: always
@@ -403,7 +384,6 @@ class AnsibleHCloudServer(AnsibleHCloud):
             ],
             "image": self.hcloud_server.image.name if self.hcloud_server.image is not None else None,
             "server_type": self.hcloud_server.server_type.name,
-            "datacenter": self.hcloud_server.datacenter and self.hcloud_server.datacenter.name,
             "location": self.hcloud_server.location.name,
             "placement_group": (
                 self.hcloud_server.placement_group.name if self.hcloud_server.placement_group is not None else None
@@ -479,31 +459,9 @@ class AnsibleHCloudServer(AnsibleHCloud):
             ]
 
         server_type_location = None
-
-        if self.module.params.get("location") is None and self.module.params.get("datacenter") is None:
-            # When not given, the API will choose the location.
-            params["location"] = None
-            params["datacenter"] = None
-        elif self.module.params.get("location") is not None and self.module.params.get("datacenter") is None:
+        if self.module.params.get("location") is not None:
             params["location"] = self._client_get_by_name_or_id("locations", self.module.params.get("location"))
             server_type_location = params["location"]
-        elif self.module.params.get("location") is None and self.module.params.get("datacenter") is not None:
-            self.module.warn(
-                "The `datacenter` argument is deprecated and will be removed "
-                "after 1 July 2026. Please use the `location` argument instead. "
-                "See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters."
-            )
-            value: str = self.module.params.get("datacenter")
-            # Backward compatible datacenter argument.
-            # datacenter hel1-dc2 => location hel1
-            if value and not value.isdigit():
-                # pylint: disable=disallowed-name
-                part1, _, _ = value.partition("-")
-                params["location"] = self.client.locations.get_by_name(part1)
-                server_type_location = params["location"]
-            else:
-                params["datacenter"] = self._client_get_by_name_or_id("datacenters", value)
-                server_type_location = params["datacenter"].location
 
         if self.module.params.get("state") == "stopped" or self.module.params.get("state") == "created":
             params["start_after_create"] = False
@@ -974,11 +932,6 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 image_allow_deprecated={"type": "bool", "default": False, "aliases": ["allow_deprecated_image"]},
                 server_type={"type": "str"},
                 location={"type": "str"},
-                datacenter={
-                    "type": "str",
-                    "removed_at_date": "2026-07-01",
-                    "removed_from_collection": "hetzner.hcloud",
-                },
                 user_data={"type": "str"},
                 ssh_keys={"type": "list", "elements": "str", "no_log": False},
                 volumes={"type": "list", "elements": "str"},
@@ -1003,7 +956,6 @@ class AnsibleHCloudServer(AnsibleHCloud):
                 **super().base_module_arguments(),
             ),
             required_one_of=[["id", "name"]],
-            mutually_exclusive=[["location", "datacenter"]],
             required_together=[["delete_protection", "rebuild_protection"]],
             supports_check_mode=True,
         )

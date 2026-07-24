@@ -15,7 +15,6 @@ def prepare_result(o: BoundPrimaryIP):
         "ip": o.ip,
         "type": o.type,
         "location": o.location.name,
-        "datacenter": o.datacenter and o.datacenter.name,
         "labels": o.labels,
         "delete_protection": o.protection["delete"],
         "assignee_id": o.assignee_id,

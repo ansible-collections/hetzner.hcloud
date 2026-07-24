@@ -173,10 +173,6 @@ plugin: hetzner.hcloud.hcloud
 #   hcloud_image_os_flavor: "debian"
 ## Location
 #   hcloud_location: "hel1"
-#   # The hcloud_datacenter variable is deprecated and will be removed after 1 July 2026.
-#   # Please use the hcloud_location variable instead.
-#   # See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
-#   hcloud_datacenter: "hel1-dc2"
 ## Network
 #   hcloud_ipv4: "65.109.140.95" # Value is optional!
 #   hcloud_ipv6: "2a01:4f9:c011:b83f::1" # Value is optional!
@@ -192,7 +188,6 @@ hostname: "my-prefix-{{ hcloud_location }}-{{ hcloud_name }}-{{ hcloud_server_ty
 """
 
 import sys
-import warnings
 from ipaddress import IPv6Network
 
 from ansible.errors import AnsibleError
@@ -233,8 +228,7 @@ if sys.version_info >= (3, 11):
         server_type: str
         architecture: str
 
-        # Datacenter
-        datacenter: str  # Deprecated!
+        # Location
         location: str
 
         # Labels
@@ -371,14 +365,6 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         # Location
         server_dict["location"] = server.location.name
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=DeprecationWarning)
-            self.display.warning(
-                "The `hcloud_datacenter` variable is deprecated and will be removed "
-                "after 1 July 2026. Please use the `hcloud_location` variable instead. "
-                "See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters."
-            )
-            server_dict["datacenter"] = server.datacenter and server.datacenter.name
 
         # Image
         if server.image is not None:

@@ -154,16 +154,6 @@ hcloud_network_info:
                     returned: always
                     type: str
                     sample: fsn1
-                datacenter:
-                    description: |
-                        Name of the datacenter of the server
-
-                        B(Deprecated:) The RV(hcloud_network_info[].servers[].datacenter) value is deprecated and will be removed
-                        after 1 July 2026. Please use the RV(hcloud_network_info[].servers[].location) value instead.
-                        See https://docs.hetzner.cloud/changelog#2025-12-16-phasing-out-datacenters.
-                    returned: always
-                    type: str
-                    sample: fsn1-dc14
                 rescue_enabled:
                     description: True if rescue mode is enabled, Server will then boot into rescue system on next reboot
                     returned: always
@@ -232,7 +222,6 @@ class AnsibleHCloudNetworkInfo(AnsibleHCloud):
                     "ipv6": server.public_net.ipv6.ip if server.public_net.ipv6 is not None else None,
                     "image": server.image.name if server.image is not None else None,
                     "server_type": server.server_type.name,
-                    "datacenter": server.datacenter and server.datacenter.name,
                     "location": server.location.name,
                     "rescue_enabled": server.rescue_enabled,
                     "backup_window": server.backup_window,
