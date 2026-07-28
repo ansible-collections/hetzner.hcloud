@@ -6,7 +6,11 @@ from unittest import mock
 import pytest
 
 from plugins.module_utils._deprecation import (
+    deprecated_load_balancer_type_warning,
     deprecated_server_type_warning,
+)
+from plugins.module_utils._vendor.hcloud.load_balancer_types import (
+    BoundLoadBalancerType,
 )
 from plugins.module_utils._vendor.hcloud.locations import (
     BoundLocation,
@@ -256,4 +260,43 @@ DEPRECATION_UNAVAILABLE = {
 def test_deprecated_server_type_warning(server_type, location, calls):
     m = mock.Mock()
     deprecated_server_type_warning(m, server_type, location)
+    m.warn.assert_has_calls(calls)
+
+
+@pytest.mark.parametrize(
+    ("load_balancer_type", "calls"),
+    [
+        (
+            BoundLoadBalancerType(
+                mock.Mock(),
+                {"name": "lb11"},
+            ),
+            [],
+        ),
+        # - Deprecated
+        (
+            BoundLoadBalancerType(
+                mock.Mock(),
+                {"name": "lb11", **DEPRECATION_DEPRECATED},
+            ),
+            [
+                mock.call(
+                    "Load Balancer type lb11 is deprecated and will no longer "
+                    f"be available for order as of {FUTURE.strftime('%Y-%m-%d')}."
+                )
+            ],
+        ),
+        # - Unavailable
+        (
+            BoundLoadBalancerType(
+                mock.Mock(),
+                {"name": "lb11", **DEPRECATION_UNAVAILABLE},
+            ),
+            [mock.call("Load Balancer type lb11 is unavailable and can no longer be ordered.")],
+        ),
+    ],
+)
+def test_deprecated_load_balancer_type_warning(load_balancer_type, calls):
+    m = mock.Mock()
+    deprecated_load_balancer_type_warning(m, load_balancer_type)
     m.warn.assert_has_calls(calls)
