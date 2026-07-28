@@ -85,6 +85,26 @@ hcloud_load_balancer_type_info:
             returned: always
             type: int
             sample: 5
+        deprecation:
+            description: |
+              Describes if, when & how the resources was deprecated.
+              If this field is set to None the resource is not deprecated. If it has a value, it is considered deprecated.
+            returned: when deprecated
+            type: dict
+            contains:
+                announced:
+                    description: Date of when the deprecation was announced.
+                    returned: when deprecated
+                    type: str
+                    sample: "2026-03-09T09:00:00Z"
+                unavailable_after:
+                    description: |
+                      After the time in this field, the resource will not be available from the general listing
+                      endpoint of the resource type, and it can not be used in new resources. For example, if this is
+                      an image, you can not create new servers with this image after the mentioned date.
+                    returned: when deprecated
+                    type: str
+                    sample: "2026-06-09T09:00:00Z"
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -115,6 +135,14 @@ class AnsibleHCloudLoadBalancerTypeInfo(AnsibleHCloud):
                     "max_services": load_balancer_type.max_services,
                     "max_targets": load_balancer_type.max_targets,
                     "max_assigned_certificates": load_balancer_type.max_assigned_certificates,
+                    "deprecation": (
+                        {
+                            "announced": load_balancer_type.deprecation.announced.isoformat(),
+                            "unavailable_after": load_balancer_type.deprecation.unavailable_after.isoformat(),
+                        }
+                        if load_balancer_type.deprecation is not None
+                        else None
+                    ),
                 }
             )
         return tmp
