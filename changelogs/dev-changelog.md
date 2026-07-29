@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.11.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.10.0...6.11.0) (2026-07-29)
+
+
+### Features
+
+* print deprecation warning for load balancer type  ([#848](https://github.com/ansible-collections/hetzner.hcloud/issues/848)) ([134975e](https://github.com/ansible-collections/hetzner.hcloud/commit/134975e2700de9345f21dda3ca12d24bf62998da))
+* remove datacenter from server and primary ip modules ([#847](https://github.com/ansible-collections/hetzner.hcloud/issues/847)) ([84edc6d](https://github.com/ansible-collections/hetzner.hcloud/commit/84edc6df62c0eebe6ff19f37feebf12f4afb9e93))
+
 ## [6.10.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.9.0...6.10.0) (2026-06-18)
 
 
