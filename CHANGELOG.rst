@@ -4,6 +4,39 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.11.0
+=======
+
+Release Summary
+---------------
+
+This release is removing datacenters from ``Primary IPs`` and ``Servers``.
+
+The ``datacenter`` property in the Hetzner Cloud API request body and response of ``Servers`` and ``Primary IPs`` were
+removed. We therefore do not consider this a breaking change.
+
+See our `changelog`_ for more details.
+
+.. _changelog: https://docs.hetzner.cloud/changelog#2026-07-01-removing-datacenters
+
+Minor Changes
+-------------
+
+- load_balancer - Print warning when creating a Load Balancer with a deprecated or unavailable Load Balancer Type.
+- load_balancer_type_info - Added the Load Balancer Type ``deprecation`` object to the return values (``load_balancer_type_info[].deprecation``).
+
+Removed Features (previously deprecated)
+----------------------------------------
+
+- hcloud inventory - The deprecated ``hcloud_datacenter`` host variable was removed. Please use the ``hcloud_location`` host variable instead.
+- network_info - The deprecated ``hcloud_network_info[].servers[].datacenter`` return value was removed. Please use the ``hcloud_network_info[].servers[].location`` return value instead.
+- primary_ip - The deprecated ``datacenter`` argument was removed. Please use the ``location`` argument instead.
+- primary_ip - The deprecated ``hcloud_primary_ip.datacenter`` return value was removed. Please use the ``hcloud_primary_ip.location`` return value instead.
+- primary_ip_info - The deprecated ``hcloud_primary_ip_info[].datacenter`` return value was removed. Please use the ``hcloud_primary_ip_info[].location`` return value instead.
+- server - The deprecated ``datacenter`` argument was removed. Please use the ``location`` argument instead.
+- server - The deprecated ``hcloud_server.datacenter`` return value was removed. Please use the ``hcloud_server.location`` return value instead.
+- server_info - The deprecated ``hcloud_server_info[].datacenter`` return value was removed. Please use the ``hcloud_server_info[].location`` return value instead.
+
 v6.10.0
 =======
 
