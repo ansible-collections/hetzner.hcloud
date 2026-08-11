@@ -1,4 +1,4 @@
-ansible-core>=2.18
+ansible-core>=2.19
 
 # Third party collections requirements
 netaddr
