@@ -8,7 +8,6 @@ from datetime import datetime, timezone
 
 from ansible.module_utils.basic import AnsibleModule
 
-from ._vendor.hcloud.load_balancer_types import BoundLoadBalancerType
 from ._vendor.hcloud.locations import BoundLocation
 from ._vendor.hcloud.server_types import BoundServerType, ServerTypeLocation
 
@@ -23,11 +22,6 @@ def deprecated_server_type_warning(
     server_type: BoundServerType,
     location: BoundLocation | None = None,
 ) -> bool:
-    """
-    Print a warning when the Server Type is either deprecated or unavailable. Returns
-    whether any warning was printed. Without location, some deprecation cannot be
-    checked.
-    """
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         if server_type.deprecation is not None:
@@ -133,33 +127,3 @@ def deprecated_server_type_warning(
         )
 
     return True
-
-
-def deprecated_load_balancer_type_warning(
-    module: AnsibleModule,
-    load_balancer_type: BoundLoadBalancerType,
-) -> bool:
-    """
-    Print a warning when the Load Balancer Type is either deprecated or unavailable.
-    Returns whether any warning was printed.
-    """
-    if load_balancer_type.deprecation is not None:
-        if load_balancer_type.deprecation.unavailable_after < datetime.now(timezone.utc):
-            module.warn(
-                str.format(
-                    "Load Balancer type {load_balancer_type} is unavailable and can no longer be ordered.",
-                    load_balancer_type=load_balancer_type.name,
-                ),
-            )
-        else:
-            module.warn(
-                str.format(
-                    "Load Balancer type {load_balancer_type} is deprecated and will no longer be available "
-                    "for order as of {unavailable_after}.",
-                    load_balancer_type=load_balancer_type.name,
-                    unavailable_after=load_balancer_type.deprecation.unavailable_after.strftime("%Y-%m-%d"),
-                ),
-            )
-        return True
-
-    return False

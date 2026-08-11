@@ -150,7 +150,6 @@ hcloud_load_balancer:
 from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils._base import AnsibleHCloud
-from ..module_utils._deprecation import deprecated_load_balancer_type_warning
 from ..module_utils._vendor.hcloud import HCloudException
 from ..module_utils._vendor.hcloud.load_balancers import (
     BoundLoadBalancer,
@@ -192,18 +191,14 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
     def _create_load_balancer(self):
         self.module.fail_on_missing_params(required_params=["name", "load_balancer_type"])
         try:
-            load_balancer_type = self.client.load_balancer_types.get_by_name(
-                self.module.params.get("load_balancer_type")
-            )
-
             params = {
                 "name": self.module.params.get("name"),
                 "algorithm": LoadBalancerAlgorithm(type=self.module.params.get("algorithm", "round_robin")),
-                "load_balancer_type": load_balancer_type,
+                "load_balancer_type": self.client.load_balancer_types.get_by_name(
+                    self.module.params.get("load_balancer_type")
+                ),
                 "labels": self.module.params.get("labels"),
             }
-
-            deprecated_load_balancer_type_warning(self.module, load_balancer_type)
 
             if self.module.params.get("location") is None and self.module.params.get("network_zone") is None:
                 self.module.fail_json(msg="one of the following is required: location, network_zone")
