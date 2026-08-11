@@ -4,6 +4,24 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v6.12.0
+=======
+
+Release Summary
+---------------
+
+This release is reverting all the changes made in 6.11.
+
+In the 6.11.0 release, we removed some features from this collection without marking
+the change as breaking (i.e., without a new major release). We didn't mark it as
+breaking because the removal originated in the Hetzner Cloud API itself, the features
+stopped working there regardless of what we did on our end, so not removing them would
+have caused some breakage anyway.
+
+However, to comply with the community package collection requirements, such removals
+must be released as breaking changes. We will therefore revert the 6.11.0 changes in the
+6.12.0 release, and then re-introduce them as a new major release 7.0.0.
+
 v6.11.0
 =======
 
