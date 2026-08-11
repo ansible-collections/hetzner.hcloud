@@ -1,5 +1,21 @@
 # Changelog
 
+## [7.0.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.12.0...7.0.0) (2026-08-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for Python 3.10 ([#857](https://github.com/ansible-collections/hetzner.hcloud/issues/857))
+* drop support for ansible-core 2.18 ([#856](https://github.com/ansible-collections/hetzner.hcloud/issues/856))
+* remove datacenter from server and primary ip modules ([#847](https://github.com/ansible-collections/hetzner.hcloud/issues/847))
+
+### Features
+
+* drop support for ansible-core 2.18 ([#856](https://github.com/ansible-collections/hetzner.hcloud/issues/856)) ([747e384](https://github.com/ansible-collections/hetzner.hcloud/commit/747e384583df48296a5687079036af109679b3e8))
+* drop support for Python 3.10 ([#857](https://github.com/ansible-collections/hetzner.hcloud/issues/857)) ([6655fd7](https://github.com/ansible-collections/hetzner.hcloud/commit/6655fd74e130e7fb525e3e4338fb732e432aa1d0))
+* print deprecation warning for load balancer type  ([#848](https://github.com/ansible-collections/hetzner.hcloud/issues/848)) ([d2a9177](https://github.com/ansible-collections/hetzner.hcloud/commit/d2a917712eb6a9244fc92af93d4d43433c643815))
+* remove datacenter from server and primary ip modules ([#847](https://github.com/ansible-collections/hetzner.hcloud/issues/847)) ([30cb342](https://github.com/ansible-collections/hetzner.hcloud/commit/30cb342703f7fbc9f887947edafdb1f129762111))
+
 ## [6.12.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.11.0...6.12.0) (2026-08-11)
 
 
