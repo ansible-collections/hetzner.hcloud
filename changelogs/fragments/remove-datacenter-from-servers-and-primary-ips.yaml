@@ -2,7 +2,7 @@ release_summary: |
   This release is removing datacenters from ``Primary IPs`` and ``Servers``.
 
   The ``datacenter`` property in the Hetzner Cloud API request body and response of ``Servers`` and ``Primary IPs`` were
-  removed. We therefore do not consider this a breaking change.
+  removed.
 
   See our `changelog`_ for more details.
 
