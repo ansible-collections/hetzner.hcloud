@@ -109,10 +109,7 @@ class BoundModelBase(Generic[Domain]):
         """
         self._client = client
         self.complete = complete
-
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore", category=DeprecationWarning)
-            self.data_model: Domain = self.model.from_dict(data)
+        self.data_model: Domain = self.model.from_dict(data)
 
     def __getattr__(self, name: str):  # type: ignore[no-untyped-def]
         """Allow magical access to the properties of the model

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import time
-import warnings
 from http import HTTPStatus
 from random import uniform
 from typing import Any, Protocol
@@ -185,10 +184,11 @@ class Client:
             timeout=timeout,
         )
 
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore", category=DeprecationWarning)
-            self.datacenters = DatacentersClient(self)
+        self.datacenters = DatacentersClient(self)
+        """DatacentersClient Instance
 
+        :type: :class:`DatacentersClient <hcloud.datacenters.client.DatacentersClient>`
+        """
         self.locations = LocationsClient(self)
         """LocationsClient Instance
 
@@ -305,28 +305,6 @@ class Client:
         :param timeout: Requests timeout in seconds.
         """
         return self._client.request(method, url, **kwargs)
-
-    @property
-    def datacenters(self) -> DatacentersClient:
-        """DatacentersClient Instance
-
-        .. deprecated:: 2.22.0
-            The datacenters client is deprecated and will be removed after the 2026-10-01.
-            See https://docs.hetzner.cloud/changelog#2026-06-02-datacenters-deprecated.
-
-        :type: :class:`DatacentersClient <hcloud.datacenters.client.DatacentersClient>`
-        """
-        warnings.warn(
-            "The datacenters client is deprecated and will be removed after the 2026-10-01. "
-            "See https://docs.hetzner.cloud/changelog#2026-06-02-datacenters-deprecated.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self._datacenters
-
-    @datacenters.setter
-    def datacenters(self, value: DatacentersClient) -> None:
-        self._datacenters = value
 
 
 class ClientBase:
