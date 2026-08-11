@@ -1,0 +1,20 @@
+# Copyright: (c) 2019, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Test create server with datacenter (deprecated)
+  hetzner.hcloud.server:
+    name: "{{ hcloud_server_name }}"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
+    datacenter: "{{ hcloud_datacenter_name }}"
+    state: created
+  register: result
+- name: Verify create server with datacenter (deprecated)
+  ansible.builtin.assert:
+    that:
+      - result is changed
+
+- name: Cleanup server with datacenter (deprecated)
+  hetzner.hcloud.server:
+    name: "{{ hcloud_server_name }}"
+    state: absent
