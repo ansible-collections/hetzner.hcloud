@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.12.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.11.0...6.12.0) (2026-08-11)
+
+
+### Features
+
+* revert all changes from the 6.11.0 release ([#852](https://github.com/ansible-collections/hetzner.hcloud/issues/852)) ([2ce20d5](https://github.com/ansible-collections/hetzner.hcloud/commit/2ce20d5190572cedeec42db03f01ff25ac9e4503))
+
 ## [6.11.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.10.0...6.11.0) (2026-07-29)
 
 
