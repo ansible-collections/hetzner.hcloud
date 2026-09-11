@@ -1203,3 +1203,5 @@ releases:
     - load-balancer-type-deprecation.yml
     - remove-datacenter-from-servers-and-primary-ips.yaml
     release_date: '2026-08-11'
+  7.0.1:
+    release_date: '2026-09-11'

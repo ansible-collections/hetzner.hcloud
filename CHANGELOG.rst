@@ -4,6 +4,9 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v7.0.1
+======
+
 v7.0.0
 ======
 
