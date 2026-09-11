@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.1](https://github.com/ansible-collections/hetzner.hcloud/compare/7.0.0...7.0.1) (2026-09-11)
+
+
+### Bug Fixes
+
+* update dependencies ([1d48fa5](https://github.com/ansible-collections/hetzner.hcloud/commit/1d48fa5caea04e35f835d055cba3e9f47890d64f))
+
 ## [7.0.0](https://github.com/ansible-collections/hetzner.hcloud/compare/6.12.0...7.0.0) (2026-08-11)
 
 
