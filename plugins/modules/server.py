@@ -340,7 +340,6 @@ root_password:
     sample: YItygq1v3GYjjMomLaKc
 """
 
-from datetime import timedelta
 from typing import TYPE_CHECKING, Literal
 
 from ansible.module_utils.basic import AnsibleModule
