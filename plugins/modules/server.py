@@ -529,18 +529,17 @@ class AnsibleHCloudServer(AnsibleHCloud):
         if image is None:
             image = self.client.images.get_by_id(self.module.params.get("image"))
 
-        if image.deprecated is not None:
-            available_until = image.deprecated + timedelta(days=90)
+        if image.deprecation is not None:
             if self.module.params.get("image_allow_deprecated"):
                 self.module.warn(
                     f"You try to use a deprecated image. The image {image.name} will "
-                    f"continue to be available until {available_until.strftime('%Y-%m-%d')}."
+                    f"continue to be available until {image.deprecation.available_until.strftime('%Y-%m-%d')}."
                 )
             else:
                 self.module.fail_json(
                     msg=(
                         f"You try to use a deprecated image. The image {image.name} will "
-                        f"continue to be available until {available_until.strftime('%Y-%m-%d')}. "
+                        f"continue to be available until {image.deprecation.available_until.strftime('%Y-%m-%d')}. "
                         "If you want to use this image use image_allow_deprecated=true."
                     )
                 )
