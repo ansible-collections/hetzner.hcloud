@@ -5,7 +5,7 @@ netaddr
 cryptography
 
 # Development requirements
-antsibull-docs>=2.25,<2.26
+antsibull-docs>=2.26,<2.27
 pylint
 pytest
 pytest-xdist
