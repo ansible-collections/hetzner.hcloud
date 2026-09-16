@@ -324,7 +324,9 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
                 self.hcloud_load_balancer_service = service
 
     def _make_service_http(
-        self, params: dict, current: LoadBalancerServiceHttp | None
+        self,
+        params: dict,
+        current: LoadBalancerServiceHttp | None,
     ) -> tuple[LoadBalancerServiceHttp, bool]:
         changed = False
         result = LoadBalancerServiceHttp()
@@ -364,7 +366,9 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
         return result, changed
 
     def _make_service_health_check(
-        self, params: dict, current: LoadBalancerHealthCheck
+        self,
+        params: dict,
+        current: LoadBalancerHealthCheck | None,
     ) -> tuple[LoadBalancerHealthCheck, bool]:
         changed = False
         result = LoadBalancerHealthCheck()
@@ -396,7 +400,9 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
         return result, changed
 
     def _make_service_health_check_http(
-        self, params: dict, current: LoadBalancerHealthCheckHttp | None
+        self,
+        params: dict,
+        current: LoadBalancerHealthCheckHttp | None,
     ) -> tuple[LoadBalancerHealthCheckHttp, bool]:
         changed = False
         result = LoadBalancerHealthCheckHttp()
@@ -453,7 +459,6 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
 
     def _update(self):
         changed = False
-
         params = {
             "listen_port": self.module.params.get("listen_port"),
         }
