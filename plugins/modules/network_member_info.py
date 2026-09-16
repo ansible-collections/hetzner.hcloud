@@ -146,9 +146,20 @@ class AnsibleNetworkMemberInfo(AnsibleHCloud):
         return AnsibleModule(
             argument_spec=dict(
                 network={"type": "str", "required": True},
-                type={"type": "list", "elements": "str"},
-                status={"type": "list", "elements": "str"},
-                subnet={"type": "list", "elements": "str"},
+                type={
+                    "type": "list",
+                    "elements": "str",
+                    "choices": ["server", "load_balancer"],
+                },
+                status={
+                    "type": "list",
+                    "elements": "str",
+                    "choices": ["ok", "attaching", "detaching", "updating", "error"],
+                },
+                subnet={
+                    "type": "list",
+                    "elements": "str",
+                },
                 **super().base_module_arguments(),
             ),
             supports_check_mode=True,
