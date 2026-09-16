@@ -1,0 +1,99 @@
+# Copyright: (c) 2026, Hetzner Cloud GmbH <info@hetzner-cloud.de>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Gather hcloud_network_member_info
+  hetzner.hcloud.network_member_info:
+    network: "{{ hcloud_network_name }}"
+  register: result
+- name: Verify hcloud_network_member_info
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_network_member_info | list | count == 1
+      - result.hcloud_network_member_info[0].id == test_server.hcloud_server.id
+      - result.hcloud_network_member_info[0].type == "server"
+      - result.hcloud_network_member_info[0].ip == "10.0.1.2"
+      - result.hcloud_network_member_info[0].alias_ips == ["10.0.1.4", "10.0.1.5"]
+      - result.hcloud_network_member_info[0].subnet == "10.0.1.0/24"
+      - result.hcloud_network_member_info[0].status == "ok"
+
+- name: Gather hcloud_network_member_info in check mode
+  hetzner.hcloud.network_member_info:
+    network: "{{ test_network.hcloud_network.id }}"
+  check_mode: true
+  register: result
+- name: Verify hcloud_network_member_info in check mode
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_network_member_info | list | count == 1
+
+- name: Gather hcloud_network_member_info with wrong network
+  hetzner.hcloud.network_member_info:
+    network: "4321"
+  ignore_errors: true
+  register: result
+- name: Verify hcloud_network_member_info with wrong network
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - result.failure.code == "not_found"
+      - result.failure.message == "entity not found"
+
+- name: Gather hcloud_network_member_info with type
+  hetzner.hcloud.network_member_info:
+    network: "{{ test_network.hcloud_network.id }}"
+    type: [server]
+  register: result
+- name: Verify hcloud_network_member_info with type
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_network_member_info | list | count == 1
+
+- name: Gather hcloud_network_member_info with other type
+  hetzner.hcloud.network_member_info:
+    network: "{{ test_network.hcloud_network.id }}"
+    type: [load_balancer]
+  register: result
+- name: Verify hcloud_network_member_info with other type
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_network_member_info | list | count == 0
+
+- name: Gather hcloud_network_member_info with status
+  hetzner.hcloud.network_member_info:
+    network: "{{ test_network.hcloud_network.id }}"
+    status: [ok]
+  register: result
+- name: Verify hcloud_network_member_info with status
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_network_member_info | list | count == 1
+
+- name: Gather hcloud_network_member_info with other status
+  hetzner.hcloud.network_member_info:
+    network: "{{ test_network.hcloud_network.id }}"
+    status: [error]
+  register: result
+- name: Verify hcloud_network_member_info with other status
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_network_member_info | list | count == 0
+
+- name: Gather hcloud_network_member_info with subnet
+  hetzner.hcloud.network_member_info:
+    network: "{{ test_network.hcloud_network.id }}"
+    status: [ok]
+  register: result
+- name: Verify hcloud_network_member_info with subnet
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_network_member_info | list | count == 1
+
+- name: Gather hcloud_network_member_info with other subnet
+  hetzner.hcloud.network_member_info:
+    network: "{{ test_network.hcloud_network.id }}"
+    status: [error]
+  register: result
+- name: Verify hcloud_network_member_info with other subnet
+  ansible.builtin.assert:
+    that:
+      - result.hcloud_network_member_info | list | count == 0
