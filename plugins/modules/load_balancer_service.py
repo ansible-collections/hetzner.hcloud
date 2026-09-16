@@ -437,9 +437,11 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
             params["destination_port"] = value
 
         if value := self.module.params.get("http"):
+            # pylint: disable=disallowed-name
             params["http"], _ = self._make_service_http(value, None)
 
         if value := self.module.params.get("health_check"):
+            # pylint: disable=disallowed-name
             params["health_check"], _ = self._make_service_health_check(value, None)
 
         if not self.module.check_mode:
