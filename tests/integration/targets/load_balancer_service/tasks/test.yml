@@ -163,6 +163,49 @@
       - result.hcloud_load_balancer_service.health_check.http.path == "/"
       - result.hcloud_load_balancer_service.health_check.http.status_codes | sort == ["2??", "3??"]
 
+- name: Test create with http idempotency
+  hetzner.hcloud.load_balancer_service:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    protocol: http
+    listen_port: 80
+    http:
+      cookie_name: keks
+      sticky_sessions: true
+    state: present
+  register: result
+- name: Verify create with http idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update with unchanged health_check
+  hetzner.hcloud.load_balancer_service:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    protocol: http
+    listen_port: 80
+    http:
+      cookie_name: keks
+      sticky_sessions: true
+    health_check:
+      protocol: http
+      port: 80
+      interval: 15
+      timeout: 10
+      retries: 3
+      http:
+        domain: ""
+        path: "/"
+        status_codes:
+          - "3??"
+          - "2??"
+        tls: false
+    state: present
+  register: result
+- name: Verify update with unchanged health_check
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
 - name: Test update with timeout_idle
   hetzner.hcloud.load_balancer_service:
     load_balancer: "{{ hcloud_load_balancer_name }}"
@@ -179,6 +222,22 @@
     that:
       - result is changed
       - result.hcloud_load_balancer_service.http.timeout_idle == 60
+
+- name: Test update with timeout_idle idempotency
+  hetzner.hcloud.load_balancer_service:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    protocol: http
+    listen_port: 80
+    http:
+      cookie_name: keks
+      sticky_sessions: true
+      timeout_idle: 60
+    state: present
+  register: result
+- name: Verify update with timeout_idle idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
 
 - name: Test delete with http
   hetzner.hcloud.load_balancer_service:
