@@ -251,12 +251,34 @@
       - result is changed
 
 # https://github.com/ansible-collections/hetzner.hcloud/issues/158
+# The API requires `health_check.protocol` and `health_check.port` whenever
+# `health_check` is set, but `interval`, `timeout` and `retries` are optional and
+# default on the API side. Omitting the optional ones must not cause them to be sent
+# as `null`, which the API rejects.
+- name: Test create with health_check missing port
+  hetzner.hcloud.load_balancer_service:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    protocol: http
+    listen_port: 8080
+    health_check:
+      retries: 3
+    state: present
+  ignore_errors: true
+  register: result
+- name: Verify create with health_check missing port
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - "result.msg == 'missing required arguments: port, protocol found in health_check'"
+
 - name: Test create with partial health_check
   hetzner.hcloud.load_balancer_service:
     load_balancer: "{{ hcloud_load_balancer_name }}"
     protocol: http
     listen_port: 8080
     health_check:
+      protocol: http
+      port: 8080
       http:
         status_codes:
           - "404"

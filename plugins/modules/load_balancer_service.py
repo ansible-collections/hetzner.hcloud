@@ -560,8 +560,9 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
                         protocol={
                             "type": "str",
                             "choices": ["http", "https", "tcp"],
+                            "required": True,
                         },
-                        port={"type": "int"},
+                        port={"type": "int", "required": True},
                         interval={"type": "int"},
                         timeout={"type": "int"},
                         retries={"type": "int"},

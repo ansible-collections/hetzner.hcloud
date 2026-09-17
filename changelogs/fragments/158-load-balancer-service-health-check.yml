@@ -1,2 +1,2 @@
 bugfixes:
-  - load_balancer_service - Fix ``health_check`` fields not explicitly set by the user being sent to the API as ``null``, causing the request to fail with ``invalid input in field 'health_check'``.
+  - load_balancer_service - Fix ``health_check`` optional fields (``interval``, ``timeout``, ``retries``) not explicitly set by the user being sent to the API as ``null``, causing the request to fail with ``invalid input in field 'health_check'``. Note that ``health_check.protocol`` and ``health_check.port`` are still required by the API whenever ``health_check`` is set.
