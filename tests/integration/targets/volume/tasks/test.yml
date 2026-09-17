@@ -26,6 +26,19 @@
       - result is failed
       - 'result.msg == "missing required arguments: size"'
 
+- name: test create Volume with non existing server
+  hetzner.hcloud.volume:
+    name: "{{hcloud_volume_name}}"
+    size: 10
+    server: "not-existing"
+  register: result
+  ignore_errors: true
+- name: verify fail test create Volume with non existing server
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "resource (server) does not exist: not-existing"'
+
 - name: test create Volume with check mode
   hetzner.hcloud.volume:
     name: "{{hcloud_volume_name}}"
@@ -76,6 +89,18 @@
     that:
       - volume is changed
       - volume.hcloud_volume.server != hcloud_server_name
+
+- name: test attach Volume to non existing server
+  hetzner.hcloud.volume:
+    name: "{{hcloud_volume_name}}"
+    server: "not-existing"
+  register: result
+  ignore_errors: true
+- name: verify fail test attach Volume to non existing server
+  assert:
+    that:
+      - result is failed
+      - 'result.msg == "resource (server) does not exist: not-existing"'
 
 - name: test attach Volume
   hetzner.hcloud.volume:
