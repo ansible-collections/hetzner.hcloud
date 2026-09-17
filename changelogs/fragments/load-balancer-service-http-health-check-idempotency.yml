@@ -1,0 +1,2 @@
+bugfixes:
+  - load_balancer_service - Fix the module always reporting a change when the ``http`` or ``health_check`` arguments were set, even when the current configuration already matched the desired state.

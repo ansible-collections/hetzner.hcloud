@@ -289,13 +289,13 @@ hcloud_load_balancer_service:
 
 from ansible.module_utils.basic import AnsibleModule
 
+from ..module_utils import _load_balancer_service
 from ..module_utils._base import AnsibleHCloud
 from ..module_utils._vendor.hcloud import APIException, HCloudException
-from ..module_utils._vendor.hcloud.certificates import BoundCertificate
 from ..module_utils._vendor.hcloud.load_balancers import (
     BoundLoadBalancer,
-    LoadBalancerHealtCheckHttp,
     LoadBalancerHealthCheck,
+    LoadBalancerHealthCheckHttp,
     LoadBalancerService,
     LoadBalancerServiceHttp,
 )
@@ -308,54 +308,127 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
     hcloud_load_balancer_service: LoadBalancerService | None = None
 
     def _prepare_result(self):
-        http = None
-        if self.hcloud_load_balancer_service.protocol != "tcp":
-            http = {
-                "cookie_name": self.hcloud_load_balancer_service.http.cookie_name,
-                "cookie_lifetime": self.hcloud_load_balancer_service.http.cookie_lifetime,
-                "redirect_http": self.hcloud_load_balancer_service.http.redirect_http,
-                "sticky_sessions": self.hcloud_load_balancer_service.http.sticky_sessions,
-                "timeout_idle": self.hcloud_load_balancer_service.http.timeout_idle,
-                "certificates": [
-                    certificate.name for certificate in self.hcloud_load_balancer_service.http.certificates
-                ],
-            }
-        health_check = {
-            "protocol": self.hcloud_load_balancer_service.health_check.protocol,
-            "port": self.hcloud_load_balancer_service.health_check.port,
-            "interval": self.hcloud_load_balancer_service.health_check.interval,
-            "timeout": self.hcloud_load_balancer_service.health_check.timeout,
-            "retries": self.hcloud_load_balancer_service.health_check.retries,
-        }
-        if self.hcloud_load_balancer_service.health_check.protocol != "tcp":
-            health_check["http"] = {
-                "domain": self.hcloud_load_balancer_service.health_check.http.domain,
-                "path": self.hcloud_load_balancer_service.health_check.http.path,
-                "response": self.hcloud_load_balancer_service.health_check.http.response,
-                "status_codes": self.hcloud_load_balancer_service.health_check.http.status_codes,
-                "tls": self.hcloud_load_balancer_service.health_check.http.tls,
-            }
         return {
             "load_balancer": self.hcloud_load_balancer.name,
-            "protocol": self.hcloud_load_balancer_service.protocol,
-            "listen_port": self.hcloud_load_balancer_service.listen_port,
-            "destination_port": self.hcloud_load_balancer_service.destination_port,
-            "proxyprotocol": self.hcloud_load_balancer_service.proxyprotocol,
-            "http": http,
-            "health_check": health_check,
+            **_load_balancer_service.prepare_result(self.hcloud_load_balancer_service),
         }
 
-    def _get_load_balancer(self):
-        try:
-            self.hcloud_load_balancer = self._client_get_by_name_or_id(
-                "load_balancers",
-                self.module.params.get("load_balancer"),
-            )
-            self._get_load_balancer_service()
-        except HCloudException as exception:
-            self.fail_json_hcloud(exception)
+    def _fetch(self):
+        self.hcloud_load_balancer = self._client_get_by_name_or_id(
+            "load_balancers",
+            self.module.params.get("load_balancer"),
+        )
 
-    def _create_load_balancer_service(self):
+        for service in self.hcloud_load_balancer.services:
+            if self.module.params.get("listen_port") == service.listen_port:
+                self.hcloud_load_balancer_service = service
+
+    def _make_service_http(
+        self,
+        params: dict,
+        current: LoadBalancerServiceHttp | None,
+    ) -> tuple[LoadBalancerServiceHttp, bool]:
+        changed = False
+        result = LoadBalancerServiceHttp()
+        if (wanted := params.get("cookie_name")) is not None:
+            if current is None or current.cookie_name != wanted:
+                result.cookie_name = wanted
+                changed = True
+        if (wanted := params.get("cookie_lifetime")) is not None:
+            if current is None or current.cookie_lifetime != wanted:
+                result.cookie_lifetime = wanted
+                changed = True
+        if (wanted := params.get("sticky_sessions")) is not None:
+            if current is None or current.sticky_sessions != wanted:
+                result.sticky_sessions = wanted
+                changed = True
+        if (wanted := params.get("redirect_http")) is not None:
+            if current is None or current.redirect_http != wanted:
+                result.redirect_http = wanted
+                changed = True
+        if (wanted := params.get("timeout_idle")) is not None:
+            if current is None or current.timeout_idle != wanted:
+                result.timeout_idle = wanted
+                changed = True
+        if (wanted := params.get("certificates")) is not None:
+            wanted_certificates = [
+                self._client_get_by_name_or_id(
+                    "certificates",
+                    id_or_name,
+                )
+                for id_or_name in wanted
+            ]
+            wanted_certificates_ids = sorted(o.id for o in wanted_certificates)
+            current_certificates_ids = sorted(o.id for o in current.certificates or [])
+            if current is None or current_certificates_ids != wanted_certificates_ids:
+                result.certificates = wanted_certificates
+                changed = True
+        return result, changed
+
+    def _make_service_health_check(
+        self,
+        params: dict,
+        current: LoadBalancerHealthCheck | None,
+    ) -> tuple[LoadBalancerHealthCheck, bool]:
+        changed = False
+        result = LoadBalancerHealthCheck()
+        if (wanted := params.get("protocol")) is not None:
+            if current is None or current.protocol != wanted:
+                result.protocol = wanted
+                changed = True
+        if (wanted := params.get("port")) is not None:
+            if current is None or current.port != wanted:
+                result.port = wanted
+                changed = True
+        if (wanted := params.get("interval")) is not None:
+            if current is None or current.interval != wanted:
+                result.interval = wanted
+                changed = True
+        if (wanted := params.get("timeout")) is not None:
+            if current is None or current.timeout != wanted:
+                result.timeout = wanted
+                changed = True
+        if (wanted := params.get("retries")) is not None:
+            if current is None or current.retries != wanted:
+                result.retries = wanted
+                changed = True
+        if (wanted := params.get("http")) is not None:
+            wanted_http, changed_http = self._make_service_health_check_http(wanted, current and current.http)
+            if current is None or changed_http:
+                result.http = wanted_http
+                changed = True
+        return result, changed
+
+    def _make_service_health_check_http(
+        self,
+        params: dict,
+        current: LoadBalancerHealthCheckHttp | None,
+    ) -> tuple[LoadBalancerHealthCheckHttp, bool]:
+        changed = False
+        result = LoadBalancerHealthCheckHttp()
+        if (wanted := params.get("domain")) is not None:
+            if current is None or current.domain != wanted:
+                result.domain = wanted
+                changed = True
+        if (wanted := params.get("path")) is not None:
+            if current is None or current.path != wanted:
+                result.path = wanted
+                changed = True
+        if (wanted := params.get("response")) is not None:
+            if current is None or current.response != wanted:
+                result.response = wanted
+                changed = True
+        if (wanted := params.get("status_codes")) is not None:
+            if current is None or current.status_codes != wanted:
+                result.status_codes = wanted
+                changed = True
+        if (wanted := params.get("tls")) is not None:
+            if current is None or current.tls != wanted:
+                result.tls = wanted
+                changed = True
+        return result, changed
+
+    def _create(self):
         self.module.fail_on_missing_params(required_params=["protocol"])
         if self.module.params.get("protocol") == "tcp":
             self.module.fail_on_missing_params(required_params=["destination_port"])
@@ -366,145 +439,95 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
             "proxyprotocol": self.module.params.get("proxyprotocol"),
         }
 
-        if self.module.params.get("destination_port"):
-            params["destination_port"] = self.module.params.get("destination_port")
+        if value := self.module.params.get("destination_port"):
+            params["destination_port"] = value
 
-        if self.module.params.get("http"):
-            params["http"] = self.__get_service_http(http_arg=self.module.params.get("http"))
+        if value := self.module.params.get("http"):
+            # pylint: disable=disallowed-name
+            params["http"], _ = self._make_service_http(value, None)
 
-        if self.module.params.get("health_check"):
-            params["health_check"] = self.__get_service_health_checks(
-                health_check=self.module.params.get("health_check")
-            )
+        if value := self.module.params.get("health_check"):
+            # pylint: disable=disallowed-name
+            params["health_check"], _ = self._make_service_health_check(value, None)
 
         if not self.module.check_mode:
-            try:
-                action = self.hcloud_load_balancer.add_service(LoadBalancerService(**params))
-                action.wait_until_finished()
-            except HCloudException as exception:
-                self.fail_json_hcloud(exception)
+            action = self.hcloud_load_balancer.add_service(LoadBalancerService(**params))
+            action.wait_until_finished()
+
         self._mark_as_changed()
-        self._get_load_balancer()
-        self._get_load_balancer_service()
+        self._fetch()
 
-    def __get_service_http(self, http_arg):
-        service_http = LoadBalancerServiceHttp(certificates=[])
-        if http_arg.get("cookie_name") is not None:
-            service_http.cookie_name = http_arg.get("cookie_name")
-        if http_arg.get("cookie_lifetime") is not None:
-            service_http.cookie_lifetime = http_arg.get("cookie_lifetime")
-        if http_arg.get("sticky_sessions") is not None:
-            service_http.sticky_sessions = http_arg.get("sticky_sessions")
-        if http_arg.get("redirect_http") is not None:
-            service_http.redirect_http = http_arg.get("redirect_http")
-        if http_arg.get("timeout_idle") is not None:
-            service_http.timeout_idle = http_arg.get("timeout_idle")
-        if http_arg.get("certificates") is not None:
-            certificates = http_arg.get("certificates")
-            if certificates is not None:
-                for certificate_id_or_name in certificates:
-                    certificate: BoundCertificate = self._client_get_by_name_or_id(
-                        "certificates",
-                        certificate_id_or_name,
-                    )
-                    service_http.certificates.append(certificate)
-
-        return service_http
-
-    def __get_service_health_checks(self, health_check):
-        service_health_check = LoadBalancerHealthCheck()
-        if health_check.get("protocol") is not None:
-            service_health_check.protocol = health_check.get("protocol")
-        if health_check.get("port") is not None:
-            service_health_check.port = health_check.get("port")
-        if health_check.get("interval") is not None:
-            service_health_check.interval = health_check.get("interval")
-        if health_check.get("timeout") is not None:
-            service_health_check.timeout = health_check.get("timeout")
-        if health_check.get("retries") is not None:
-            service_health_check.retries = health_check.get("retries")
-        if health_check.get("http") is not None:
-            health_check_http = health_check.get("http")
-            service_health_check.http = LoadBalancerHealtCheckHttp()
-            if health_check_http.get("domain") is not None:
-                service_health_check.http.domain = health_check_http.get("domain")
-            if health_check_http.get("path") is not None:
-                service_health_check.http.path = health_check_http.get("path")
-            if health_check_http.get("response") is not None:
-                service_health_check.http.response = health_check_http.get("response")
-            if health_check_http.get("status_codes") is not None:
-                service_health_check.http.status_codes = health_check_http.get("status_codes")
-            if health_check_http.get("tls") is not None:
-                service_health_check.http.tls = health_check_http.get("tls")
-
-        return service_health_check
-
-    def _update_load_balancer_service(self):
+    def _update(self):
         changed = False
-        try:
-            params = {
-                "listen_port": self.module.params.get("listen_port"),
-            }
+        params = {
+            "listen_port": self.module.params.get("listen_port"),
+        }
 
-            if self.module.params.get("destination_port") is not None:
-                if self.hcloud_load_balancer_service.destination_port != self.module.params.get("destination_port"):
-                    params["destination_port"] = self.module.params.get("destination_port")
-                    changed = True
-
-            if self.module.params.get("protocol") is not None:
-                if self.hcloud_load_balancer_service.protocol != self.module.params.get("protocol"):
-                    params["protocol"] = self.module.params.get("protocol")
-                    changed = True
-
-            if self.module.params.get("proxyprotocol") is not None:
-                if self.hcloud_load_balancer_service.proxyprotocol != self.module.params.get("proxyprotocol"):
-                    params["proxyprotocol"] = self.module.params.get("proxyprotocol")
-                    changed = True
-
-            if self.module.params.get("http") is not None:
-                params["http"] = self.__get_service_http(http_arg=self.module.params.get("http"))
+        if (wanted := self.module.params.get("destination_port")) is not None:
+            if self.hcloud_load_balancer_service.destination_port != wanted:
+                params["destination_port"] = wanted
                 changed = True
 
-            if self.module.params.get("health_check") is not None:
-                params["health_check"] = self.__get_service_health_checks(
-                    health_check=self.module.params.get("health_check")
-                )
+        if (wanted := self.module.params.get("protocol")) is not None:
+            if self.hcloud_load_balancer_service.protocol != wanted:
+                params["protocol"] = wanted
                 changed = True
 
-            if changed and not self.module.check_mode:
-                action = self.hcloud_load_balancer.update_service(LoadBalancerService(**params))
-                action.wait_until_finished()
-                self._get_load_balancer()
-        except HCloudException as exception:
-            self.fail_json_hcloud(exception)
+        if (wanted := self.module.params.get("proxyprotocol")) is not None:
+            if self.hcloud_load_balancer_service.proxyprotocol != wanted:
+                params["proxyprotocol"] = wanted
+                changed = True
+
+        if (wanted := self.module.params.get("http")) is not None:
+            wanted_http, changed_http = self._make_service_http(
+                wanted,
+                self.hcloud_load_balancer_service.http,
+            )
+            if changed_http:
+                params["http"] = wanted_http
+                changed = True
+
+        if (wanted := self.module.params.get("health_check")) is not None:
+            wanted_health_check, changed_health_check = self._make_service_health_check(
+                wanted,
+                self.hcloud_load_balancer_service.health_check,
+            )
+            if changed_health_check:
+                params["health_check"] = wanted_health_check
+                changed = True
+
+        if changed and not self.module.check_mode:
+            action = self.hcloud_load_balancer.update_service(LoadBalancerService(**params))
+            action.wait_until_finished()
+            self._fetch()
 
         if changed:
             self._mark_as_changed()
 
-    def _get_load_balancer_service(self):
-        for service in self.hcloud_load_balancer.services:
-            if self.module.params.get("listen_port") == service.listen_port:
-                self.hcloud_load_balancer_service = service
+    def _delete(self):
+        if not self.module.check_mode:
+            action = self.hcloud_load_balancer.delete_service(self.hcloud_load_balancer_service)
+            action.wait_until_finished()
+        self._mark_as_changed()
+        self.hcloud_load_balancer_service = None
 
-    def present_load_balancer_service(self):
-        self._get_load_balancer()
-        if self.hcloud_load_balancer_service is None:
-            self._create_load_balancer_service()
-        else:
-            self._update_load_balancer_service()
-
-    def delete_load_balancer_service(self):
+    def present(self):
         try:
-            self._get_load_balancer()
+            self._fetch()
+            if self.hcloud_load_balancer_service is None:
+                self._create()
+            else:
+                self._update()
+
+        except HCloudException as exception:
+            self.fail_json_hcloud(exception)
+
+    def absent(self):
+        try:
+            self._fetch()
             if self.hcloud_load_balancer_service is not None:
-                if not self.module.check_mode:
-                    try:
-                        action = self.hcloud_load_balancer.delete_service(self.hcloud_load_balancer_service)
-                        action.wait_until_finished()
-                    except HCloudException as exception:
-                        self.fail_json_hcloud(exception)
-                self._mark_as_changed()
-            self.hcloud_load_balancer_service = None
+                self._delete()
+
         except APIException as exception:
             self.fail_json_hcloud(exception)
 
@@ -570,9 +593,9 @@ def main():
     hcloud = AnsibleHCloudLoadBalancerService(module)
     state = module.params.get("state")
     if state == "absent":
-        hcloud.delete_load_balancer_service()
+        hcloud.absent()
     elif state == "present":
-        hcloud.present_load_balancer_service()
+        hcloud.present()
 
     module.exit_json(**hcloud.get_result())
 
