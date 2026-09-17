@@ -202,9 +202,9 @@ class AnsibleHCloudVolume(AnsibleHCloud):
             "labels": self.module.params.get("labels"),
         }
         if self.module.params.get("server") is not None:
-            params["server"] = self.client.servers.get_by_name(self.module.params.get("server"))
+            params["server"] = self._client_get_by_name_or_id("servers", self.module.params.get("server"))
         elif self.module.params.get("location") is not None:
-            params["location"] = self.client.locations.get_by_name(self.module.params.get("location"))
+            params["location"] = self._client_get_by_name_or_id("locations", self.module.params.get("location"))
         else:
             self.module.fail_json(msg="server or location is required")
 
@@ -212,7 +212,8 @@ class AnsibleHCloudVolume(AnsibleHCloud):
             try:
                 resp = self.client.volumes.create(**params)
                 resp.action.wait_until_finished()
-                [action.wait_until_finished() for action in resp.next_actions]
+                for action in resp.next_actions:
+                    action.wait_until_finished()
                 delete_protection = self.module.params.get("delete_protection")
                 if delete_protection is not None:
                     self._get_volume()
@@ -237,7 +238,7 @@ class AnsibleHCloudVolume(AnsibleHCloud):
 
             server_name = self.module.params.get("server")
             if server_name:
-                server = self.client.servers.get_by_name(server_name)
+                server = self._client_get_by_name_or_id("servers", server_name)
                 if self.hcloud_volume.server is None or self.hcloud_volume.server.name != server.name:
                     if not self.module.check_mode:
                         automount = self.module.params.get("automount", False)

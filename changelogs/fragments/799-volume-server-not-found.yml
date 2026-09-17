@@ -1,0 +1,2 @@
+bugfixes:
+  - volume - Fix misleading ``only one of server or location must be provided`` error being raised when the ``server`` or ``location`` given does not exist, instead of a clear error stating that the resource was not found.
