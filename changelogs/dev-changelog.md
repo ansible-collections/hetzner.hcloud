@@ -1,5 +1,21 @@
 # Changelog
 
+## [7.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/7.0.1...7.1.0) (2026-09-17)
+
+
+### Features
+
+* add hcloud_network_member_info module  ([#871](https://github.com/ansible-collections/hetzner.hcloud/issues/871)) ([57aa11f](https://github.com/ansible-collections/hetzner.hcloud/commit/57aa11fb36f6fc31873bc55e9e81329d31129a67))
+
+
+### Bug Fixes
+
+* **certificate:** fail when trying to change an existing uploaded certificate ([#876](https://github.com/ansible-collections/hetzner.hcloud/issues/876)) ([2849de4](https://github.com/ansible-collections/hetzner.hcloud/commit/2849de45bdd585748d9ff8f8f7e21e6e3f666af5))
+* **firewall:** allow updating using id without name ([#877](https://github.com/ansible-collections/hetzner.hcloud/issues/877)) ([bca62eb](https://github.com/ansible-collections/hetzner.hcloud/commit/bca62eb7aa5f0f04c440aaa94d0484cc473576c2))
+* **load_balancer_service:** idempotency with http or health_check arguments ([#870](https://github.com/ansible-collections/hetzner.hcloud/issues/870)) ([760071d](https://github.com/ansible-collections/hetzner.hcloud/commit/760071da85cdb43701883016e683a89effdace2d))
+* **load_balancer_service:** mark port and protocol as required in health_check argument ([#873](https://github.com/ansible-collections/hetzner.hcloud/issues/873)) ([46607f1](https://github.com/ansible-collections/hetzner.hcloud/commit/46607f1d6e33779b385e60cdb6b05c29698b174f))
+* **volume:** misleading error when given server does not exists ([#875](https://github.com/ansible-collections/hetzner.hcloud/issues/875)) ([971b3b8](https://github.com/ansible-collections/hetzner.hcloud/commit/971b3b86868388c76116f43ba033fe32e47cb90f))
+
 ## [7.0.1](https://github.com/ansible-collections/hetzner.hcloud/compare/7.0.0...7.0.1) (2026-09-11)
 
 
