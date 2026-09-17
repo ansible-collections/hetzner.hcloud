@@ -112,7 +112,7 @@
       - result is changed
       - result.hcloud_certificate.name == hcloud_certificate_name
 
-- name: test update certificate content
+- name: test update certificate content fails
   hetzner.hcloud.certificate:
     id: "{{ certificate.hcloud_certificate.id }}"
     # We are testing the local validation, the certificate must not be valid.
