@@ -181,6 +181,34 @@
     that:
       - result is not changed
 
+- name: Test update idempotency with id only
+  hetzner.hcloud.firewall:
+    id: "{{ result.hcloud_firewall.id }}"
+    rules:
+      - description: allow icmp in
+        direction: in
+        protocol: icmp
+        source_ips: ["0.0.0.0/0", "::/0"]
+      - description: allow http in
+        direction: in
+        protocol: tcp
+        port: 80
+        source_ips: ["0.0.0.0/0", "::/0"]
+      - description: allow http out
+        direction: out
+        protocol: tcp
+        port: 80
+        destination_ips: ["0.0.0.0/0", "::/0"]
+    labels:
+      key: value
+      label: label
+  register: result
+- name: Verify update idempotency with id only
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+      - result.hcloud_firewall.name == hcloud_firewall_name
+
 - name: Test update name
   hetzner.hcloud.firewall:
     id: "{{ result.hcloud_firewall.id }}"
