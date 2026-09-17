@@ -4,6 +4,18 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v7.1.0
+======
+
+Bugfixes
+--------
+
+- certificate - Fail with a clear error message when trying to change the ``certificate`` or ``private_key`` of an existing uploaded certificate, instead of silently reporting no change. The Hetzner Cloud API does not support updating these fields in place.
+- firewall - Fix ``state is present but all of the following are missing: name`` error being raised when the ``id`` is given.
+- load_balancer_service - Fix ``health_check`` optional fields (``interval``, ``timeout``, ``retries``) not explicitly set by the user being sent to the API as ``null``, causing the request to fail with ``invalid input in field 'health_check'``. Note that ``health_check.protocol`` and ``health_check.port`` are still required by the API whenever ``health_check`` is set.
+- load_balancer_service - Fix the module always reporting a change when the ``http`` or ``health_check`` arguments were set, even when the current configuration already matched the desired state.
+- volume - Fix misleading ``only one of server or location must be provided`` error being raised when the ``server`` or ``location`` given does not exist, instead of a clear error stating that the resource was not found.
+
 v7.0.1
 ======
 

@@ -1,2 +1,0 @@
-bugfixes:
-  - certificate - Fail with a clear error message when trying to change the ``certificate`` or ``private_key`` of an existing uploaded certificate, instead of silently reporting no change. The Hetzner Cloud API does not support updating these fields in place.

@@ -1,2 +1,0 @@
-bugfixes:
-  - "firewall - Fix ``state is present but all of the following are missing: name`` error being raised when the ``id`` is given."
