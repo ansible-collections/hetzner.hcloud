@@ -1,0 +1,37 @@
+---
+- name: Create test_network
+  hetzner.hcloud.network:
+    name: "{{ hcloud_network_name }}"
+    ip_range: 10.0.0.0/16
+    labels:
+      key: value
+  register: test_network
+
+- name: Create test_subnetwork
+  hetzner.hcloud.subnetwork:
+    network: "{{ hcloud_network_name }}"
+    type: cloud
+    network_zone: "{{ hcloud_network_zone_name }}"
+    ip_range: 10.0.1.0/24
+  register: test_subnetwork
+
+- name: Create test_server
+  hetzner.hcloud.server:
+    name: "{{ hcloud_server_name }}"
+    server_type: "{{ hcloud_server_type_name }}"
+    image: "{{ hcloud_image_name }}"
+    location: "{{ hcloud_location_name }}"
+    state: created
+    enable_ipv4: false
+    enable_ipv6: false
+  register: test_server
+
+- name: Attach test_server to test_network
+  hetzner.hcloud.server_network:
+    server: "{{ hcloud_server_name }}"
+    network: "{{ hcloud_network_name }}"
+    ip: "10.0.1.2"
+    alias_ips:
+      - "10.0.1.4"
+      - "10.0.1.5"
+    state: present
