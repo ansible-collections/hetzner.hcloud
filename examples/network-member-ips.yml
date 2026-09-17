@@ -1,0 +1,60 @@
+---
+- name: Demonstrate listing members of a network
+  hosts: localhost
+  connection: local
+
+  vars:
+    network_name: my-network
+    server_name: my-server
+
+  tasks:
+    - name: Create network
+      hetzner.hcloud.network:
+        name: "{{ network_name }}"
+        ip_range: 10.0.0.0/16
+        labels:
+          key: value
+
+    - name: Create subnetwork
+      hetzner.hcloud.subnetwork:
+        network: "{{ network_name }}"
+        type: cloud
+        network_zone: eu-central
+        ip_range: 10.0.1.0/24
+
+    - name: Create server
+      hetzner.hcloud.server:
+        name: "{{ server_name }}"
+        server_type: cpx12
+        image: debian-13
+        location: hel1
+        state: created
+        enable_ipv4: false
+        enable_ipv6: false
+
+    - name: Attach server to network
+      hetzner.hcloud.server_network:
+        server: "{{ server_name }}"
+        network: "{{ network_name }}"
+        ip: "10.0.1.2"
+        alias_ips:
+          - "10.0.1.4"
+          - "10.0.1.5"
+        state: present
+
+    - name: Gather network member infos
+      hetzner.hcloud.network_member_info:
+        network: "{{ network_name }}"
+      register: result
+
+    - name: Collect all network member ips
+      ansible.builtin.set_fact:
+        network_ips: >
+          {{
+            result.hcloud_network_member_info | map(attribute='ip') +
+            result.hcloud_network_member_info | map(attribute='alias_ips') | flatten
+          }}
+
+    - name: Print all network member ips
+      debug:
+        var: network_ips

@@ -50,6 +50,7 @@ extends_documentation_fragment:
 EXAMPLES = """
 - name: Gather Network Member infos
   hetzner.hcloud.network_member_info:
+    network: my-network
     type: [server, load_balancer]
     status: [ok, attaching, detaching, updating, error]
     subnet: [10.0.1.0/24]
@@ -58,6 +59,18 @@ EXAMPLES = """
 - name: Print the gathered infos
   debug:
     var: output.hcloud_network_member_info
+
+- name: Collect all Network Member ips
+  ansible.builtin.set_fact:
+  network_ips: >
+    {{
+      output.hcloud_network_member_info | map(attribute='ip') +
+      output.hcloud_network_member_info | map(attribute='alias_ips') | flatten
+    }}
+
+- name: Print all Network Member ips
+  debug:
+    var: network_ips
 """
 
 RETURN = """
