@@ -112,6 +112,20 @@
       - result is changed
       - result.hcloud_certificate.name == hcloud_certificate_name
 
+- name: test update certificate content fails
+  hetzner.hcloud.certificate:
+    id: "{{ certificate.hcloud_certificate.id }}"
+    # We are testing the local validation, the certificate must not be valid.
+    certificate: "{{ test_certificate_content }}-changed"
+    private_key: "{{ test_certificate_privatekey_content }}-changed"
+  register: result
+  ignore_errors: true
+- name: verify update certificate content fails
+  assert:
+    that:
+      - result is failed
+      - "'cannot be changed' in result.msg"
+
 - name: absent certificate
   hetzner.hcloud.certificate:
     id: "{{ certificate.hcloud_certificate.id }}"
