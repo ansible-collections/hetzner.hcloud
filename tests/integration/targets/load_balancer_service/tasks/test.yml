@@ -255,7 +255,7 @@
 # `health_check` is set, but `interval`, `timeout` and `retries` are optional and
 # default on the API side. Omitting the optional ones must not cause them to be sent
 # as `null`, which the API rejects.
-- name: Test create with health_check missing port
+- name: Test create with health_check missing port # noqa: args[module]
   hetzner.hcloud.load_balancer_service:
     load_balancer: "{{ hcloud_load_balancer_name }}"
     protocol: http
