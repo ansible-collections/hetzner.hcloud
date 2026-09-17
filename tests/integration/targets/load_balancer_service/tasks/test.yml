@@ -249,3 +249,64 @@
   ansible.builtin.assert:
     that:
       - result is changed
+
+# https://github.com/ansible-collections/hetzner.hcloud/issues/158
+# The API requires `health_check.protocol` and `health_check.port` whenever
+# `health_check` is set, but `interval`, `timeout` and `retries` are optional and
+# default on the API side. Omitting the optional ones must not cause them to be sent
+# as `null`, which the API rejects.
+- name: Test create with health_check missing port # noqa: args[module]
+  hetzner.hcloud.load_balancer_service:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    protocol: http
+    listen_port: 8080
+    health_check:
+      retries: 3
+    state: present
+  ignore_errors: true
+  register: result
+- name: Verify create with health_check missing port
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - "result.msg == 'missing required arguments: port, protocol found in health_check'"
+
+- name: Test create with partial health_check
+  hetzner.hcloud.load_balancer_service:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    protocol: http
+    listen_port: 8080
+    health_check:
+      protocol: http
+      port: 8080
+      http:
+        status_codes:
+          - "404"
+        tls: false
+    state: present
+  register: result
+- name: Verify create with partial health_check
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_load_balancer_service.load_balancer == hcloud_load_balancer_name
+      - result.hcloud_load_balancer_service.listen_port == 8080
+      - result.hcloud_load_balancer_service.protocol == "http"
+      - result.hcloud_load_balancer_service.health_check.protocol == "http"
+      - result.hcloud_load_balancer_service.health_check.port == 8080
+      - result.hcloud_load_balancer_service.health_check.interval == 15
+      - result.hcloud_load_balancer_service.health_check.retries == 3
+      - result.hcloud_load_balancer_service.health_check.timeout == 10
+      - result.hcloud_load_balancer_service.health_check.http.status_codes == ["404"]
+      - result.hcloud_load_balancer_service.health_check.http.tls == false
+
+- name: Test delete with partial health_check
+  hetzner.hcloud.load_balancer_service:
+    load_balancer: "{{ hcloud_load_balancer_name }}"
+    listen_port: 8080
+    state: absent
+  register: result
+- name: Verify delete with partial health_check
+  ansible.builtin.assert:
+    that:
+      - result is changed

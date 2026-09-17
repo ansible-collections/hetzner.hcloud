@@ -88,10 +88,12 @@ options:
                     - Protocol the health checks will be performed over
                 type: str
                 choices: [ http, https, tcp ]
+                required: true
             port:
                 description:
                     - Port the health check will be performed on
                 type: int
+                required: true
             interval:
                 description:
                     - Interval of health checks, in seconds
@@ -560,8 +562,9 @@ class AnsibleHCloudLoadBalancerService(AnsibleHCloud):
                         protocol={
                             "type": "str",
                             "choices": ["http", "https", "tcp"],
+                            "required": True,
                         },
-                        port={"type": "int"},
+                        port={"type": "int", "required": True},
                         interval={"type": "int"},
                         timeout={"type": "int"},
                         retries={"type": "int"},
