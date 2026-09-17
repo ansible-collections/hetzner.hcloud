@@ -38,11 +38,15 @@ options:
         description:
             - Certificate and chain in PEM format, in order so that each record directly certifies the one preceding.
             - Required if certificate does not exist and I(type=uploaded).
+            - The certificate and I(private_key) of an existing uploaded certificate cannot be changed. To rotate a
+              certificate, delete it and create a new one.
         type: str
     private_key:
         description:
             - Certificate key in PEM format.
             - Required if certificate does not exist and I(type=uploaded).
+            - The certificate and I(private_key) of an existing uploaded certificate cannot be changed. To rotate a
+              certificate, delete it and create a new one.
         type: str
     domain_names:
         description:
@@ -225,6 +229,17 @@ class AnsibleHCloudCertificate(AnsibleHCloud):
                 if not self.module.check_mode:
                     self.hcloud_certificate.update(labels=labels)
                 self._mark_as_changed()
+
+            if self.hcloud_certificate.type == "uploaded":
+                certificate = self.module.params.get("certificate")
+                if certificate is not None and self.hcloud_certificate.certificate != certificate:
+                    self.module.fail_json(
+                        msg=(
+                            "The certificate and private_key of an uploaded certificate cannot be changed "
+                            "after creation. Delete the certificate and create a new one instead."
+                        )
+                    )
+
         except HCloudException as exception:
             self.fail_json_hcloud(exception)
         self._get_certificate()
@@ -268,7 +283,6 @@ class AnsibleHCloudCertificate(AnsibleHCloud):
                 **super().base_module_arguments(),
             ),
             required_one_of=[["id", "name"]],
-            required_if=[["state", "present", ["name"]]],
             supports_check_mode=True,
         )
 
