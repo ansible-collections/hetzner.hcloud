@@ -426,7 +426,6 @@ class AnsibleHCloudFirewall(AnsibleHCloud):
                 **super().base_module_arguments(),
             ),
             required_one_of=[["id", "name"]],
-            required_if=[["state", "present", ["name"]]],
             supports_check_mode=True,
         )
 
