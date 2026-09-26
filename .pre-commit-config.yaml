@@ -21,7 +21,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/jooola/pre-commit-prettier
-    rev: 3.9.6
+    rev: 3.9.8
     hooks:
       - id: prettier
         files: \.(md|ya?ml)$
