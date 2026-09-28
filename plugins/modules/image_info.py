@@ -90,6 +90,27 @@ hcloud_image_info:
             returned: always
             type: str
             sample: Ubuntu 18.04 Standard 64 bit
+        deprecation:
+            description: |
+                Describes if, when and how the resource is deprecated.
+                If this field is set to null the resource is not deprecated. If a value is set, it is considered deprecated.
+            returned: when deprecated
+            type: dict
+            contains:
+                announced:
+                    description: Date of the deprecation announcement.
+                    returned: when deprecated
+                    type: str
+                    sample: "2023-09-28T00:00:00Z"
+                unavailable_after:
+                    description: |
+                        Date of the deprecated resource removal.
+                        Once this date is reached, the resource will not be returned by resource type "list" endpoint,
+                        and the resource can not be used to create new resources. For example, if this is an image,
+                        you can not create new servers with this image after the mentioned date.
+                    returned: when deprecated
+                    type: str
+                    sample: "2026-09-28T00:00:00Z"
         os_flavor:
             description: OS flavor of the image
             returned: always
@@ -137,6 +158,14 @@ class AnsibleHCloudImageInfo(AnsibleHCloud):
                     "type": image.type,
                     "name": image.name,
                     "description": image.description,
+                    "deprecation": (
+                        {
+                            "announced": image.deprecation.announced.isoformat(),
+                            "unavailable_after": image.deprecation.unavailable_after.isoformat(),
+                        }
+                        if image.deprecation is not None
+                        else None
+                    ),
                     "os_flavor": image.os_flavor,
                     "os_version": image.os_version,
                     "architecture": image.architecture,

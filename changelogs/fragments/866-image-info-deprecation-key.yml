@@ -1,0 +1,2 @@
+minor_changes:
+  - image_info - Added the Image ``deprecation`` object to the return values (``hcloud_image_info[].deprecation``).
