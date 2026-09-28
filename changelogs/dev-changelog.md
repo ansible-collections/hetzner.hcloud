@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/7.1.0...7.2.0) (2026-09-28)
+
+
+### Features
+
+* **image_info:** return `deprecation` key for images ([#879](https://github.com/ansible-collections/hetzner.hcloud/issues/879)) ([8c173f5](https://github.com/ansible-collections/hetzner.hcloud/commit/8c173f51f3a28ef8be1a9bf56fdddef02b174dd2))
+
 ## [7.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/7.0.1...7.1.0) (2026-09-17)
 
 

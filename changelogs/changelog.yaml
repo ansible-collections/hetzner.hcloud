@@ -1232,3 +1232,10 @@ releases:
     - 799-volume-server-not-found.yml
     - load-balancer-service-http-health-check-idempotency.yml
     release_date: '2026-09-17'
+  7.2.0:
+    changes:
+      minor_changes:
+      - image_info - Added the Image ``deprecation`` object to the return values (``hcloud_image_info[].deprecation``).
+    fragments:
+    - 866-image-info-deprecation-key.yml
+    release_date: '2026-09-28'

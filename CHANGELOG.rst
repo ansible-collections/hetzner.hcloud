@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v7.2.0
+======
+
+Minor Changes
+-------------
+
+- image_info - Added the Image ``deprecation`` object to the return values (``hcloud_image_info[].deprecation``).
+
 v7.1.0
 ======
 
