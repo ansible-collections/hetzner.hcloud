@@ -3,3 +3,18 @@
   hetzner.hcloud.load_balancer:
     name: "{{ hcloud_load_balancer_name }}"
     state: absent
+
+- name: Cleanup test_primary_ipv4
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ipv4_name }}"
+    state: absent
+
+- name: Cleanup test_primary_ipv6
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ipv6_name }}"
+    state: absent
+
+- name: Cleanup test_primary_ipv6_alt
+  hetzner.hcloud.primary_ip:
+    name: "{{ hcloud_primary_ipv6_alt_name }}"
+    state: absent

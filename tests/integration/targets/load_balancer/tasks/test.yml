@@ -143,3 +143,75 @@
   ansible.builtin.assert:
     that:
       - result is changed
+
+- name: Test create with public_net
+  hetzner.hcloud.load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    load_balancer_type: lb11
+    location: "{{ hcloud_location_name }}"
+    public_net:
+      ipv4: "{{ hcloud_primary_ipv4_name }}"
+      ipv6: "{{ hcloud_primary_ipv6_name }}"
+    state: present
+  register: result
+- name: Verify create with public_net
+  ansible.builtin.assert:
+    that:
+      - result is changed
+      - result.hcloud_load_balancer.name == hcloud_load_balancer_name
+      - result.hcloud_load_balancer.public_net.ipv4.primary_ip == test_primary_ipv4.hcloud_primary_ip.id
+      - result.hcloud_load_balancer.public_net.ipv4.ip_address == test_primary_ipv4.hcloud_primary_ip.ip
+      - result.hcloud_load_balancer.public_net.ipv6.primary_ip == test_primary_ipv6.hcloud_primary_ip.id
+      - >
+        result.hcloud_load_balancer.public_net.ipv6.ip_address == (
+          test_primary_ipv6.hcloud_primary_ip.ip
+          | ansible.utils.ipaddr('1')
+          | ansible.utils.ipaddr('address')
+        )
+      - result.hcloud_load_balancer.ipv4_address == test_primary_ipv4.hcloud_primary_ip.ip
+      - >
+        result.hcloud_load_balancer.ipv6_address == (
+          test_primary_ipv6.hcloud_primary_ip.ip
+          | ansible.utils.ipaddr('1')
+          | ansible.utils.ipaddr('address')
+        )
+
+- name: Test create with public_net idempotency
+  hetzner.hcloud.load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    load_balancer_type: lb11
+    location: "{{ hcloud_location_name }}"
+    public_net:
+      ipv4: "{{ hcloud_primary_ipv4_name }}"
+      ipv6: "{{ hcloud_primary_ipv6_name }}"
+    state: present
+  register: result
+- name: Verify create with public_net idempotency
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+
+- name: Test update public_net.ipv6 is ignored with a warning
+  hetzner.hcloud.load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    public_net:
+      ipv6: "{{ hcloud_primary_ipv6_alt_name }}"
+    state: present
+  register: result
+- name: Verify update public_net.ipv6 is ignored with a warning
+  ansible.builtin.assert:
+    that:
+      - result is not changed
+      - result.hcloud_load_balancer.public_net.ipv6.primary_ip == test_primary_ipv6.hcloud_primary_ip.id
+      - result.warnings is defined
+      - result.warnings | count == 1
+
+- name: Test delete with public_net
+  hetzner.hcloud.load_balancer:
+    name: "{{ hcloud_load_balancer_name }}"
+    state: absent
+  register: result
+- name: Verify delete with public_net
+  ansible.builtin.assert:
+    that:
+      - result is changed
