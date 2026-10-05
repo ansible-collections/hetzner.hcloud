@@ -60,6 +60,19 @@ options:
             - Disables the public interface.
         type: bool
         default: False
+    public_net:
+        description:
+            - Public network configuration for the Load Balancer.
+        type: dict
+        suboptions:
+            ipv4:
+                description:
+                    - ID or name of an existing Hetzner Cloud Primary IPv4 for the Load Balancer.
+                type: str
+            ipv6:
+                description:
+                    - ID or name of an existing Hetzner Cloud Primary IPv6 for the Load Balancer.
+                type: str
     delete_protection:
         description:
             - Protect the Load Balancer for deletion.
@@ -81,6 +94,16 @@ EXAMPLES = """
     load_balancer_type: lb11
     algorithm: round_robin
     location: fsn1
+    state: present
+
+- name: Create a Load Balancer from existing Primary IPs
+  hetzner.hcloud.load_balancer:
+    name: my-Load Balancer
+    load_balancer_type: lb11
+    location: fsn1
+    public_net:
+      ipv4: my-primary-ipv4
+      ipv6: my-primary-ipv6
     state: present
 
 - name: Ensure the Load Balancer is absent (remove if needed)
@@ -131,6 +154,61 @@ hcloud_load_balancer:
             returned: always
             type: str
             sample: fsn1
+        public_net:
+            description: Public network configuration of the Load Balancer.
+            returned: always
+            type: dict
+            contains:
+                ipv4:
+                    description: Public IPv4 configuration
+                    returned: always
+                    type: dict
+                    contains:
+                        primary_ip:
+                            description: ID of the Primary IP assigned to the Load Balancer.
+                            returned: when assigned
+                            type: int
+                            sample: 8573930
+                        blocked:
+                            description: Whether the IP is blocked by our abuse department.
+                            returned: always
+                            type: bool
+                            sample: false
+                        ip_address:
+                            description: Public IPv4 address of the Load Balancer.
+                            returned: always
+                            type: str
+                            sample: 116.203.104.109
+                        dns_ptr:
+                            description: Reverse DNS PTR entry for the IPv4 address of the Load Balancer.
+                            returned: always
+                            type: str
+                            sample: lb1.example.com
+                ipv6:
+                    description: Public IPv6 configuration
+                    returned: always
+                    type: dict
+                    contains:
+                        primary_ip:
+                            description: ID of the Primary IP assigned to the Load Balancer.
+                            returned: when assigned
+                            type: int
+                            sample: 8573930
+                        blocked:
+                            description: Whether the IP is blocked by our abuse department.
+                            returned: always
+                            type: bool
+                            sample: false
+                        ip_address:
+                            description: Public IPv6 address of the Load Balancer.
+                            returned: always
+                            type: str
+                            sample: 2a01:4f8:1c1c:c140::1
+                        dns_ptr:
+                            description: Reverse DNS PTR entry for the IPv6 address of the Load Balancer.
+                            returned: always
+                            type: str
+                            sample: lb1.example.com
         labels:
             description: User-defined labels (key-value pairs)
             returned: always
@@ -149,12 +227,14 @@ hcloud_load_balancer:
 
 from ansible.module_utils.basic import AnsibleModule
 
+from ..module_utils import _load_balancer
 from ..module_utils._base import AnsibleHCloud
 from ..module_utils._deprecation import deprecated_load_balancer_type_warning
 from ..module_utils._vendor.hcloud import HCloudException
 from ..module_utils._vendor.hcloud.load_balancers import (
     BoundLoadBalancer,
     LoadBalancerAlgorithm,
+    LoadBalancerCreatePublicNetwork,
 )
 
 
@@ -164,21 +244,7 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
     hcloud_load_balancer: BoundLoadBalancer | None = None
 
     def _prepare_result(self):
-        return {
-            "id": self.hcloud_load_balancer.id,
-            "name": self.hcloud_load_balancer.name,
-            "ipv4_address": self.hcloud_load_balancer.public_net.ipv4.ip,
-            "ipv6_address": self.hcloud_load_balancer.public_net.ipv6.ip,
-            "private_ipv4_address": (
-                self.hcloud_load_balancer.private_net[0].ip if len(self.hcloud_load_balancer.private_net) else None
-            ),
-            "load_balancer_type": self.hcloud_load_balancer.load_balancer_type.name,
-            "algorithm": self.hcloud_load_balancer.algorithm.type,
-            "location": self.hcloud_load_balancer.location.name,
-            "labels": self.hcloud_load_balancer.labels,
-            "delete_protection": self.hcloud_load_balancer.protection["delete"],
-            "disable_public_interface": not self.hcloud_load_balancer.public_net.enabled,
-        }
+        return _load_balancer.prepare_result(self.hcloud_load_balancer)
 
     def _get_load_balancer(self):
         try:
@@ -205,6 +271,14 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
 
             deprecated_load_balancer_type_warning(self.module, load_balancer_type)
 
+            if (value := self.module.params.get("public_net")) is not None:
+                public_net = LoadBalancerCreatePublicNetwork()
+                if (id_or_name := value.get("ipv4")) is not None:
+                    public_net.ipv4 = self._client_get_by_name_or_id("primary_ips", id_or_name)
+                if (id_or_name := value.get("ipv6")) is not None:
+                    public_net.ipv6 = self._client_get_by_name_or_id("primary_ips", id_or_name)
+                params["public_net"] = public_net
+
             if self.module.params.get("location") is None and self.module.params.get("network_zone") is None:
                 self.module.fail_json(msg="one of the following is required: location, network_zone")
             elif self.module.params.get("location") is not None and self.module.params.get("network_zone") is None:
@@ -228,6 +302,23 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
 
     def _update_load_balancer(self):
         try:
+            if (value := self.module.params.get("public_net")) is not None:
+                if (id_or_name := value.get("ipv4")) is not None:
+                    ipv4 = self._client_get_by_name_or_id("primary_ips", id_or_name)
+                    if self.hcloud_load_balancer.public_net.ipv4.primary_ip.id != ipv4.id:
+                        self.module.warn(
+                            "The public IPv4 'public_net.ipv4' of the Load Balancer cannot be "
+                            "changed without deleting the Load Balancer, ignoring.."
+                        )
+
+                if (id_or_name := value.get("ipv6")) is not None:
+                    ipv6 = self._client_get_by_name_or_id("primary_ips", id_or_name)
+                    if self.hcloud_load_balancer.public_net.ipv6.primary_ip.id != ipv6.id:
+                        self.module.warn(
+                            "The public IPv6 'public_net.ipv6' of the Load Balancer cannot be "
+                            "changed without deleting the Load Balancer, ignoring.."
+                        )
+
             labels = self.module.params.get("labels")
             if labels is not None and labels != self.hcloud_load_balancer.labels:
                 if not self.module.check_mode:
@@ -293,7 +384,8 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
             self._get_load_balancer()
             if self.hcloud_load_balancer is not None:
                 if not self.module.check_mode:
-                    self.client.load_balancers.delete(self.hcloud_load_balancer)
+                    result = self.client.load_balancers.delete(self.hcloud_load_balancer)
+                    result.action.wait_until_finished()
                 self._mark_as_changed()
             self.hcloud_load_balancer = None
         except HCloudException as exception:
@@ -312,6 +404,13 @@ class AnsibleHCloudLoadBalancer(AnsibleHCloud):
                 labels={"type": "dict"},
                 delete_protection={"type": "bool"},
                 disable_public_interface={"type": "bool", "default": False},
+                public_net={
+                    "type": "dict",
+                    "options": dict(
+                        ipv4={"type": "str"},
+                        ipv6={"type": "str"},
+                    ),
+                },
                 state={
                     "choices": ["absent", "present"],
                     "default": "present",
