@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/7.1.0...7.2.0) (2026-10-05)
+
+
+### Features
+
+* **image_info:** return `deprecation` key for images ([#879](https://github.com/ansible-collections/hetzner.hcloud/issues/879)) ([8c173f5](https://github.com/ansible-collections/hetzner.hcloud/commit/8c173f51f3a28ef8be1a9bf56fdddef02b174dd2))
+* **load_balancer:** allow creating load balancers with primary ips ([#885](https://github.com/ansible-collections/hetzner.hcloud/issues/885)) ([939eaed](https://github.com/ansible-collections/hetzner.hcloud/commit/939eaed42278f4cb027633f4ae2eee4950d9df69))
+
 ## [7.1.0](https://github.com/ansible-collections/hetzner.hcloud/compare/7.0.1...7.1.0) (2026-09-17)
 
 
