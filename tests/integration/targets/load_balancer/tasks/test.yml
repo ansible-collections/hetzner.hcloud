@@ -162,9 +162,19 @@
       - result.hcloud_load_balancer.public_net.ipv4.primary_ip == test_primary_ipv4.hcloud_primary_ip.id
       - result.hcloud_load_balancer.public_net.ipv4.ip_address == test_primary_ipv4.hcloud_primary_ip.ip
       - result.hcloud_load_balancer.public_net.ipv6.primary_ip == test_primary_ipv6.hcloud_primary_ip.id
-      - result.hcloud_load_balancer.public_net.ipv6.ip_address == test_primary_ipv6.hcloud_primary_ip.ip | ansible.utils.ipaddr('1') | ansible.utils.ipaddr('address')
+      - >
+        result.hcloud_load_balancer.public_net.ipv6.ip_address == (
+          test_primary_ipv6.hcloud_primary_ip.ip
+          | ansible.utils.ipaddr('1')
+          | ansible.utils.ipaddr('address')
+        )
       - result.hcloud_load_balancer.ipv4_address == test_primary_ipv4.hcloud_primary_ip.ip
-      - result.hcloud_load_balancer.ipv6_address == test_primary_ipv6.hcloud_primary_ip.ip | ansible.utils.ipaddr('1') | ansible.utils.ipaddr('address')
+      - >
+        result.hcloud_load_balancer.ipv6_address == (
+          test_primary_ipv6.hcloud_primary_ip.ip
+          | ansible.utils.ipaddr('1')
+          | ansible.utils.ipaddr('address')
+        )
 
 - name: Test create with public_net idempotency
   hetzner.hcloud.load_balancer:
