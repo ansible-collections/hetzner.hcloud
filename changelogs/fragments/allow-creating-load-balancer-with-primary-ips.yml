@@ -1,0 +1,25 @@
+minor_changes:
+  - load_balancer - Added the `public_net.ipv4` and `public_net.ipv6` arguments to the Load Balancer module.
+  - load_balancer - Added the `public_net.ipv4` and `public_net.ipv6` return values (``hcloud_load_balancer.public_net.ipv4`` and ``hcloud_load_balancer.public_net.ipv6``).
+  - load_balancer_info - Added the `public_net.ipv4` and `public_net.ipv6` return values (``hcloud_load_balancer_info[].public_net.ipv4`` and ``hcloud_load_balancer_info[].public_net.ipv6``).
+release_summary: |
+  Primary IPs, which were previously available exclusively for Servers,
+  are now also available for Load Balancers. When creating a Load
+  Balancer, you can assign an `existing Primary
+  IP <https://docs.hetzner.cloud/reference/cloud#tag/primary-ips/list_primary_ips>`__
+  instead of having an IP address allocated automatically. Currently, you
+  cannot change the Primary IP once the Load Balancer has been created.
+
+  To support this change, we added the following attributes to the ``load_balancer`` module:
+
+  - ``public_net.ipv4``: Name or id of an IPv4 Primary IP to assign to the Load Balancer.
+  - ``public_net.ipv6``: Name or id of an IPv6 Primary IP to assign to the Load Balancer.
+
+  If you omit a property, a new Primary IP of that version is allocated
+  for the Load Balancer, as before.
+
+  A Primary IP can currently only be assigned when the Load Balancer is
+  created. It stays assigned for the entire lifetime of the Load Balancer.
+
+  Related to
+  https://docs.hetzner.cloud/changelog#2026-10-05-load-balancers-can-use-existing-primary-ips.
