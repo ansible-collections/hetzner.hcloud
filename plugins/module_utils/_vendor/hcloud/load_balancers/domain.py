@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from ..locations import BoundLocation
     from ..metrics import Metrics
     from ..networks import BoundNetwork, Network
+    from ..primary_ips import BoundPrimaryIP, PrimaryIP
     from ..servers import BoundServer
     from .client import BoundLoadBalancer
 
@@ -488,11 +489,18 @@ class LoadBalancerTargetHealthStatus(BaseDomain):
 
     :param listen_port: Load Balancer Target listen port
     :param status: Load Balancer Target status. Choices: healthy, unhealthy, unknown
+    :param detail: Additional details about why the health check failed. Only present when `status` is `unhealthy`.
+            Choices: unspecified, layer4_no_connection, layer4_timeout, layer7_timeout, unexpected_http_status,
+            unexpected_http_content
+    :param http_status_code: HTTP status code returned by the target during the last health check. Only present when
+            `status` is `unhealthy` and `detail` is `unexpected_http_status`.
     """
 
     __api_properties__ = (
         "listen_port",
         "status",
+        "detail",
+        "http_status_code",
     )
     __slots__ = __api_properties__
 
@@ -500,9 +508,13 @@ class LoadBalancerTargetHealthStatus(BaseDomain):
         self,
         listen_port: int | None = None,
         status: str | None = None,
+        detail: str | None = None,
+        http_status_code: int | None = None,
     ):
         self.listen_port = listen_port
         self.status = status
+        self.detail = detail
+        self.http_status_code = http_status_code
 
 
 class LoadBalancerTargetLabelSelector(BaseDomain):
@@ -567,6 +579,41 @@ class PublicNetwork(BaseDomain):
         self.enabled = enabled
 
 
+class LoadBalancerCreatePublicNetwork(BaseDomain):
+    """Load Balancer Create Public Network Domain
+
+    :param ipv4: ID of an existing Primary IP of type `ipv4` to assign to the Load Balancer.
+    :param ipv6: ID of an existing Primary IP of type `ipv6` to assign to the Load Balancer.
+    """
+
+    __api_properties__ = (
+        "ipv4",
+        "ipv6",
+    )
+    __slots__ = __api_properties__
+
+    def __init__(
+        self,
+        ipv4: PrimaryIP | BoundPrimaryIP | None = None,
+        ipv6: PrimaryIP | BoundPrimaryIP | None = None,
+    ):
+        self.ipv4 = ipv4
+        self.ipv6 = ipv6
+
+    def to_payload(self) -> dict[str, Any]:
+        """
+        Generates the request payload from this domain object.
+        """
+        payload: dict[str, Any] = {}
+
+        if self.ipv4 is not None:
+            payload["ipv4"] = self.ipv4.id
+        if self.ipv6 is not None:
+            payload["ipv6"] = self.ipv6.id
+
+        return payload
+
+
 class IPv4Address(BaseDomain):
     """IPv4 Address Domain
 
@@ -574,15 +621,25 @@ class IPv4Address(BaseDomain):
            The IPv4 Address
     """
 
-    __api_properties__ = ("ip", "dns_ptr")
+    __api_properties__ = (
+        "primary_ip",
+        "ip",
+        "blocked",
+        "dns_ptr",
+    )
     __slots__ = __api_properties__
 
     def __init__(
         self,
         ip: str,
         dns_ptr: str,
+        *,
+        primary_ip: PrimaryIP | BoundPrimaryIP | None = None,
+        blocked: bool | None = None,
     ):
+        self.primary_ip = primary_ip
         self.ip = ip
+        self.blocked = blocked
         self.dns_ptr = dns_ptr
 
 
@@ -593,15 +650,25 @@ class IPv6Network(BaseDomain):
            The IPv6 Network as CIDR Notation
     """
 
-    __api_properties__ = ("ip", "dns_ptr")
+    __api_properties__ = (
+        "primary_ip",
+        "ip",
+        "blocked",
+        "dns_ptr",
+    )
     __slots__ = __api_properties__
 
     def __init__(
         self,
         ip: str,
         dns_ptr: str,
+        *,
+        primary_ip: PrimaryIP | BoundPrimaryIP | None = None,
+        blocked: bool | None = None,
     ):
+        self.primary_ip = primary_ip
         self.ip = ip
+        self.blocked = blocked
         self.dns_ptr = dns_ptr
 
 
@@ -644,6 +711,21 @@ class CreateLoadBalancerResponse(BaseDomain):
         action: BoundAction,
     ):
         self.load_balancer = load_balancer
+        self.action = action
+
+
+class DeleteLoadBalancerResponse(BaseDomain):
+    """
+    Delete Load Balancer Response Domain.
+    """
+
+    __api_properties__ = ("action",)
+    __slots__ = __api_properties__
+
+    def __init__(
+        self,
+        action: BoundAction,
+    ):
         self.action = action
 
 
