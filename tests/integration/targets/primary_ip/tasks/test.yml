@@ -41,7 +41,7 @@
       - result.hcloud_primary_ip.name == hcloud_primary_ip_name
       - result.hcloud_primary_ip.type == "ipv6"
       - result.hcloud_primary_ip.location == hcloud_location_name
-      - result.hcloud_primary_ip.assignee_type == "server"
+      - result.hcloud_primary_ip.assignee_type == "unassigned"
       - result.hcloud_primary_ip.assignee_id is none
       - result.hcloud_primary_ip.labels.key == "value"
       - result.hcloud_primary_ip.auto_delete is false
@@ -77,7 +77,7 @@
       - result.hcloud_primary_ip.name == hcloud_primary_ip_name
       - result.hcloud_primary_ip.type == "ipv6"
       - result.hcloud_primary_ip.location == hcloud_location_name
-      - result.hcloud_primary_ip.assignee_type == "server"
+      - result.hcloud_primary_ip.assignee_type == "unassigned"
       - result.hcloud_primary_ip.assignee_id is none
       - result.hcloud_primary_ip.labels.key == "value"
       - result.hcloud_primary_ip.labels.foo == "bar"
