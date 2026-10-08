@@ -1286,3 +1286,11 @@ releases:
     - 866-image-info-deprecation-key.yml
     - allow-creating-load-balancer-with-primary-ips.yml
     release_date: '2026-10-05'
+  7.3.0:
+    changes:
+      minor_changes:
+      - load_balancer_info - Add `targets[].health_status[].detail` and `targets[].health_status[].http_status_code`
+        to the returned Load Balancer target health status.
+    fragments:
+    - load-balancer-health-status-detail.yaml
+    release_date: '2026-10-08'

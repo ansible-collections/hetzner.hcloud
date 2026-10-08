@@ -4,6 +4,14 @@ Hetzner Cloud Ansible Collection Release Notes
 
 .. contents:: Topics
 
+v7.3.0
+======
+
+Minor Changes
+-------------
+
+- load_balancer_info - Add `targets[].health_status[].detail` and `targets[].health_status[].http_status_code` to the returned Load Balancer target health status.
+
 v7.2.0
 ======
 
