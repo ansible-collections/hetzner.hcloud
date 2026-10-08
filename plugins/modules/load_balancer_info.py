@@ -152,6 +152,26 @@ hcloud_load_balancer_info:
                             choices: [healthy, unhealthy, unknown]
                             returned: always
                             sample: healthy
+                        detail:
+                            description:
+                                - Additional details about why the health check failed. Only present if status is unhealthy.
+                            type: str
+                            choices:
+                              - unspecified
+                              - layer4_no_connection
+                              - layer4_timeout
+                              - layer7_timeout
+                              - unexpected_http_status
+                              - unexpected_http_content
+                            returned: if status is unhealthy
+                            sample: unexpected_http_status
+                        http_status_code:
+                            description:
+                                - HTTP status code returned by the target during the last health check.
+                                - Only present if status is unhealthy and detail is unexpected_http_status.
+                            type: int
+                            returned: if status is unhealthy and detail is unexpected_http_status
+                            sample: 503
         services:
             description: all services from this Load Balancer
             returned: Always
@@ -367,13 +387,17 @@ class AnsibleHCloudLoadBalancerInfo(AnsibleHCloud):
             result["ip"] = target.ip.ip
 
         if target.health_status is not None:
-            result["health_status"] = [
-                {
+            result["health_status"] = []
+            for item in target.health_status:
+                health_status = {
                     "listen_port": item.listen_port,
                     "status": item.status,
                 }
-                for item in target.health_status
-            ]
+                if item.detail is not None:
+                    health_status["detail"] = item.detail
+                if item.http_status_code is not None:
+                    health_status["http_status_code"] = item.http_status_code
+                result["health_status"].append(health_status)
 
         return result
 
