@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.3.0](https://github.com/ansible-collections/hetzner.hcloud/compare/7.2.0...7.3.0) (2026-10-08)
+
+
+### Features
+
+* **load_balancer:** add health check diagnostic details ([#887](https://github.com/ansible-collections/hetzner.hcloud/issues/887)) ([0fed33a](https://github.com/ansible-collections/hetzner.hcloud/commit/0fed33a980b5ea8dfaf03f465c11cd6e73b65eeb))
+
 ## [7.2.0](https://github.com/ansible-collections/hetzner.hcloud/compare/7.1.0...7.2.0) (2026-10-05)
 
 

@@ -1,2 +1,0 @@
-minor_changes:
-  - load_balancer_info - Add `targets[].health_status[].detail` and `targets[].health_status[].http_status_code` to the returned Load Balancer target health status.
