@@ -14,7 +14,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
-          python-version: "3.14"
+          python-version: "3.15"
           cache: pip
           cache-dependency-path: requirements.txt
 
@@ -29,6 +29,6 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: ansible/ansible-lint@665d9e07a1943254d2910faffc106adaf7ea7294 # v26.8.0
+      - uses: ansible/ansible-lint@fac2489f3e4ccffa83a40b839770abbf4ab52327 # v26.10.0
         env:
           HCLOUD_TOKEN: ""
