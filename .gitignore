@@ -390,3 +390,4 @@ $RECYCLE.BIN/
 
 cloud-config-hcloud.ini
 tests/integration/inventory
+tests/integration/integration_config.yml

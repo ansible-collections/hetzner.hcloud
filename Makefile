@@ -2,7 +2,9 @@ SHELL := bash
 .PHONY: vendor clean dev
 
 dev:
-	cat tests/integration/cloud-config-hcloud.ini.in | envsubst > tests/integration/cloud-config-hcloud.ini
+	if [[ -f .env ]]; then set -a; source .env; set +a; fi; \
+	cat tests/integration/cloud-config-hcloud.ini.in | envsubst | tee tests/integration/cloud-config-hcloud.ini; \
+	cat tests/integration/integration_config.yml.in | envsubst | tee tests/integration/integration_config.yml;
 
 vendor:
 	python3 scripts/vendor.py
@@ -25,7 +27,7 @@ lint-docs: venv
 		.
 
 clean:
-	git clean -xdf
+	git clean -xdf -e .env*
 
 sanity:
 	ansible-test sanity --color --truncate 0 -v \
