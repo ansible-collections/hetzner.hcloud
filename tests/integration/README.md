@@ -25,3 +25,17 @@ The integration tests handle a lot of different variables, names, identifier. To
 - In `tasks/cleanup.yml`, tasks names MUST start with: `Cleanup test_<resource>` (e.g. `Cleanup test_server` or `Cleanup test_floating_ip`)
 - Any fact starting with `_` is scoped to the current file and MUST NOT be used outside of it.
 - Any test result MUST be registered using the `result` variable name unless it is required in a future test, in that case it MUST use the `<resource>` variable name as prefix.
+
+## Environment variables
+
+`ansible-test` does not forward the host environment variables to the integration tests, only the `HCLOUD_TOKEN` (from `tests/integration/cloud-config-hcloud.ini`) is set.
+
+To set additional environment variables for all the modules in the tests (e.g. `HCLOUD_ENDPOINT` or `HETZNER_ENDPOINT`), define the `hcloud_environment` variable in the `tests/integration/integration_config.yml` file, which is loaded by `ansible-test` for every target:
+
+```yaml
+hcloud_environment:
+  HCLOUD_ENDPOINT: https://api.hetzner.cloud/v1
+  HETZNER_ENDPOINT: https://api.hetzner.com/v1
+```
+
+Running `make dev` generates this file from the `HCLOUD_ENDPOINT` and `HETZNER_ENDPOINT` variables of your shell.
